@@ -9,8 +9,8 @@
 - **Done:** Xcode project created (`Ember.xcodeproj`, Mac-only, macOS 15+); the template
   app builds from the terminal. Tested on macOS 26.6.
 - **Done:** milestone 0 (foundation).
-- **In progress:** milestone 1 (the pill), plan docs/plans/pill.md: task 2 of 6 done (notch geometry).
-- **Next:** build the pill task by task, test-first.
+- **In progress:** milestone 1 (the pill), plan docs/plans/pill.md: task 5 of 6 done (controller and delays, the pill on screen, app icon; manual checks pending).
+- **Next:** task 6 — the user runs the manual checklist on the MacBook; fix what fails.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

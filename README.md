@@ -1,3 +1,5 @@
+<img src="assets/Ember_app_icon.png" width="128" alt="Ember app icon">
+
 # Ember
 
 A Dynamic Island for the MacBook notch. Ember is a black pill that sits around the
