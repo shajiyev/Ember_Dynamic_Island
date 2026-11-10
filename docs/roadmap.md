@@ -9,7 +9,7 @@
 - **Done:** Xcode project created (`Ember.xcodeproj`, Mac-only, macOS 15+); the template
   app builds from the terminal. Tested on macOS 26.6.
 - **Done:** milestone 0 (foundation).
-- **In progress:** milestone 1 (the pill), plan docs/plans/pill.md: task 1 of 6 done (test target, pill state rules).
+- **In progress:** milestone 1 (the pill), plan docs/plans/pill.md: task 2 of 6 done (notch geometry).
 - **Next:** build the pill task by task, test-first.
 
 ## Milestones (draft)
