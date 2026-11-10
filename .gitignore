@@ -29,3 +29,6 @@ sparkle_private_key*
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Brainstorming mockups (local only)
+.superpowers/

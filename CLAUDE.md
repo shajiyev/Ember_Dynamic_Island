@@ -40,6 +40,7 @@ live activities and quick tools. It is intended for public, open-source release.
 - `docs/roadmap.md` — **Current status** at top, then milestones
 - `docs/features.md` — feature inventory + status
 - `docs/decisions.md` — dated decision log
+- `docs/specs/` — one design spec per milestone/feature (what and why, agreed before planning)
 - `docs/plans/` — one implementation plan per feature
 
 ## Project-specific checkpoint items

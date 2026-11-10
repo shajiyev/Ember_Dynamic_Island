@@ -78,6 +78,28 @@ own domain; Ember only makes sense on a Mac; a root-level project is what people
 when they clone. No signing team is set, so no personal Team ID is in the repo.
 App Sandbox is still on (Xcode's default) — to be revisited when a feature needs it off.
 
+## 2026-11-10 — Pill design choices (milestone 1)
+Full design in docs/specs/2026-11-10-pill-design.md. The choices behind it:
+- **Glow only when something is happening.** At rest Ember is invisible. Considered an
+  always-on faint glow and no glow at all. **Why:** the glow then carries meaning, and an
+  always-on line distracts over video and bright windows.
+- **Open panel uses tabs (about 620 × 200 points).** Considered a single dashboard and a
+  compact one-thing-at-a-time view. **Why:** tabs absorb the twelve "later" features
+  without a redesign, and Atoll's tab-based code is easier to reuse. Minimal layouts
+  remain feature #26b.
+- **Own small skeleton, borrowing specific pieces from Atoll.** Considered stripping down
+  a copy of Atoll. **Why:** Atoll's core is a few very large files tied to features we
+  dropped; untangling them is harder than building the pill fresh.
+- **No pop-up on Macs without a notch display;** the menu bar menu shows a line instead.
+  This replaces the "friendly message" wording in the entry above. **Why:** a pop-up
+  would also fire every time a notch MacBook is used with the lid closed.
+- **The logo is the app icon and the menu bar icon** (block "E"), reshaped to the macOS
+  icon grid.
+- **Open delay 0.2 s, close delay 0.3 s for now.** Both become user settings (0–1 s each)
+  with the settings window, feature #26a.
+- **Documented window APIs only** in this milestone; Atoll's undocumented Spaces call is
+  not used unless the documented settings prove insufficient.
+
 ## 2026-11-10 — Free distribution only; no Apple Developer Program
 Ember ships as a DMG on GitHub Releases with Sparkle auto-updates, signed without a paid
 Developer ID and not notarized. Considered: joining the Apple Developer Program

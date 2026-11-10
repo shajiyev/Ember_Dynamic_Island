@@ -21,7 +21,7 @@ explicitly decide to revive something.
 | 13 | Productivity | Timers | v1 | |
 | 14 | Productivity | Calendar & reminders preview | v1 | Needs Calendar/Reminders permission |
 | 15 | Productivity | File shelf (drop files on the notch, AirDrop) | v1 | |
-| 26a | Customization | Basics: hover-to-open on/off, per-feature toggles | v1 | Rest of customization is #26b (later) |
+| 26a | Customization | Basics: hover-to-open on/off, open delay and close delay (each 0–1 s; defaults 0.2 s and 0.3 s), per-feature toggles | v1 | Rest of customization is #26b (later) |
 
 ## Later — after v1 (we pick the order after v1 ships)
 

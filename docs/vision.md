@@ -6,7 +6,9 @@ that blends into the notch. When something happens (music playing, charging, a t
 running) a warm glow and compact info appear beside the notch. Hover or click and it
 expands into controls and quick tools.
 
-Brand: a black notch-shaped pill with a warm ember glow inside, like a burning coal.
+Brand: the logo is a white block "E" on a glowing ember-orange background
+(`assets/Ember_logo.png`). On screen, the pill is black and lights up with a warm ember
+glow when something is happening.
 
 ## Why
 - A polished tool the author uses every day.
