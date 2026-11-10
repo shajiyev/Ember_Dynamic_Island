@@ -1,6 +1,6 @@
 # Milestone 1 design: the pill
 
-Date: 2026-11-10. Status: awaiting review.
+Date: 2026-11-10. Status: approved, being built (plan: docs/plans/pill.md).
 
 ## Goal
 
