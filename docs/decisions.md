@@ -69,6 +69,15 @@ A floating pill for non-notch Macs and external monitors is feature #28 (later).
 **Why:** every feature would otherwise need to look right in two shapes; the author
 uses the built-in display. Notch geometry is kept in one place so #28 is cheap to add.
 
+## 2026-11-10 — Bundle ID `io.github.shajiyev.Ember`; Mac-only project at the repo root
+The Xcode project was created with Xcode 27.2, which starts every new project as a
+multi-platform app (iPhone, iPad, Vision Pro, Mac) targeting only the newest OS. We
+changed it to Mac-only with a macOS 15.0 minimum and moved it to the repo root.
+**Why:** `io.github.<username>` is the usual ID form for GitHub-hosted apps without their
+own domain; Ember only makes sense on a Mac; a root-level project is what people expect
+when they clone. No signing team is set, so no personal Team ID is in the repo.
+App Sandbox is still on (Xcode's default) — to be revisited when a feature needs it off.
+
 ## 2026-11-10 — Free distribution only; no Apple Developer Program
 Ember ships as a DMG on GitHub Releases with Sparkle auto-updates, signed without a paid
 Developer ID and not notarized. Considered: joining the Apple Developer Program

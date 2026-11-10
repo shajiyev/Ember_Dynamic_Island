@@ -6,7 +6,12 @@ live activities and quick tools. It is intended for public, open-source release.
 
 ## Stack
 - Swift + SwiftUI, with AppKit for the notch window (borderless `NSPanel`) — *proposed, see docs/decisions.md*
-- Xcode project lives in this repo; app / target / bundle name: **Ember**
+- Xcode 27 project at the repo root: `Ember.xcodeproj` (settings in the text file
+  `Ember.xcodeproj/project.xcproj`), sources in `Ember/`. The `Ember/` folder is synced:
+  any file added there is part of the app automatically — no project-file edit needed.
+- App / target name: **Ember**; bundle ID: `io.github.shajiyev.Ember`
+- Build check from the terminal:
+  `xcodebuild -project Ember.xcodeproj -scheme Ember -configuration Debug -destination 'platform=macOS' build`
 - License: **GPL-3.0** (see LICENSE)
 - Minimum macOS: **15.0** (deployment target). Developed and tested on macOS 26.
   Newer-only APIs must be wrapped in `if #available(...)`.

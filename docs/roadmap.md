@@ -6,7 +6,9 @@
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
 - **Done:** supported Macs — macOS 15+, notch display only in v1.
 - **Done:** distribution — free only (DMG + Sparkle, no paid Apple account, not notarized).
-- **In progress:** creating the Xcode project inside this folder.
+- **Done:** Xcode project created (`Ember.xcodeproj`, Mac-only, macOS 15+); the template
+  app builds from the terminal. Tested on macOS 26.6.
+- **In progress:** nothing — foundation (milestone 0) is complete.
 - **Next:** design the notch window (first feature, milestone 1).
 
 ## Milestones (draft)

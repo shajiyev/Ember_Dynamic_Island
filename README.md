@@ -28,6 +28,14 @@ Not released yet. Ember will be a free download from GitHub Releases. It will no
 notarized by Apple, so macOS will show a warning the first time you open it; the steps
 to get past that will be documented here.
 
+## Building from source
+
+You need a Mac with Xcode 27 or later.
+
+1. Clone this repository.
+2. Open `Ember.xcodeproj` in Xcode.
+3. Press Run (⌘R).
+
 ## Credits
 
 Ember builds on the work of two open-source projects, both licensed under GPL-3.0:
