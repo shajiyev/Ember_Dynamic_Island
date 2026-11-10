@@ -7,6 +7,10 @@ nonisolated enum PillMetrics {
     static let openSize = CGSize(width: 620, height: 200)
     /// Transparent space around the open panel so the glow is not cut off.
     static let glowMargin: CGFloat = 40
+    /// How far the active shape reaches below the notch height macOS reports. The physical
+    /// notch is slightly taller than reported, so this keeps the glowing bottom edge whole
+    /// and the animation smooth. Chosen by eye on a 14" MacBook Pro.
+    static let activeBottomExtension: CGFloat = 2
 }
 
 /// Where the notch is on one screen, and the rectangle the pill fills in each state.
@@ -38,7 +42,9 @@ nonisolated struct NotchGeometry: Equatable {
         case .rest:
             return notchRect
         case .active:
-            return notchRect.insetBy(dx: -PillMetrics.wingWidth, dy: 0)
+            let extra = PillMetrics.activeBottomExtension
+            return CGRect(x: notchRect.minX - PillMetrics.wingWidth, y: notchRect.minY - extra,
+                          width: notchRect.width + 2 * PillMetrics.wingWidth, height: notchRect.height + extra)
         case .open:
             let size = PillMetrics.openSize
             return CGRect(x: notchRect.midX - size.width / 2, y: notchRect.maxY - size.height,

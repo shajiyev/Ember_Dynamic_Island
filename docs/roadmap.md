@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-10)
+## Current status (2026-11-11)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -9,8 +9,9 @@
 - **Done:** Xcode project created (`Ember.xcodeproj`, Mac-only, macOS 15+); the template
   app builds from the terminal. Tested on macOS 26.6.
 - **Done:** milestone 0 (foundation).
-- **In progress:** milestone 1 (the pill), plan docs/plans/pill.md: task 5 of 6 done (controller and delays, the pill on screen, app icon; manual checks pending).
-- **Next:** task 6 — the user runs the manual checklist on the MacBook; fix what fails.
+- **Done:** milestone 1 (the pill). Verified on macOS 26.6 with the manual checklist in docs/plans/pill.md.
+- **In progress:** nothing.
+- **Next:** choose and design milestone 2 (the first feature inside the pill).
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

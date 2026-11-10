@@ -110,3 +110,17 @@ the README must carry clear "how to open Ember the first time" steps; permission
 need re-granting after updates (to investigate at release: a stable self-signed
 certificate); the official Homebrew catalog is out, a personal tap is still possible.
 The release process should keep signing as a separate step so this can be revisited.
+
+## 2026-11-11 — Milestone 1 results
+All ten manual checks passed on a 14" MacBook Pro with an external main display, macOS 26.6.
+- **Hover uses SwiftUI `onHover`.** It works on the never-active panel, so the
+  pointer-monitor fallback in the plan was not needed.
+- **App Sandbox stays on.** Nothing in this milestone needed it off.
+- **No checks accepted as known limits.**
+- **The active pill reaches 2 points below the notch height macOS reports**
+  (`PillMetrics.activeBottomExtension`); rest stays exactly the notch. **Why:** the
+  physical notch is about 0.5 point taller than reported, which cut the glowing bottom
+  edge; 2 points keeps the edge whole and the animation smoother. At rest nothing may show,
+  so rest is not extended. Glow and corner values are unchanged from the spec.
+- **Menu bar managers can hide the icon.** macOS adds a new menu bar icon on the left, so
+  tools like Hidden Bar hide it on first launch. Worth a README note at release.

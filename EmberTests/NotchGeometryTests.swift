@@ -37,8 +37,8 @@ struct NotchGeometryTests {
         #expect(try geometry().rect(for: .rest) == CGRect(x: 663, y: 950, width: 185, height: 32))
     }
 
-    @Test func activeAddsAWingOnEachSide() throws {
-        #expect(try geometry().rect(for: .active) == CGRect(x: 623, y: 950, width: 265, height: 32))
+    @Test func activeAddsAWingOnEachSideAndReachesTwoPointsBelowTheNotch() throws {
+        #expect(try geometry().rect(for: .active) == CGRect(x: 623, y: 948, width: 265, height: 34))
     }
 
     @Test func openIsCentredOnTheNotchAndHangsFromTheTopOfTheScreen() throws {

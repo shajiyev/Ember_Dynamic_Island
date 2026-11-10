@@ -10,8 +10,8 @@ explicitly decide to revive something.
 
 | # | Area | Feature | Status | Notes |
 |---|------|---------|--------|-------|
-| 0 | Core | Notch pill window, hover/click expand, animations | v1 | Foundation for everything else |
-| 0 | Core | Settings window, menu bar icon, launch at login | v1 | |
+| 0 | Core | Notch pill window, hover/click expand, animations | done | Foundation for everything else |
+| 0 | Core | Settings window, menu bar icon, launch at login | in progress | Menu bar icon done (milestone 1) |
 | 0 | Core | Onboarding & permission requests | v1 | |
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | v1 | Private media API restricted since macOS 15.4 — needs workaround |
@@ -38,7 +38,7 @@ explicitly decide to revive something.
 | 18 | Productivity | Caffeinate (keep Mac awake) | later | |
 | 19 | Productivity | Webcam mirror | later | Needs Camera permission |
 | 21 | System | Stats: CPU, GPU, memory, network, disk, temperatures | later | Temps need SMC access |
-| 26b | Customization | Layouts, minimal mode, animation styles, shortcut remapping | later | |
+| 26b | Customization | Layouts, minimal mode, animation styles, shortcut remapping | later | If a glow on/off option is added: with the glow off, the active pill should reach 1 point below the notch instead of 2 (`PillMetrics.activeBottomExtension`); 2 points of plain black visibly cut into the screen (checked 2026-11-11) |
 | 28 | Core | Floating pill on non-notch Macs and external monitors | later | v1 shows a "needs a notch" message instead |
 
 ## Dropped — decided 2026-11-10

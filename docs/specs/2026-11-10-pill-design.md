@@ -1,6 +1,6 @@
 # Milestone 1 design: the pill
 
-Date: 2026-11-10. Status: approved, being built (plan: docs/plans/pill.md).
+Date: 2026-11-10. Status: built 2026-11-11 (plan: docs/plans/pill.md).
 
 ## Goal
 
@@ -18,7 +18,7 @@ spring open with a warm glow, move away, and watch it close.
 | State | When | Shape | Glow |
 |---|---|---|---|
 | Rest | Nothing is happening | Exactly the notch (185 × 32 points on a 14" MacBook Pro) | None. Ember is invisible. |
-| Active | A feature reports activity | The notch plus a 40-point wing on each side, same height | Strong |
+| Active | A feature reports activity | The notch plus a 40-point wing on each side, reaching 2 points below the notch | Strong |
 | Open | The user hovered or clicked | Panel, 620 × 200 points, centred on the notch | Soft |
 
 No feature produces activity yet. Development builds get a "Simulate Activity" menu item
