@@ -12,14 +12,14 @@
 - **Done:** milestone 1 (the pill). Verified on macOS 26.6 with the manual checklist in docs/plans/pill.md.
 - **Done:** milestone 2, feature 1: battery (#4), with live activities and the panel's top row. Verified on macOS 26.6.2 with the checklist in docs/plans/battery.md.
 - **Done:** milestone 2's second feature chosen and designed: timers (#13), which also adds
-  ongoing live activities. Spec docs/specs/2026-11-11-timers-design.md.
-- **In progress:** timers (#13), plan docs/plans/timers.md: no tasks done yet.
-- **Next:** plan task 1, the timer setting and countdown rules.
+  ongoing live activities. Spec docs/specs/timers.md.
+- **In progress:** milestone 2, feature 2: timers (#13), plan docs/plans/timers.md: task 1 of 5 done (timer setting and countdown rules).
+- **Next:** plan task 2, ongoing activities on the pill.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).
 1. **The pill** — notch-shaped window that sits over the notch, hover/expand/collapse,
-   menu bar icon, app icon. Spec: docs/specs/2026-11-10-pill-design.md.
+   menu bar icon, app icon. Spec: docs/specs/pill.md.
 2. **v1 features** — the `v1` table in docs/features.md.
 3. **Ship it** — DMG on GitHub Releases, Sparkle auto-updates, README first-launch
    instructions for the Gatekeeper warning. Investigate a stable self-signed certificate
