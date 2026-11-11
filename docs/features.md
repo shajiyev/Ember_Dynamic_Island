@@ -38,6 +38,7 @@ explicitly decide to revive something.
 | 18 | Productivity | Caffeinate (keep Mac awake) | later | |
 | 19 | Productivity | Webcam mirror | later | Needs Camera permission |
 | 21 | System | Stats: CPU, GPU, memory, network, disk, temperatures | later | Temps need SMC access |
+| 24 | Productivity | Claude Code usage limits: plan name; 5-hour, weekly (all models) and weekly per-model limits, each with a percentage bar and reset time; Refresh button with an "Updated …" label; "Usage settings…" button | later | Revived 2026-11-11, narrowed from "LLM usage tracking". Modelled on the usage panel in Claude's own menu bar app. Where the numbers come from is undecided — settle it at design time |
 | 26b | Customization | Layouts, minimal mode, animation styles, shortcut remapping | later | If a glow on/off option is added: with the glow off, the active pill should reach 1 point below the notch instead of 2 (`PillMetrics.activeBottomExtension`); 2 points of plain black visibly cut into the screen (checked 2026-11-11) |
 | 28 | Core | Floating pill on non-notch Macs and external monitors | later | v1 shows a "needs a notch" message instead |
 
@@ -50,5 +51,4 @@ explicitly decide to revive something.
 | 20 | Terminal tab | Big dependency, little value in a notch |
 | 22 | Lock-screen widgets | Private window APIs, breaks across macOS releases |
 | 23 | AI screen assistant | Requires users' API keys; out of scope |
-| 24 | LLM usage tracking | Niche |
 | 25 | Extensions API for third-party apps | A platform of its own; out of scope |

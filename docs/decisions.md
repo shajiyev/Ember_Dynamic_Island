@@ -160,3 +160,13 @@ All eight manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
   close the open panel. Left as is, with reasons in the review: the percentage is not
   clamped (IOKit already gives 0–100), the glow colour blends towards orange while it
   fades out (subtle, accepted by eye), and `start` methods assume a single call.
+
+## 2026-11-11 — Claude Code usage limits revived (#24)
+- **#24 moves from dropped to later, narrowed to Claude Code only.** It was dropped on
+  2026-11-10 as "LLM usage tracking — niche". **Why:** the wanted feature is much smaller
+  than tracking every LLM provider: one panel showing the plan and its usage limits, like
+  the one in Claude's own menu bar app.
+- **Scope:** plan name; 5-hour limit, weekly limit for all models and weekly limit per
+  model, each with a percentage bar and reset time; a Refresh button with an "Updated …"
+  label; a "Usage settings…" button.
+- **Open question:** where the numbers come from. To be settled when the feature is designed.
