@@ -18,7 +18,7 @@ explicitly decide to revive something.
 | 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |
 | 6 | Live activity | Camera / mic in-use (privacy) indicator | v1 | |
 | 8 | Live activity | Bluetooth device connected (AirPods + battery) | v1 | |
-| 13 | Productivity | Timers | v1 | |
+| 13 | Productivity | Timers | in progress | Spec docs/specs/2026-11-11-timers-design.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
 | 14 | Productivity | Calendar & reminders preview | v1 | Needs Calendar/Reminders permission |
 | 15 | Productivity | File shelf (drop files on the notch, AirDrop) | v1 | |
 | 26a | Customization | Basics: hover-to-open on/off, open delay and close delay (each 0–1 s; defaults 0.2 s and 0.3 s), per-feature toggles | v1 | Rest of customization is #26b (later) |

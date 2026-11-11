@@ -179,3 +179,29 @@ All eight manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
   for everyone who leaves the option off.
 - Not designed yet. Open points for design time: glow colour and strength at rest, and how
   it interacts with the alert colours and with the glow on/off option noted in #26b.
+
+## 2026-11-11 — Timers design (milestone 2, second feature)
+Spec: docs/specs/2026-11-11-timers-design.md.
+- **Timers come second.** Considered Now Playing, the camera/mic indicator and the settings
+  window. **Why:** no permission and no API risk, and it adds lasting live activities that
+  Now Playing will reuse.
+- **One countdown, set with per-unit arrows and presets (5, 25, 45 min).** Each unit wraps
+  inside itself (0 ↔ 59, 0 ↔ 23) and never changes its neighbour; holding an arrow repeats.
+  Considered several timers at once and a stopwatch (later). **Why:** simplest clearly
+  useful timer; precise to the second without an extra "pick a unit" step.
+- **No typing a time for now.** **Why:** Ember's panel never takes keyboard focus, so typing
+  goes to the app the user is working in. Typing needs its own design; kept as a later
+  addition.
+- **A started timer cannot be changed;** cancel and start a new one. **Why:** avoids changing
+  a running timer by accident.
+- **"Time's up" stays until seen, with one sound.** **Why:** a timer matters most when the
+  user looked away.
+- **No tab row yet;** the timer replaces the panel's placeholder. **Why:** a one-tab row looks
+  odd; tabs arrive with Now Playing.
+- **No glow while a timer runs, to be compared on screen.** The glow is Ember's signature
+  and the brand colour, so the user wants to see both versions before deciding; it is one
+  value (`TimerLook.runningGlowColor`).
+- **The pill gets a second, ongoing activity slot** next to the brief one (approach A).
+  Considered a prioritised list of activities. **Why:** smallest change that covers timers
+  with battery alerts; revisit when two lasting activities can coexist (camera/mic).
+
