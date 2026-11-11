@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// How the pill looks in each state. This is the one place to tune the look.
-struct PillStyle: Equatable {
+nonisolated struct PillStyle: Equatable {
     /// Radius of the outward flare where the pill meets the top of the screen.
     var topCornerRadius: CGFloat
     var bottomCornerRadius: CGFloat
