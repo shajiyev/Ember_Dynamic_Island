@@ -124,3 +124,24 @@ All ten manual checks passed on a 14" MacBook Pro with an external main display,
   so rest is not extended. Glow and corner values are unchanged from the spec.
 - **Menu bar managers can hide the icon.** macOS adds a new menu bar icon on the left, so
   tools like Hidden Bar hide it on first launch. Worth a README note at release.
+
+## 2026-11-11 — Battery design (milestone 2, first feature)
+Spec: docs/specs/2026-11-11-battery-design.md.
+- **Battery is the first feature of milestone 2.** Considered Now Playing, Timers and the
+  settings window. **Why:** the simplest data source (public IOKit, no permission prompt),
+  so the work goes into the two patterns every later feature reuses: live activities on
+  the closed pill and the open panel's top row. Now Playing is riskier (media API
+  restricted since macOS 15.4) and is better done once those patterns exist.
+- **Brief alerts only:** plug in, unplug, 20% and 10%. Considered keeping the pill active
+  the whole time it is charging. **Why:** a MacBook on a desk is plugged in most of the
+  day; a constant glow would lose its meaning.
+- **Each alert has its own glow colour** (green, orange, yellow, red), in the active state
+  only. Considered an always-orange glow with a coloured icon. **Why:** easier to read out
+  of the corner of the eye. The open panel stays orange for now; giving it the alert
+  colours too may come later.
+- **Battery is a status item in the panel's top row, not a tab.** **Why:** it does not
+  fill a tab. The tab row arrives with the second feature that needs one.
+- **Features hand the pill a `LiveActivity` value.** Considered letting the pill view know
+  each feature directly, and a full feature protocol with a registry. **Why:** later
+  features plug in without touching the pill view, and a protocol would mean designing
+  tabs and settings before they exist.

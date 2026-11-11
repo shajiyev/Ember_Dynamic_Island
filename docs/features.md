@@ -15,7 +15,7 @@ explicitly decide to revive something.
 | 0 | Core | Onboarding & permission requests | v1 | |
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | v1 | Private media API restricted since macOS 15.4 — needs workaround |
-| 4 | Live activity | Battery / charging | v1 | |
+| 4 | Live activity | Battery / charging | in progress | Spec docs/specs/2026-11-11-battery-design.md |
 | 6 | Live activity | Camera / mic in-use (privacy) indicator | v1 | |
 | 8 | Live activity | Bluetooth device connected (AirPods + battery) | v1 | |
 | 13 | Productivity | Timers | v1 | |
