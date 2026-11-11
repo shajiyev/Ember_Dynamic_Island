@@ -170,3 +170,12 @@ All eight manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
   model, each with a percentage bar and reset time; a Refresh button with an "Updated …"
   label; a "Usage settings…" button.
 - **Open question:** where the numbers come from. To be settled when the feature is designed.
+
+## 2026-11-11 — Always-on glow planned as an option (#29)
+- **A later feature adds an optional constant glow around the notch, even at rest,**
+  switched on or off in the Glow section of Settings. **Why:** some users want the notch
+  to stay visibly lit. It does not replace the current behaviour: the default stays "glow
+  only when something is happening" (decision of 2026-11-10), so the glow keeps its meaning
+  for everyone who leaves the option off.
+- Not designed yet. Open points for design time: glow colour and strength at rest, and how
+  it interacts with the alert colours and with the glow on/off option noted in #26b.
