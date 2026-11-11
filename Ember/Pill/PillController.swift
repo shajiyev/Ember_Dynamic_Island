@@ -28,6 +28,7 @@ final class PillController {
     @ObservationIgnored private var activityTimeout: Task<Void, Never>?
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
+    @ObservationIgnored private var panelContent = AnyView(EmptyView())
 
     init(timing: PillTiming = PillTiming()) {
         self.timing = timing
@@ -64,8 +65,9 @@ final class PillController {
     }
 
     /// Puts the pill on the display that has a notch and keeps it there when displays
-    /// are connected, removed or rearranged.
-    func start() {
+    /// are connected, removed or rearranged. `panelContent` is what the open panel shows.
+    func start(panelContent: some View) {
+        self.panelContent = AnyView(panelContent)
         refreshDisplay()
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -95,7 +97,7 @@ final class PillController {
 
     private func makeWindow() -> PillWindow {
         let window = PillWindow()
-        let hostingView = FirstMouseHostingView(rootView: PillView(controller: self))
+        let hostingView = FirstMouseHostingView(rootView: PillView(controller: self, panelContent: panelContent))
         hostingView.safeAreaRegions = []   // draw under the menu bar and notch
         window.contentView = hostingView
         self.window = window

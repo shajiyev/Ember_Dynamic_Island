@@ -23,7 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard NSClassFromString("XCTestCase") == nil else { return }
         battery.onAlert = { [controller] activity in controller.show(activity) }
         battery.start()
-        controller.start()
+        controller.start(panelContent: PanelView(battery: battery))
     }
 }
 

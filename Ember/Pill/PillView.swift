@@ -4,6 +4,8 @@ import SwiftUI
 /// It fills the whole pill window; the shape hangs from the top centre.
 struct PillView: View {
     let controller: PillController
+    /// What the open panel shows. The pill does not know what is inside.
+    let panelContent: AnyView
 
     var body: some View {
         let state = controller.state
@@ -33,10 +35,11 @@ struct PillView: View {
                 }
             }
             .overlay {
-                Text("Ember")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.35))
-                    .opacity(state == .open ? 1 : 0)
+                if state == .open {
+                    panelContent
+                        .environment(\.notchHeight, notchHeight)
+                        .transition(.opacity)
+                }
             }
             .shadow(color: glowColor.opacity(style.glowOpacity),
                     radius: style.glowRadius, y: style.glowRadius / 2)
@@ -82,4 +85,9 @@ private struct ActivityWings: View {
         .frame(height: height)
         .frame(maxHeight: .infinity, alignment: .top)
     }
+}
+
+extension EnvironmentValues {
+    /// The height of the notch, so panel content can line up a row beside it.
+    @Entry var notchHeight: CGFloat = 0
 }
