@@ -15,8 +15,12 @@ nonisolated struct PillTiming: Equatable {
 @Observable
 final class PillController {
     private(set) var state: PillState = .rest
-    /// What the pill shows in its wings, until the activity's time runs out.
-    private(set) var currentActivity: LiveActivity?
+    /// A brief activity, shown until its duration runs out (`show(_:)`).
+    private(set) var briefActivity: LiveActivity?
+    /// An ongoing activity, shown until its feature replaces or clears it (`setOngoing(_:)`).
+    private(set) var ongoingActivity: LiveActivity?
+    /// What the wings show: the brief activity if there is one, otherwise the ongoing one.
+    var currentActivity: LiveActivity? { briefActivity ?? ongoingActivity }
     /// The notch on the display the pill lives on, or nil when no display has a notch.
     private(set) var geometry: NotchGeometry?
 
@@ -25,7 +29,7 @@ final class PillController {
     @ObservationIgnored private let timing: PillTiming
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
-    @ObservationIgnored private var activityTimeout: Task<Void, Never>?
+    @ObservationIgnored private var briefTimeout: Task<Void, Never>?
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
     @ObservationIgnored private var panelContent = AnyView(EmptyView())
@@ -35,6 +39,9 @@ final class PillController {
     }
 
     func send(_ event: PillEvent) {
+        if event == .pointerEntered || event == .clicked {
+            clearActivityThatEndsWhenSeen()
+        }
         switch model.handle(event) {
         case .startOpenDelay:
             schedule(.openDelayElapsed, after: timing.openDelay)
@@ -49,19 +56,35 @@ final class PillController {
         state = model.state
     }
 
-    /// Shows a feature's activity on the pill for the activity's duration. A newer
+    /// Shows a brief activity for its duration, over any ongoing one. A newer brief
     /// activity replaces the current one and starts its own time from zero.
     func show(_ activity: LiveActivity) {
-        currentActivity = activity
-        send(.activityChanged(true))
-
-        activityTimeout?.cancel()
-        activityTimeout = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(activity.duration))
-            guard !Task.isCancelled else { return }
-            self?.currentActivity = nil
-            self?.send(.activityChanged(false))
+        guard let duration = activity.duration else {
+            assertionFailure("show(_:) needs a brief activity, one with a duration")
+            return
         }
+        briefActivity = activity
+        activityDidChange()
+
+        briefTimeout?.cancel()
+        briefTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(duration))
+            guard !Task.isCancelled else { return }
+            self?.briefActivity = nil
+            self?.activityDidChange()
+        }
+    }
+
+    /// Keeps a feature's activity on the pill until the feature replaces it or passes nil.
+    /// An activity that ends when seen is dropped at once if the panel is open, because the
+    /// user is already looking at it.
+    func setOngoing(_ activity: LiveActivity?) {
+        if let activity, activity.endsWhenSeen, state == .open {
+            ongoingActivity = nil
+        } else {
+            ongoingActivity = activity
+        }
+        activityDidChange()
     }
 
     /// Puts the pill on the display that has a notch and keeps it there when displays
@@ -102,6 +125,16 @@ final class PillController {
         window.contentView = hostingView
         self.window = window
         return window
+    }
+
+    private func activityDidChange() {
+        send(.activityChanged(currentActivity != nil))
+    }
+
+    private func clearActivityThatEndsWhenSeen() {
+        guard ongoingActivity?.endsWhenSeen == true else { return }
+        ongoingActivity = nil
+        activityDidChange()
     }
 
     private func schedule(_ event: PillEvent, after delay: TimeInterval) {

@@ -14,10 +14,12 @@ struct PillView: View {
         let notchHeight = controller.geometry?.notchRect.height ?? 0
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
-        // Only the active state takes its colour from the activity; the open panel stays orange.
-        let glowColor = state == .active
-            ? controller.currentActivity?.glowColor ?? PillStyle.glowColor
-            : PillStyle.glowColor
+        // The active state takes its glow from the activity, which may have none; the open
+        // panel always glows orange.
+        let activityGlow = controller.currentActivity?.glowColor
+        let hasGlow = state != .active || activityGlow != nil
+        let glowColor = state == .active ? activityGlow ?? PillStyle.glowColor : PillStyle.glowColor
+        let glowOpacity = hasGlow ? style.glowOpacity : 0
 
         shape
             .fill(.black)
@@ -25,7 +27,7 @@ struct PillView: View {
             .overlay {
                 // A thin bright line that fades in towards the bottom edge.
                 shape
-                    .stroke(PillStyle.edgeColor(for: glowColor).opacity(style.glowOpacity), lineWidth: 1)
+                    .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity), lineWidth: 1)
                     .mask(LinearGradient(colors: [.clear, .black], startPoint: .center, endPoint: .bottom))
             }
             .overlay {
@@ -46,7 +48,7 @@ struct PillView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipShape(shape)
             }
-            .shadow(color: glowColor.opacity(style.glowOpacity),
+            .shadow(color: glowColor.opacity(glowOpacity),
                     radius: style.glowRadius, y: style.glowRadius / 2)
             .contentShape(Rectangle())
             .onHover { isInside in
@@ -58,6 +60,7 @@ struct PillView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
             .animation(PillStyle.animation, value: state)
+            .animation(PillStyle.animation, value: activityGlow)
     }
 }
 

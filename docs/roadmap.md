@@ -13,8 +13,8 @@
 - **Done:** milestone 2, feature 1: battery (#4), with live activities and the panel's top row. Verified on macOS 26.6.2 with the checklist in docs/plans/battery.md.
 - **Done:** milestone 2's second feature chosen and designed: timers (#13), which also adds
   ongoing live activities. Spec docs/specs/timers.md.
-- **In progress:** milestone 2, feature 2: timers (#13), plan docs/plans/timers.md: task 1 of 5 done (timer setting and countdown rules).
-- **Next:** plan task 2, ongoing activities on the pill.
+- **In progress:** milestone 2, feature 2: timers (#13), plan docs/plans/timers.md: task 2 of 5 done (ongoing activities on the pill).
+- **Next:** plan task 3, the timer's look.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).
