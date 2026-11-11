@@ -10,8 +10,10 @@ nonisolated struct PillStyle: Equatable {
 
     /// The ember glow, #FF7A1E.
     static let glowColor = Color(red: 1.0, green: 0.478, blue: 0.118)
-    /// The brighter line on the pill's bottom edge, #FFB86E.
-    static let edgeColor = Color(red: 1.0, green: 0.722, blue: 0.431)
+    /// The brighter line on the pill's bottom edge: the glow colour mixed with white.
+    static func edgeColor(for glowColor: Color) -> Color {
+        glowColor.mix(with: .white, by: 0.45)
+    }
     static let animation = Animation.spring(response: 0.38, dampingFraction: 0.8)
 
     static func style(for state: PillState) -> PillStyle {

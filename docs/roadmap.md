@@ -12,8 +12,8 @@
 - **Done:** milestone 1 (the pill). Verified on macOS 26.6 with the manual checklist in docs/plans/pill.md.
 - **Done:** milestone 2's first feature chosen and designed: battery (#4), which also sets up
   live activities and the panel's top row. Spec docs/specs/2026-11-11-battery-design.md.
-- **In progress:** milestone 2, feature 1: battery (#4), plan docs/plans/battery.md: task 3 of 7 done (the controller shows live activities).
-- **Next:** plan task 4, wings and glow colour on screen.
+- **In progress:** milestone 2, feature 1: battery (#4), plan docs/plans/battery.md: task 4 of 7 done (wings and glow colour on screen).
+- **Next:** plan task 5, real battery alerts.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).
