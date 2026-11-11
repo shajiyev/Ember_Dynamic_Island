@@ -36,12 +36,13 @@ nonisolated extension BatteryReading {
                   isPluggedIn: state == kIOPSACPowerValue)
     }
 
-    /// The internal battery right now, or nil if the Mac has none.
+    /// The internal battery right now, or nil if the Mac has none or IOKit gives nothing.
     static func current() -> BatteryReading? {
-        let info = IOPSCopyPowerSourcesInfo().takeRetainedValue()
-        let sources = IOPSCopyPowerSourcesList(info).takeRetainedValue() as [CFTypeRef]
+        guard let info = IOPSCopyPowerSourcesInfo()?.takeRetainedValue(),
+              let sources = IOPSCopyPowerSourcesList(info)?.takeRetainedValue() as? [CFTypeRef]
+        else { return nil }
         return sources.lazy.compactMap { source in
-            (IOPSGetPowerSourceDescription(info, source).takeUnretainedValue() as? [String: Any])
+            (IOPSGetPowerSourceDescription(info, source)?.takeUnretainedValue() as? [String: Any])
                 .flatMap(BatteryReading.init(description:))
         }.first
     }

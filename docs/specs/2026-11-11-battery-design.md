@@ -1,6 +1,6 @@
 # Milestone 2, feature 1 design: battery (#4)
 
-Date: 2026-11-11. Status: agreed, not yet planned.
+Date: 2026-11-11. Status: built 2026-11-11 (plan: docs/plans/battery.md).
 
 ## Goal
 

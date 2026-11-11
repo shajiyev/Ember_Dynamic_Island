@@ -145,3 +145,18 @@ Spec: docs/specs/2026-11-11-battery-design.md.
   each feature directly, and a full feature protocol with a registry. **Why:** later
   features plug in without touching the pill view, and a protocol would mean designing
   tabs and settings before they exist.
+
+## 2026-11-11 — Battery results
+All eight manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
+- **No values were tuned.** Colours, durations, wing fonts, the edge-line white mix (0.45)
+  and the panel's 32-point side padding are the planned starting values.
+- **No checks accepted as known limits.**
+- **IOKit power data works inside the App Sandbox.** Checked in task 1; the sandbox stays on.
+- **The edge line's colour is now derived from the glow colour** (mixed 45% with white)
+  instead of a fixed `#FFB86E`, so it matches every alert colour. For Ember orange the
+  result is close to the old value.
+- **Final review fixes:** `BatteryReading.current()` returns nil instead of crashing if
+  IOKit gives nothing; a controller test now checks that an alert running out does not
+  close the open panel. Left as is, with reasons in the review: the percentage is not
+  clamped (IOKit already gives 0–100), the glow colour blends towards orange while it
+  fades out (subtle, accepted by eye), and `start` methods assume a single call.

@@ -17,9 +17,13 @@
 - `Ember/Pill/` — the pill.
   - `PillState.swift`: the rules (`PillModel`). Events in, state out. No timers, no UI.
   - `NotchGeometry.swift`: where the notch is and the rectangle for each state.
-  - `PillController.swift`: owns the model, runs the open and close delays, manages the window.
+  - `PillController.swift`: owns the model, runs the open and close delays, manages the
+    window, keeps the current live activity for its duration, and holds the open panel's
+    content it is given at start.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
+    `PillView` also draws a live activity in the wings and shows the panel content when
+    open, passing it the notch height (`notchHeight` environment value).
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
   pill (wing symbol, wing text, glow colour, duration).
 - `Ember/Panel/PanelView.swift` — the open panel's content: a top row beside the notch
@@ -48,8 +52,8 @@ duration, which makes the pill active, and `PillView` draws its wings and glow c
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The
-  feature hands the pill `LiveActivity` values and status views; the app delegate
-  connects the two.
+  feature hands the pill `LiveActivity` values; its status views go into `PanelView`,
+  which the app delegate gives the controller. The app delegate connects the two.
 - Rules are pure `nonisolated` types with unit tests. System APIs stay in a thin monitor
   type that only connects them to the rules.
 - Each feature keeps its colours, thresholds and durations in one place.

@@ -10,10 +10,9 @@
   app builds from the terminal. Tested on macOS 26.6.
 - **Done:** milestone 0 (foundation).
 - **Done:** milestone 1 (the pill). Verified on macOS 26.6 with the manual checklist in docs/plans/pill.md.
-- **Done:** milestone 2's first feature chosen and designed: battery (#4), which also sets up
-  live activities and the panel's top row. Spec docs/specs/2026-11-11-battery-design.md.
-- **In progress:** milestone 2, feature 1: battery (#4), plan docs/plans/battery.md: task 6 of 7 done (panel top row with battery status).
-- **Next:** plan task 7, the full checklist on the MacBook and finishing the feature.
+- **Done:** milestone 2, feature 1: battery (#4), with live activities and the panel's top row. Verified on macOS 26.6.2 with the checklist in docs/plans/battery.md.
+- **In progress:** nothing.
+- **Next:** choose and design milestone 2's next feature.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

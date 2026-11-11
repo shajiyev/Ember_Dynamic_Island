@@ -90,6 +90,7 @@ struct PillControllerTests {
         controller.show(activity(duration: 0.05))
         #expect(controller.state == .open)
         try await settle()
+        #expect(controller.state == .open)   // the activity ran out; the panel stays open
         controller.send(.pointerExited)
         try await settle()
         #expect(controller.state == .rest)
