@@ -29,17 +29,22 @@ struct PillView: View {
                     .mask(LinearGradient(colors: [.clear, .black], startPoint: .center, endPoint: .bottom))
             }
             .overlay {
-                if state == .active, let activity = controller.currentActivity {
-                    ActivityWings(activity: activity, inset: style.topCornerRadius, height: notchHeight)
-                        .transition(.opacity)
+                // This container always exists and is clipped to the shape, so its clip
+                // grows and shrinks with the shape. Content that appears is uncovered by
+                // the black instead of showing beside it before the shape gets there.
+                ZStack {
+                    if state == .active, let activity = controller.currentActivity {
+                        ActivityWings(activity: activity, inset: style.topCornerRadius, height: notchHeight)
+                            .transition(PillStyle.contentTransition)
+                    }
+                    if state == .open {
+                        panelContent
+                            .environment(\.notchHeight, notchHeight)
+                            .transition(PillStyle.contentTransition)
+                    }
                 }
-            }
-            .overlay {
-                if state == .open {
-                    panelContent
-                        .environment(\.notchHeight, notchHeight)
-                        .transition(.opacity)
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipShape(shape)
             }
             .shadow(color: glowColor.opacity(style.glowOpacity),
                     radius: style.glowRadius, y: style.glowRadius / 2)

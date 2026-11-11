@@ -15,6 +15,12 @@ nonisolated struct PillStyle: Equatable {
         glowColor.mix(with: .white, by: 0.45)
     }
     static let animation = Animation.spring(response: 0.38, dampingFraction: 0.8)
+    /// How the wings and the panel content appear: they sharpen out of a blur just after
+    /// the shape starts to grow, and leave quickly when it shrinks.
+    @MainActor static var contentTransition: AnyTransition {
+        .asymmetric(insertion: AnyTransition(.blurReplace).animation(.smooth(duration: 0.3).delay(0.1)),
+                    removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
+    }
 
     static func style(for state: PillState) -> PillStyle {
         switch state {
