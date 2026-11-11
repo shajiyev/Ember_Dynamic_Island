@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Ember
 
@@ -54,13 +55,52 @@ struct PillControllerTests {
         #expect(controller.state == .open)
     }
 
-    @Test func simulatedActivityShowsTheActiveState() {
+    private func activity(duration: TimeInterval, text: String = "73%") -> LiveActivity {
+        LiveActivity(symbolName: "battery.100percent.bolt", symbolColor: .green, text: text,
+                     glowColor: .green, duration: duration)
+    }
+
+    @Test func showMakesThePillActiveUntilTheActivityRunsOut() async throws {
         let controller = PillController(timing: fast)
-        controller.setSimulatedActivity(true)
-        #expect(controller.isSimulatingActivity)
+        let shown = activity(duration: 0.05)
+        controller.show(shown)
         #expect(controller.state == .active)
-        controller.setSimulatedActivity(false)
-        #expect(!controller.isSimulatingActivity)
+        #expect(controller.currentActivity == shown)
+        try await settle()
         #expect(controller.state == .rest)
+        #expect(controller.currentActivity == nil)
+    }
+
+    @Test func aNewerActivityReplacesTheCurrentOneAndRestartsTheTime() async throws {
+        let controller = PillController(timing: fast)
+        controller.show(activity(duration: 0.3, text: "first"))
+        try await Task.sleep(for: .milliseconds(200))
+        let second = activity(duration: 0.3, text: "second")
+        controller.show(second)
+        try await Task.sleep(for: .milliseconds(200))   // the first one would have ended by now
+        #expect(controller.state == .active)
+        #expect(controller.currentActivity == second)
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(controller.state == .rest)
+    }
+
+    @Test func anActivityThatRunsOutWhileOpenLeavesRestWhenClosed() async throws {
+        let controller = PillController(timing: fast)
+        controller.send(.clicked)
+        controller.show(activity(duration: 0.05))
+        #expect(controller.state == .open)
+        try await settle()
+        controller.send(.pointerExited)
+        try await settle()
+        #expect(controller.state == .rest)
+    }
+
+    @Test func anActivityStillRunningWhenThePanelClosesIsShown() async throws {
+        let controller = PillController(timing: fast)
+        controller.send(.clicked)
+        controller.show(activity(duration: 2))
+        controller.send(.pointerExited)
+        try await settle()
+        #expect(controller.state == .active)
     }
 }

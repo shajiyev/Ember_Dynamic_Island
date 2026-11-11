@@ -15,7 +15,8 @@ nonisolated struct PillTiming: Equatable {
 @Observable
 final class PillController {
     private(set) var state: PillState = .rest
-    private(set) var isSimulatingActivity = false
+    /// What the pill shows in its wings, until the activity's time runs out.
+    private(set) var currentActivity: LiveActivity?
     /// The notch on the display the pill lives on, or nil when no display has a notch.
     private(set) var geometry: NotchGeometry?
 
@@ -24,6 +25,7 @@ final class PillController {
     @ObservationIgnored private let timing: PillTiming
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
+    @ObservationIgnored private var activityTimeout: Task<Void, Never>?
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
 
@@ -46,10 +48,19 @@ final class PillController {
         state = model.state
     }
 
-    /// Development aid: pretends a feature reports activity, so the active state can be seen.
-    func setSimulatedActivity(_ isOn: Bool) {
-        isSimulatingActivity = isOn
-        send(.activityChanged(isOn))
+    /// Shows a feature's activity on the pill for the activity's duration. A newer
+    /// activity replaces the current one and starts its own time from zero.
+    func show(_ activity: LiveActivity) {
+        currentActivity = activity
+        send(.activityChanged(true))
+
+        activityTimeout?.cancel()
+        activityTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(activity.duration))
+            guard !Task.isCancelled else { return }
+            self?.currentActivity = nil
+            self?.send(.activityChanged(false))
+        }
     }
 
     /// Puts the pill on the display that has a notch and keeps it there when displays

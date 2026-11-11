@@ -34,14 +34,24 @@ struct PillMenu: View {
             Divider()
         }
         #if DEBUG
-        Toggle("Simulate Activity", isOn: Binding(
-            get: { controller.isSimulatingActivity },
-            set: { controller.setSimulatedActivity($0) }
-        ))
+        Menu("Simulate Battery Alert") {
+            Button("Plugged In") { simulate(.pluggedIn, at: 73) }
+            Button("Unplugged") { simulate(.unplugged, at: 73) }
+            Button("Low") { simulate(.low, at: 20) }
+            Button("Very Low") { simulate(.veryLow, at: 10) }
+        }
         Divider()
         #endif
         Button("Quit Ember") {
             NSApplication.shared.terminate(nil)
         }
     }
+
+    #if DEBUG
+    /// Development aid: shows a battery alert without plugging or draining anything.
+    private func simulate(_ alert: BatteryAlert, at percentage: Int) {
+        let reading = BatteryReading(percentage: percentage, isPluggedIn: alert == .pluggedIn)
+        controller.show(alert.liveActivity(for: reading))
+    }
+    #endif
 }
