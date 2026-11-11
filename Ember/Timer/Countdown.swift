@@ -30,6 +30,11 @@ nonisolated struct Countdown: Equatable {
         if isStopped { setting = TimerSetting(totalSeconds: minutes * 60) }
     }
 
+    /// Sets the time back to zero, so a new time can be set from scratch.
+    mutating func reset() {
+        if isStopped { setting = TimerSetting() }
+    }
+
     /// Starts the timer if it is stopped and set to more than zero.
     mutating func start(at now: Date) {
         guard isStopped, setting.totalSeconds > 0 else { return }

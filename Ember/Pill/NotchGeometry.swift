@@ -8,9 +8,10 @@ nonisolated enum PillMetrics {
     /// Transparent space around the open panel so the glow is not cut off.
     static let glowMargin: CGFloat = 40
     /// How far the active shape reaches below the notch height macOS reports. The physical
-    /// notch is slightly taller than reported, so this keeps the glowing bottom edge whole
-    /// and the animation smooth. Chosen by eye on a 14" MacBook Pro.
-    static let activeBottomExtension: CGFloat = 2
+    /// notch is about 0.5 point taller than reported, so this keeps the glowing bottom edge
+    /// whole and the animation smooth, while covering as little of the screen as possible.
+    /// Chosen by eye on a 14" MacBook Pro.
+    static let activeBottomExtension: CGFloat = 1
 }
 
 /// Where the notch is on one screen, and the rectangle the pill fills in each state.

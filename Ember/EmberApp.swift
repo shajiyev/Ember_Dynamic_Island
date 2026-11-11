@@ -17,13 +17,15 @@ struct EmberApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = PillController()
     let battery = BatteryMonitor()
+    let timer = TimerModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
         guard NSClassFromString("XCTestCase") == nil else { return }
         battery.onAlert = { [controller] activity in controller.show(activity) }
         battery.start()
-        controller.start(panelContent: PanelView(battery: battery))
+        timer.onActivity = { [controller] activity in controller.setOngoing(activity) }
+        controller.start(panelContent: PanelView(battery: battery, timer: timer))
     }
 }
 

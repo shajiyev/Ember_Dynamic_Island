@@ -18,14 +18,17 @@
   - `PillState.swift`: the rules (`PillModel`). Events in, state out. No timers, no UI.
   - `NotchGeometry.swift`: where the notch is and the rectangle for each state.
   - `PillController.swift`: owns the model, runs the open and close delays, manages the
-    window, keeps the current live activity for its duration, and holds the open panel's
-    content it is given at start.
+    window, keeps a brief live activity for its duration and an ongoing one until its
+    feature clears it (the brief one shows over the ongoing one), and holds the open
+    panel's content it is given at start.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch height (`notchHeight` environment value).
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
-  pill (wing symbol, wing text, glow colour, duration).
+  pill (wing symbol, wing text, optional glow colour). A brief one has a duration and goes
+  by itself; an ongoing one stays until its feature clears it, or until seen if it ends
+  when seen.
 - `Ember/Panel/PanelView.swift` — the open panel's content: a top row beside the notch
   (status items on the right, the tab row on the left later) above the body.
 - `Ember/Battery/` — the battery feature (#4).
@@ -35,6 +38,15 @@
   - `BatteryMonitor.swift`: listens for power-source changes, publishes the reading, and
     sends alerts on.
   - `BatteryStatusView.swift`: percentage and icon for the panel's top row.
+- `Ember/Timer/` — the timer feature (#13).
+  - `TimerSetting.swift`: hours, minutes and seconds that wrap inside their own unit.
+  - `Countdown.swift`: the countdown's rules (stopped, running, paused), told the clock
+    time from outside.
+  - `TimerLook.swift`: presets, sound, wing text and the timer's live activities. All
+    timer symbols and colours live here.
+  - `TimerModel.swift`: owns the countdown, ticks while it runs, hands the pill an ongoing
+    activity and plays the sound at zero.
+  - `TimerPanelView.swift`, `HoldRepeatButton.swift`: the timer in the open panel.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
   bar icon and menu.
 
@@ -49,6 +61,12 @@ battery, publishes the reading (the panel's status item shows it) and asks
 `BatteryAlertRules` whether this deserves an alert. An alert becomes a `LiveActivity`,
 which the app delegate passes to `PillController.show`. The controller keeps it for its
 duration, which makes the pill active, and `PillView` draws its wings and glow colour.
+
+Timer: the panel's buttons call `TimerModel`, which changes its `Countdown`. While the
+timer runs, the model updates just after each whole second, asks `TimerLook` for the
+matching `LiveActivity`, and the app delegate passes it to `PillController.setOngoing`.
+At zero the model plays the sound and sets "Time's up", which the controller clears when
+the user hovers over or clicks the pill.
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The

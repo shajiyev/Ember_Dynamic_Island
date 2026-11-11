@@ -29,7 +29,7 @@ Playing, the first time two features need the panel body.
 ```
         ▲     ▲     ▲
         0  :  05 :  00          [1m] [5m] [10m] [25m]
-        ▼     ▼     ▼                  [ Start ]
+        ▼     ▼     ▼              [ Start ] [ Reset ]
 ```
 
 **Setting a time (the timer is stopped):**
@@ -41,6 +41,8 @@ Playing, the first time two features need the panel body.
   second, until released.
 - Presets **5m, 25m, 45m** set the whole time in one click (for example `0:05:00`).
 - **Start** is dimmed at `0:00:00`.
+- **Reset** sets the time back to `0:00:00`, so a new time can be set from scratch. It is
+  dimmed at `0:00:00` and only shown while the timer is stopped.
 
 **Running or paused:**
 - The same digits show the time left, counting down normally (`1:00` → `0:59`).
@@ -97,7 +99,7 @@ The pill module still knows nothing about features. The timer hands the pill
 | Countdown | `Ember/Timer/Countdown.swift` | The rules: setup → running (end time) → paused (time left) → setup, on cancel or at zero. Gives the time left and whether it has finished for a given clock time, so sleep is just a clock jump. Pure, no timers. | Timer setting |
 | Timer look | `Ember/Timer/TimerLook.swift` | The running and "Time's up" activities, symbols, colours, sound name, presets, the short wing text, and the glow-while-running value. Pure. | Live activity |
 | Timer model | `Ember/Timer/TimerModel.swift` | Owns the setting and the countdown, ticks once a second while running, hands the current activity (or none) to the pill through a closure, and plays the sound at zero. | Countdown, look |
-| Timer panel | `Ember/Timer/TimerPanelView.swift` | The digits with arrows, presets, and Start / Pause / Resume / Cancel. | Timer model |
+| Timer panel | `Ember/Timer/TimerPanelView.swift` | The digits with arrows, presets, and Start / Reset / Pause / Resume / Cancel. | Timer model |
 | Hold-repeat button | `Ember/Timer/HoldRepeatButton.swift` | A button that acts once on press and repeats while held (after 0.4 s, about 10 times a second). | SwiftUI |
 | Panel content (changed) | `Ember/Panel/PanelView.swift` | The body shows the timer panel instead of the placeholder. | Timer panel |
 | App shell (changed) | `Ember/EmberApp.swift` | Creates the timer model and connects its activity to `controller.setOngoing`. | All of the above |

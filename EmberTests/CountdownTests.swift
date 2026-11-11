@@ -57,6 +57,20 @@ struct CountdownTests {
         #expect(countdown.setting == TimerSetting(hours: 0, minutes: 5, seconds: 0))
     }
 
+    @Test func resetSetsTheTimeBackToZeroWhileStopped() {
+        var countdown = Countdown()
+        countdown.choosePreset(minutes: 25)
+        countdown.stepUp(.seconds)
+        countdown.reset()
+        #expect(countdown.setting == TimerSetting())
+    }
+
+    @Test func resetDoesNothingOnceStarted() {
+        var countdown = runningFiveMinutes()
+        countdown.reset()
+        #expect(countdown.setting == TimerSetting(hours: 0, minutes: 5, seconds: 0))
+    }
+
     @Test func pauseHoldsTheTimeLeftAndResumeContinuesFromIt() {
         var countdown = runningFiveMinutes()
         countdown.pause(at: at(60))

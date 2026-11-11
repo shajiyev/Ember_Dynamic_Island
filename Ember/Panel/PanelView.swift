@@ -4,6 +4,7 @@ import SwiftUI
 /// right (the tab row goes on its left later), above the panel's body.
 struct PanelView: View {
     let battery: BatteryMonitor
+    let timer: TimerModel
     @Environment(\.notchHeight) private var notchHeight
 
     var body: some View {
@@ -16,11 +17,10 @@ struct PanelView: View {
             }
             .frame(height: notchHeight)
 
-            Text("Ember")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.white.opacity(0.35))
+            TimerPanelView(timer: timer)
                 .frame(maxHeight: .infinity)
         }
         .padding(.horizontal, 32)   // clears the open panel's flared and rounded corners
+        .environment(\.colorScheme, .dark)   // the panel is always black
     }
 }

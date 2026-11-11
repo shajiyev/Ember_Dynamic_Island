@@ -205,3 +205,14 @@ Spec: docs/specs/timers.md.
   Considered a prioritised list of activities. **Why:** smallest change that covers timers
   with battery alerts; revisit when two lasting activities can coexist (camera/mic).
 
+
+## 2026-11-11 — Timers: changes after the on-screen check (task 4)
+Checked on a 14" MacBook Pro, macOS 26.6.2.
+- **Added a Reset button** next to Start, shown only while the timer is stopped. It sets
+  the time back to 0:00:00. **Why:** going from, say, 37 minutes to 4 minutes with the
+  arrows took many steps.
+- **The active pill now reaches 1 point below the reported notch height, not 2**
+  (`PillMetrics.activeBottomExtension`). **Why:** a running timer has no glow, and the bare
+  black edge 2 points down covered window content. 1 point lines up with the bottom of
+  the physical notch (about 0.5 point taller than reported), so the no-glow pill is clean,
+  which the planned glow on/off option (#26b) needs as well.
