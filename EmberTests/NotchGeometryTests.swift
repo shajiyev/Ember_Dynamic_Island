@@ -14,7 +14,13 @@ struct NotchGeometryTests {
     }
 
     @Test func findsTheNotchOnA14InchScreen() throws {
-        #expect(try geometry().notchRect == CGRect(x: 663, y: 950, width: 185, height: 32))
+        #expect(try geometry().notchRect == CGRect(x: 663.5, y: 950, width: 185, height: 32))
+    }
+
+    @Test func centresTheNotchOnTheScreenThoughTheSideAreasDifferByAPoint() throws {
+        // macOS reports 663 points left of the notch and 664 right of it; the physical notch
+        // is centred, so the reported edges would put the pill half a point to the left.
+        #expect(try geometry().notchRect.midX == builtIn.midX)
     }
 
     @Test func screenWithoutANotchHasNoGeometry() {
@@ -30,22 +36,22 @@ struct NotchGeometryTests {
     @Test func builtInScreenBesideAnExternalMainDisplayKeepsItsOffset() throws {
         // The built-in screen sits to the right of a 2512-point-wide main display, lower down.
         let frame = CGRect(x: 2512, y: -200, width: 1512, height: 982)
-        #expect(try geometry(screenFrame: frame).notchRect == CGRect(x: 3175, y: 750, width: 185, height: 32))
+        #expect(try geometry(screenFrame: frame).notchRect == CGRect(x: 3175.5, y: 750, width: 185, height: 32))
     }
 
-    @Test func restFillsExactlyTheNotch() throws {
-        #expect(try geometry().rect(for: .rest) == CGRect(x: 663, y: 950, width: 185, height: 32))
+    @Test func restFillsTheNotchAndReachesOnePointBelowIt() throws {
+        #expect(try geometry().rect(for: .rest) == CGRect(x: 663.5, y: 949, width: 185, height: 33))
     }
 
     @Test func activeAddsAWingOnEachSideAndReachesOnePointBelowTheNotch() throws {
-        #expect(try geometry().rect(for: .active) == CGRect(x: 623, y: 949, width: 265, height: 33))
+        #expect(try geometry().rect(for: .active) == CGRect(x: 623.5, y: 949, width: 265, height: 33))
     }
 
     @Test func openIsCentredOnTheNotchAndHangsFromTheTopOfTheScreen() throws {
-        #expect(try geometry().rect(for: .open) == CGRect(x: 445.5, y: 782, width: 620, height: 200))
+        #expect(try geometry().rect(for: .open) == CGRect(x: 446, y: 782, width: 620, height: 200))
     }
 
     @Test func windowCoversTheOpenPanelPlusTheGlowMargin() throws {
-        #expect(try geometry().windowFrame == CGRect(x: 405.5, y: 742, width: 700, height: 240))
+        #expect(try geometry().windowFrame == CGRect(x: 406, y: 742, width: 700, height: 240))
     }
 }

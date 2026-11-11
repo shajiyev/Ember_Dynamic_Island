@@ -16,13 +16,15 @@
 ## Modules
 - `Ember/Pill/` — the pill.
   - `PillState.swift`: the rules (`PillModel`). Events in, state out. No timers, no UI.
-  - `NotchGeometry.swift`: where the notch is and the rectangle for each state.
+  - `NotchGeometry.swift`: where the notch is (the reported width, centred on the screen)
+    and the rectangle for each state.
   - `PillController.swift`: owns the model, runs the open and close delays, manages the
     window, keeps a brief live activity for its duration and an ongoing one until its
     feature clears it (the brief one shows over the ongoing one), and holds the open
     panel's content it is given at start.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
+    `PillStyle.alwaysOnGlow` switches the resting glow (#29) on or off.
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch height (`notchHeight` environment value).
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed

@@ -25,10 +25,16 @@ struct PillView: View {
             .fill(.black)
             .frame(width: size.width, height: size.height)
             .overlay {
-                // A thin bright line that fades in towards the bottom edge.
+                // A thin bright line that fades in towards the bottom edge, on an outline
+                // outside the shape by the style's outsets. The mask reaches past that outline
+                // so the half of the line outside it still shows.
+                let side = style.edgeSideOutset
                 shape
-                    .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity), lineWidth: 1)
-                    .mask(LinearGradient(colors: [.clear, .black], startPoint: .center, endPoint: .bottom))
+                    .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity), lineWidth: style.edgeLineWidth)
+                    .padding(EdgeInsets(top: 0, leading: -side, bottom: -style.edgeBottomOutset, trailing: -side))
+                    .mask(LinearGradient(colors: [.clear, .black],
+                                         startPoint: style.edgeFadeStart, endPoint: style.edgeFadeEnd)
+                        .padding(-style.edgeLineWidth))
             }
             .overlay {
                 // This container always exists and is clipped to the shape, so its clip
@@ -49,7 +55,7 @@ struct PillView: View {
                 .clipShape(shape)
             }
             .shadow(color: glowColor.opacity(glowOpacity),
-                    radius: style.glowRadius, y: style.glowRadius / 2)
+                    radius: style.glowRadius, y: style.glowOffset)
             .contentShape(Rectangle())
             .onHover { isInside in
                 controller.send(isInside ? .pointerEntered : .pointerExited)

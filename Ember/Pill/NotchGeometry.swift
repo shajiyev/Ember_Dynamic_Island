@@ -7,11 +7,11 @@ nonisolated enum PillMetrics {
     static let openSize = CGSize(width: 620, height: 200)
     /// Transparent space around the open panel so the glow is not cut off.
     static let glowMargin: CGFloat = 40
-    /// How far the active shape reaches below the notch height macOS reports. The physical
-    /// notch is about 0.5 point taller than reported, so this keeps the glowing bottom edge
-    /// whole and the animation smooth, while covering as little of the screen as possible.
-    /// Chosen by eye on a 14" MacBook Pro.
-    static let activeBottomExtension: CGFloat = 1
+    /// How far the rest and active shapes reach below the notch height macOS reports. The
+    /// physical notch is about 0.5 point taller than reported, so this keeps the glowing
+    /// bottom edge whole and the animation smooth, while covering as little of the screen
+    /// as possible. Chosen by eye on a 14" MacBook Pro.
+    static let bottomExtension: CGFloat = 1
 }
 
 /// Where the notch is on one screen, and the rectangle the pill fills in each state.
@@ -29,8 +29,10 @@ nonisolated struct NotchGeometry: Equatable {
         let width = screenFrame.width - topLeftArea.width - topRightArea.width
         let height = topLeftArea.height
         guard width > 0, height > 0 else { return nil }
+        // Centred on the screen: the side areas are whole points (663 and 664 on a 14"
+        // MacBook Pro), so their edges put the notch half a point left of the physical one.
         notchRect = CGRect(
-            x: screenFrame.minX + topLeftArea.width,
+            x: screenFrame.midX - width / 2,
             y: screenFrame.maxY - height,
             width: width,
             height: height
@@ -41,9 +43,11 @@ nonisolated struct NotchGeometry: Equatable {
     func rect(for state: PillState) -> CGRect {
         switch state {
         case .rest:
-            return notchRect
+            let extra = PillMetrics.bottomExtension
+            return CGRect(x: notchRect.minX, y: notchRect.minY - extra,
+                          width: notchRect.width, height: notchRect.height + extra)
         case .active:
-            let extra = PillMetrics.activeBottomExtension
+            let extra = PillMetrics.bottomExtension
             return CGRect(x: notchRect.minX - PillMetrics.wingWidth, y: notchRect.minY - extra,
                           width: notchRect.width + 2 * PillMetrics.wingWidth, height: notchRect.height + extra)
         case .open:

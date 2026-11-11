@@ -216,3 +216,26 @@ Checked on a 14" MacBook Pro, macOS 26.6.2.
   black edge 2 points down covered window content. 1 point lines up with the bottom of
   the physical notch (about 0.5 point taller than reported), so the no-glow pill is clean,
   which the planned glow on/off option (#26b) needs as well.
+
+## 2026-11-11 — Always-on glow, resting style (#29)
+Spec: docs/specs/always-on-glow.md. Checked on a 14" MacBook Pro, macOS 26.6.2.
+- **The resting glow is on for now,** until the Settings toggle exists
+  (`PillStyle.alwaysOnGlow`). This sets aside, for now, the 2026-11-10 default of "glow
+  only when something is happening". **Why:** the user wants the notch lit; turning it
+  off becomes a setting.
+- **At rest the edge line is drawn on an outline outside the notch:** 6 points at each
+  side; at the bottom it stays on the shape's edge, already 1 point below the notch. **Why:** the resting shape is the notch, so its sides and rounded
+  corners lie inside the physical cut-out, where nothing can be seen. A thicker line or a
+  stronger haze could not fix that.
+- **Values chosen by eye with temporary sliders and menu items**, removed afterwards:
+  glow 0.6, spread 8, centred (not pushed down); line 2 points, fully bright 60% of the
+  way down.
+- **The notch is centred on the screen** instead of placed from the menu bar areas beside
+  it. **Why:** those areas are whole points (663 left, 664 right), which put the pill half
+  a point left of the physical notch, so one side of the line looked further out.
+- **Rest reaches 1 point below the reported notch height,** like active
+  (`PillMetrics.bottomExtension`). **Why:** otherwise the physical notch hides the glowing
+  bottom edge; with the glow off the extra point is invisible.
+- **The fade mask now reaches past the shape,** so the line's outer half shows in every
+  state. **Why:** it was cut off at the shape's edge; active and open now show their full
+  1-point line.

@@ -41,7 +41,7 @@ explicitly decide to revive something.
 | 24 | Productivity | Claude Code usage limits: plan name; 5-hour, weekly (all models) and weekly per-model limits, each with a percentage bar and reset time; Refresh button with an "Updated …" label; "Usage settings…" button | later | Revived 2026-11-11, narrowed from "LLM usage tracking". Modelled on the usage panel in Claude's own menu bar app. Where the numbers come from is undecided — settle it at design time |
 | 26b | Customization | Layouts, minimal mode, animation styles, shortcut remapping | later | If a glow on/off option is added: the active pill already reaches only 1 point below the notch (`PillMetrics.activeBottomExtension`, since 2026-11-11), so it stays clean with the glow off |
 | 28 | Core | Floating pill on non-notch Macs and external monitors | later | v1 shows a "needs a notch" message instead |
-| 29 | Customization | Always-on glow: an optional constant glow around the notch even at rest, toggled in the Glow section of Settings | later | Added 2026-11-11. Off by default (rest stays invisible, see decisions 2026-11-10). Related to #26b's glow on/off option |
+| 29 | Customization | Always-on glow: an optional constant glow around the notch even at rest, toggled in the Glow section of Settings | done | Spec docs/specs/always-on-glow.md. On for now (`PillStyle.alwaysOnGlow`); the Settings toggle comes with the settings window. Related to #26b's glow on/off option |
 
 ## Dropped — decided 2026-11-10
 

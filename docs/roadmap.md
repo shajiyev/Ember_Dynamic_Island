@@ -13,6 +13,8 @@
 - **Done:** milestone 2, feature 1: battery (#4), with live activities and the panel's top row. Verified on macOS 26.6.2 with the checklist in docs/plans/battery.md.
 - **Done:** milestone 2's second feature chosen and designed: timers (#13), which also adds
   ongoing live activities. Spec docs/specs/timers.md.
+- **Done:** always-on glow (#29), resting style, on for now; the Settings toggle comes
+  later. Spec docs/specs/always-on-glow.md. Verified on macOS 26.6.2.
 - **In progress:** milestone 2, feature 2: timers (#13), plan docs/plans/timers.md: task 4 of 5 done (the timer in the panel and on the pill).
 - **Next:** plan task 5, the full checklist, the glow comparison and finishing the feature.
 
