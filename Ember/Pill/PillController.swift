@@ -29,7 +29,12 @@ final class PillController {
     @ObservationIgnored private let timing: PillTiming
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
+    /// Called when the user has seen an activity that ends when seen: they hovered over or
+    /// clicked the pill, or the panel was already open when it arrived.
+    @ObservationIgnored var onActivitySeen: (() -> Void)?
     @ObservationIgnored private var briefTimeout: Task<Void, Never>?
+    /// The ongoing activity ends when seen and has been seen; it goes once the panel opens.
+    @ObservationIgnored private var ongoingWasSeen = false
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
     @ObservationIgnored private var panelContent = AnyView(EmptyView())
@@ -40,7 +45,7 @@ final class PillController {
 
     func send(_ event: PillEvent) {
         if event == .pointerEntered || event == .clicked {
-            clearActivityThatEndsWhenSeen()
+            noticeActivityThatEndsWhenSeen()
         }
         switch model.handle(event) {
         case .startOpenDelay:
@@ -54,6 +59,11 @@ final class PillController {
             break
         }
         state = model.state
+        // A seen activity stays until the panel opens, so the pill goes straight from the
+        // wings into the panel; if the pointer leaves first, it goes then.
+        if state == .open || event == .pointerExited {
+            clearSeenActivity()
+        }
     }
 
     /// Shows a brief activity for its duration, over any ongoing one. A newer brief
@@ -79,8 +89,10 @@ final class PillController {
     /// An activity that ends when seen is dropped at once if the panel is open, because the
     /// user is already looking at it.
     func setOngoing(_ activity: LiveActivity?) {
+        ongoingWasSeen = false
         if let activity, activity.endsWhenSeen, state == .open {
             ongoingActivity = nil
+            onActivitySeen?()
         } else {
             ongoingActivity = activity
         }
@@ -131,8 +143,16 @@ final class PillController {
         send(.activityChanged(currentActivity != nil))
     }
 
-    private func clearActivityThatEndsWhenSeen() {
-        guard ongoingActivity?.endsWhenSeen == true else { return }
+    /// The user hovered over or clicked the pill: tells the feature at once.
+    private func noticeActivityThatEndsWhenSeen() {
+        guard ongoingActivity?.endsWhenSeen == true, !ongoingWasSeen else { return }
+        ongoingWasSeen = true
+        onActivitySeen?()
+    }
+
+    private func clearSeenActivity() {
+        guard ongoingWasSeen else { return }
+        ongoingWasSeen = false
         ongoingActivity = nil
         activityDidChange()
     }

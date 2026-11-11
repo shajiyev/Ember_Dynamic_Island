@@ -239,3 +239,29 @@ Spec: docs/specs/always-on-glow.md. Checked on a 14" MacBook Pro, macOS 26.6.2.
 - **The fade mask now reaches past the shape,** so the line's outer half shows in every
   state. **Why:** it was cut off at the shape's edge; active and open now show their full
   1-point line.
+
+## 2026-11-11 — Timers results
+All nine manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
+- **A running or paused timer glows Ember orange.** **Why:** with the always-on glow the
+  notch would otherwise go dark during a countdown; orange matches the resting glow.
+- **"Time's up" is amber, #FFA826** (glow and bell), picked from three candidates on
+  screen. **Why:** it had the same orange as the resting and running glow; amber is
+  brighter and sits between Ember orange and the low-battery yellow (#FFD60A).
+- **The sound repeats every 2 seconds until "Time's up" is seen, for at most 1 minute.**
+  **Why:** one sound was easy to miss. It rings once if nobody can be watching: the screen
+  is locked or off, or the Mac slept through the end; locking or sleeping stops repeats.
+- **Screen locking is detected with `com.apple.screenIsLocked` / `screenIsUnlocked`**,
+  distributed notifications whose names Apple does not document: a deliberate exception
+  to "documented APIs only", agreed with the user. **Why:** there is no documented lock
+  notification. If they stop arriving, the sound keeps repeating while locked until the
+  displays turn off or the minute is up: harmless.
+- **Hover stops the sound at once, but "Time's up" stays in the wings until the panel
+  opens.** **Why:** clearing it on hover made the pill shrink to rest before opening;
+  now it grows straight from the wings into the panel, like a battery alert.
+- **Fixed after the first on-screen check:** the time showed a wrong number for a frame
+  right after Start or Resume (the panel used the time of the last update).
+- **Values tuned by eye:** the active pill reaches 1 point below the notch instead of 2;
+  the timer panel's fonts and spacing are unchanged.
+- No checks accepted as known limits.
+- **Paused timers show `pause.fill`** in the wings with the time left frozen (decided while
+  planning; the spec did not cover pausing on the pill).

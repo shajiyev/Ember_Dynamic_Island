@@ -143,17 +143,34 @@ struct PillControllerTests {
         #expect(controller.state == .active)
     }
 
-    @Test func hoveringOrClickingClearsAnActivityThatEndsWhenSeen() {
-        let hovered = PillController(timing: fast)
-        hovered.setOngoing(ongoing("0:00", endsWhenSeen: true))
-        hovered.send(.pointerEntered)
-        #expect(hovered.currentActivity == nil)
+    @Test func hoveringKeepsAnActivityThatEndsWhenSeenUntilThePanelOpens() async throws {
+        // So the pill goes straight from the wings into the panel, without shrinking first.
+        let controller = PillController(timing: fast)
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        controller.send(.pointerEntered)
+        #expect(controller.state == .active)
+        #expect(controller.currentActivity != nil)
+        try await settle()
+        #expect(controller.state == .open)
+        #expect(controller.currentActivity == nil)
+    }
 
-        let clicked = PillController(timing: fast)
-        clicked.setOngoing(ongoing("0:00", endsWhenSeen: true))
-        clicked.send(.clicked)
-        #expect(clicked.currentActivity == nil)
-        #expect(clicked.state == .open)
+    @Test func clickingClearsAnActivityThatEndsWhenSeenAndOpens() {
+        let controller = PillController(timing: fast)
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        controller.send(.clicked)
+        #expect(controller.currentActivity == nil)
+        #expect(controller.state == .open)
+    }
+
+    @Test func leavingBeforeThePanelOpensClearsAnActivityThatEndsWhenSeen() async throws {
+        let controller = PillController(timing: fast)
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        controller.send(.pointerEntered)
+        controller.send(.pointerExited)
+        #expect(controller.currentActivity == nil)
+        try await settle()
+        #expect(controller.state == .rest)
     }
 
     @Test func hoveringKeepsAPlainOngoingActivity() {
@@ -162,6 +179,38 @@ struct PillControllerTests {
         controller.setOngoing(countdown)
         controller.send(.pointerEntered)
         #expect(controller.currentActivity == countdown)
+    }
+
+    @Test func seeingAnActivityThatEndsWhenSeenTellsTheFeature() {
+        let controller = PillController(timing: fast)
+        var seen = 0
+        controller.onActivitySeen = { seen += 1 }
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        controller.send(.pointerEntered)
+        #expect(seen == 1)   // at once, before the panel opens: the sound stops on hover
+        controller.send(.pointerExited)
+        controller.send(.pointerEntered)
+        #expect(seen == 1)
+    }
+
+    @Test func droppingItBecauseThePanelIsOpenTellsTheFeature() {
+        let controller = PillController(timing: fast)
+        var seen = 0
+        controller.onActivitySeen = { seen += 1 }
+        controller.send(.clicked)
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        #expect(seen == 1)
+    }
+
+    @Test func hoveringOrClearingAPlainActivityDoesNotTellTheFeature() {
+        let controller = PillController(timing: fast)
+        var seen = 0
+        controller.onActivitySeen = { seen += 1 }
+        controller.setOngoing(ongoing())
+        controller.send(.pointerEntered)
+        controller.setOngoing(ongoing("0:00", endsWhenSeen: true))
+        controller.setOngoing(nil)   // the feature cleared it itself
+        #expect(seen == 0)
     }
 
     @Test func anActivityThatEndsWhenSeenIsDroppedIfThePanelIsOpen() async throws {

@@ -7,9 +7,21 @@ nonisolated enum TimerLook {
     static let presetMinutes = [5, 25, 45]
     /// A macOS system sound.
     static let soundName = "Glass"
-    /// The glow while a timer runs or is paused. None for now; set it to
-    /// `PillStyle.glowColor` to compare the two looks on screen.
-    static let runningGlowColor: Color? = nil
+    /// At zero the sound repeats this often until "Time's up" is seen, for at most
+    /// `soundRepeatLimit` seconds.
+    static let soundRepeatInterval: TimeInterval = 2
+    static let soundRepeatLimit: TimeInterval = 60
+    /// The glow while a timer runs or is paused: Ember orange, like the resting glow.
+    static let runningGlowColor: Color? = PillStyle.glowColor
+    /// "Time's up": a brighter amber, between Ember orange and the low-battery yellow, #FFA826.
+    static let timesUpColor = Color(red: 0xFF / 255, green: 0xA8 / 255, blue: 0x26 / 255)
+
+    /// Whether the sound repeats once the timer finishes. It rings only once if nobody can
+    /// be watching: the screen is locked or off, or the timer finished more than 2 seconds
+    /// late, which means it ended while the Mac slept.
+    static func repeatsSound(finishedLateBy lateness: TimeInterval, screenInUse: Bool) -> Bool {
+        lateness <= 2 && screenInUse
+    }
 
     static func running(secondsLeft: Int) -> LiveActivity {
         LiveActivity(symbolName: "timer", symbolColor: PillStyle.glowColor,
@@ -22,8 +34,8 @@ nonisolated enum TimerLook {
     }
 
     /// "Time's up": glows, and stays until the user hovers over or clicks the pill.
-    static let timesUp = LiveActivity(symbolName: "bell.fill", symbolColor: PillStyle.glowColor,
-                                      text: "0:00", glowColor: PillStyle.glowColor, endsWhenSeen: true)
+    static let timesUp = LiveActivity(symbolName: "bell.fill", symbolColor: timesUpColor,
+                                      text: "0:00", glowColor: timesUpColor, endsWhenSeen: true)
 
     /// Short enough for a 34-point wing: "24:59" under an hour, "1h25" from an hour up.
     static func wingText(secondsLeft: Int) -> String {

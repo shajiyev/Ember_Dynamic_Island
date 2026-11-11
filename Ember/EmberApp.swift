@@ -18,6 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = PillController()
     let battery = BatteryMonitor()
     let timer = TimerModel()
+    let screen = ScreenUseMonitor()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
@@ -25,6 +26,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         battery.onAlert = { [controller] activity in controller.show(activity) }
         battery.start()
         timer.onActivity = { [controller] activity in controller.setOngoing(activity) }
+        controller.onActivitySeen = { [timer] in timer.stopRinging() }
+        screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
+        screen.start()
         controller.start(panelContent: PanelView(battery: battery, timer: timer))
     }
 }

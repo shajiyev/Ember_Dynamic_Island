@@ -29,8 +29,36 @@ struct TimerLookTests {
 
     @Test func timesUpGlowsAndEndsWhenSeen() {
         #expect(TimerLook.timesUp == LiveActivity(
-            symbolName: "bell.fill", symbolColor: PillStyle.glowColor, text: "0:00",
-            glowColor: PillStyle.glowColor, endsWhenSeen: true))
+            symbolName: "bell.fill", symbolColor: TimerLook.timesUpColor, text: "0:00",
+            glowColor: TimerLook.timesUpColor, endsWhenSeen: true))
+    }
+
+    @Test func aRunningTimerGlowsEmberOrange() {
+        #expect(TimerLook.runningGlowColor == PillStyle.glowColor)
+    }
+
+    @Test func timesUpStandsApartFromEmberOrangeAndTheLowBatteryYellow() {
+        #expect(TimerLook.timesUpColor != PillStyle.glowColor)
+        #expect(TimerLook.timesUpColor != BatteryAlert.yellow)
+    }
+
+    @Test func theSoundRepeatsWhenTheTimerFinishedOnTimeWithTheScreenInUse() {
+        #expect(TimerLook.repeatsSound(finishedLateBy: 0.05, screenInUse: true))
+        #expect(TimerLook.repeatsSound(finishedLateBy: 1.9, screenInUse: true))
+    }
+
+    @Test func theSoundPlaysOnceWhenTheMacSleptThroughTheEnd() {
+        #expect(!TimerLook.repeatsSound(finishedLateBy: 2.5, screenInUse: true))
+        #expect(!TimerLook.repeatsSound(finishedLateBy: 120, screenInUse: true))
+    }
+
+    @Test func theSoundPlaysOnceWhenTheScreenIsLockedOrOff() {
+        #expect(!TimerLook.repeatsSound(finishedLateBy: 0.05, screenInUse: false))
+    }
+
+    @Test func theSoundRepeatsEveryTwoSecondsForAtMostAMinute() {
+        #expect(TimerLook.soundRepeatInterval == 2)
+        #expect(TimerLook.soundRepeatLimit == 60)
     }
 
     @Test func presetsMatchTheSpec() {

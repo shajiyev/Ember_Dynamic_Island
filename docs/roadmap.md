@@ -15,8 +15,9 @@
   ongoing live activities. Spec docs/specs/timers.md.
 - **Done:** always-on glow (#29), resting style, on for now; the Settings toggle comes
   later. Spec docs/specs/always-on-glow.md. Verified on macOS 26.6.2.
-- **In progress:** milestone 2, feature 2: timers (#13), plan docs/plans/timers.md: task 4 of 5 done (the timer in the panel and on the pill).
-- **Next:** plan task 5, the full checklist, the glow comparison and finishing the feature.
+- **Done:** milestone 2, feature 2: timers (#13), with ongoing live activities. Verified on macOS 26.6.2 with the checklist in docs/plans/timers.md.
+- **In progress:** nothing.
+- **Next:** choose and design milestone 2's next feature.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

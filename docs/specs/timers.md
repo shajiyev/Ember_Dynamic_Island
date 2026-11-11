@@ -1,6 +1,6 @@
 # Milestone 2, feature 2 design: timers (#13)
 
-Date: 2026-11-11. Status: agreed, not yet planned.
+Date: 2026-11-11. Status: built 2026-11-11 (plan: docs/plans/timers.md).
 
 ## Goal
 
@@ -57,11 +57,8 @@ Playing, the first time two features need the panel body.
 - The left wing shows the `timer` symbol in Ember orange; the right wing shows the time
   left in white. While paused, the left wing shows `pause.fill` instead and the time left
   stays still.
-- No glow while running, for now. Whether a running timer glows is one value
-  (`TimerLook`), so both versions can be compared on screen. The choice is recorded in
-  docs/decisions.md once made. If the running timer ends up glowing, "Time's up" must
-  still look clearly different (for example brighter or pulsing); that is settled
-  during the comparison.
+- The pill glows Ember orange while the timer runs or is paused, like the resting glow
+  (`TimerLook.runningGlowColor`; chosen on screen, see docs/decisions.md).
 - Wing text, to fit a 34-point wing:
   - under an hour: minutes and seconds, `24:59`, `0:42`
   - from an hour up: hours and minutes, `1h25`, `23h59`
@@ -69,12 +66,18 @@ Playing, the first time two features need the panel body.
 
 ### At zero: "Time's up"
 
-- The wings show the `bell.fill` symbol in Ember orange and `0:00`, with the Ember orange
-  glow.
-- The system sound "Glass" plays once.
-- It stays until the user hovers over or clicks the pill.
-- If the panel is open at that moment, the user is looking at it: the sound plays and
-  "Time's up" counts as seen at once.
+- The wings show the `bell.fill` symbol and `0:00` in a brighter amber, #FFA826, with an
+  amber glow, so it stands apart from the orange running glow and the low-battery yellow.
+- The system sound "Glass" plays, then repeats every 2 seconds until "Time's up" is seen,
+  for at most 1 minute.
+- It plays only once if nobody can be watching: the screen is locked or off, or the Mac
+  slept through the end (the timer is found finished more than 2 seconds late). Locking
+  the screen or sleeping the Mac while it repeats stops the repeats.
+- Hovering over or clicking the pill counts as seeing it: the sound stops at once.
+  "Time's up" stays in the wings until the panel opens, so the pill grows straight from
+  the wings into the panel; if the pointer leaves first, it goes then.
+- If the panel is open at that moment, the user is looking at it: the sound plays once
+  and "Time's up" counts as seen at once.
 - A battery alert during "Time's up" takes over the wings for its few seconds; "Time's
   up" then comes back.
 - The timer is back in setup with the last time set, so one click on Start runs it again.

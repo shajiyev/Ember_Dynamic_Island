@@ -21,7 +21,8 @@
   - `PillController.swift`: owns the model, runs the open and close delays, manages the
     window, keeps a brief live activity for its duration and an ongoing one until its
     feature clears it (the brief one shows over the ongoing one), and holds the open
-    panel's content it is given at start.
+    panel's content it is given at start. `onActivitySeen` tells the app when the user
+    has seen an activity that ends when seen.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
     `PillStyle.alwaysOnGlow` switches the resting glow (#29) on or off.
@@ -44,10 +45,12 @@
   - `TimerSetting.swift`: hours, minutes and seconds that wrap inside their own unit.
   - `Countdown.swift`: the countdown's rules (stopped, running, paused), told the clock
     time from outside.
-  - `TimerLook.swift`: presets, sound, wing text and the timer's live activities. All
-    timer symbols and colours live here.
+  - `TimerLook.swift`: presets, sound and its repeat rule, wing text and the timer's live
+    activities. All timer symbols and colours live here.
   - `TimerModel.swift`: owns the countdown, ticks while it runs, hands the pill an ongoing
-    activity and plays the sound at zero.
+    activity and rings at zero until "Time's up" is seen.
+  - `ScreenUseMonitor.swift`: tells whether the screen is in use (not locked, off or
+    asleep), so the sound rings only once when nobody can be watching.
   - `TimerPanelView.swift`, `HoldRepeatButton.swift`: the timer in the open panel.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
   bar icon and menu.
@@ -67,8 +70,10 @@ duration, which makes the pill active, and `PillView` draws its wings and glow c
 Timer: the panel's buttons call `TimerModel`, which changes its `Countdown`. While the
 timer runs, the model updates just after each whole second, asks `TimerLook` for the
 matching `LiveActivity`, and the app delegate passes it to `PillController.setOngoing`.
-At zero the model plays the sound and sets "Time's up", which the controller clears when
-the user hovers over or clicks the pill.
+At zero the model rings and sets "Time's up". When the user hovers over or clicks the
+pill, the controller calls `onActivitySeen`, which the app delegate connects to
+`TimerModel.stopRinging`, and clears "Time's up" once the panel opens. `ScreenUseMonitor`
+sets `TimerModel.screenInUse`, so the sound rings once while the screen is locked or off.
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The
