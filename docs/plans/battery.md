@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift, SwiftUI, AppKit, IOKit power sources (`IOKit.ps`), Swift Testing, Xcode 27.
 
-Spec: [docs/specs/2026-11-11-battery-design.md](../specs/2026-11-11-battery-design.md)
+Spec: [docs/specs/battery.md](../specs/battery.md)
 
 ## Global Constraints
 
@@ -1251,7 +1251,7 @@ git commit -m "Added the panel's top row with the battery status" \
 
 **Files:**
 - Modify (only if a check fails): the file named by the failing check.
-- Modify: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/2026-11-11-battery-design.md`
+- Modify: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/battery.md`
 
 **Interfaces:**
 - Consumes: the running app from Tasks 1 to 6.
@@ -1279,7 +1279,7 @@ Use superpowers:systematic-debugging for each failed item. Run TEST and BUILD af
 In `docs/features.md`, change row #4 to:
 `| 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |`
 
-In `docs/specs/2026-11-11-battery-design.md`, change the status line to:
+In `docs/specs/battery.md`, change the status line to:
 `Date: 2026-11-11. Status: built <today's date> (plan: docs/plans/battery.md).`
 
 Append to `docs/decisions.md`:
@@ -1311,7 +1311,7 @@ git diff --cached | grep -i -E "users/|api[_-]?key|token|secret"
 
 Expected: no output. No new permission was added (IOKit power sources need none), so the README is unchanged.
 
-Files: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/2026-11-11-battery-design.md`, plus any files fixed in Step 2.
+Files: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/battery.md`, plus any files fixed in Step 2.
 
 ```bash
 git commit -m "Finished the battery feature" \

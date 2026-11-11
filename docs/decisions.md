@@ -79,7 +79,7 @@ when they clone. No signing team is set, so no personal Team ID is in the repo.
 App Sandbox is still on (Xcode's default) — to be revisited when a feature needs it off.
 
 ## 2026-11-10 — Pill design choices (milestone 1)
-Full design in docs/specs/2026-11-10-pill-design.md. The choices behind it:
+Full design in docs/specs/pill.md. The choices behind it:
 - **Glow only when something is happening.** At rest Ember is invisible. Considered an
   always-on faint glow and no glow at all. **Why:** the glow then carries meaning, and an
   always-on line distracts over video and bright windows.
@@ -126,7 +126,7 @@ All ten manual checks passed on a 14" MacBook Pro with an external main display,
   tools like Hidden Bar hide it on first launch. Worth a README note at release.
 
 ## 2026-11-11 — Battery design (milestone 2, first feature)
-Spec: docs/specs/2026-11-11-battery-design.md.
+Spec: docs/specs/battery.md.
 - **Battery is the first feature of milestone 2.** Considered Now Playing, Timers and the
   settings window. **Why:** the simplest data source (public IOKit, no permission prompt),
   so the work goes into the two patterns every later feature reuses: live activities on
@@ -181,7 +181,7 @@ All eight manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
   it interacts with the alert colours and with the glow on/off option noted in #26b.
 
 ## 2026-11-11 — Timers design (milestone 2, second feature)
-Spec: docs/specs/2026-11-11-timers-design.md.
+Spec: docs/specs/timers.md.
 - **Timers come second.** Considered Now Playing, the camera/mic indicator and the settings
   window. **Why:** no permission and no API risk, and it adds lasting live activities that
   Now Playing will reuse.

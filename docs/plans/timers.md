@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift, SwiftUI, AppKit (`NSSound`), Swift Testing, Xcode 27.
 
-Spec: [docs/specs/2026-11-11-timers-design.md](../specs/2026-11-11-timers-design.md)
+Spec: [docs/specs/timers.md](../specs/timers.md)
 
 ## Global Constraints
 
@@ -1300,7 +1300,7 @@ Commit message: `Added the timer to the panel and the pill`
 **Files:**
 - Modify (only if a check fails): the file named by the failing check.
 - Modify (for the comparison): `Ember/Timer/TimerLook.swift`, and if the glow stays on, the matching expectation in `EmberTests/TimerLookTests.swift` needs no change (it reads `TimerLook.runningGlowColor`).
-- Modify: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/2026-11-11-timers-design.md`
+- Modify: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/timers.md`
 
 **Interfaces:**
 - Consumes: the running app from Tasks 1 to 4.
@@ -1349,7 +1349,7 @@ The user decides:
 In `docs/features.md`, change row #13 to:
 `| 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min; countdown in the wings; Time's up with sound until seen |`
 
-In `docs/specs/2026-11-11-timers-design.md`, change the status line to:
+In `docs/specs/timers.md`, change the status line to:
 `Date: 2026-11-11. Status: built <today's date> (plan: docs/plans/timers.md).`
 
 Append to `docs/decisions.md`:
@@ -1383,7 +1383,7 @@ git diff | grep -i -E "users/|api[_-]?key|token|secret"
 
 Expected: no output. No new permission was added (system sounds need none), so the README is unchanged.
 
-Files: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/2026-11-11-timers-design.md`, plus `Ember/Timer/TimerLook.swift` if the glow stays on, plus any files fixed in Step 2.
+Files: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/timers.md`, plus `Ember/Timer/TimerLook.swift` if the glow stays on, plus any files fixed in Step 2.
 
 Commit message: `Finished the timers feature`
 - Recorded the results, the glow-while-running choice, and marked timers as done in the roadmap, feature list and spec

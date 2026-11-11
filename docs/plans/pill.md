@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift, SwiftUI, AppKit, Swift Testing, Xcode 27 (text project file `Ember.xcodeproj/project.xcproj`).
 
-Spec: [docs/specs/2026-11-10-pill-design.md](../specs/2026-11-10-pill-design.md)
+Spec: [docs/specs/pill.md](../specs/pill.md)
 
 ## Global Constraints
 
@@ -1457,9 +1457,9 @@ In `docs/features.md`, in the v1 table, change the status of the row "Notch pill
 
 In `docs/decisions.md`, append an entry dated with the day of completion, titled "Milestone 1 results", listing: which hover mechanism was kept (SwiftUI `onHover` or the pointer monitors) and why, whether App Sandbox stayed on, any checklist item accepted as a known limit, and the final glow and corner values if they changed.
 
-In `docs/specs/2026-11-10-pill-design.md`, change the status line to `Status: built` followed by the completion date.
+In `docs/specs/pill.md`, change the status line to `Status: built` followed by the completion date.
 
-Files: any source files changed in Step 2, `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/2026-11-10-pill-design.md`.
+Files: any source files changed in Step 2, `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/pill.md`.
 
 ```bash
 git add .
