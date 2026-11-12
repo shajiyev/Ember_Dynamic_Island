@@ -14,14 +14,23 @@
   --surface: color-mix(in srgb, var(--cream), white 45%);
   --text: var(--ink);
   --text-secondary: var(--brown);
-  --heading-accent: var(--ember-red);   /* large text only: 4.2:1 on cream */
+  /* Clay rose: the page's one accent colour, chosen by the user. Headings and "spark"
+     (4.2:1 on cream, large text), the nav hover line and Download buttons. */
+  --clay-rose: #A8524A;
+  --clay-rose-text: color-mix(in srgb, var(--clay-rose), var(--ink) 10%);   /* #9A4C44, 4.8:1: for small text */
+  --heading-accent: var(--clay-rose);
   --link: var(--rust);
-  --github-bg: var(--ink);              /* GitHub's own buttons are black */
-  --github-bg-hover: color-mix(in srgb, var(--ink), white 18%);
-  --github-text: #FFFFFF;
-  --ember-button-bg: var(--ember-red);  /* white text: 5.2:1 */
-  --ember-button-bg-hover: color-mix(in srgb, var(--ember-red), var(--amber) 15%);   /* white text: 4.7:1 */
-  --ember-button-text: #FFFFFF;
+  /* GitHub buttons are "ghost" buttons, like the reference site's: see-through with a
+     thin border, so the Download button is the one that stands out. */
+  --github-bg: color-mix(in srgb, var(--surface), transparent 50%);
+  --github-bg-hover: var(--surface);
+  --github-border: color-mix(in srgb, var(--brown), transparent 70%);
+  --github-border-hover: color-mix(in srgb, var(--brown), transparent 50%);
+  --github-text: var(--text);
+  /* Download buttons: one distinct, muted brand colour, like the reference site's. Clay
+     rose, with the label in the logo E's warm white (4.8:1). */
+  --download-bg: var(--clay-rose);
+  --download-text: #FFF1E2;
   --line: color-mix(in srgb, var(--brown), transparent 82%);
   --badge-bg: var(--gold);
   --badge-text: var(--brown);
@@ -97,7 +106,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   align-items: center;
   gap: 10px;
   justify-self: start;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 650;
   color: var(--text);
   text-decoration: none;
@@ -125,13 +134,13 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   bottom: 0;
   height: 2px;
   border-radius: 2px;
-  background: var(--ember-red);
-  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--app-glow), transparent 35%);
+  background: var(--clay-rose);
+  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--clay-rose), transparent 45%);
   scale: 0 1;
   transition: scale 0.25s ease-out;
 }
 .nav-links a:hover,
-.nav-links a:focus-visible { color: var(--text); }
+.nav-links a:focus-visible { color: var(--clay-rose-text); }
 .nav-links a:hover::after,
 .nav-links a:focus-visible::after { scale: 1 1; }
 .nav-links a:focus-visible { outline: none; }
@@ -168,33 +177,36 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .button-icon { width: 18px; height: 18px; fill: currentColor; }
 
 .button-github {
+  border: 1px solid var(--github-border);
   background: var(--github-bg);
   color: var(--github-text);
-  transition: background-color 0.15s;
+  transition: background-color 0.15s, border-color 0.15s;
 }
-.button-github:hover { background: var(--github-bg-hover); }
+.button-github:hover { border-color: var(--github-border-hover); background: var(--github-bg-hover); }
 
-/* The nav's Download, which leads to Get started, glows like that card: a thin gold edge
-   and a soft gold → amber → red glow around it, scaled down for a small button. */
+/* The nav's Download: clay rose with a warm-white label. */
 .button-ember {
-  background: var(--ember-button-bg);
-  color: var(--ember-button-text);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gold), transparent 55%),
-    0 0 10px 0 color-mix(in srgb, var(--gold), transparent 70%),
-    0 0 24px 2px color-mix(in srgb, var(--amber), transparent 84%),
-    0 0 40px 4px color-mix(in srgb, var(--ember-red), transparent 94%);
-  transition: background-color 0.2s, box-shadow 0.25s, translate 0.2s;
+  background: var(--download-bg);
+  color: var(--download-text);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0), 0 0 0 0 transparent;
+  transition: translate 0.2s ease-out, box-shadow 0.25s ease-out;
 }
-/* Hover lights it up rather than dimming it: a brighter red, a stronger glow, a 1 px lift. */
+/* Hover never darkens it: it rises 2 px, a faint highlight lights its top edge, and a soft
+   clay rose glow spreads beneath it. Pressing sets it back down. */
 .button-ember:hover {
-  background: var(--ember-button-bg-hover);
-  translate: 0 -1px;
+  translate: 0 -2px;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gold), transparent 35%),
-    0 0 14px 1px color-mix(in srgb, var(--gold), transparent 55%),
-    0 0 30px 4px color-mix(in srgb, var(--amber), transparent 75%),
-    0 0 50px 8px color-mix(in srgb, var(--ember-red), transparent 90%);
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 8px 22px -6px color-mix(in srgb, var(--clay-rose), transparent 25%);
+}
+.button-ember:active {
+  translate: 0 0;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 3px 10px -4px color-mix(in srgb, var(--clay-rose), transparent 40%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .button-ember:hover { translate: none; }
 }
 
 .button-disabled {
@@ -276,7 +288,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 .hero-visual { position: relative; isolation: isolate; margin-top: 120px; }
 
-/* The brand glow, like the logo's background, centred on the notch. */
+/* The brand glow, like the light around the logo's E, centred on the notch. */
 .hero-glow {
   position: absolute;
   top: 0;
@@ -677,7 +689,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: sheen 6s ease-in-out infinite;
+      animation: sheen 3s ease-in-out infinite;
     }
     @keyframes sheen {
       0%        { background-position: 100% 0; }

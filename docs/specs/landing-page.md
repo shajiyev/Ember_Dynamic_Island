@@ -37,14 +37,16 @@ sparks). No text, images, code or assets come from that site, and the site never
 
 0. **Navigation bar:** sized like the reference site's: 76 px tall and up to 1280 px wide
    (wider than the page's 960 px content), pinned to the top; cream, slightly see-through
-   and blurred, like macOS menus. Left: the app icon (44 px) and "Ember" (20 px). Links
+   and blurred, like macOS menus. Left: the app icon (52 px) and "Ember" (23 px). Links
    16 px, 40 px apart; Download button 40 px tall.
    Middle: links to Features, Privacy and FAQ; on hover or keyboard focus the text turns
-   full ink and a short glowing Ember red line grows from the centre beneath it, like the
-   pill's edge line. Right: a small Ember red **Download**
-   button that jumps to Get started, with the same soft glow around it as the Get started
-   card (thin gold edge, gold → amber → red). On hover it lights up rather than dimming: a
-   slightly brighter red (white text 4.7:1), a stronger glow and a 1 px lift; the light/dark toggle joins it with dark mode. A thin line under the bar
+   clay rose (a touch deeper, `#9A4C44`, 4.8:1) and a short glowing clay rose line grows from the centre beneath it, like the
+   pill's edge line. Right: a small **Download** button that jumps to Get started, in
+   **clay rose** `#A8524A` with the label in the logo E's warm white `#FFF1E2` (4.8:1),
+   like the reference site's one distinct Download colour. Hover never darkens it: it
+   rises 2 px (not with Reduce Motion), a faint highlight lights its top edge and a soft
+   clay rose glow spreads beneath it; pressing sets it back down. The
+   light/dark toggle joins it with dark mode. A thin line under the bar
    fades in once the page scrolls. On phones (600 px and narrower) the section links are
    hidden. The brand glow sits on the page background, so it shows through the bar.
 1. **Hero**, text first, then the visual:
@@ -52,8 +54,9 @@ sparks). No text, images, code or assets come from that site, and the site never
      few seconds.
    - Below it: "A free, open-source Dynamic Island for your MacBook."
    - Two buttons side by side:
-     - **GitHub:** solid near-black (GitHub's own buttons are black), white text, GitHub
-       mark; opens the repo in a new tab.
+     - **GitHub:** a "ghost" button like the reference site's: see-through cream with a
+       thin brown border, dark text and the GitHub mark; a little more solid on hover.
+       Opens the repo in a new tab. (Same in Get started.)
      - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot
        be clicked or reached with Tab (`aria-disabled="true"`, no link). A small gold
        "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
@@ -203,7 +206,8 @@ palette so the two modes share a base.
 | Colour | Hex | Job |
 |---|---|---|
 | Cream | `#EEE4D7` | Page background |
-| Ember red | `#C73915` | Large headings, and the nav's Download button (white text, 5.2:1). Never small text on cream (4.2:1) |
+| Ember red | `#C73915` | The base of Ember orange, and the outer red of the glows |
+| Clay rose | `#A8524A` | The page's one accent colour, chosen by the user (over orange, dark reds, black, gold, copper, dusty plum and honey): large headings and "spark" (4.2:1 on cream), the nav hover line, and Download buttons (the nav's now; the hero and Get started ones when v1 ships) with the label in the logo E's warm white `#FFF1E2` (4.8:1) |
 | Deep rust | `#9A2D19` | Links and small accent text (6:1 on cream) |
 | Amber | `#E19C18` | Glow only |
 | Gold | `#E7B439` | Glow, and the "Coming soon" badge's background (dark brown text) |
@@ -211,7 +215,7 @@ palette so the two modes share a base.
 | Dark brown | `#42240F` | Secondary text |
 
 - **Glow:** a radial gradient from Ember red through amber to gold, spreading from behind
-  the pill, like the logo's background. The pill itself stays black, as on a real Mac.
+  the pill, like the light around the logo's E. The pill itself stays black, as on a real Mac.
 - **Type:** Apple's system font (`-apple-system`, SF Pro); no web fonts.
 - **Icons:** our own small inline SVGs, drawn to resemble the app's. Apple's licence does
   not allow SF Symbols on websites.
