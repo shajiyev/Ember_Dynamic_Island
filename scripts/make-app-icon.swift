@@ -1,4 +1,5 @@
 // Builds the macOS app icon from assets/Ember_logo.png.
+// That PNG is exported from the master, assets/Ember_logo.svg (see docs/specs/logo.md).
 //
 // A Mac app icon is a rounded square that fills 824 of the 1024 pixels, with a soft
 // shadow. macOS does not round the corners itself, so the shape is drawn here.
@@ -42,6 +43,21 @@ func renderIcon(from logo: CGImage, pixels: Int) -> CGImage {
     context.addPath(outline)
     context.clip()
     context.draw(logo, in: body)
+
+    // A thin light edge, brighter at the top, so the dark icon stands out on a dark Dock.
+    let edgeWidth = body.width * 6 / 1600
+    let edgeRadius = radius - edgeWidth / 2
+    let edge = CGPath(roundedRect: body.insetBy(dx: edgeWidth / 2, dy: edgeWidth / 2),
+                      cornerWidth: edgeRadius, cornerHeight: edgeRadius, transform: nil)
+    context.addPath(edge)
+    context.setLineWidth(edgeWidth)
+    context.replacePathWithStrokedPath()
+    context.clip()
+    let edgeColors = [CGColor(gray: 1, alpha: 0.22), CGColor(gray: 1, alpha: 0.04)] as CFArray
+    let edgeGradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!, colors: edgeColors,
+                                  locations: [0, 1])!
+    context.drawLinearGradient(edgeGradient, start: CGPoint(x: 0, y: body.maxY),
+                               end: CGPoint(x: 0, y: body.minY), options: [])
     return context.makeImage()!
 }
 

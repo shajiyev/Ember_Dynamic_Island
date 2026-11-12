@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <!-- Ember logo master (Night Glow). Values and export steps: docs/specs/logo.md -->
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26262A"/>
+      <stop offset="1" stop-color="#111114"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="800" cy="800" r="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF7A1E" stop-opacity="0.286"/>
+      <stop offset="0.6" stop-color="#D8431A" stop-opacity="0.078"/>
+      <stop offset="1" stop-color="#D8431A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="wide-light" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="36"/>
+    </filter>
+    <filter id="close-edge" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12.6"/>
+    </filter>
+    <!-- The block E at 66% of the height: one bar and three blocks. -->
+    <g id="e">
+      <rect x="452.5" y="266.6" width="323.3" height="1065.4" rx="37.7"/>
+      <rect x="824.2" y="266.6" width="323.3" height="321.9" rx="37.7"/>
+      <rect x="824.2" y="638.4" width="323.3" height="321.9" rx="37.7"/>
+      <rect x="824.2" y="1010.1" width="323.3" height="321.9" rx="37.7"/>
+    </g>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#ground)"/>
+  <rect width="1600" height="1600" fill="url(#bloom)"/>
+  <use href="#e" fill="#FF7A1E" opacity="0.715" filter="url(#wide-light)"/>
+  <use href="#e" fill="#FF7A1E" filter="url(#close-edge)"/>
+  <use href="#e" fill="#FFF1E2"/>
+</svg>
