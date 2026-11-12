@@ -49,6 +49,12 @@ struct PillMenu: View {
             Button("Low") { simulate(.low, at: 20) }
             Button("Very Low") { simulate(.veryLow, at: 10) }
         }
+        Menu("Check Now Playing") {
+            Button("Read Players…") { checkNowPlaying() }
+            ForEach(Player.allCases) { player in
+                Button("Play/Pause \(player.name)") { Task { await PlayerScripts.send(.playPause, to: player) } }
+            }
+        }
         Divider()
         #endif
         Button("Quit Ember") {
@@ -61,6 +67,38 @@ struct PillMenu: View {
     private func simulate(_ alert: BatteryAlert, at percentage: Int) {
         let reading = BatteryReading(percentage: percentage, isPluggedIn: alert == .pluggedIn)
         controller.show(alert.liveActivity(for: reading))
+    }
+
+    /// Temporary sandbox check (Now Playing plan, Task 1): what Ember can read from the players.
+    private func checkNowPlaying() {
+        Task {
+            var lines: [String] = []
+            for player in Player.allCases {
+                guard player.isRunning else {
+                    lines.append("\(player.name): not running")
+                    continue
+                }
+                guard let reading = await PlayerScripts.read(player) else {
+                    let error = await PlayerScripts.errorText(of: PlayerScripts.readSource(for: player))
+                    lines.append("\(player.name): no answer, \(error)")
+                    continue
+                }
+                lines.append("\(player.name): \(reading.state), \(reading.title) by \(reading.artist), "
+                             + "\(Int(reading.position)) of \(Int(reading.length)) s")
+                if player == .music {
+                    let bytes = await PlayerScripts.musicArtwork()?.count ?? 0
+                    lines.append("  artwork: \(bytes) bytes")
+                } else if let url = reading.artworkURL.flatMap(URL.init(string:)) {
+                    let bytes = (try? await URLSession.shared.data(from: url))?.0.count ?? 0
+                    lines.append("  artwork download: \(bytes) bytes")
+                }
+            }
+            let alert = NSAlert()
+            alert.messageText = "Now Playing"
+            alert.informativeText = lines.joined(separator: "\n")
+            NSApplication.shared.activate()
+            alert.runModal()
+        }
     }
     #endif
 }

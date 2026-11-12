@@ -24,6 +24,13 @@ The full list, including what comes later, is in [docs/features.md](docs/feature
 - A MacBook with a notch
 - macOS 15 (Sequoia) or later
 
+## Permissions
+
+- **Automation (Music, Spotify):** the first time Ember shows what is playing, macOS asks
+  whether Ember may control Music and Spotify. Ember uses this only to read the current
+  song and to play, pause, skip and seek. You can change it later in System Settings →
+  Privacy & Security → Automation.
+
 ## Install
 
 Not released yet. Ember will be a free download from GitHub Releases. It will not be
