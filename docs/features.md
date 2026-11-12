@@ -41,6 +41,9 @@ explicitly decide to revive something.
 | 26b | Customization | Layouts, minimal mode, animation styles, shortcut remapping | later | If a glow on/off option is added: the active pill already reaches only 1 point below the notch (`PillMetrics.activeBottomExtension`, since 2026-11-11), so it stays clean with the glow off |
 | 28 | Core | Floating pill on non-notch Macs and external monitors | later | v1 shows a "needs a notch" message instead |
 | 29 | Customization | Always-on glow: an optional constant glow around the notch even at rest, toggled in the Glow section of Settings | done | Spec docs/specs/always-on-glow.md. On for now (`PillStyle.alwaysOnGlow`); the Settings toggle comes with the settings window. Related to #26b's glow on/off option |
+| 30 | Customization | Glow color presets: built-in Default (today's colors) and Monochrome (black, gray, white); users create their own. Settings → Glow shows a small preview of the notch with its glow and the preset's name (like the landing page's hero); "Add preset" starts from Default's settings, the user changes them, then saves with a name | later | Idea 2026-11-12, to discuss: which parts of the glow a preset sets (one color, or one per activity), editing/deleting presets, how the preset list is shown |
+| 31 | Customization | Panel size: let the user change the size of the expanded panel | later | Idea 2026-11-12, to discuss: free resize or a few sizes, and how features lay out at each size |
+| 32 | Core | Panel remembers the last tab: opening the panel shows the tab it was closed on (e.g. switch from Now Playing to Timer, close, reopen → Timer) | later | Idea 2026-11-12, to discuss: when an activity should win over the remembered tab, e.g. hovering over a timer's Time's up opens the Timer tab even if the panel was closed on Now Playing |
 
 ## Dropped — decided 2026-11-10
 
