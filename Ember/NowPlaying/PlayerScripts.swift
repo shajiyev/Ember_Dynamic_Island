@@ -43,7 +43,7 @@ nonisolated enum PlayerScripts {
         }
     }
 
-    static func readSource(for player: Player) -> String {
+    private static func readSource(for player: Player) -> String {
         // Spotify gives the length in milliseconds and has an artwork URL.
         let length = player == .spotify ? "(duration of t) / 1000" : "duration of t"
         let artworkURL = player == .spotify ? ", artwork url of t" : ""
@@ -56,18 +56,6 @@ nonisolated enum PlayerScripts {
             end tell
             """
     }
-
-    #if DEBUG
-    /// Temporary diagnosis (Now Playing plan, Task 1): the error a script ends with, if any.
-    static func errorText(of source: String) async -> String {
-        await Task.detached {
-            var error: NSDictionary?
-            _ = NSAppleScript(source: source)?.executeAndReturnError(&error)
-            guard let error else { return "no error" }
-            return "error \(error[NSAppleScript.errorNumber] ?? "?"): \(error[NSAppleScript.errorMessage] ?? "")"
-        }.value
-    }
-    #endif
 
     /// Music's cover of the current track, as image data.
     static func musicArtwork() async -> Data? {

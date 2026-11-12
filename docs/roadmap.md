@@ -20,14 +20,15 @@
   both. See docs/decisions.md.
 - **Done:** milestone 2's third feature chosen and designed: Now Playing (#1), Apple Music
   and Spotify. Spec docs/specs/now-playing.md.
-- **In progress:** milestone 2, feature 3: Now Playing (#1), plan docs/plans/now-playing.md: task 3 of 6 done (artwork and the equalizer in the wings).
-- **In progress (website):** the landing page (`site/`), spec docs/specs/landing-page.md,
-  plan docs/plans/landing-page.md: task 4 of 6 done (the page in its new structure,
-  modelled on the reference site's structure with Ember's own words and look, its
-  motion, and the pill demo's steps).
-- **Next:** Now Playing plan task 4, the Now Playing model on the pill.
-  Website: plan task 5, the pill demo plays. Later for the site: testimonials, donations, the
-  interactive Mac view, dark mode.
+- **In progress:** milestone 2, feature 3: Now Playing (#1), plan docs/plans/now-playing.md: task 4 of 6 done (the music on the pill).
+- **Done (website):** the landing page (`site/`), light mode, spec
+  docs/specs/landing-page.md, plan docs/plans/landing-page.md (all 6 tasks). Checked in
+  headless Chrome on macOS 26; Safari check by the user still to do.
+- **Next:** Now Playing plan task 5, the Music tab in the panel.
+  Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
+  the light/dark toggle (its own spec), and Now Playing in the demo when that feature is
+  done. Later for the site: testimonials, donations, a live GitHub star count, the
+  interactive Mac view.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

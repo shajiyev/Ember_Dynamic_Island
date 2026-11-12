@@ -19,17 +19,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let battery = BatteryMonitor()
     let timer = TimerModel()
     let screen = ScreenUseMonitor()
+    let nowPlaying = NowPlayingModel()
+    /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
+    private var timerActivity: LiveActivity?
+    private var musicActivity: LiveActivity?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
         guard NSClassFromString("XCTestCase") == nil else { return }
         battery.onAlert = { [controller] activity in controller.show(activity) }
         battery.start()
-        timer.onActivity = { [controller] activity in controller.setOngoing(activity) }
-        controller.onActivitySeen = { [timer] in timer.stopRinging() }
+        timer.onActivity = { [weak self] activity in
+            self?.timerActivity = activity
+            self?.showLastingActivity()
+        }
+        nowPlaying.onActivity = { [weak self] activity in
+            self?.musicActivity = activity
+            self?.showLastingActivity()
+        }
+        // Only "Time's up" ends when seen; once seen, the music can have the wings back.
+        controller.onActivitySeen = { [weak self] in
+            self?.timer.stopRinging()
+            self?.timerActivity = nil
+            self?.showLastingActivity()
+        }
+        nowPlaying.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
         controller.start(panelContent: PanelView(battery: battery, timer: timer))
+    }
+
+    private func showLastingActivity() {
+        controller.setOngoing(LastingChoice.choose(timer: timerActivity, music: musicActivity))
     }
 }
 
@@ -49,12 +70,6 @@ struct PillMenu: View {
             Button("Low") { simulate(.low, at: 20) }
             Button("Very Low") { simulate(.veryLow, at: 10) }
         }
-        Menu("Check Now Playing") {
-            Button("Read Players…") { checkNowPlaying() }
-            ForEach(Player.allCases) { player in
-                Button("Play/Pause \(player.name)") { Task { await PlayerScripts.send(.playPause, to: player) } }
-            }
-        }
         Divider()
         #endif
         Button("Quit Ember") {
@@ -67,38 +82,6 @@ struct PillMenu: View {
     private func simulate(_ alert: BatteryAlert, at percentage: Int) {
         let reading = BatteryReading(percentage: percentage, isPluggedIn: alert == .pluggedIn)
         controller.show(alert.liveActivity(for: reading))
-    }
-
-    /// Temporary sandbox check (Now Playing plan, Task 1): what Ember can read from the players.
-    private func checkNowPlaying() {
-        Task {
-            var lines: [String] = []
-            for player in Player.allCases {
-                guard player.isRunning else {
-                    lines.append("\(player.name): not running")
-                    continue
-                }
-                guard let reading = await PlayerScripts.read(player) else {
-                    let error = await PlayerScripts.errorText(of: PlayerScripts.readSource(for: player))
-                    lines.append("\(player.name): no answer, \(error)")
-                    continue
-                }
-                lines.append("\(player.name): \(reading.state), \(reading.title) by \(reading.artist), "
-                             + "\(Int(reading.position)) of \(Int(reading.length)) s")
-                if player == .music {
-                    let bytes = await PlayerScripts.musicArtwork()?.count ?? 0
-                    lines.append("  artwork: \(bytes) bytes")
-                } else if let url = reading.artworkURL.flatMap(URL.init(string:)) {
-                    let bytes = (try? await URLSession.shared.data(from: url))?.0.count ?? 0
-                    lines.append("  artwork download: \(bytes) bytes")
-                }
-            }
-            let alert = NSAlert()
-            alert.messageText = "Now Playing"
-            alert.informativeText = lines.joined(separator: "\n")
-            NSApplication.shared.activate()
-            alert.runModal()
-        }
     }
     #endif
 }
