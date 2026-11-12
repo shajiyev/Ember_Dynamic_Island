@@ -12,7 +12,7 @@ nonisolated struct LiveActivity: Equatable {
     /// An SF Symbol name.
     var symbolName: String
     var symbolColor: Color
-    /// Short enough for a 34-point wing, such as "73%".
+    /// Short enough for a 42-point wing, such as "73%".
     var text: String
     /// None shows the wings without a glow.
     var glowColor: Color?

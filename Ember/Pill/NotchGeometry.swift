@@ -3,7 +3,7 @@ import CoreGraphics
 /// Sizes that do not depend on the screen, in points.
 nonisolated enum PillMetrics {
     /// Extra width on each side of the notch in the active state.
-    static let wingWidth: CGFloat = 40
+    static let wingWidth: CGFloat = 48
     static let openSize = CGSize(width: 620, height: 200)
     /// Transparent space around the open panel so the glow is not cut off.
     static let glowMargin: CGFloat = 40

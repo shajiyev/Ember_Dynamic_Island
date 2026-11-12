@@ -37,7 +37,7 @@ nonisolated enum TimerLook {
     static let timesUp = LiveActivity(symbolName: "bell.fill", symbolColor: timesUpColor,
                                       text: "0:00", glowColor: timesUpColor, endsWhenSeen: true)
 
-    /// Short enough for a 34-point wing: "24:59" under an hour, "1h25" from an hour up.
+    /// Short enough for a 42-point wing: "24:59" under an hour, "1h25" from an hour up.
     static func wingText(secondsLeft: Int) -> String {
         let hours = secondsLeft / 3600
         let minutes = secondsLeft % 3600 / 60
