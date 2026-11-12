@@ -82,18 +82,34 @@ private struct ActivityWings: View {
     var body: some View {
         let wingWidth = PillMetrics.wingWidth - inset
         HStack(spacing: 0) {
-            Image(systemName: activity.symbolName)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(activity.symbolColor)
-                .frame(width: wingWidth)
+            Group {
+                if let artwork = activity.artwork {
+                    Image(nsImage: artwork)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 20, height: 20)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                } else {
+                    Image(systemName: activity.symbolName)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(activity.symbolColor)
+                }
+            }
+            .frame(width: wingWidth)
             Spacer(minLength: 0)
-            Text(activity.text)
-                .font(.system(size: 12, weight: .semibold))
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)   // "100%" shrinks instead of being cut off
-                .foregroundStyle(.white)
-                .frame(width: wingWidth)
+            Group {
+                if activity.showsEqualizer {
+                    EqualizerView(color: activity.symbolColor)
+                } else {
+                    Text(activity.text)
+                        .font(.system(size: 12, weight: .semibold))
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)   // "100%" shrinks instead of being cut off
+                        .foregroundStyle(.white)
+                }
+            }
+            .frame(width: wingWidth)
         }
         .padding(.horizontal, inset)
         .frame(height: height)

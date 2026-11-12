@@ -35,6 +35,8 @@ final class PillController {
     @ObservationIgnored private var briefTimeout: Task<Void, Never>?
     /// The ongoing activity ends when seen and has been seen; it goes once the panel opens.
     @ObservationIgnored private var ongoingWasSeen = false
+    /// Set while a seen activity waits for the panel to open; it replaces it then.
+    @ObservationIgnored private var activityAfterSeen: LiveActivity?
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
     @ObservationIgnored private var panelContent = AnyView(EmptyView())
@@ -89,7 +91,11 @@ final class PillController {
     /// An activity that ends when seen is dropped at once if the panel is open, because the
     /// user is already looking at it.
     func setOngoing(_ activity: LiveActivity?) {
-        ongoingWasSeen = false
+        // A seen activity stays until the panel opens; what is set meanwhile follows it.
+        if ongoingWasSeen {
+            activityAfterSeen = activity
+            return
+        }
         if let activity, activity.endsWhenSeen, state == .open {
             ongoingActivity = nil
             onActivitySeen?()
@@ -155,6 +161,10 @@ final class PillController {
         ongoingWasSeen = false
         ongoingActivity = nil
         activityDidChange()
+        if let next = activityAfterSeen {
+            activityAfterSeen = nil
+            setOngoing(next)
+        }
     }
 
     private func schedule(_ event: PillEvent, after delay: TimeInterval) {

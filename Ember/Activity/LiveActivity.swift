@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// What a feature shows on the closed pill: a symbol in the left wing, a short text in the
@@ -20,4 +21,8 @@ nonisolated struct LiveActivity: Equatable {
     var duration: TimeInterval?
     /// An ongoing activity that is cleared once the user hovers over or clicks the pill.
     var endsWhenSeen = false
+    /// Shown instead of the symbol when set, such as an album cover.
+    var artwork: NSImage?
+    /// Shows a small animated equalizer in the symbol's colour instead of the text.
+    var showsEqualizer = false
 }

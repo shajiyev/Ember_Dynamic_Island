@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// How Now Playing looks. All music symbols, colours and text formats are defined here.
 nonisolated enum NowPlayingLook {
@@ -12,5 +13,13 @@ nonisolated enum NowPlayingLook {
             return "\(hours):" + String(format: "%02d:%02d", minutes, rest)
         }
         return "\(minutes):" + String(format: "%02d", rest)
+    }
+
+    /// The wings while a song plays: its cover (a note without one) and the equalizer, in
+    /// the cover's colour, or Ember orange when the cover gives none.
+    static func activity(for track: Track, glow: Color?) -> LiveActivity {
+        let color = glow ?? PillStyle.glowColor
+        return LiveActivity(symbolName: "music.note", symbolColor: color, text: "", glowColor: color,
+                            artwork: track.artwork, showsEqualizer: true)
     }
 }

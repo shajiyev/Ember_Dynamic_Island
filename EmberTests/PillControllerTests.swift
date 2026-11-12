@@ -222,4 +222,17 @@ struct PillControllerTests {
         try await settle()
         #expect(controller.state == .rest)
     }
+
+    @Test func anActivitySetWhileASeenOneWaitsFollowsItWhenThePanelOpens() async throws {
+        let controller = PillController(timing: fast)
+        let timesUp = ongoing("0:00", endsWhenSeen: true)
+        controller.setOngoing(timesUp)
+        controller.send(.pointerEntered)
+        let music = ongoing("music")
+        controller.setOngoing(music)
+        #expect(controller.currentActivity == timesUp)   // still showing until the panel opens
+        try await settle()
+        #expect(controller.state == .open)
+        #expect(controller.ongoingActivity == music)
+    }
 }
