@@ -291,3 +291,22 @@ The design above (commit ebcf102) was not built.
 - **Found while checking:** the App Sandbox hides cameras from Ember (0 found inside it;
   the same code finds 3 outside), while microphones are visible (2 found). Worth knowing
   if a camera feature (for example the webcam mirror, #19) comes back.
+
+## 2026-11-12 — Website: site/ in this repo, Vercel, plain HTML/CSS/JS
+- **In a `site/` folder on `main`.** Considered a separate repo and a long-lived branch.
+  **Why:** one repo keeps stars, issues and releases together, and the site's main button
+  asks for a star; a branch would drift from `main`, which Vercel deploys. A folder is
+  enough separation: Xcode builds only `Ember/`, and commits stay separate by path.
+- **Vercel.** Considered GitHub Pages. **Why:** the user wants a custom domain and Vercel's
+  setup for it; Vercel skips deploys when `site/` has not changed.
+- **Plain HTML, CSS and a little JavaScript.** Considered Astro and Next.js. **Why:** one
+  page needs no build step or dependencies.
+- **`.gitattributes` hides `site/` from GitHub's language bar,** so the repo still shows as
+  a Swift project.
+
+## 2026-11-12 — Privacy commitment
+Nothing leaves the Mac except the update check, and each permission belongs to a feature
+the user turns on, during onboarding or later in Settings.
+**Why:** the website promises this to users, so the app must keep it true. It affects
+onboarding (#0) and any feature that might call a server (for example #24).
+

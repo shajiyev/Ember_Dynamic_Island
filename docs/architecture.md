@@ -12,6 +12,7 @@
 - `assets/` — logo and other repository artwork (not bundled into the app).
 - `docs/` — planning documents.
 - `scripts/` — helper scripts. `make-app-icon.swift` regenerates the app icon from the logo.
+- `site/` — the website (see Website below). Not part of the app.
 
 ## Modules
 - `Ember/Pill/` — the pill.
@@ -82,3 +83,18 @@ sets `TimerModel.screenInUse`, so the sound rings once while the screen is locke
 - Rules are pure `nonisolated` types with unit tests. System APIs stay in a thin monitor
   type that only connects them to the rules.
 - Each feature keeps its colours, thresholds and durations in one place.
+
+## Website
+`site/` is a static landing page, deployed by Vercel with `site` as its root directory.
+Plain HTML, CSS and JavaScript: no dependencies and no build step. Nothing in it is part
+of the app, and `.gitattributes` keeps it out of GitHub's language statistics.
+
+| File | Job |
+|---|---|
+| `site/index.html` | All page content, meta tags and the inline SVG icons |
+| `site/styles.css` | Colour variables (defined once, at the top), then layout, then the pill demo |
+| `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen) |
+
+The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
+`BatteryAlert`); when those change in the app, update the pill section of `styles.css`.
+Serve locally with `python3 -m http.server 8765 --directory site`.

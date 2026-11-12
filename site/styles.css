@@ -1,0 +1,276 @@
+/* Colours are defined once, here. Dark mode will add a second set of the job values. */
+:root {
+  /* Palette (light) */
+  --cream: #EEE4D7;
+  --ember-red: #C73915;
+  --rust: #9A2D19;
+  --amber: #E19C18;
+  --gold: #E7B439;
+  --ink: #1A190B;
+  --brown: #42240F;
+
+  /* Jobs */
+  --bg: var(--cream);
+  --surface: color-mix(in srgb, var(--cream), white 45%);
+  --text: var(--ink);
+  --text-secondary: var(--brown);
+  --heading-accent: var(--ember-red);   /* large text only: 4.2:1 on cream */
+  --link: var(--rust);
+  --github-bg: var(--ink);              /* GitHub's own buttons are black */
+  --github-bg-hover: color-mix(in srgb, var(--ink), white 18%);
+  --github-text: #FFFFFF;
+  --line: color-mix(in srgb, var(--brown), transparent 82%);
+  --badge-bg: var(--gold);
+  --badge-text: var(--brown);
+  --halo-1: color-mix(in srgb, var(--gold), transparent 45%);
+  --halo-2: color-mix(in srgb, var(--amber), transparent 70%);
+  --halo-3: color-mix(in srgb, var(--ember-red), transparent 88%);
+
+  /* The app's own colours, used only in the pill demo. They match
+     Ember/Pill/PillStyle.swift and Ember/Battery/BatteryAlerts.swift, in both themes. */
+  --app-glow: #FF7A1E;
+  --app-green: #30D158;
+
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 17px/1.55 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--link); }
+h1, h2, h3 { margin: 0; line-height: 1.15; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+
+/* Hero */
+
+.hero {
+  padding: 56px 0 72px;
+  text-align: center;
+  /* The brand glow, like the logo's background, spreading from the notch. */
+  background: radial-gradient(ellipse 620px 360px at 50% 100px,
+    var(--halo-1), var(--halo-2) 45%, var(--halo-3) 70%, transparent 100%);
+}
+
+.app-icon { display: block; margin: 48px auto 0; }
+
+h1 {
+  margin-top: 12px;
+  font-size: clamp(44px, 8vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  margin: 8px 0 0;
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 650;
+  color: var(--heading-accent);
+}
+
+.lede { margin: 12px 0 0; font-size: 19px; color: var(--text-secondary); }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px 16px;
+  margin-top: 32px;
+}
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.button-icon { width: 18px; height: 18px; fill: currentColor; }
+
+.button-github {
+  background: var(--github-bg);
+  color: var(--github-text);
+  transition: background-color 0.15s;
+}
+.button-github:hover { background: var(--github-bg-hover); }
+.button-github:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+.button-disabled {
+  border: 1.5px solid var(--line);
+  color: color-mix(in srgb, var(--text-secondary), transparent 45%);
+  cursor: not-allowed;
+  user-select: none;
+}
+
+.badge {
+  position: absolute;
+  top: -11px;
+  right: -12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+/* Sections */
+
+.section { padding: 72px 0; border-top: 1px solid var(--line); }
+
+.section h2 {
+  font-size: clamp(28px, 4.5vw, 36px);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  color: var(--heading-accent);
+}
+
+.section-intro { max-width: 620px; margin: 12px 0 0; color: var(--text-secondary); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.card h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.card p { margin: 8px 0 0; font-size: 15.5px; color: var(--text-secondary); }
+
+.tag {
+  padding: 1px 8px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--link);
+}
+
+.requirements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.requirements li {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 550;
+}
+
+.footer { padding: 32px 0 48px; border-top: 1px solid var(--line); font-size: 14px; color: var(--text-secondary); }
+.footer p { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; }
+
+/* The pill demo. Sizes are the app's, 1 CSS px = 1 point: a 14" MacBook Pro notch is
+   185 × 32, the pill reaches 1 below it, each wing adds 48 minus the 6-point top flare,
+   and the bottom corners have a radius of 14 (Ember/Pill/NotchGeometry.swift and
+   PillStyle.swift). */
+
+.screen {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 12px 0;
+  border-radius: 24px 24px 0 0;
+  background: #000;
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--brown), transparent 55%);
+}
+
+.wallpaper {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: radial-gradient(120% 140% at 50% 0%, #42240F 0%, #1A190B 70%);
+}
+
+.menubar { height: 32px; background: rgb(255 255 255 / 0.06); }
+
+.pill {
+  --glow: var(--app-glow);
+  --edge: color-mix(in oklab, var(--glow), white 45%);
+  --notch-width: 185px;
+  --wing: 42px;
+  --flare: 6px;
+
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: var(--notch-width);
+  height: 33px;
+  border-radius: 0 0 14px 14px;
+  background: #000;
+  /* At rest: a soft glow, centred (PillStyle rest: opacity 0.6, radius 8, offset 0). */
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--glow) 60%, transparent));
+}
+
+/* The top corners flare outward where the pill meets the top of the screen. */
+.flare { position: absolute; top: 0; width: var(--flare); height: var(--flare); }
+.flare-left {
+  left: calc(-1 * var(--flare));
+  background: radial-gradient(circle at 0 100%, transparent var(--flare), #000 calc(var(--flare) + 0.5px));
+}
+.flare-right {
+  right: calc(-1 * var(--flare));
+  background: radial-gradient(circle at 100% 100%, transparent var(--flare), #000 calc(var(--flare) + 0.5px));
+}
+
+/* The bright edge line. At rest: 2 wide, fading in from the top to full at 60%. */
+.edge {
+  position: absolute;
+  inset: 0 -1px -1px;
+  border: 2px solid var(--edge);
+  border-top: 0;
+  border-radius: 0 0 15px 15px;
+  opacity: 0.6;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent, #000 60%);
+}
+
+/* Holds the wings; clipped to the pill so they are uncovered as it grows. */
+.pill-body { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+
+.wings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+}
