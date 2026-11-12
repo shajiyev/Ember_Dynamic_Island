@@ -28,23 +28,25 @@ and deploys on its own.
 1. **Hero:** the pill demo (see below), the logo and "Ember", the tagline "Your notch,
    glowing.", the line "A free, open-source Dynamic Island for your MacBook.", and two
    buttons side by side:
-   - **Star on GitHub:** solid Ember red, white text, GitHub mark; links to the repo.
+   - **GitHub:** solid near-black (GitHub's own buttons are black), white text,
+     GitHub mark; opens the repo in a new tab.
    - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot be
      clicked or reached with Tab (`aria-disabled="true"`, no link). A small gold "Coming
      soon" badge overlaps its top-right corner. When v1 ships it becomes a solid button
      linking to the release, and the badge goes.
-2. **Features:** a grid of the v1 features: Now Playing; live activities (battery and
-   charging, camera and microphone in use, Bluetooth and AirPods); timers; calendar and
-   reminders; file shelf. Features not yet built carry a "Planned" tag. Built today:
-   battery and timers.
+2. **Features:** a grid of the v1 features: Now Playing; battery and charging; Bluetooth
+   and AirPods; timers; calendar and reminders; file shelf. Features not yet built carry a
+   "Planned" tag. Built today: battery and timers. The grid follows the v1 table in
+   `docs/features.md`; when a feature is dropped or finished there, the grid changes too.
 3. **Safe to open. Private by design.** Explains the first-launch warning and permissions;
    text below. Placed after Features, where someone who is interested is deciding whether
    to install.
 4. **Requirements:** a MacBook with a notch, macOS 15 or later; free and open source under
    GPL-3.0.
-5. **Built in the open:** one short paragraph: built with Claude Code, planning docs are
-   public; links to the repo and to `docs/`.
-6. **Footer:** GitHub link, "Licensed under GPL-3.0", "Not affiliated with Apple".
+5. **Footer:** GitHub link (new tab), "Licensed under GPL-3.0", "Not affiliated with Apple".
+
+A "Built in the open" section was in the first version and removed by the user after
+seeing it.
 
 Not on the page: FAQ, install steps, changelog, screenshots, and any mention of other
 notch projects (see "Credit" below).
@@ -101,16 +103,18 @@ palette so the two modes share a base.
 | Colour | Hex | Job |
 |---|---|---|
 | Cream | `#EEE4D7` | Page background |
-| Ember red | `#C73915` | Main button background (white text, 5.2:1) and large headings. Never small text on cream (4.2:1) |
+| Ember red | `#C73915` | Large headings and the tagline. Never small text on cream (4.2:1) |
 | Deep rust | `#9A2D19` | Links and small accent text (6:1 on cream) |
 | Amber | `#E19C18` | Glow only |
 | Gold | `#E7B439` | Glow, and the "Coming soon" badge's background (dark brown text) |
-| Near-black | `#1A190B` | Body text |
+| Near-black | `#1A190B` | Body text, and the GitHub button (white text, 17.7:1) |
 | Dark brown | `#42240F` | Secondary text |
 
 - **Glow:** a radial gradient from Ember red through amber to gold, spreading from behind
   the pill, like the logo's background. The pill itself stays black, as on a real Mac.
 - **Type:** Apple's system font (`-apple-system`, SF Pro); no web fonts.
+- **Icons:** our own small inline SVGs, drawn to resemble the app's. Apple's licence does
+  not allow SF Symbols on websites.
 - **Colours are defined once,** as CSS variables at the top of `styles.css`, so dark mode
   is a second set of values.
 - **Works on phones:** the layout holds from phone width up; no sideways scrolling.
@@ -127,8 +131,10 @@ is ready.
   (Open Graph) tags.
 - `site/styles.css`: colour variables, then the layout and the demo's look.
 - `site/demo.js`: runs the pill demo loop and respects Reduce Motion. The only JavaScript.
-- `site/assets/`: logo, favicon and link-preview image, copied from the repo's `assets/`
-  (Vercel only sees files inside `site/`).
+- `site/assets/`: the app icon in small sizes for the hero and the favicon, resized from
+  the repo's `assets/` (Vercel only sees files inside `site/`). The link-preview image
+  points at the full app icon on GitHub, because link previews need an absolute URL and
+  the site has no domain yet.
 - `.gitattributes` (repo root): hides `site/` from GitHub's language statistics.
 
 ## Credit
