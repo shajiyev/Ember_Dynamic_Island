@@ -1,6 +1,6 @@
 # Milestone 2, feature 3 design: Now Playing (#1)
 
-Date: 2026-11-12. Status: agreed, not yet planned.
+Date: 2026-11-12. Status: built 2026-11-12 (plan: docs/plans/now-playing.md).
 
 ## Goal
 
@@ -28,30 +28,32 @@ works inside the sandbox. Browsers, YouTube and podcast apps are not covered.
 - The wings stay out for as long as music **plays**: the album art (rounded) in the left
   wing, a small animated equalizer in the right wing. The equalizer is a looping
   animation, not real audio levels (Ember cannot read those).
-- **Glow:** the main colour of the current cover, whatever it is, so it changes with each
-  song. Very dark or grey covers, and songs without artwork, glow Ember orange.
+- **Glow:** the cover's dominant colour, whatever it is, so it changes with each song and
+  carries its mood. Black, white and grey pixels are left out; of the rest, the hue
+  covering the most area wins, vivid pixels counting more. Covers with almost no colour
+  (black and white) glow soft white; songs without a cover glow Ember orange.
 - **Paused or stopped:** the wings go; the pill returns to rest.
 
 ### Which lasting activity wins
 
-The wings show one lasting activity at a time, by importance:
+The wings show one lasting activity at a time:
 
-1. "Time's up"
-2. A running or paused timer
-3. Music playing
+1. "Time's up" always wins: it is an alert.
+2. If the user last closed the panel on the **Music** tab and a song plays, the song wins:
+   they chose to see it. The timer keeps running in its tab.
+3. Otherwise a running or paused timer wins over music: the user started it on purpose
+   and it is about time.
 
-The timer wins because the user started it on purpose and it is about time; the music
-is audible and one hover away in the panel. When the timer ends (and "Time's up" is
-seen) or is cancelled, the music comes back by itself. Brief alerts (battery) show over
-all of them for their few seconds, as before.
+When the timer ends (and "Time's up" is seen) or is cancelled, the music comes back by
+itself. Brief alerts (battery) show over all of them for their few seconds, as before.
 
 ### Open panel: tabs
 
 - The top row gets a tab row on the left: **Music | Timer**. The battery stays on the
   right.
-- The panel opens on **Music**, except while a timer runs or is paused, or "Time's up"
-  shows: then it opens on **Timer**. A tab chosen by the user lasts until the panel
-  closes.
+- **Which tab the panel opens on:** when the wings show something, its tab (the song:
+  Music; a countdown or "Time's up": Timer). When they show nothing, the tab the panel
+  was last closed on (Music at launch). This builds feature #32.
 
 ### Music tab
 
@@ -66,6 +68,9 @@ all of them for their few seconds, as before.
 
 - Artwork, title and artist (each cut with "…" if too long), a scrubber with the time
   played and the length, and previous / play-pause / next.
+- While the Music tab shows a song, the open panel glows in that song's colour, like the
+  closed pill; the Timer tab and "Nothing playing" glow Ember orange. Only the panel's
+  shape glows; nothing inside it (artwork, icons, text) casts a glow.
 - **Dragging the scrubber** seeks when released.
 - **A paused song** (the player is open with a song loaded) shows with its play button,
   so one click resumes it.
@@ -99,7 +104,7 @@ about music or timers: the app delegate decides which lasting activity it shows.
 |---|---|---|---|
 | Track | `Ember/NowPlaying/Track.swift` | `Track` (title, artist, album, length, position and when it was read, playing or not, artwork) and the player it came from. Pure. | Foundation |
 | Player choice | `Ember/NowPlaying/PlayerChoice.swift` | Which player's track to show, by the rules above. Pure. | Track |
-| Cover colour | `Ember/NowPlaying/CoverColor.swift` | The glow colour from the cover's average colour; Ember orange when too dark, too grey, or missing. Pure. | SwiftUI `Color` |
+| Cover colour | `Ember/NowPlaying/CoverColor.swift` | The glow colour: the cover's dominant hue (not its average, which mixes colours into grey); soft white for covers without colour. Pure rule plus reading the cover's pixels. | SwiftUI `Color` |
 | Music look | `Ember/NowPlaying/NowPlayingLook.swift` | The playing activity (artwork left, equalizer right, cover colour glow), the time text (`1:12`, `1:02:05`). Pure. | Live activity |
 | Players | `Ember/NowPlaying/MusicPlayer.swift`, `SpotifyPlayer.swift` | Read the current track and send play/pause, next, previous and seek through short AppleScript commands (`NSAppleScript`). Never run while the player is closed. Spotify's artwork is downloaded from its artwork URL. | Track, AppKit |
 | Now Playing model | `Ember/NowPlaying/NowPlayingModel.swift` | Listens to the players' change notices (`com.apple.Music.playerInfo`, `com.spotify.client.PlaybackStateChanged`) and to apps opening and quitting; reads the players on a change; publishes the chosen track; advances the position on its own clock between changes; hands the pill the playing activity. | Players, choice, look |
@@ -130,8 +135,9 @@ ever stop arriving, the panel still reads the players when it opens.
   5. Both players open: the rules for which one shows.
   6. Neither open: "Nothing playing" with Open buttons for the installed apps; Ember
      never opens a player by itself.
-  7. A timer while music plays: the timer takes the wings, the music returns after it;
-     the panel opens on Timer while the timer runs.
+  7. A timer while music plays: closed on Timer, the timer takes the wings; closed on
+     Music, the song does; "Time's up" always does, and hovering opens Timer; the panel
+     opens on the tab of what the wings show.
   8. Declining the Automation prompt: nothing breaks; nothing shows for that player.
 
 ## Risks to check early

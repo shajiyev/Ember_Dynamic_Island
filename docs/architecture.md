@@ -10,6 +10,7 @@
 - `Ember.xcodeproj/` — Xcode project. Build settings live in `project.xcproj` (plain text).
 - `Ember/` — app source code and assets. Xcode syncs this folder automatically.
 - `assets/` — logo and other repository artwork (not bundled into the app).
+  `Ember_logo.svg` is the logo master; `Ember_logo.png` is exported from it.
 - `docs/` — planning documents.
 - `scripts/` — helper scripts. `make-app-icon.swift` regenerates the app icon from the logo.
 - `site/` — the website (see Website below). Not part of the app.
@@ -65,9 +66,11 @@
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
     notices settle, publishes the chosen track and sends commands.
   - `NowPlayingPanelView.swift`: the Music tab.
-- `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: the
-  timer's wins over music.
-- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs and which one the panel opens on.
+- `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
+  up" always; the song if the panel was closed on the Music tab; otherwise the timer.
+- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs, and `PanelSelection`: the tab,
+  remembered between openings, and the tab of what the wings show, which the panel opens
+  on.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
   bar icon and menu.
 

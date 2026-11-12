@@ -40,4 +40,10 @@ struct PillStyleTests {
             #expect(style.glowOffset == style.glowRadius / 2, "\(state)")
         }
     }
+
+    @Test func shrinkingSettlesWithoutBouncingAndOpeningKeepsItsSpring() {
+        #expect(PillStyle.animation(to: .rest) == .spring(response: 0.38, dampingFraction: 1))
+        #expect(PillStyle.animation(to: .active) == .spring(response: 0.38, dampingFraction: 1))
+        #expect(PillStyle.animation(to: .open) == .spring(response: 0.38, dampingFraction: 0.8))
+    }
 }

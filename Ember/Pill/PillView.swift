@@ -6,6 +6,8 @@ struct PillView: View {
     let controller: PillController
     /// What the open panel shows. The pill does not know what is inside.
     let panelContent: AnyView
+    /// The glow the panel's content asks for while open (`PanelGlowColorKey`).
+    @State private var panelGlow: Color?
 
     var body: some View {
         let state = controller.state
@@ -15,10 +17,14 @@ struct PillView: View {
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
         // The active state takes its glow from the activity, which may have none; the open
-        // panel always glows orange.
+        // panel from its content, or orange; rest is always orange.
         let activityGlow = controller.currentActivity?.glowColor
         let hasGlow = state != .active || activityGlow != nil
-        let glowColor = state == .active ? activityGlow ?? PillStyle.glowColor : PillStyle.glowColor
+        let glowColor = switch state {
+        case .active: activityGlow ?? PillStyle.glowColor
+        case .open: panelGlow ?? PillStyle.glowColor
+        case .rest: PillStyle.glowColor
+        }
         let glowOpacity = hasGlow ? style.glowOpacity : 0
 
         shape
@@ -36,6 +42,10 @@ struct PillView: View {
                                          startPoint: style.edgeFadeStart, endPoint: style.edgeFadeEnd)
                         .padding(-style.edgeLineWidth))
             }
+            // The glow belongs to the shape only: applied before the content, so the wings'
+            // and the panel's content (artwork, icons, text) cast no glow of their own.
+            .shadow(color: glowColor.opacity(glowOpacity),
+                    radius: style.glowRadius, y: style.glowOffset)
             .overlay {
                 // This container always exists and is clipped to the shape, so its clip
                 // grows and shrinks with the shape. Content that appears is uncovered by
@@ -48,14 +58,13 @@ struct PillView: View {
                     if state == .open {
                         panelContent
                             .environment(\.notchHeight, notchHeight)
+                            .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
                             .transition(PillStyle.contentTransition)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipShape(shape)
             }
-            .shadow(color: glowColor.opacity(glowOpacity),
-                    radius: style.glowRadius, y: style.glowOffset)
             .contentShape(Rectangle())
             .onHover { isInside in
                 controller.send(isInside ? .pointerEntered : .pointerExited)
@@ -65,8 +74,9 @@ struct PillView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
-            .animation(PillStyle.animation, value: state)
+            .animation(PillStyle.animation(to: state), value: state)
             .animation(PillStyle.animation, value: activityGlow)
+            .animation(PillStyle.animation, value: panelGlow)
     }
 }
 
@@ -114,6 +124,16 @@ private struct ActivityWings: View {
         .padding(.horizontal, inset)
         .frame(height: height)
         .frame(maxHeight: .infinity, alignment: .top)
+    }
+}
+
+/// A glow colour the open panel's content can ask the pill for; none keeps Ember orange.
+/// The pill does not know where it comes from.
+nonisolated struct PanelGlowColorKey: PreferenceKey {
+    static let defaultValue: Color? = nil
+
+    static func reduce(value: inout Color?, nextValue: () -> Color?) {
+        value = nextValue() ?? value
     }
 }
 

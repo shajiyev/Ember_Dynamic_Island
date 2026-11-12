@@ -20,11 +20,17 @@
   both. See docs/decisions.md.
 - **Done:** milestone 2's third feature chosen and designed: Now Playing (#1), Apple Music
   and Spotify. Spec docs/specs/now-playing.md.
-- **In progress:** milestone 2, feature 3: Now Playing (#1), plan docs/plans/now-playing.md: task 4 of 6 done (the music on the pill).
+- **Done:** milestone 2, feature 3: Now Playing (#1), Apple Music and Spotify. Verified on
+  macOS 26.6.2 with the checklist in docs/plans/now-playing.md.
+- **In progress:** nothing in the app.
 - **Done (website):** the landing page (`site/`), light mode, spec
   docs/specs/landing-page.md, plan docs/plans/landing-page.md (all 6 tasks). Checked in
   headless Chrome on macOS 26; Safari check by the user still to do.
-- **Next:** Now Playing plan task 5, the Music tab in the panel.
+- **Done:** new logo and app icon (Night Glow): graphite, warm-white E with an ember
+  glow, one icon for light and dark mode. Spec docs/specs/logo.md. Built on macOS 26.6.2;
+  not yet seen in the real Dock.
+- **Next:** choose and design milestone 2's next feature (by the agreed order: Bluetooth
+  devices, #8).
   Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
   the light/dark toggle (its own spec), and Now Playing in the demo when that feature is
   done. Later for the site: testimonials, donations, a live GitHub star count, the

@@ -345,3 +345,52 @@ Testimonials, donations, a live star count and an interactive Mac view are left 
 later. **Why:** the user liked that site's approach; copying its content would make Ember
 look like a clone and is not covered by the app's GPL licence.
 
+
+## 2026-11-12 — Now Playing: changes after the on-screen checks (task 5)
+Checked on a 14" MacBook Pro, macOS 26.6.2.
+- **The cover's dominant colour, not its average.** Averaging mixes a cover's colours into
+  beige or grey (a half-blue, half-yellow test cover averaged to 0.55 0.53 0.45), so many
+  colourful covers fell back to orange. Now black, white and grey pixels are left out and
+  the hue covering the most area wins, vivid pixels counting more; a colour needs about 5%
+  of the cover. **Why:** the glow should carry the song's mood (the user's words).
+- **Black-and-white covers glow soft white;** only songs without a cover glow Ember orange.
+- **The open panel glows in the song's colour** while the Music tab shows a song, through
+  a general `PanelGlowColorKey`, so the pill still knows nothing about music.
+- **Only the pill's shape glows.** The glow was a shadow on the whole pill, so the panel's
+  artwork, icons and text each cast an orange halo.
+- **The tab the panel was closed on decides the wings** (replaces "the timer always
+  wins"): closed on Music with a song playing, the song; otherwise the timer; "Time's up"
+  always. **Why:** the user chooses what to see.
+- **The panel opens on the tab of what the wings show,** otherwise on the last tab (#32).
+  Hovering over "Time's up" opens Timer. **Why:** it opened on Music, because seeing
+  "Time's up" made the timer inactive 0.2 s before the panel opened.
+- **Shrinking settles without bouncing** (spring damping 1.0); opening keeps 0.8. **Why:**
+  at 0.8 the closing panel overshot about 2.5 points up into the notch before settling.
+- **Fixed in task 4:** pausing Apple Music left the wings showing. Music announces a pause
+  two or three times; reads ran in parallel and a stale "playing" answer won. Reads now
+  wait 0.3 s for announcements to settle and drop late answers.
+
+## 2026-11-12 — New logo: Night Glow
+The block E stays; the orange square around it is replaced by a graphite ground, a
+warm-white E at 66% of the icon height and a tight ember glow (#FF7A1E, the pill's glow
+colour). Values in docs/specs/logo.md; the old logo is in git history.
+- **Why:** the old background looked cheap (a centred spotlight gradient, brown seams from
+  the dark shadow, burnt corners), and an orange square said nothing about a black pill
+  that lights up.
+- **One icon for light and dark mode.** A light version (white E on white) disappeared at
+  32 px and smaller, and macOS 15 shows only one icon anyway.
+- **An SVG master** (`assets/Ember_logo.svg`) is now the source; the PNG is exported from
+  it with headless Chrome. `make-app-icon.swift` adds a thin light edge so the icon stands
+  out on a dark Dock.
+- Considered: Clean Ember (orange, cleaned up), Paper (cream with an ember-red E) and six
+  other directions, compared in browser mock-ups.
+
+## 2026-11-12 — Now Playing results
+All ten manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
+- **Apple Events in the sandbox:** both players are read and controlled from inside the
+  App Sandbox with the scripting-targets entitlement. macOS asks once per player; the
+  answer survives rebuilds (Ember is signed to run locally). Turning the permission off
+  in System Settings breaks nothing: that player's song simply does not show.
+- **Values tuned by eye:** none in the wings or the panel; the pill's closing spring went
+  from 0.8 to 1.0 damping (see the entry above).
+- No checks accepted as known limits.

@@ -10,12 +10,13 @@ import SwiftUI
 final class NowPlayingModel {
     /// The chosen player's track, or nil when neither has one.
     private(set) var current: Track?
+    /// The chosen song's glow from its cover, or nil without a cover (Ember orange).
+    private(set) var glow: Color?
     /// The players installed on this Mac, for the Open buttons.
     let installed = Player.allCases.filter { $0.appURL != nil }
     @ObservationIgnored var onActivity: ((LiveActivity?) -> Void)?
 
     @ObservationIgnored private var reports: [Player: PlayerReport] = [:]
-    @ObservationIgnored private var glow: Color?
     @ObservationIgnored private var artworkCache: [String: NSImage] = [:]
     @ObservationIgnored private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     @ObservationIgnored private var pendingReads: [Player: Task<Void, Never>] = [:]
@@ -85,7 +86,7 @@ final class NowPlayingModel {
     private func publish() {
         let chosen = PlayerChoice.choose(Array(reports.values))?.track
         if chosen?.artwork !== current?.artwork {
-            glow = chosen?.artwork.flatMap { CoverColor.glow(of: $0) }
+            glow = chosen?.artwork.map { CoverColor.glow(of: $0) }
         }
         current = chosen
         if let chosen, chosen.isPlaying {

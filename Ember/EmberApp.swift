@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let timer = TimerModel()
     let screen = ScreenUseMonitor()
     let nowPlaying = NowPlayingModel()
+    let panelSelection = PanelSelection()
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     private var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
@@ -37,20 +38,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.musicActivity = activity
             self?.showLastingActivity()
         }
-        // Only "Time's up" ends when seen; once seen, the music can have the wings back.
+        // Only "Time's up" ends when seen. Once seen, it rings no more, the panel opens on
+        // the Timer tab, and the wings go back to the lasting choice.
         controller.onActivitySeen = { [weak self] in
             self?.timer.stopRinging()
             self?.timerActivity = nil
-            self?.showLastingActivity()
+            self?.panelSelection.tab = .timer   // calls showLastingActivity()
+            // "Time's up" was on the pill, so the panel opens on its tab, although the music
+            // has already taken the wings back.
+            self?.panelSelection.openingTab = .timer
         }
+        panelSelection.onChange = { [weak self] in self?.showLastingActivity() }
         nowPlaying.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
-        controller.start(panelContent: PanelView(battery: battery, timer: timer))
+        controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
+                                                 selection: panelSelection))
     }
 
     private func showLastingActivity() {
-        controller.setOngoing(LastingChoice.choose(timer: timerActivity, music: musicActivity))
+        let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
+                                         musicTabChosen: panelSelection.tab == .music)
+        controller.setOngoing(shown)
+        panelSelection.openingTab = shown == nil ? nil : shown == musicActivity ? .music : .timer
     }
 }
 
