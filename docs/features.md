@@ -12,7 +12,7 @@ explicitly decide to revive something.
 |---|------|---------|--------|-------|
 | 0 | Core | Notch pill window, hover/click expand, animations | done | Foundation for everything else |
 | 0 | Core | Settings window, menu bar icon, launch at login | in progress | Menu bar icon done (milestone 1) |
-| 0 | Core | Onboarding & permission requests | v1 | |
+| 0 | Core | Onboarding & permission requests | v1 | One page per feature that needs a permission: the user turns it on now (the page shows where and how to grant the permission) or leaves it for Settings, where every feature can be found and turned on later. Keeps the privacy promise on the website (decisions 2026-11-12) |
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | in progress | Apple Music and Spotify through Apple Events (MediaRemote is blocked since macOS 15.4). Spec docs/specs/now-playing.md |
 | 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |

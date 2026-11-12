@@ -1,0 +1,2 @@
+# Tests run locally with `node --test 'site/tests/*.test.mjs'`; they are not part of the website.
+tests

@@ -39,4 +39,10 @@
    instructions for the Gatekeeper warning. Investigate a stable self-signed certificate
    so permissions survive updates.
    Before each public release: smoke-test on macOS 15 (virtual machine or external boot disk).
+   **Checkpoint before the first release: performance audit.** Go through the whole app and
+   prove it does not slow the Mac down. Measure with Instruments and Activity Monitor:
+   CPU and energy impact at rest (pill idle, always-on glow on), with each live activity
+   running, and with the panel open; memory over a long session (no leaks, no growth);
+   timers, polling and animations that keep running when nothing is visible. Write the
+   numbers down and fix anything that stands out before shipping.
 4. **After v1** — pick the order of the `later` features together; personal Homebrew tap.

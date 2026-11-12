@@ -1,6 +1,6 @@
 # Design: landing page
 
-Date: 2026-11-12. Status: agreed, not built.
+Date: 2026-11-12. Status: built 2026-11-12 (light mode; dark mode and the "Later" list still to come).
 
 ## Goal
 
@@ -35,10 +35,16 @@ sparks). No text, images, code or assets come from that site, and the site never
 
 ## Page sections, top to bottom
 
-0. **Navigation bar:** pinned to the top; cream, slightly see-through and blurred, like
-   macOS menus. Left: the small app icon and "Ember" (back to the top). Middle: links to
-   Features, Privacy and FAQ. Right: a small Ember red **Download** button that jumps to
-   Get started; the light/dark toggle joins it with dark mode. A thin line under the bar
+0. **Navigation bar:** sized like the reference site's: 76 px tall and up to 1280 px wide
+   (wider than the page's 960 px content), pinned to the top; cream, slightly see-through
+   and blurred, like macOS menus. Left: the app icon (44 px) and "Ember" (20 px). Links
+   16 px, 40 px apart; Download button 40 px tall.
+   Middle: links to Features, Privacy and FAQ; on hover or keyboard focus the text turns
+   full ink and a short glowing Ember red line grows from the centre beneath it, like the
+   pill's edge line. Right: a small Ember red **Download**
+   button that jumps to Get started, with the same soft glow around it as the Get started
+   card (thin gold edge, gold → amber → red). On hover it lights up rather than dimming: a
+   slightly brighter red (white text 4.7:1), a stronger glow and a 1 px lift; the light/dark toggle joins it with dark mode. A thin line under the bar
    fades in once the page scrolls. On phones (600 px and narrower) the section links are
    hidden. The brand glow sits on the page background, so it shows through the bar.
 1. **Hero**, text first, then the visual:
@@ -54,7 +60,8 @@ sparks). No text, images, code or assets come from that site, and the site never
        it becomes a solid button linking to the release, and the badge goes.
    - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
      with a notch". (This replaces the separate Requirements section.)
-   - The visual: the pill demo (see below) at the top of a MacBook screen. The glow
+   - The visual, well below the badges (120 px) so the glow doesn't sit behind them: the
+     pill demo (see below) at the top of a MacBook screen. The glow
      behind it breathes slowly, and a few sparks drift up from the notch.
 2. **Features** (`#features`): small label "Features", heading **"It glows when it
    matters."**, the line "At rest, Ember is a black pill that blends into the notch. When
@@ -67,11 +74,15 @@ sparks). No text, images, code or assets come from that site, and the site never
    where someone who is interested is deciding whether to install.
 4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
    open one at a time when clicked (text below).
-5. **Get started** (`#download`): heading **"Light up your notch."**, one line, the same two
-   buttons as the hero, and a "First time you open it?" box with the steps past the
+5. **Get started** (`#download`): a plain cream card with a thin gold edge and a warm glow
+   around the whole card, outside it, like the pill's glow (not inside). Heading **"Light up your notch."**, one line, the same two
+   buttons as the hero, and an "Opened for the first time?" box with the steps past the
    macOS warning (text below).
-6. **Footer:** "Ember", GitHub (new tab), Report a bug (GitHub Issues, new tab),
-   "© 2026 Ember contributors · GPL-3.0", "Not affiliated with Apple".
+6. **Footer**, one row like the reference site's (stacked and centred at 760 px and
+   narrower): left, the app icon (44 px) and "Ember" (back to the top); middle, quiet links that
+   darken on hover: GitHub (with its mark, new tab), Report a bug (GitHub Issues, new
+   tab), Privacy, FAQ; right, "© 2026 Ember contributors. GPL-3.0 licence." and "Not
+   affiliated with Apple."
 
 Removed after the user saw them: a "Built in the open" section, and the logo, name and
 tagline ("Your notch, glowing.") in the hero; the GitHub icon in the nav.
@@ -80,6 +91,7 @@ tagline ("Your notch, glowing.") in the hero; the GitHub icon in the nav.
 called finished):
 - **Testimonials**, once real users exist. Never invented quotes.
 - **Support / donations** (for example GitHub Sponsors).
+- **Live GitHub star count** in the hero, like the reference site's stars counter.
 - **An interactive Mac view in the hero:** hover the notch to see what Ember offers, like
   the reference site. Until then, the pill demo stays.
 
@@ -98,7 +110,7 @@ Not on the page: changelog, screenshots, and any mention of other notch projects
 > without a notch aren't supported yet.
 >
 > **How do I install it?** Ember isn't out yet. When it is, you'll download it here, drag
-> it into Applications, and follow the one-time steps under "First time you open it?".
+> it into Applications, and follow the one-time steps under "Opened for the first time?".
 >
 > **Does it cost anything?** No. Ember is free and open source under the GPL-3.0 licence:
 > no ads, no account, no in-app purchases.
@@ -114,7 +126,7 @@ Not on the page: changelog, screenshots, and any mention of other notch projects
 > **Light up your notch.** Ember is almost ready. Star it on GitHub to follow along, and
 > download it here the day it ships.
 >
-> **First time you open it?** macOS blocks apps that aren't notarized the first time. Open
+> **Opened for the first time?** macOS blocks apps that aren't notarized the first time. Open
 > Ember once, then go to System Settings → Privacy & Security, scroll down, and click
 > **Open Anyway** next to Ember. You only do this once.
 
@@ -178,6 +190,8 @@ Text, as agreed:
   metrics and its battery and timer views, read before the demo is written.
 - **Reduced motion:** with Reduce Motion on, the loop stops and shows the charging step,
   still.
+- **Narrow phones** (420 px and narrower): the pill is drawn at 80%, so the wide pill fits
+  inside the mock screen.
 - **Later:** Now Playing and other features join the loop only when the user says they
   are finished. A real screen recording may replace the CSS demo later.
 

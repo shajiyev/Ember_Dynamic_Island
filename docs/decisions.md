@@ -329,3 +329,19 @@ Spec: docs/specs/now-playing.md.
   on Music.
 - **Ember never launches a player by itself;** only the Open buttons do.
 - **Shuffle, repeat and back / forward 10 seconds come later** as Settings options (#33).
+
+## 2026-11-12 — Credit wording: other notch projects are inspiration
+Credit is given only where code was used. The website names no other notch project. The
+README's "Credits" section became one line under License naming Atoll and Boring Notch,
+because that line is what covers copied snippets without per-file headers (refines the
+2026-11-10 credit decision).
+**Why:** Ember's pages are about Ember; GPL credit is still kept wherever code was used.
+
+## 2026-11-12 — Landing page follows a reference site's structure, not its content
+The page's structure and approach (nav with a Download button, text-first hero, features
+grid, FAQ, closing get-started block, scroll motion) follow boringnotch.com. Its words,
+look, palette, motion character and pill demo are Ember's own; nothing is copied.
+Testimonials, donations, a live star count and an interactive Mac view are left for
+later. **Why:** the user liked that site's approach; copying its content would make Ember
+look like a clone and is not covered by the app's GPL licence.
+

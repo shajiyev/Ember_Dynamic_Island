@@ -38,7 +38,7 @@ Run from the repository root. `DerivedData/` is ignored by git, so screenshots g
 python3 -m http.server 8765 --directory site
 
 # TEST
-node --test site/tests/
+node --test 'site/tests/*.test.mjs'
 
 # SCREENSHOTS (desktop, tablet, phone)
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -1271,6 +1271,10 @@ git add site/index.html site/styles.css docs/specs/landing-page.md docs/plans/la
 
 ---
 
+> **Changed after Task 2 (by request):** the footer was rebuilt in the reference site's
+> one-row layout (spec, "Page sections" item 6), and the first-launch box is titled
+> "Opened for the first time?". The code above shows the earlier versions.
+
 ### Task 3: Motion
 
 Adds the seven motion ideas from the spec ("Motion"). Everything is off with Reduce Motion; nothing is hidden without JavaScript.
@@ -1475,6 +1479,11 @@ git add site/index.html site/styles.css site/motion.js docs/roadmap.md docs/arch
 
 ---
 
+> **Changed after Task 6 (bug fix):** `motion.js` is loaded as a plain deferred script
+> (`<script src="motion.js" defer>`) and adds the `js` class itself; the inline script is
+> gone. Before, opening `index.html` directly (`file://`) blocked the module, the inline
+> script had already set `js`, and every section stayed hidden.
+
 ### Task 4: The demo's steps (tested)
 
 The pure part of the demo: the sequence, how long each step lasts, and what the wings say.
@@ -1542,7 +1551,7 @@ test('Reduce Motion shows charging, still', () => {
 
 - [ ] **Step 2: Run the tests to see them fail**
 
-Run: `node --test site/tests/`
+Run: `node --test 'site/tests/*.test.mjs'`
 Expected: FAIL with `ERR_MODULE_NOT_FOUND` for `demo-steps.js`.
 
 - [ ] **Step 3: Write `site/demo-steps.js`**
@@ -1581,7 +1590,7 @@ export function wingText(secondsLeft) {
 
 - [ ] **Step 4: Run the tests to see them pass**
 
-Run: `node --test site/tests/`
+Run: `node --test 'site/tests/*.test.mjs'`
 Expected: `# pass 7`, `# fail 0`. (Node 22.12+ detects that `demo-steps.js` is an ES module; no `package.json` needed. If Node prints a module-type warning, that is fine; a failure is not.)
 
 - [ ] **Step 5: Keep the tests out of the deploy**
@@ -1589,14 +1598,14 @@ Expected: `# pass 7`, `# fail 0`. (Node 22.12+ detects that `demo-steps.js` is a
 Create `site/.vercelignore`:
 
 ```
-# Tests run locally with `node --test site/tests/`; they are not part of the website.
+# Tests run locally with `node --test 'site/tests/*.test.mjs'`; they are not part of the website.
 tests
 ```
 
 - [ ] **Step 6: Checkpoint**
 
 - `docs/roadmap.md` → Current status: the landing page, task 4 of 6 done (the demo's steps, tested).
-- `docs/architecture.md` → Website: add the test command `node --test site/tests/`.
+- `docs/architecture.md` → Website: add the test command `node --test 'site/tests/*.test.mjs'`.
 - Tell the user the commit line:
 
 ```bash
@@ -1719,7 +1728,8 @@ if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pill, .edge, .wings { transition: none; }
+  /* As specific as the active rules above, so it wins over their transitions. */
+  .pill, .pill[data-state] .edge, .pill[data-state] .wings { transition: none; }
 }
 ```
 
@@ -1751,7 +1761,7 @@ Expected: `data-state="active"` and `82%` even after 8 s (it never moves on). Th
 
 - [ ] **Step 6: Run the tests again**
 
-Run: `node --test site/tests/`. Expected: `# pass 7`, `# fail 0`.
+Run: `node --test 'site/tests/*.test.mjs'`. Expected: `# pass 7`, `# fail 0`.
 
 - [ ] **Step 7: Compare with the app (the user)**
 
@@ -1769,6 +1779,10 @@ git add site/index.html site/styles.css site/demo.js docs/roadmap.md docs/archit
 ```
 
 ---
+
+> **Changed during Task 6's checks:** on screens 420 px and narrower the pill is drawn at
+> 80% (`scale: 0.8` from its top centre), because the wide pill filled the mock screen at
+> 320 px.
 
 ### Task 6: README credit, Vercel setup and final checks
 

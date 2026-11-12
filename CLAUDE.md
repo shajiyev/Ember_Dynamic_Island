@@ -24,7 +24,8 @@ live activities and quick tools. It is intended for public, open-source release.
 - **Reusing Atoll / Boring Notch code (both GPL-3.0, like Ember):** allowed. Three levels:
   1. Same idea / same Apple APIs, written our own way → nothing needed.
   2. Snippets or functions copied/adapted into *our* files → no per-file header; covered
-     by the project-wide credit in the README ("portions derived from Atoll and Boring Notch").
+     by the one-line credit under License in the README ("Small portions of code are
+     adapted from Atoll and Boring Notch").
   3. A whole file copied mostly as-is → keep its original copyright header intact. (Rare.)
   Never use their name/logo/icons/assets as Ember branding, and scrub copied code of their
   identifiers: bundle IDs, update-feed URLs, Sparkle keys, Discord/donation links,

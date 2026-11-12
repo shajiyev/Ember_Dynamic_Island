@@ -45,16 +45,6 @@ You need a Mac with Xcode 27 or later.
 2. Open `Ember.xcodeproj` in Xcode.
 3. Press Run (⌘R).
 
-## Credits
-
-Ember builds on the work of two open-source projects, both licensed under GPL-3.0:
-
-- [Atoll](https://github.com/Ebullioscopic/Atoll) © Atoll Contributors
-- [Boring Notch](https://github.com/TheBoredTeam/boring.notch) © TheBoredTeam
-
-Ember is a modified work: parts of its code are derived from these projects. Their
-names, logos and assets are not used.
-
 ## Built with AI
 
 Ember is built with [Claude Code](https://claude.com/claude-code). The planning
@@ -62,4 +52,6 @@ documents are in [docs/](docs/): vision, roadmap, feature list and a log of deci
 
 ## License
 
-Ember is licensed under the [GNU General Public License v3.0](LICENSE).
+Ember is licensed under the [GNU General Public License v3.0](LICENSE). Small portions of
+code are adapted from [Atoll](https://github.com/Ebullioscopic/Atoll) and
+[Boring Notch](https://github.com/TheBoredTeam/boring.notch) (GPL-3.0).

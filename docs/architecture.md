@@ -28,7 +28,9 @@
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
     `PillStyle.alwaysOnGlow` switches the resting glow (#29) on or off.
     `PillView` also draws a live activity in the wings and shows the panel content when
-    open, passing it the notch height (`notchHeight` environment value).
+    open, passing it the notch height (`notchHeight` environment value). The panel content
+    can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
+    its song's.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
   pill (wing symbol, wing text, optional glow colour). A brief one has a duration and goes
   by itself; an ongoing one stays until its feature clears it, or until seen if it ends
@@ -53,6 +55,19 @@
   - `ScreenUseMonitor.swift`: tells whether the screen is in use (not locked, off or
     asleep), so the sound rings only once when nobody can be watching.
   - `TimerPanelView.swift`, `HoldRepeatButton.swift`: the timer in the open panel.
+- `Ember/NowPlaying/` — Now Playing for Apple Music and Spotify (#1).
+  - `Player.swift`, `PlayerScripts.swift`: the two players, and short AppleScript commands
+    that read them and send play/pause, skip and seek; never to a closed player, and off
+    the main thread.
+  - `Track.swift`, `PlayerChoice.swift`, `CoverColor.swift`, `NowPlayingLook.swift`: the
+    pure rules: the song and its position, which player to show, the glow from the cover,
+    the wings' activity and the time text.
+  - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
+    notices settle, publishes the chosen track and sends commands.
+  - `NowPlayingPanelView.swift`: the Music tab.
+- `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: the
+  timer's wins over music.
+- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs and which one the panel opens on.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
   bar icon and menu.
 
@@ -70,11 +85,20 @@ duration, which makes the pill active, and `PillView` draws its wings and glow c
 
 Timer: the panel's buttons call `TimerModel`, which changes its `Countdown`. While the
 timer runs, the model updates just after each whole second, asks `TimerLook` for the
-matching `LiveActivity`, and the app delegate passes it to `PillController.setOngoing`.
+matching `LiveActivity`, and the app delegate passes it through `LastingChoice` to
+`PillController.setOngoing`.
 At zero the model rings and sets "Time's up". When the user hovers over or clicks the
 pill, the controller calls `onActivitySeen`, which the app delegate connects to
-`TimerModel.stopRinging`, and clears "Time's up" once the panel opens. `ScreenUseMonitor`
+`TimerModel.timesUpWasSeen`, and clears "Time's up" once the panel opens. `ScreenUseMonitor`
 sets `TimerModel.screenInUse`, so the sound rings once while the screen is locked or off.
+
+Now Playing: Music and Spotify post change notices; once a player's notices settle,
+`NowPlayingModel` reads it through `PlayerScripts` (Apple Events), builds a `Track`, keeps
+a `PlayerReport` per player, and publishes the track `PlayerChoice` picks. While it plays,
+the model hands the app delegate an activity with the cover, the equalizer and the cover's
+glow. The app delegate passes the timer's and the music's activities through
+`LastingChoice` to `PillController.setOngoing`. The Music tab reads the model and sends its
+commands.
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The
@@ -93,6 +117,9 @@ of the app, and `.gitattributes` keeps it out of GitHub's language statistics.
 |---|---|
 | `site/index.html` | All page content, meta tags and the inline SVG icons |
 | `site/styles.css` | Colour variables (defined once, at the top), then layout, then the pill demo |
+| `site/demo.js` | Plays `demo-steps.js` on the page; with Reduce Motion it shows charging, still |
+| `site/demo-steps.js` | The pill demo's steps and wing text. Pure, tested in `site/tests/` |
+| `site/motion.js` | Scroll reveals and the cards' light. All motion styles sit in one block at the end of `styles.css`, inside `prefers-reduced-motion: no-preference` |
 | `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen) |
 
 The page's sections, their order and their text are set in
@@ -101,3 +128,21 @@ The page's sections, their order and their text are set in
 The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
 `BatteryAlert`); when those change in the app, update the pill section of `styles.css`.
 Serve locally with `python3 -m http.server 8765 --directory site`.
+Test the demo's steps with `node --test 'site/tests/*.test.mjs'` (Node 22.12 or later); the
+tests are kept out of the deploy by `site/.vercelignore`.
+
+### Deploying (Vercel)
+
+One-time setup, done by the repo owner in the Vercel dashboard (labels may differ slightly):
+
+1. Add New → Project → import `shajiyev/Ember_Dynamic_Island` from GitHub. Give the
+   Vercel GitHub app access to this repository only.
+2. Framework Preset: **Other**. Root Directory: **site**. Leave the build and output
+   settings empty: there is no build step.
+3. Deploy. Every push to `main` that changes `site/` deploys again.
+4. Settings → Build and Deployment → Root Directory: turn on **Skip deployments when there
+   are no changes to the root directory or its dependencies**, so app-only commits do not
+   deploy.
+5. Settings → Domains: add the custom domain and set the DNS records Vercel shows.
+
+Files in `site/.vercelignore` (the tests) are not deployed.
