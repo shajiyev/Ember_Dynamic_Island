@@ -265,3 +265,20 @@ All nine manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
 - No checks accepted as known limits.
 - **Paused timers show `pause.fill`** in the wings with the time left frozen (decided while
   planning; the spec did not cover pausing on the pill).
+
+## 2026-11-12 — Camera/mic indicator design (milestone 2, third feature)
+Spec: docs/specs/camera-mic.md.
+- **Brief alerts only, on switching on and off.** Considered a lasting indicator while
+  in use (alone or after the alert). **Why:** it would compete with the running timer and
+  later features for the wings; an off alert removes doubt that something really stopped.
+- **One colour pair for both devices: green on, yellow off,** the plugged-in and unplugged
+  colours, moved into shared `AlertColors`. Considered macOS's green camera and orange
+  microphone. **Why:** orange is Ember's resting and timer glow; "green started, yellow
+  ended" now means the same everywhere.
+- **Changes within half a second count as one.** **Why:** macOS reports the camera and the
+  microphone separately, milliseconds apart; without it, ending a call would flash two
+  alerts.
+- **An off and an on at the same moment: two alerts, off then on, 2 seconds each.**
+  Considered one combined alert. **Why:** both changes matter; ending on the "on" leaves
+  the user with what is active now; 4 seconds instead of 6.
+- **Nothing already on at launch alerts.**

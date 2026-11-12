@@ -16,7 +16,7 @@ explicitly decide to revive something.
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | v1 | Private media API restricted since macOS 15.4 — needs workaround |
 | 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |
-| 6 | Live activity | Camera / mic in-use (privacy) indicator | v1 | |
+| 6 | Live activity | Camera / mic in-use (privacy) indicator | in progress | Spec docs/specs/camera-mic.md |
 | 8 | Live activity | Bluetooth device connected (AirPods + battery) | v1 | |
 | 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min, Reset; countdown in the wings with an orange glow; amber Time's up with a sound that repeats until seen. Spec docs/specs/timers.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
 | 14 | Productivity | Calendar & reminders preview | v1 | Needs Calendar/Reminders permission |
