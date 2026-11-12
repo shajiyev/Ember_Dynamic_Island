@@ -18,11 +18,13 @@
 - **Done:** milestone 2, feature 2: timers (#13), with ongoing live activities. Verified on macOS 26.6.2 with the checklist in docs/plans/timers.md.
 - **Dropped:** the camera/mic indicator (#6), designed but not built: macOS already shows
   both. See docs/decisions.md.
-- **In progress:** nothing in the app.
+- **Done:** milestone 2's third feature chosen and designed: Now Playing (#1), Apple Music
+  and Spotify. Spec docs/specs/now-playing.md.
+- **In progress:** Now Playing (#1), plan docs/plans/now-playing.md: no tasks done yet.
 - **In progress (website):** the landing page (`site/`), spec docs/specs/landing-page.md,
   plan docs/plans/landing-page.md: task 1 of 4 done (the page and its light look).
-- **Next:** choose and design milestone 2's next feature. Website: plan task 2, the
-  pill demo's steps.
+- **Next:** Now Playing plan task 1, checking Apple Events and artwork in the sandbox.
+  Website: plan task 2, the pill demo's steps.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).

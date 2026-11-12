@@ -310,3 +310,22 @@ the user turns on, during onboarding or later in Settings.
 **Why:** the website promises this to users, so the app must keep it true. It affects
 onboarding (#0) and any feature that might call a server (for example #24).
 
+
+## 2026-11-12 — Now Playing design (milestone 2, third feature)
+Spec: docs/specs/now-playing.md.
+- **Apple Music and Spotify only, through Apple Events.** Considered mediaremote-adapter
+  (every player, used by Boring Notch). **Why:** it relies on an undocumented exception
+  (Apple's own `/usr/bin/perl` reaching the private MediaRemote framework, blocked for
+  apps since macOS 15.4) that Apple could close, and most likely needs the App Sandbox
+  off. Apple Events are documented and work inside the sandbox; both players publish
+  scripting access groups, so Ember declares precise scripting targets.
+- **New permission: Automation,** asked once per player by macOS; documented in the README.
+  Outgoing network access is added for Spotify's artwork.
+- **Lasting music wings while playing; the timer wins.** Order: "Time's up" > timer >
+  music; the music returns after the timer. **Why:** the user started the timer on
+  purpose and it is about time; the music is audible and one hover away.
+- **Glow in the cover's colour,** Ember orange for dark, grey or missing covers.
+- **Tabs Music | Timer;** the panel opens on Timer while the timer is active, otherwise
+  on Music.
+- **Ember never launches a player by itself;** only the Open buttons do.
+- **Shuffle, repeat and back / forward 10 seconds come later** as Settings options (#33).

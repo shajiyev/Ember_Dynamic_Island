@@ -14,7 +14,7 @@ explicitly decide to revive something.
 | 0 | Core | Settings window, menu bar icon, launch at login | in progress | Menu bar icon done (milestone 1) |
 | 0 | Core | Onboarding & permission requests | v1 | |
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
-| 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | v1 | Private media API restricted since macOS 15.4 — needs workaround |
+| 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | in progress | Apple Music and Spotify through Apple Events (MediaRemote is blocked since macOS 15.4). Spec docs/specs/now-playing.md |
 | 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |
 | 8 | Live activity | Bluetooth device connected (AirPods + battery) | v1 | |
 | 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min, Reset; countdown in the wings with an orange glow; amber Time's up with a sound that repeats until seen. Spec docs/specs/timers.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
@@ -44,6 +44,7 @@ explicitly decide to revive something.
 | 30 | Customization | Glow color presets: built-in Default (today's colors) and Monochrome (black, gray, white); users create their own. Settings → Glow shows a small preview of the notch with its glow and the preset's name (like the landing page's hero); "Add preset" starts from Default's settings, the user changes them, then saves with a name | later | Idea 2026-11-12, to discuss: which parts of the glow a preset sets (one color, or one per activity), editing/deleting presets, how the preset list is shown |
 | 31 | Customization | Panel size: let the user change the size of the expanded panel | later | Idea 2026-11-12, to discuss: free resize or a few sizes, and how features lay out at each size |
 | 32 | Core | Panel remembers the last tab: opening the panel shows the tab it was closed on (e.g. switch from Now Playing to Timer, close, reopen → Timer) | later | Idea 2026-11-12, to discuss: when an activity should win over the remembered tab, e.g. hovering over a timer's Time's up opens the Timer tab even if the panel was closed on Now Playing |
+| 33 | Media | Now Playing extras: shuffle, repeat, and back / forward 10 seconds, each switched on in Settings | later | Added 2026-11-12 while designing Now Playing (#1); both players support them through Apple Events |
 
 ## Dropped — decided 2026-11-10
 
