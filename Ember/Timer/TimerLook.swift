@@ -13,7 +13,7 @@ nonisolated enum TimerLook {
     static let soundRepeatLimit: TimeInterval = 60
     /// The glow while a timer runs or is paused: Ember orange, like the resting glow.
     static let runningGlowColor: Color? = PillStyle.glowColor
-    /// "Time's up": a brighter amber, between Ember orange and the low-battery yellow, #FFA826.
+    /// "Time's up": a brighter amber, between Ember orange and the unplugged yellow, #FFA826.
     static let timesUpColor = Color(red: 0xFF / 255, green: 0xA8 / 255, blue: 0x26 / 255)
 
     /// Whether the sound repeats once the timer finishes. It rings only once if nobody can

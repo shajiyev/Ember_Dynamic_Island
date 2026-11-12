@@ -18,9 +18,8 @@ nonisolated enum BatteryAlert: Equatable {
     var color: Color {
         switch self {
         case .pluggedIn: return Self.green
-        case .unplugged: return PillStyle.glowColor
-        case .low: return Self.yellow
-        case .veryLow: return Self.red
+        case .unplugged: return Self.yellow
+        case .low, .veryLow: return Self.red
         }
     }
 
