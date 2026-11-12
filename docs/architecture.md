@@ -95,6 +95,9 @@ of the app, and `.gitattributes` keeps it out of GitHub's language statistics.
 | `site/styles.css` | Colour variables (defined once, at the top), then layout, then the pill demo |
 | `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen) |
 
+The page's sections, their order and their text are set in
+`docs/specs/landing-page.md`.
+
 The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
 `BatteryAlert`); when those change in the app, update the pill section of `styles.css`.
 Serve locally with `python3 -m http.server 8765 --directory site`.

@@ -23,33 +23,119 @@ and deploys on its own.
 - **GitHub language bar:** `.gitattributes` marks `site/` so its HTML/CSS/JS is not counted;
   the repo keeps showing as a Swift project.
 
+## Reference and what is ours
+
+The page follows the **structure and approach** of the Boring Notch website
+(boringnotch.com, studied 2026-11-12): nav with section links and a Download button; a
+text-first hero with two buttons, a badge row and a menu-bar visual below; a features
+grid; an FAQ that opens per question; a closing "get started" block with the first-launch
+steps; motion that reveals sections as you scroll. **Everything else is Ember's own:** the
+words, the palette, the pill demo, the look and the motion's character (glow, warmth,
+sparks). No text, images, code or assets come from that site, and the site never names it.
+
 ## Page sections, top to bottom
 
-1. **Hero:** the pill demo (see below), the logo and "Ember", the tagline "Your notch,
-   glowing.", the line "A free, open-source Dynamic Island for your MacBook.", and two
-   buttons side by side:
-   - **GitHub:** solid near-black (GitHub's own buttons are black), white text,
-     GitHub mark; opens the repo in a new tab.
-   - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot be
-     clicked or reached with Tab (`aria-disabled="true"`, no link). A small gold "Coming
-     soon" badge overlaps its top-right corner. When v1 ships it becomes a solid button
-     linking to the release, and the badge goes.
-2. **Features:** a grid of the v1 features: Now Playing; battery and charging; Bluetooth
-   and AirPods; timers; calendar and reminders; file shelf. Features not yet built carry a
-   "Planned" tag. Built today: battery and timers. The grid follows the v1 table in
-   `docs/features.md`; when a feature is dropped or finished there, the grid changes too.
-3. **Safe to open. Private by design.** Explains the first-launch warning and permissions;
-   text below. Placed after Features, where someone who is interested is deciding whether
-   to install.
-4. **Requirements:** a MacBook with a notch, macOS 15 or later; free and open source under
-   GPL-3.0.
-5. **Footer:** GitHub link (new tab), "Licensed under GPL-3.0", "Not affiliated with Apple".
+0. **Navigation bar:** pinned to the top; cream, slightly see-through and blurred, like
+   macOS menus. Left: the small app icon and "Ember" (back to the top). Middle: links to
+   Features, Privacy and FAQ. Right: a small Ember red **Download** button that jumps to
+   Get started; the light/dark toggle joins it with dark mode. A thin line under the bar
+   fades in once the page scrolls. On phones (600 px and narrower) the section links are
+   hidden. The brand glow sits on the page background, so it shows through the bar.
+1. **Hero**, text first, then the visual:
+   - Headline: **"Every notch needs a spark."** A warm sheen passes across "spark" every
+     few seconds.
+   - Below it: "A free, open-source Dynamic Island for your MacBook."
+   - Two buttons side by side:
+     - **GitHub:** solid near-black (GitHub's own buttons are black), white text, GitHub
+       mark; opens the repo in a new tab.
+     - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot
+       be clicked or reached with Tab (`aria-disabled="true"`, no link). A small gold
+       "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
+       it becomes a solid button linking to the release, and the badge goes.
+   - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
+     with a notch". (This replaces the separate Requirements section.)
+   - The visual: the pill demo (see below) at the top of a MacBook screen. The glow
+     behind it breathes slowly, and a few sparks drift up from the notch.
+2. **Features** (`#features`): small label "Features", heading **"It glows when it
+   matters."**, the line "At rest, Ember is a black pill that blends into the notch. When
+   something happens, it glows. Hover, and it opens.", then six cards: Now Playing;
+   battery and charging; Bluetooth and AirPods; timers; calendar and reminders; file
+   shelf. Features not yet built carry a "Planned" tag. Built today: battery and timers.
+   The grid follows the v1 table in `docs/features.md`; when a feature is dropped or
+   finished there, the grid changes too.
+3. **Safe to open. Private by design.** (`#privacy`): text below. Placed after Features,
+   where someone who is interested is deciding whether to install.
+4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
+   open one at a time when clicked (text below).
+5. **Get started** (`#download`): heading **"Light up your notch."**, one line, the same two
+   buttons as the hero, and a "First time you open it?" box with the steps past the
+   macOS warning (text below).
+6. **Footer:** "Ember", GitHub (new tab), Report a bug (GitHub Issues, new tab),
+   "© 2026 Ember contributors · GPL-3.0", "Not affiliated with Apple".
 
-A "Built in the open" section was in the first version and removed by the user after
-seeing it.
+Removed after the user saw them: a "Built in the open" section, and the logo, name and
+tagline ("Your notch, glowing.") in the hero; the GitHub icon in the nav.
 
-Not on the page: FAQ, install steps, changelog, screenshots, and any mention of other
-notch projects (see "Credit" below).
+**Later, not now** (the user wants to be reminded at deployment and when the page is
+called finished):
+- **Testimonials**, once real users exist. Never invented quotes.
+- **Support / donations** (for example GitHub Sponsors).
+- **An interactive Mac view in the hero:** hover the notch to see what Ember offers, like
+  the reference site. Until then, the pill demo stays.
+
+Not on the page: changelog, screenshots, and any mention of other notch projects (see
+"Credit" below).
+
+## FAQ text
+
+> **What is Ember?** A free Mac app that turns the notch into a small, living status
+> area. At rest it's a black pill that blends in. When something happens, like plugging
+> in your charger or a timer running, it glows and shows it. Hover, and it opens into
+> controls.
+>
+> **Which Macs does it work on?** MacBooks with a notch (MacBook Pro 14" and 16" from 2021,
+> MacBook Air from 2022) running macOS 15 Sequoia or later. External displays and Macs
+> without a notch aren't supported yet.
+>
+> **How do I install it?** Ember isn't out yet. When it is, you'll download it here, drag
+> it into Applications, and follow the one-time steps under "First time you open it?".
+>
+> **Does it cost anything?** No. Ember is free and open source under the GPL-3.0 licence:
+> no ads, no account, no in-app purchases.
+>
+> **Will it slow down my Mac or drain the battery?** It's built to stay light: it only
+> redraws when something changes. We'll measure it on real Macs before the first release.
+>
+> **How does it update?** Ember checks GitHub for new versions and asks before installing
+> one. That check is the only time it goes online.
+
+## Get started text
+
+> **Light up your notch.** Ember is almost ready. Star it on GitHub to follow along, and
+> download it here the day it ships.
+>
+> **First time you open it?** macOS blocks apps that aren't notarized the first time. Open
+> Ember once, then go to System Settings → Privacy & Security, scroll down, and click
+> **Open Anyway** next to Ember. You only do this once.
+
+## Motion
+
+Everything is plain CSS plus one small script; no animation library. With Reduce Motion
+on, everything is shown in place without movement, the demo is still, and there are no
+sparks. Without JavaScript, all content is visible.
+
+1. **Sections ignite as they appear:** headings and cards fade up about 24 px as they
+   scroll into view (0.5 s), cards one after another (80 ms apart), and each card warms
+   with a brief ember glow as it settles.
+2. **Cards catch the light:** on hover (mouse or trackpad only), a soft ember glow follows
+   the pointer inside the card.
+3. **The hero breathes:** the glow behind the screen slowly brightens and dims (about 6 s
+   per breath).
+4. **Sparks:** up to 6 tiny gold and amber sparks drift up from the notch and fade out.
+5. **Sheen:** a warm highlight sweeps across "spark" in the headline every few seconds.
+6. **The "Coming soon" badge pulses softly.**
+7. **FAQ answers open smoothly** when clicked (instantly where the browser can't animate
+   it).
 
 ## Safe to open. Private by design.
 
@@ -57,7 +143,7 @@ Text, as agreed:
 
 > **Why macOS warns you the first time.** Ember is free and made independently, so it
 > isn't notarized by Apple (that needs a paid developer account). macOS will say it can't
-> verify the developer. That's expected, and the steps to open it will be right here.
+> verify the developer. That's expected, and the steps to open it are under Get started.
 > Ember's code is public, so anyone can check exactly what it does.
 >
 > **Why it asks for permissions.** Some features need macOS's permission: Calendar and
@@ -103,7 +189,7 @@ palette so the two modes share a base.
 | Colour | Hex | Job |
 |---|---|---|
 | Cream | `#EEE4D7` | Page background |
-| Ember red | `#C73915` | Large headings and the tagline. Never small text on cream (4.2:1) |
+| Ember red | `#C73915` | Large headings, and the nav's Download button (white text, 5.2:1). Never small text on cream (4.2:1) |
 | Deep rust | `#9A2D19` | Links and small accent text (6:1 on cream) |
 | Amber | `#E19C18` | Glow only |
 | Gold | `#E7B439` | Glow, and the "Coming soon" badge's background (dark brown text) |
@@ -121,7 +207,7 @@ palette so the two modes share a base.
 
 ## Dark mode (not in this round)
 
-A toggle in the header will switch to a dark theme built from the user's second palette:
+A toggle in the navigation bar, next to Download, will switch to a dark theme built from the user's second palette:
 `#E5753D`, `#B2451A`, `#762216`, `#42240F`, `#1A190B`. It gets its own spec when the user
 is ready.
 
@@ -130,7 +216,8 @@ is ready.
 - `site/index.html`: all page content, plus page title, description and link-preview
   (Open Graph) tags.
 - `site/styles.css`: colour variables, then the layout and the demo's look.
-- `site/demo.js`: runs the pill demo loop and respects Reduce Motion. The only JavaScript.
+- `site/demo.js`: runs the pill demo loop and respects Reduce Motion.
+- `site/motion.js`: scroll reveals and the cards' light; respects Reduce Motion.
 - `site/assets/`: the app icon in small sizes for the hero and the favicon, resized from
   the repo's `assets/` (Vercel only sees files inside `site/`). The link-preview image
   points at the full app icon on GitHub, because link previews need an absolute URL and
@@ -150,8 +237,11 @@ carry no per-file header (see the 2026-11-10 credit decision).
 ## Checks before calling it done
 
 - The page served locally looks right at desktop, tablet and phone widths.
-- With Reduce Motion on, the demo is still and shows charging.
-- The download button cannot be clicked or focused; the star button links to the repo.
+- With Reduce Motion on, the demo is still and shows charging, nothing moves, and all
+  content is visible.
+- With JavaScript off, all content is visible.
+- The download buttons cannot be clicked or focused; the GitHub buttons open the repo in a
+  new tab; the nav's Download button jumps to Get started.
 - Every text colour pair meets 4.5:1 (3:1 for large text). The disabled button's faded
   text is the one exception (contrast rules exempt disabled controls), but it stays
   readable.

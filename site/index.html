@@ -6,7 +6,7 @@
   <title>Ember: a Dynamic Island for your MacBook</title>
   <meta name="description" content="Ember turns the MacBook notch into a glowing pill with live activities, timers and quick tools. Free and open source.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Ember: your notch, glowing">
+  <meta property="og:title" content="Ember: every notch needs a spark">
   <meta property="og:description" content="A free, open-source Dynamic Island for your MacBook.">
   <!-- Absolute URL: link previews need one, and the site has no domain yet. -->
   <meta property="og:image" content="https://raw.githubusercontent.com/shajiyev/Ember_Dynamic_Island/main/assets/Ember_app_icon.png">
@@ -36,74 +36,103 @@
     </symbol>
   </svg>
 
+  <nav class="nav" aria-label="Main">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="#">
+        <img src="assets/icon-64.png" width="28" height="28" alt="">
+        Ember
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <!-- The light/dark toggle goes here, before Download. -->
+        <a class="button button-small button-ember" href="#download">Download</a>
+      </div>
+    </div>
+  </nav>
+
   <header class="hero">
     <div class="container">
-      <div class="screen" role="img" aria-label="The top of a MacBook screen, with Ember's pill around the notch">
-        <div class="wallpaper">
-          <div class="menubar"></div>
-          <div class="pill" data-state="rest">
-            <span class="flare flare-left"></span>
-            <span class="flare flare-right"></span>
-            <span class="edge"></span>
-            <div class="pill-body">
-              <div class="wings">
-                <span class="wing"><svg class="wing-icon" data-icon="battery-bolt"><use href="#icon-battery-bolt"/></svg></span>
-                <span class="wing"><span class="wing-text">82%</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h1 class="hero-title" data-reveal>Every notch needs a <span class="sheen">spark</span>.</h1>
+      <p class="lede" data-reveal>A free, open-source Dynamic Island for your MacBook.</p>
 
-      <img class="app-icon" src="assets/icon-192.png" width="96" height="96" alt="">
-      <h1>Ember</h1>
-      <p class="tagline">Your notch, glowing.</p>
-      <p class="lede">A free, open-source Dynamic Island for your MacBook.</p>
-
-      <div class="actions">
+      <div class="actions" data-reveal>
         <a class="button button-github" href="https://github.com/shajiyev/Ember_Dynamic_Island" target="_blank" rel="noopener">
           <svg class="button-icon" aria-hidden="true"><use href="#icon-github"/></svg>
           GitHub
         </a>
         <!-- Not a link and not focusable until v1 ships. Then: make it an <a> to the
-             release, give it a solid style, and remove the badge. -->
+             release, give it a solid style, and remove the badge. Same in Get started. -->
         <span class="button button-disabled" aria-disabled="true">
           <svg class="button-icon" aria-hidden="true"><use href="#icon-download"/></svg>
           Download for macOS
           <span class="badge">Coming soon</span>
         </span>
       </div>
+
+      <ul class="facts" data-reveal>
+        <li>Free &amp; open source</li>
+        <li>macOS 15 or later</li>
+        <li>MacBooks with a notch</li>
+      </ul>
+
+      <div class="hero-visual" data-reveal>
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="sparks" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="screen" role="img" aria-label="The top of a MacBook screen, with Ember's pill around the notch">
+          <div class="wallpaper">
+            <div class="menubar"></div>
+            <div class="pill" data-state="rest">
+              <span class="flare flare-left"></span>
+              <span class="flare flare-right"></span>
+              <span class="edge"></span>
+              <div class="pill-body">
+                <div class="wings">
+                  <span class="wing"><svg class="wing-icon" data-icon="battery-bolt"><use href="#icon-battery-bolt"/></svg></span>
+                  <span class="wing"><span class="wing-text">82%</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
   <main>
-    <section class="section" aria-labelledby="features-title">
+    <section class="section" id="features" aria-labelledby="features-title">
       <div class="container">
-        <h2 id="features-title">What it does</h2>
-        <p class="section-intro">At rest, Ember is a black pill that blends into the notch. When something happens, it glows. Hover, and it opens.</p>
+        <p class="eyebrow" data-reveal>Features</p>
+        <h2 id="features-title" data-reveal>It glows when it matters.</h2>
+        <p class="section-intro" data-reveal>At rest, Ember is a black pill that blends into the notch. When something happens, it glows. Hover, and it opens.</p>
         <!-- Follows the v1 table in docs/features.md. "Planned" = not built yet. -->
         <div class="grid">
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Now Playing <span class="tag">Planned</span></h3>
             <p>Album art, play and pause, skip and a scrubber, right below the notch.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Battery and charging</h3>
             <p>A glance when you plug in or unplug, and a heads-up at 20% and 10%.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Bluetooth and AirPods <span class="tag">Planned</span></h3>
             <p>See your AirPods connect, with their battery level.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Timers</h3>
             <p>Start a countdown from the notch and watch it tick beside it. A glow and a chime when time's up.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Calendar and reminders <span class="tag">Planned</span></h3>
             <p>What's next today, one hover away.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>File shelf <span class="tag">Planned</span></h3>
             <p>Drop files on the notch to keep them handy, or send them with AirDrop.</p>
           </article>
@@ -111,19 +140,20 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="privacy-title">
+    <section class="section" id="privacy" aria-labelledby="privacy-title">
       <div class="container">
-        <h2 id="privacy-title">Safe to open. Private by design.</h2>
+        <p class="eyebrow" data-reveal>Privacy</p>
+        <h2 id="privacy-title" data-reveal>Safe to open. Private by design.</h2>
         <div class="grid">
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Why macOS warns you the first time</h3>
-            <p>Ember is free and made independently, so it isn't notarized by Apple (that needs a paid developer account). macOS will say it can't verify the developer. That's expected, and the steps to open it will be right here. Ember's code is public, so anyone can check exactly what it does.</p>
+            <p>Ember is free and made independently, so it isn't notarized by Apple (that needs a paid developer account). macOS will say it can't verify the developer. That's expected, and the steps to open it are under Get started. Ember's code is public, so anyone can check exactly what it does.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>Why it asks for permissions</h3>
             <p>Some features need macOS's permission: Calendar and Reminders to show what's next, and Bluetooth to show your AirPods' battery. Ember asks for each permission only when you turn on the feature that needs it, during setup or later in Settings. Say no, and only that feature stays off. You can change your mind any time in System Settings → Privacy &amp; Security.</p>
           </article>
-          <article class="card">
+          <article class="card" data-reveal>
             <h3>What stays on your Mac: everything</h3>
             <p>No account, no analytics, no tracking, no servers. Your calendar, devices and files are read on your Mac, shown in the notch, and never sent anywhere. Ember only goes online to check GitHub for updates.</p>
           </article>
@@ -131,25 +161,72 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="requirements-title">
+    <section class="section" id="faq" aria-labelledby="faq-title">
       <div class="container">
-        <h2 id="requirements-title">What you need</h2>
-        <ul class="requirements">
-          <li>A MacBook with a notch</li>
-          <li>macOS 15 Sequoia or later</li>
-          <li>Nothing else: free and open source (GPL-3.0)</li>
-        </ul>
+        <p class="eyebrow" data-reveal>FAQ</p>
+        <h2 id="faq-title" data-reveal>Questions, answered</h2>
+        <!-- name="faq": opening one question closes the others. -->
+        <div class="faq">
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>What is Ember?</summary>
+            <p>A free Mac app that turns the notch into a small, living status area. At rest it's a black pill that blends in. When something happens, like plugging in your charger or a timer running, it glows and shows it. Hover, and it opens into controls.</p>
+          </details>
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>Which Macs does it work on?</summary>
+            <p>MacBooks with a notch (MacBook Pro 14" and 16" from 2021, MacBook Air from 2022) running macOS 15 Sequoia or later. External displays and Macs without a notch aren't supported yet.</p>
+          </details>
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>How do I install it?</summary>
+            <p>Ember isn't out yet. When it is, you'll download it here, drag it into Applications, and follow the one-time steps under "First time you open it?".</p>
+          </details>
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>Does it cost anything?</summary>
+            <p>No. Ember is free and open source under the GPL-3.0 licence: no ads, no account, no in-app purchases.</p>
+          </details>
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>Will it slow down my Mac or drain the battery?</summary>
+            <p>It's built to stay light: it only redraws when something changes. We'll measure it on real Macs before the first release.</p>
+          </details>
+          <details class="faq-item" name="faq" data-reveal>
+            <summary>How does it update?</summary>
+            <p>Ember checks GitHub for new versions and asks before installing one. That check is the only time it goes online.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download" aria-labelledby="download-title">
+      <div class="container">
+        <div class="cta" data-reveal>
+          <h2 id="download-title">Light up your notch.</h2>
+          <p class="section-intro">Ember is almost ready. Star it on GitHub to follow along, and download it here the day it ships.</p>
+          <div class="actions">
+            <a class="button button-github" href="https://github.com/shajiyev/Ember_Dynamic_Island" target="_blank" rel="noopener">
+              <svg class="button-icon" aria-hidden="true"><use href="#icon-github"/></svg>
+              GitHub
+            </a>
+            <span class="button button-disabled" aria-disabled="true">
+              <svg class="button-icon" aria-hidden="true"><use href="#icon-download"/></svg>
+              Download for macOS
+              <span class="badge">Coming soon</span>
+            </span>
+          </div>
+          <div class="first-time">
+            <h3>Opened for the first time?</h3>
+            <p>macOS blocks apps that aren't notarized the first time. Open Ember once, then go to System Settings → Privacy &amp; Security, scroll down, and click <strong>Open Anyway</strong> next to Ember. You only do this once.</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="container">
-      <p>
-        <a href="https://github.com/shajiyev/Ember_Dynamic_Island" target="_blank" rel="noopener">GitHub</a>
-        <span>Licensed under GPL-3.0</span>
-        <span>Not affiliated with Apple</span>
-      </p>
+    <div class="container footer-inner">
+      <span class="footer-brand">Ember</span>
+      <a href="https://github.com/shajiyev/Ember_Dynamic_Island" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/shajiyev/Ember_Dynamic_Island/issues" target="_blank" rel="noopener">Report a bug</a>
+      <span>© 2026 Ember contributors · GPL-3.0</span>
+      <span>Not affiliated with Apple</span>
     </div>
   </footer>
 </body>

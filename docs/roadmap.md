@@ -20,11 +20,13 @@
   both. See docs/decisions.md.
 - **Done:** milestone 2's third feature chosen and designed: Now Playing (#1), Apple Music
   and Spotify. Spec docs/specs/now-playing.md.
-- **In progress:** Now Playing (#1), plan docs/plans/now-playing.md: no tasks done yet.
+- **In progress:** milestone 2, feature 3: Now Playing (#1), plan docs/plans/now-playing.md: task 1 of 6 done (Apple Events check).
 - **In progress (website):** the landing page (`site/`), spec docs/specs/landing-page.md,
-  plan docs/plans/landing-page.md: task 1 of 4 done (the page and its light look).
-- **Next:** Now Playing plan task 1, checking Apple Events and artwork in the sandbox.
-  Website: plan task 2, the pill demo's steps.
+  plan docs/plans/landing-page.md: task 2 of 6 done (the page in its new structure,
+  modelled on the reference site's structure with Ember's own words and look).
+- **Next:** Now Playing plan task 2, the Now Playing rules.
+  Website: plan task 3, motion. Later for the site: testimonials, donations, the
+  interactive Mac view, dark mode.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).
