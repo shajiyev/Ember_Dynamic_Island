@@ -282,3 +282,12 @@ Spec: docs/specs/camera-mic.md.
   Considered one combined alert. **Why:** both changes matter; ending on the "on" leaves
   the user with what is active now; 4 seconds instead of 6.
 - **Nothing already on at launch alerts.**
+
+## 2026-11-12 — Camera/mic indicator dropped (#6)
+The design above (commit ebcf102) was not built.
+- **Dropped before building.** **Why:** macOS already shows both: the green camera light
+  beside the notch and the orange microphone dot in the menu bar. A second signal at the
+  notch would only repeat them. It also keeps Ember away from CoreAudio and CoreMediaIO.
+- **Found while checking:** the App Sandbox hides cameras from Ember (0 found inside it;
+  the same code finds 3 outside), while microphones are visible (2 found). Worth knowing
+  if a camera feature (for example the webcam mirror, #19) comes back.

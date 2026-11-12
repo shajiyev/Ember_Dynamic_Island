@@ -11,7 +11,7 @@ activities and quick tools.
 ## Planned for the first release
 
 - Now Playing: artwork, playback controls and scrubber
-- Live activities: battery and charging, camera/microphone in use, Bluetooth devices
+- Live activities: battery and charging, Bluetooth devices
 - Timers
 - Calendar and reminders preview
 - File shelf: drop files on the notch

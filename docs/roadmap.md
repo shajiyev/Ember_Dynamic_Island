@@ -16,10 +16,10 @@
 - **Done:** always-on glow (#29), resting style, on for now; the Settings toggle comes
   later. Spec docs/specs/always-on-glow.md. Verified on macOS 26.6.2.
 - **Done:** milestone 2, feature 2: timers (#13), with ongoing live activities. Verified on macOS 26.6.2 with the checklist in docs/plans/timers.md.
-- **Done:** milestone 2's third feature chosen and designed: camera/mic indicator (#6).
-  Spec docs/specs/camera-mic.md.
-- **In progress:** camera/mic indicator (#6), plan docs/plans/camera-mic.md: no tasks done yet.
-- **Next:** plan task 1, checking the camera and microphone in the sandbox.
+- **Dropped:** the camera/mic indicator (#6), designed but not built: macOS already shows
+  both. See docs/decisions.md.
+- **In progress:** nothing.
+- **Next:** choose and design milestone 2's next feature.
 
 ## Milestones (draft)
 0. **Foundation** — docs, license, Xcode project, README skeleton (incl. credits to Atoll & Boring Notch).
