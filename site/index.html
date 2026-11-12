@@ -43,7 +43,7 @@
   <nav class="nav" aria-label="Main">
     <div class="container nav-inner">
       <a class="nav-brand" href="#">
-        <img src="assets/icon-192.png" width="44" height="44" alt="">
+        <img src="assets/icon-192.png" width="60" height="60" alt="">
         Ember
       </a>
       <ul class="nav-links">
@@ -60,7 +60,7 @@
 
   <header class="hero">
     <div class="container">
-      <h1 class="hero-title" data-reveal>Every notch needs a <span class="sheen">spark</span>.</h1>
+      <h1 class="hero-title" data-reveal>Every notch needs a <span class="sheen">spark<span class="word-sparks" aria-hidden="true"><i></i><i></i><i></i></span></span>.</h1>
       <p class="lede" data-reveal>A free, open-source Dynamic Island for your MacBook.</p>
 
       <div class="actions" data-reveal>
@@ -117,8 +117,8 @@
         <!-- Follows the v1 table in docs/features.md. "Planned" = not built yet. -->
         <div class="grid">
           <article class="card" data-reveal>
-            <h3>Now Playing <span class="tag">Planned</span></h3>
-            <p>Album art, play and pause, skip and a scrubber, right below the notch.</p>
+            <h3>Now Playing</h3>
+            <p>Apple Music and Spotify: the cover and a little equalizer beside the notch, glowing in the cover's colour. Open it to play, pause, skip and scrub.</p>
           </article>
           <article class="card" data-reveal>
             <h3>Battery and charging</h3>
@@ -155,11 +155,11 @@
           </article>
           <article class="card" data-reveal>
             <h3>Why it asks for permissions</h3>
-            <p>Some features need macOS's permission: Calendar and Reminders to show what's next, and Bluetooth to show your AirPods' battery. Ember asks for each permission only when you turn on the feature that needs it, during setup or later in Settings. Say no, and only that feature stays off. You can change your mind any time in System Settings → Privacy &amp; Security.</p>
+            <p>Some features need macOS's permission: Music and Spotify to show what's playing and control it, Calendar and Reminders to show what's next, and Bluetooth to show your AirPods' battery. Ember asks for each permission only when you turn on the feature that needs it, during setup or later in Settings. Say no, and only that feature stays off. You can change your mind any time in System Settings → Privacy &amp; Security.</p>
           </article>
           <article class="card" data-reveal>
             <h3>What stays on your Mac: everything</h3>
-            <p>No account, no analytics, no tracking, no servers. Your calendar, devices and files are read on your Mac, shown in the notch, and never sent anywhere. Ember only goes online to check GitHub for updates.</p>
+            <p>No account, no analytics, no tracking, no servers. Your music, calendar, devices and files are read on your Mac, shown in the notch, and never sent anywhere. Ember only goes online to check GitHub for updates and to fetch the cover of the song Spotify is playing.</p>
           </article>
         </div>
       </div>
@@ -181,7 +181,7 @@
           </details>
           <details class="faq-item" name="faq" data-reveal>
             <summary>How do I install it?</summary>
-            <p>Ember isn't out yet. When it is, you'll download it here, drag it into Applications, and follow the one-time steps under "First time you open it?".</p>
+            <p>Ember isn't out yet. When it is, you'll download it here, drag it into Applications, and follow the three steps under "Light up your notch.".</p>
           </details>
           <details class="faq-item" name="faq" data-reveal>
             <summary>Does it cost anything?</summary>
@@ -193,7 +193,7 @@
           </details>
           <details class="faq-item" name="faq" data-reveal>
             <summary>How does it update?</summary>
-            <p>Ember checks GitHub for new versions and asks before installing one. That check is the only time it goes online.</p>
+            <p>Ember checks GitHub for new versions and asks before installing one. That check, and fetching Spotify's song covers, are the only times it goes online.</p>
           </details>
         </div>
       </div>
@@ -215,9 +215,15 @@
               <span class="badge">Coming soon</span>
             </span>
           </div>
-          <div class="first-time">
-            <h3>Opened for the first time?</h3>
-            <p>macOS blocks apps that aren't notarized the first time. Open Ember once, then go to System Settings → Privacy &amp; Security, scroll down, and click <strong>Open Anyway</strong> next to Ember. You only do this once.</p>
+          <!-- Three steps on a fuse. With motion, a spark runs along it, stopping at each step,
+               and lights the last one (the motion rules in styles.css). -->
+          <div class="fuse-steps">
+            <div class="fuse" aria-hidden="true"><span class="fuse-burnt"></span><span class="fuse-spark"></span></div>
+            <ol class="steps">
+              <li class="step"><span class="step-node">1</span><h3>Download</h3><p>Get Ember from this page.</p></li>
+              <li class="step"><span class="step-node">2</span><h3>Drag to Applications</h3><p>Like any Mac app.</p></li>
+              <li class="step"><span class="step-node">3</span><h3>Open Anyway</h3><p>The first time only: macOS stops apps that aren't notarized. In System Settings → Privacy &amp; Security, scroll down and click <strong>Open Anyway</strong>.</p></li>
+            </ol>
           </div>
         </div>
       </div>
@@ -227,7 +233,7 @@
   <footer class="footer">
     <div class="container footer-inner">
       <a class="footer-brand" href="#">
-        <img src="assets/icon-192.png" width="44" height="44" alt="">
+        <img src="assets/icon-192.png" width="60" height=60" alt="">
         Ember
       </a>
       <nav class="footer-links" aria-label="Footer">

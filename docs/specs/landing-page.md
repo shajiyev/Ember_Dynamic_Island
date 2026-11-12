@@ -43,9 +43,12 @@ sparks). No text, images, code or assets come from that site, and the site never
    clay rose (a touch deeper, `#9A4C44`, 4.8:1) and a short glowing clay rose line grows from the centre beneath it, like the
    pill's edge line. Right: a small **Download** button that jumps to Get started, in
    **clay rose** `#A8524A` with the label in the logo E's warm white `#FFF1E2` (4.8:1),
-   like the reference site's one distinct Download colour. Hover never darkens it: it
-   rises 2 px (not with Reduce Motion), a faint highlight lights its top edge and a soft
-   clay rose glow spreads beneath it; pressing sets it back down. The
+   like the reference site's one distinct Download colour. At rest it has the pill's
+   resting glow, always on: a soft Ember rose light around it and a thin pale-rose line on
+   its lower edge, fading out towards the top. On hover it holds the bright peak of its
+   blink (see Motion item 9): brighter, a touch more colour and a rose glow, eased in over
+   0.25 s, and rises 2 px (not with Reduce Motion); the blinking pauses while hovered.
+   Pressing sets it back down and dims it slightly. The
    light/dark toggle joins it with dark mode. A thin line under the bar
    fades in once the page scrolls. On phones (600 px and narrower) the section links are
    hidden. The brand glow sits on the page background, so it shows through the bar.
@@ -58,7 +61,7 @@ sparks). No text, images, code or assets come from that site, and the site never
        thin brown border, dark text and the GitHub mark; a little more solid on hover.
        Opens the repo in a new tab. (Same in Get started.)
      - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot
-       be clicked or reached with Tab (`aria-disabled="true"`, no link). A small gold
+       be clicked or reached with Tab (`aria-disabled="true"`, no link). A small pale-rose
        "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
        it becomes a solid button linking to the release, and the badge goes.
    - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
@@ -70,17 +73,21 @@ sparks). No text, images, code or assets come from that site, and the site never
    matters."**, the line "At rest, Ember is a black pill that blends into the notch. When
    something happens, it glows. Hover, and it opens.", then six cards: Now Playing;
    battery and charging; Bluetooth and AirPods; timers; calendar and reminders; file
-   shelf. Features not yet built carry a "Planned" tag. Built today: battery and timers.
+   shelf. Features not yet built carry a "Planned" tag. Built today: Now Playing, battery
+   and timers (updated to the roadmap 2026-11-12).
    The grid follows the v1 table in `docs/features.md`; when a feature is dropped or
    finished there, the grid changes too.
 3. **Safe to open. Private by design.** (`#privacy`): text below. Placed after Features,
    where someone who is interested is deciding whether to install.
 4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
    open one at a time when clicked (text below).
-5. **Get started** (`#download`): a plain cream card with a thin gold edge and a warm glow
-   around the whole card, outside it, like the pill's glow (not inside). Heading **"Light up your notch."**, one line, the same two
-   buttons as the hero, and an "Opened for the first time?" box with the steps past the
-   macOS warning (text below).
+5. **Get started** (`#download`): a plain cream card with a glow around it (a thin clay
+   rose edge, a soft pale-rose light close to the card, fading out through clay rose).
+   Centred: heading **"Light up your notch."**, one line, the same two buttons as the hero.
+   Below them, **"Light the fuse"**: the three install steps in a row, joined by a fuse line
+   (1 Download · 2 Drag to Applications · 3 Open Anyway). Redesigned so it no longer
+   matches the reference site's centred note box; the user chose this over a split card
+   with the logo. On phones the steps stack and the fuse line is hidden.
 6. **Footer**, one row like the reference site's (stacked and centred at 760 px and
    narrower): left, the app icon (44 px) and "Ember" (back to the top); middle, quiet links that
    darken on hover: GitHub (with its mark, new tab), Report a bug (GitHub Issues, new
@@ -113,7 +120,7 @@ Not on the page: changelog, screenshots, and any mention of other notch projects
 > without a notch aren't supported yet.
 >
 > **How do I install it?** Ember isn't out yet. When it is, you'll download it here, drag
-> it into Applications, and follow the one-time steps under "Opened for the first time?".
+> it into Applications, and follow the three steps under "Light up your notch.".
 >
 > **Does it cost anything?** No. Ember is free and open source under the GPL-3.0 licence:
 > no ads, no account, no in-app purchases.
@@ -122,16 +129,17 @@ Not on the page: changelog, screenshots, and any mention of other notch projects
 > redraws when something changes. We'll measure it on real Macs before the first release.
 >
 > **How does it update?** Ember checks GitHub for new versions and asks before installing
-> one. That check is the only time it goes online.
+> one. That check, and fetching Spotify's song covers, are the only times it goes online.
 
 ## Get started text
 
 > **Light up your notch.** Ember is almost ready. Star it on GitHub to follow along, and
 > download it here the day it ships.
 >
-> **Opened for the first time?** macOS blocks apps that aren't notarized the first time. Open
-> Ember once, then go to System Settings → Privacy & Security, scroll down, and click
-> **Open Anyway** next to Ember. You only do this once.
+> 1. **Download**: Get Ember from this page.
+> 2. **Drag to Applications**: Like any Mac app.
+> 3. **Open Anyway**: The first time only: macOS stops apps that aren't notarized. In
+>    System Settings → Privacy & Security, scroll down and click **Open Anyway**.
 
 ## Motion
 
@@ -142,15 +150,29 @@ sparks. Without JavaScript, all content is visible.
 1. **Sections ignite as they appear:** headings and cards fade up about 24 px as they
    scroll into view (0.5 s), cards one after another (80 ms apart), and each card warms
    with a brief ember glow as it settles.
-2. **Cards catch the light:** on hover (mouse or trackpad only), a soft ember glow follows
-   the pointer inside the card.
+2. **Cards catch the light:** on hover (mouse or trackpad only), a soft rose glow, 39 px
+   across (made smaller twice at the user's request: 260 → 130 → 39 px), follows the pointer inside the card.
 3. **The hero breathes:** the glow behind the screen slowly brightens and dims (about 6 s
    per breath).
-4. **Sparks:** up to 6 tiny gold and amber sparks drift up from the notch and fade out.
-5. **Sheen:** a warm highlight sweeps across "spark" in the headline every few seconds.
+4. **Sparks:** up to 6 tiny rose sparks drift up from the notch and fade out.
+5. **"spark" comes alive:** a warm sheen sweeps across it every 3 seconds, a soft rose glow
+   around the letters breathes (4 s), and every 3 seconds (was 5, made more frequent at the
+   user's request) three tiny rose sparks pop off the top of the "k" and fade. (A one-time flare when the page opened was moved to the
+   nav's Download button, at the user's request.)
 6. **The "Coming soon" badge pulses softly.**
 7. **FAQ answers open smoothly** when clicked (instantly where the browser can't animate
    it).
+8. **Light the fuse:** when Get started scrolls into view, a spark appears at step 1 and
+   stops there, runs to step 2 (which lights up) and stops again, then runs to step 3,
+   which flares bright rose; the line burns from clay rose to pale rose behind it. Each stop swells the
+   spark a little. It loops every 6 s: the run takes 3.6 s, everything stays lit until
+   5.4 s, then fades back to unlit and the spark starts again (the user asked for it to
+   repeat). Without motion, the steps are shown fully lit.
+9. **The nav's Download blinks softly:** every 4 seconds it brightens and flares with a
+   rose glow (to 112% with a 14 px rose glow), then settles, on top of its resting glow.
+   It only blinks towards brightness, never darker (the user removed the dim step). Based
+   on the flare "spark" once had when the page opened; a fifth of its strength was tried
+   first and was too faint.
 
 ## Safe to open. Private by design.
 
@@ -161,34 +183,43 @@ Text, as agreed:
 > verify the developer. That's expected, and the steps to open it are under Get started.
 > Ember's code is public, so anyone can check exactly what it does.
 >
-> **Why it asks for permissions.** Some features need macOS's permission: Calendar and
-> Reminders to show what's next, and Bluetooth to show your AirPods' battery. Ember asks
+> **Why it asks for permissions.** Some features need macOS's permission: Music and
+> Spotify to show what's playing and control it, Calendar and Reminders to show what's
+> next, and Bluetooth to show your AirPods' battery. Ember asks
 > for each permission only when you turn on the feature that needs it, during setup or
 > later in Settings. Say no, and only that feature stays off. You can change your mind any
 > time in System Settings → Privacy & Security.
 >
 > **What stays on your Mac: everything.** No account, no analytics, no tracking, no
-> servers. Your calendar, devices and files are read on your Mac, shown in the notch, and
-> never sent anywhere. Ember only goes online to check GitHub for updates.
+> servers. Your music, calendar, devices and files are read on your Mac, shown in the
+> notch, and never sent anywhere. Ember only goes online to check GitHub for updates and
+> to fetch the cover of the song Spotify is playing.
 
 - **Every claim must be true of the app.** "Not supported by Apple" is avoided on purpose:
   the warning comes from not being notarized, and permissions are a separate matter. The
   site does not claim Ember "can't access" anything or "stores nothing": it reads what the
   user allows and saves its settings and shelf locally.
 - **The permission list names only real features.** Before release, check it against the
-  permissions the app actually requests. Today (battery, timers) none are needed.
+  permissions the app actually requests. Today: Automation for Music and Spotify (Now
+  Playing); battery and timers need none.
 - **These promises bind the app** (logged in `docs/decisions.md`): nothing leaves the Mac
-  except the update check; each permission belongs to a feature the user turns on.
+  except the update check and Spotify's cover downloads (Now Playing fetches the cover
+  from Spotify's artwork link; Music hands it over directly); each permission belongs to
+  a feature the user turns on. Note: Now Playing currently asks for Automation the first
+  time it talks to a player, not through onboarding; onboarding (#0) must make the
+  "only when you turn on the feature" promise true before release.
 
 ## The pill demo
 
 - **Setting:** the top edge of a MacBook screen drawn across the hero as a dark strip with
   the notch cut into its middle; the pill sits around the notch as in the app.
 - **Loop**, about 4 seconds per step, showing only features that are built:
-  1. **Rest:** black, almost hidden in the notch, with the soft always-on glow.
+  1. **Rest:** black, almost hidden in the notch, with the soft always-on glow in Ember
+     rose, as in the app.
   2. **Charging:** the pill widens, battery icon on one side and "82%" on the other; the
      glow brightens.
-  3. **Timer:** a countdown ticks beside the notch.
+  3. **Timer:** a countdown ticks beside the notch, in the timer's own orange `#FF7A1E`
+     (`TimerLook.color`), as in the app.
 - **Matches the app:** shapes, sizes, timings and glow are taken from the app's pill
   metrics and its battery and timer views, read before the demo is written.
 - **Reduced motion:** with Reduce Motion on, the loop stops and shows the charging step,
@@ -206,22 +237,24 @@ palette so the two modes share a base.
 | Colour | Hex | Job |
 |---|---|---|
 | Cream | `#EEE4D7` | Page background |
-| Ember red | `#C73915` | The base of Ember orange, and the outer red of the glows |
 | Clay rose | `#A8524A` | The page's one accent colour, chosen by the user (over orange, dark reds, black, gold, copper, dusty plum and honey): large headings and "spark" (4.2:1 on cream), the nav hover line, and Download buttons (the nav's now; the hero and Get started ones when v1 ships) with the label in the logo E's warm white `#FFF1E2` (4.8:1) |
 | Deep rust | `#9A2D19` | Links and small accent text (6:1 on cream) |
-| Amber | `#E19C18` | Glow only |
-| Gold | `#E7B439` | Glow, and the "Coming soon" badge's background (dark brown text) |
+| Ember rose | `#D9776B` | Every glow on the page (the wide light): the same as the logo's glow and the app's (`PillStyle.glowColor`). Changed from gold/amber/orange with the logo's rose redesign (2026-11-12) |
+| Pale rose | `#F2A496` | The close, paler edge of every glow, like the logo's E; also the "Coming soon" badge (dark brown text 7.1:1) |
 | Near-black | `#1A190B` | Body text, and the GitHub button (white text, 17.7:1) |
 | Dark brown | `#42240F` | Secondary text |
 
-- **Glow:** a radial gradient from Ember red through amber to gold, spreading from behind
-  the pill, like the light around the logo's E. The pill itself stays black, as on a real Mac.
+- **Glow:** a radial gradient from pale rose through Ember rose to clay rose, spreading
+  from behind the pill, like the light around the logo's E. Focus rings are clay rose. The pill itself stays black, as on a real Mac.
 - **Type:** Apple's system font (`-apple-system`, SF Pro); no web fonts.
 - **Icons:** our own small inline SVGs, drawn to resemble the app's. Apple's licence does
   not allow SF Symbols on websites.
 - **Colours are defined once,** as CSS variables at the top of `styles.css`, so dark mode
   is a second set of values.
-- **Works on phones:** the layout holds from phone width up; no sideways scrolling.
+- **Works on phones:** the layout holds from phone width up; no sideways scrolling. Nothing may be
+  wider than the screen, not even decoration: the hero glow (656 × 368 px, made 20% smaller
+  at the user's request) is capped at 74% of the screen width (with room for its breathing scale), because a wider glow made phones zoom out to
+  fit the page and the pinned nav misbehave.
 
 ## Dark mode (not in this round)
 

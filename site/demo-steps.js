@@ -8,7 +8,7 @@ export const STEPS = [
   { name: 'charging', seconds: 3, icon: 'battery-bolt', color: '--app-green', text: '82%' },
   { name: 'rest', seconds: 2 },
   // A running timer: orange timer symbol, time left in white, orange glow.
-  { name: 'timer', seconds: 6, icon: 'timer', color: '--app-glow', startSeconds: 24 * 60 + 59 },
+  { name: 'timer', seconds: 6, icon: 'timer', color: '--app-timer', startSeconds: 24 * 60 + 59 },
 ];
 
 /** The step shown, without movement, when the visitor has Reduce Motion on. */

@@ -2,12 +2,14 @@
 :root {
   /* Palette (light) */
   --cream: #EEE4D7;
-  --ember-red: #C73915;
   --rust: #9A2D19;
-  --amber: #E19C18;
-  --gold: #E7B439;
   --ink: #1A190B;
   --brown: #42240F;
+
+  /* Ember rose: every glow on the page, the same as the logo's glow and the pill's
+     (docs/specs/logo.md, PillStyle.glowColor). */
+  --rose-glow: #D9776B;   /* the wide light */
+  --rose-edge: #F2A496;   /* the close, paler edge; also the "Coming soon" badge (brown text 7.1:1) */
 
   /* Jobs */
   --bg: var(--cream);
@@ -32,15 +34,17 @@
   --download-bg: var(--clay-rose);
   --download-text: #FFF1E2;
   --line: color-mix(in srgb, var(--brown), transparent 82%);
-  --badge-bg: var(--gold);
+  --badge-bg: var(--rose-edge);
   --badge-text: var(--brown);
-  --halo-1: color-mix(in srgb, var(--gold), transparent 45%);
-  --halo-2: color-mix(in srgb, var(--amber), transparent 70%);
-  --halo-3: color-mix(in srgb, var(--ember-red), transparent 88%);
+  --halo-1: color-mix(in srgb, var(--rose-edge), transparent 45%);
+  --halo-2: color-mix(in srgb, var(--rose-glow), transparent 70%);
+  --halo-3: color-mix(in srgb, var(--clay-rose), transparent 88%);
 
   /* The app's own colours, used only in the pill demo. They match
-     Ember/Pill/PillStyle.swift and Ember/Battery/BatteryAlerts.swift, in both themes. */
-  --app-glow: #FF7A1E;
+     Ember/Pill/PillStyle.swift, Ember/Timer/TimerLook.swift and
+     Ember/Battery/BatteryAlerts.swift, in both themes. */
+  --app-glow: #D9776B;   /* Ember rose, PillStyle.glowColor */
+  --app-timer: #FF7A1E;  /* the timer's orange, TimerLook.color */
   --app-green: #30D158;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -104,9 +108,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .nav-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 7px;
   justify-self: start;
-  font-size: 23px;
+  font-size: 25px;
   font-weight: 650;
   color: var(--text);
   text-decoration: none;
@@ -170,7 +174,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   font-weight: 600;
   text-decoration: none;
 }
-.button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.button:focus-visible { outline: 3px solid var(--clay-rose); outline-offset: 3px; }
 
 .button-small { min-height: 40px; padding: 0 20px; font-size: 15px; }
 
@@ -184,26 +188,36 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 }
 .button-github:hover { border-color: var(--github-border-hover); background: var(--github-bg-hover); }
 
-/* The nav's Download: clay rose with a warm-white label. */
+/* The nav's Download: clay rose with a warm-white label, and the pill's resting glow
+   (PillStyle rest): a soft Ember rose light around it, always on, and a thin pale-rose
+   line on its lower edge that fades out towards the top. */
 .button-ember {
   background: var(--download-bg);
   color: var(--download-text);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0), 0 0 0 0 transparent;
-  transition: translate 0.2s ease-out, box-shadow 0.25s ease-out;
+  box-shadow: 0 0 14px 1px color-mix(in srgb, var(--rose-glow), transparent 45%);
+  filter: brightness(1) saturate(1) drop-shadow(0 0 0 color-mix(in srgb, var(--rose-glow), transparent 100%));
+  transition: filter 0.25s ease-out, translate 0.2s ease-out;
 }
-/* Hover never darkens it: it rises 2 px, a faint highlight lights its top edge, and a soft
-   clay rose glow spreads beneath it. Pressing sets it back down. */
+.button-ember::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1.5px solid var(--rose-edge);
+  border-radius: inherit;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 30%, #000);
+  mask-image: linear-gradient(to bottom, transparent 30%, #000);
+}
+/* Hover holds the bright peak of its blink (motion item 9): brighter, a touch more colour
+   and a rose glow, for as long as the pointer is on it, and rises 2 px. Pressing sets it
+   back down and dims it slightly. */
 .button-ember:hover {
   translate: 0 -2px;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.22),
-    0 8px 22px -6px color-mix(in srgb, var(--clay-rose), transparent 25%);
+  filter: brightness(1.12) saturate(1.1) drop-shadow(0 0 14px color-mix(in srgb, var(--rose-glow), transparent 35%));
 }
 .button-ember:active {
   translate: 0 0;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
-    0 3px 10px -4px color-mix(in srgb, var(--clay-rose), transparent 40%);
+  filter: brightness(1.04) saturate(1.04) drop-shadow(0 0 8px color-mix(in srgb, var(--rose-glow), transparent 50%));
 }
 @media (prefers-reduced-motion: reduce) {
   .button-ember:hover { translate: none; }
@@ -243,7 +257,10 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 .hero {
   padding: 72px 0 96px;
-  overflow-x: clip;   /* the glow is wider than a phone */
+  /* Nothing here should be wider than the screen (the glow is capped below), but in case:
+     clip where supported, hidden as the fallback for older browsers. */
+  overflow-x: hidden;
+  overflow-x: clip;
   text-align: center;
 }
 
@@ -257,7 +274,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   text-wrap: balance;
 }
 
-.sheen { color: var(--heading-accent); }
+.sheen { position: relative; color: var(--heading-accent); }
+.word-sparks { display: none; }   /* shown by the motion rules */
 
 .lede {
   max-width: 560px;
@@ -294,8 +312,10 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   top: 0;
   left: 50%;
   z-index: -1;
-  width: 820px;
-  height: 460px;
+  /* Never wider than the screen, even at its 5% breathing scale: a wider glow made phones
+     zoom out to fit the page. */
+  width: min(656px, 74vw);    /* 20% smaller than the first 820 × 460, at the user's request */
+  height: min(368px, 72vw);
   translate: -50% -45%;
   background: radial-gradient(closest-side, var(--halo-1), var(--halo-2) 50%, var(--halo-3) 75%, transparent);
   pointer-events: none;
@@ -380,7 +400,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   font-weight: 600;
 }
 .faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; border-radius: 6px; }
+.faq-item summary:focus-visible { outline: 3px solid var(--clay-rose); outline-offset: 4px; border-radius: 6px; }
 
 /* The chevron. */
 .faq-item summary::after {
@@ -400,31 +420,83 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 /* Get started */
 
-/* Plain inside; the glow surrounds the whole card, like the pill's glow. */
+/* Plain inside; the glow surrounds the whole card, like the pill's glow. Same recipe as
+   "spark": a clay rose edge, a soft pale-rose light close to it, fading out through clay rose. */
 .cta {
   padding: 64px 24px;
-  border: 1px solid color-mix(in srgb, var(--gold), transparent 55%);
+  border: 1px solid color-mix(in srgb, var(--clay-rose), transparent 55%);
   border-radius: 28px;
   background: var(--surface);
   box-shadow:
-    0 0 24px 0 color-mix(in srgb, var(--gold), transparent 70%),
-    0 0 70px 6px color-mix(in srgb, var(--amber), transparent 84%),
-    0 0 120px 12px color-mix(in srgb, var(--ember-red), transparent 94%);
+    0 0 24px 0 color-mix(in srgb, var(--rose-edge), transparent 70%),
+    0 0 70px 6px color-mix(in srgb, var(--clay-rose), transparent 84%),
+    0 0 120px 12px color-mix(in srgb, var(--clay-rose), transparent 93%);
   text-align: center;
 }
 .cta .section-intro { margin-left: auto; margin-right: auto; }
 
-.first-time {
-  max-width: 560px;
-  margin: 36px auto 0;
-  padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--bg);
-  text-align: left;
+/* The three install steps on a fuse. Drawn here fully lit, which is what you see without
+   motion; the motion rules play the spark along it once. */
+.fuse-steps { --gap: 20px; position: relative; max-width: 780px; margin: 52px auto 0; }
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.first-time h3 { font-size: 16px; font-weight: 650; }
-.first-time p { margin: 6px 0 0; font-size: 15px; color: var(--text-secondary); }
+.step { padding: 0 8px; }
+.step h3 { margin: 14px 0 4px; font-size: 18px; font-weight: 650; }
+.step p { margin: 0; font-size: 15px; color: var(--text-secondary); }
+
+.step-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  border: 2px solid var(--clay-rose);
+  border-radius: 50%;
+  background: var(--clay-rose);
+  color: var(--download-text);
+  font-weight: 700;
+}
+/* The last step is where the spark lands: it glows. */
+.step:last-child .step-node {
+  border-color: var(--rose-edge);
+  box-shadow:
+    0 0 14px 3px color-mix(in srgb, var(--rose-edge), transparent 30%),
+    0 0 30px 6px color-mix(in srgb, var(--rose-glow), transparent 65%);
+}
+.step:last-child h3 { color: var(--clay-rose-text); }
+
+/* The fuse runs from the centre of the first step to the centre of the last. */
+.fuse {
+  position: absolute;
+  top: 21px;
+  left: calc((100% - 2 * var(--gap)) / 6);
+  right: calc((100% - 2 * var(--gap)) / 6);
+  height: 2px;
+  background: var(--line);
+}
+.fuse-burnt {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, var(--clay-rose), var(--rose-edge));
+}
+.fuse-spark { display: none; }   /* shown by the motion rules */
+
+@media (max-width: 640px) {
+  .steps { grid-template-columns: 1fr; gap: 28px; }
+  .fuse { display: none; }
+}
 
 /* Footer */
 
@@ -621,8 +693,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(260px circle at var(--light-x, 50%) var(--light-y, 50%),
-      color-mix(in srgb, var(--gold), transparent 65%), transparent 70%);
+    background: radial-gradient(39px circle at var(--light-x, 50%) var(--light-y, 50%),
+      color-mix(in srgb, var(--rose-edge), transparent 65%), transparent 70%);
     opacity: 0;
     transition: opacity 0.3s;
   }
@@ -646,7 +718,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   }
   @keyframes ignite {
     0%   { box-shadow: 0 0 0 0 transparent; }
-    35%  { box-shadow: 0 12px 40px -8px color-mix(in srgb, var(--amber), transparent 45%); }
+    35%  { box-shadow: 0 12px 40px -8px color-mix(in srgb, var(--rose-glow), transparent 45%); }
     100% { box-shadow: 0 0 0 0 transparent; }
   }
 
@@ -664,8 +736,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     width: 3px;
     height: 3px;
     border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 6px 1px var(--amber);
+    background: var(--rose-edge);
+    box-shadow: 0 0 6px 1px var(--rose-glow);
     opacity: 0;
     animation: rise var(--time) ease-out var(--delay) infinite;
   }
@@ -684,12 +756,14 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   /* 5. A warm sheen sweeps across "spark" every 6 seconds. */
   @supports (background-clip: text) or (-webkit-background-clip: text) {
     .sheen {
-      background: linear-gradient(100deg, var(--heading-accent) 40%, var(--amber) 50%, var(--heading-accent) 60%)
+      background: linear-gradient(100deg, var(--heading-accent) 40%, var(--rose-glow) 50%, var(--heading-accent) 60%)
         100% 0 / 250% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: sheen 3s ease-in-out infinite;
+      animation:
+        sheen 3s ease-in-out infinite,
+        spark-breathe 6s ease-in-out infinite;
     }
     @keyframes sheen {
       0%        { background-position: 100% 0; }
@@ -697,11 +771,124 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     }
   }
 
+  /* "spark" keeps a soft glow around its letters that breathes. (A filter glow, because a
+     text-shadow would cover the sheen's text fill.) */
+  @keyframes spark-breathe {
+    0%, 100% { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rose-edge), transparent 65%)); }
+    50%      { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--rose-edge), transparent 40%)); }
+  }
+
+  /* Every 3 seconds three tiny sparks pop off the top of the "k" and fade (each flies for
+     about 1.1 s). */
+  .word-sparks { display: block; position: absolute; top: 0.12em; right: 0.04em; }
+  .word-sparks i {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--rose-edge);
+    box-shadow: 0 0 6px 1px var(--rose-glow);
+    opacity: 0;
+    animation: word-spark 3s ease-out infinite;
+  }
+  .word-sparks i:nth-child(1) { --dx: 10px;  --dy: -26px; animation-delay: 0.6s; }
+  .word-sparks i:nth-child(2) { --dx: 22px;  --dy: -14px; animation-delay: 0.85s; }
+  .word-sparks i:nth-child(3) { --dx: -4px;  --dy: -32px; animation-delay: 1.2s; }
+  @keyframes word-spark {
+    0%   { opacity: 0; translate: 0 0; scale: 1; }
+    5%   { opacity: 1; }
+    37%  { opacity: 0; translate: var(--dx) var(--dy); scale: 0.4; }
+    100% { opacity: 0; translate: var(--dx) var(--dy); }
+  }
+
+  /* 8. Light the fuse, on a loop of 6 s once Get started appears: a spark starts at step 1
+     and stops there, runs to step 2 (which lights) and stops, runs to step 3, which flares
+     bright rose (0-3.6 s); everything stays lit (to 5.4 s), then fades back to unlit and the
+     spark starts again. Each stop swells the spark slightly. */
+  .fuse-spark {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--download-text);
+    box-shadow: 0 0 6px 2px var(--rose-edge), 0 0 16px 4px color-mix(in srgb, var(--rose-glow), transparent 40%);
+    opacity: 0;
+  }
+  .js .cta.is-visible .fuse-spark { animation: fuse-spark 6s ease-in-out 0.6s infinite both; }
+  .js .cta.is-visible .fuse-burnt { animation: fuse-burn 6s ease-in-out 0.6s infinite both; }
+  .js .cta.is-visible .step:nth-child(1) .step-node { animation: node-1 6s linear 0.6s infinite both; }
+  .js .cta.is-visible .step:nth-child(2) .step-node { animation: node-2 6s linear 0.6s infinite both; }
+  .js .cta.is-visible .step:nth-child(3) .step-node { animation: node-3 6s linear 0.6s infinite both; }
+  .js .cta.is-visible .step:nth-child(3) h3 { animation: node-3-title 6s linear 0.6s infinite both; }
+
+  @keyframes fuse-spark {
+    0%        { left: 0;    opacity: 1; scale: 1.5; }
+    9%        { left: 0;    scale: 1; }
+    27%       { left: 50%;  scale: 1.5; }
+    36%       { left: 50%;  scale: 1; }
+    54%       { left: 100%; opacity: 1; scale: 1.6; }
+    60%, 100% { left: 100%; opacity: 0; scale: 1; }
+  }
+  @keyframes fuse-burn {
+    0%, 9%    { width: 0;    opacity: 1; }
+    27%, 36%  { width: 50%; }
+    54%, 90%  { width: 100%; opacity: 1; }
+    98%       { width: 100%; opacity: 0; }
+    100%      { width: 0;    opacity: 0; }
+  }
+  /* Unlit: an empty ring. Lit: filled clay rose (the base style). */
+  @keyframes node-1 {
+    0%, 98%, 100% { border-color: var(--line); background: var(--surface); color: var(--text-secondary); }
+    2%, 90%       { border-color: var(--clay-rose); background: var(--clay-rose); color: var(--download-text); }
+  }
+  @keyframes node-2 {
+    0%, 26%, 98%, 100% { border-color: var(--line); background: var(--surface); color: var(--text-secondary); }
+    28%, 90%           { border-color: var(--clay-rose); background: var(--clay-rose); color: var(--download-text); }
+  }
+  @keyframes node-3 {
+    0%, 53%, 98%, 100% {
+      border-color: var(--line); background: var(--surface); color: var(--text-secondary);
+      /* Transparent rose, not "transparent", so the flare doesn't fade in through grey. */
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--rose-edge), transparent 100%), 0 0 0 0 color-mix(in srgb, var(--rose-glow), transparent 100%);
+    }
+    56% {
+      border-color: var(--rose-edge); background: var(--clay-rose); color: var(--download-text);
+      box-shadow:
+        0 0 22px 6px color-mix(in srgb, var(--rose-edge), transparent 10%),
+        0 0 44px 10px color-mix(in srgb, var(--rose-glow), transparent 45%);
+    }
+    62%, 90% {
+      border-color: var(--rose-edge); background: var(--clay-rose); color: var(--download-text);
+      box-shadow:
+        0 0 14px 3px color-mix(in srgb, var(--rose-edge), transparent 30%),
+        0 0 30px 6px color-mix(in srgb, var(--rose-glow), transparent 65%);
+    }
+  }
+  @keyframes node-3-title {
+    0%, 53%, 98%, 100% { color: var(--text); }
+    56%, 90%           { color: var(--clay-rose-text); }
+  }
+
+  /* 9. The nav's Download blinks softly every 4 s: it brightens and flares with a rose glow,
+     then settles, on top of its resting glow. It only ever gets brighter, never darker. The same blink "spark" once had when the
+     page opened, at about half its strength (a fifth was too faint to notice). (Starts from transparent rose, not
+     "transparent", which would fade through grey.) */
+  .button-ember { animation: download-blink 4s ease-in-out 1s infinite; }
+  .button-ember:hover, .button-ember:active { animation: none; }   /* hover holds the lit state */
+  @keyframes download-blink {
+    0%, 40%, 100% { filter: brightness(1) saturate(1) drop-shadow(0 0 0 color-mix(in srgb, var(--rose-glow), transparent 100%)); }
+    22%           { filter: brightness(1.12) saturate(1.1) drop-shadow(0 0 14px color-mix(in srgb, var(--rose-glow), transparent 35%)); }
+  }
+
   /* 6. The "Coming soon" badge pulses softly. */
   .badge { animation: badge-pulse 2.4s ease-in-out infinite; }
   @keyframes badge-pulse {
     0%, 100% { box-shadow: 0 0 0 3px var(--bg), 0 0 0 0 transparent; }
-    50%      { box-shadow: 0 0 0 3px var(--bg), 0 0 14px 2px color-mix(in srgb, var(--gold), transparent 30%); }
+    50%      { box-shadow: 0 0 0 3px var(--bg), 0 0 14px 2px color-mix(in srgb, var(--rose-edge), transparent 30%); }
   }
 
   /* 7. FAQ answers open smoothly where the browser can animate it; elsewhere instantly. */

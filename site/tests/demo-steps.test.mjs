@@ -36,7 +36,7 @@ test('active steps have an icon and a glow colour; rest has neither', () => {
     assert.equal(Boolean(s.color), active, s.name);
   }
   assert.equal(step('charging').color, '--app-green');
-  assert.equal(step('timer').color, '--app-glow');
+  assert.equal(step('timer').color, '--app-timer');
 });
 
 test('Reduce Motion shows charging, still', () => {
