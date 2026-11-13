@@ -4,14 +4,14 @@ import SwiftUI
 /// The glow colour for a song: the cover's dominant colour. Black, white and grey pixels
 /// carry no colour and are left out; the rest are grouped by hue, and the hue covering the
 /// most area wins, vivid pixels counting more than dull ones. Covers with almost no colour
-/// (black and white) glow soft white. Songs without a cover are the caller's: Ember orange.
+/// (black and white) glow soft white. Songs without a cover are the caller's: Ember rose.
 enum CoverColor {
     typealias Pixel = (red: Double, green: Double, blue: Double)
 
     /// A pixel darker or greyer than this has no colour to show.
     static let minimumBrightness = 0.2
     static let minimumSaturation = 0.25
-    /// A cover whose colourful pixels cover less than this share glows Ember orange.
+    /// A cover whose colourful pixels cover less than this share glows Ember rose.
     static let minimumColourfulShare = 0.05
     /// How finely hues are grouped: 24 groups of 15 degrees.
     static let hueGroups = 24

@@ -19,7 +19,7 @@ struct NowPlayingLookTests {
             symbolName: "music.note", symbolColor: .blue, text: "", glowColor: .blue, showsEqualizer: true))
     }
 
-    @Test func withoutACoverColourItGlowsEmberOrange() {
+    @Test func withoutACoverColourItGlowsEmberRose() {
         #expect(NowPlayingLook.activity(for: track, glow: nil).glowColor == PillStyle.glowColor)
     }
 }

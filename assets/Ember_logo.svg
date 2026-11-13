@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
-  <!-- Ember logo master (Night Glow). Values and export steps: docs/specs/logo.md -->
+  <!-- Ember logo master (Night Glow, rose). Values and export steps: docs/specs/logo.md -->
   <defs>
     <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#26262A"/>
       <stop offset="1" stop-color="#111114"/>
     </linearGradient>
     <radialGradient id="bloom" cx="800" cy="800" r="630" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FF7A1E" stop-opacity="0.286"/>
-      <stop offset="0.6" stop-color="#D8431A" stop-opacity="0.078"/>
-      <stop offset="1" stop-color="#D8431A" stop-opacity="0"/>
+      <stop offset="0" stop-color="#C4645A" stop-opacity="0.286"/>
+      <stop offset="0.6" stop-color="#A8524A" stop-opacity="0.078"/>
+      <stop offset="1" stop-color="#A8524A" stop-opacity="0"/>
     </radialGradient>
     <filter id="wide-light" x="-40%" y="-40%" width="180%" height="180%">
       <feGaussianBlur stdDeviation="36"/>
@@ -26,7 +26,10 @@
   </defs>
   <rect width="1600" height="1600" fill="url(#ground)"/>
   <rect width="1600" height="1600" fill="url(#bloom)"/>
-  <use href="#e" fill="#FF7A1E" opacity="0.715" filter="url(#wide-light)"/>
-  <use href="#e" fill="#FF7A1E" filter="url(#close-edge)"/>
+  <!-- Rose is darker than orange, so each glow layer is drawn twice to read as light. -->
+  <use href="#e" fill="#D9776B" filter="url(#wide-light)"/>
+  <use href="#e" fill="#D9776B" opacity="0.6" filter="url(#wide-light)"/>
+  <use href="#e" fill="#F2A496" filter="url(#close-edge)"/>
+  <use href="#e" fill="#F2A496" opacity="0.7" filter="url(#close-edge)"/>
   <use href="#e" fill="#FFF1E2"/>
 </svg>

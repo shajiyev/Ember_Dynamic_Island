@@ -1,3 +1,4 @@
+import SwiftUI
 import Testing
 @testable import Ember
 
@@ -29,5 +30,15 @@ struct PanelTabsTests {
         selection.openingTab = nil
         selection.panelOpened()
         #expect(selection.tab == .timer)
+    }
+
+    @Test func theMusicTabGlowsInTheSongsColour() {
+        #expect(PanelTab.music.glowColor(songGlow: .blue) == .blue)
+        #expect(PanelTab.music.glowColor(songGlow: nil) == nil)   // the pill's own glow
+    }
+
+    @Test func theTimerTabGlowsTimerOrange() {
+        #expect(PanelTab.timer.glowColor(songGlow: .blue) == TimerLook.color)
+        #expect(PanelTab.timer.glowColor(songGlow: nil) == TimerLook.color)
     }
 }

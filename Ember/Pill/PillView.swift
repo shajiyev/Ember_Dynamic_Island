@@ -17,7 +17,7 @@ struct PillView: View {
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
         // The active state takes its glow from the activity, which may have none; the open
-        // panel from its content, or orange; rest is always orange.
+        // panel from its content, or Ember rose; rest is always Ember rose.
         let activityGlow = controller.currentActivity?.glowColor
         let hasGlow = state != .active || activityGlow != nil
         let glowColor = switch state {
@@ -127,7 +127,7 @@ private struct ActivityWings: View {
     }
 }
 
-/// A glow colour the open panel's content can ask the pill for; none keeps Ember orange.
+/// A glow colour the open panel's content can ask the pill for; none keeps Ember rose.
 /// The pill does not know where it comes from.
 nonisolated struct PanelGlowColorKey: PreferenceKey {
     static let defaultValue: Color? = nil

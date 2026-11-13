@@ -38,7 +38,7 @@ rounded bottom corners. Corner radii, as starting values to tune on a real scree
 
 ### Glow
 
-A warm orange light (starting colour `#FF7A1E`) under the bottom edge of the shape, with
+A warm orange light (starting colour `#FF7A1E`; Ember rose `#D9776B` since 2026-11-12, see docs/specs/logo.md) under the bottom edge of the shape, with
 a thin brighter line on the edge itself. The colour and strengths are defined in one
 place so they are easy to tune.
 

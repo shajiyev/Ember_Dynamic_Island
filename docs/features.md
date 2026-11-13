@@ -17,7 +17,7 @@ explicitly decide to revive something.
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | done | Apple Music and Spotify through Apple Events (MediaRemote is blocked since macOS 15.4). Cover and equalizer in the wings, glow in the cover's dominant colour; Music tab with scrubber. Spec docs/specs/now-playing.md |
 | 4 | Live activity | Battery / charging | done | Brief alerts: plug in, unplug, 20%, 10%; status in the panel's top row |
 | 8 | Live activity | Bluetooth device connected (AirPods + battery) | v1 | |
-| 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min, Reset; countdown in the wings with an orange glow; amber Time's up with a sound that repeats until seen. Spec docs/specs/timers.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
+| 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min, Reset; countdown in the wings with an orange glow (the timer keeps orange when Ember's glow is rose); amber Time's up with a sound that repeats until seen. Spec docs/specs/timers.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
 | 14 | Productivity | Calendar & reminders preview | v1 | Needs Calendar/Reminders permission |
 | 15 | Productivity | File shelf (drop files on the notch, AirDrop) | v1 | |
 | 26a | Customization | Basics: hover-to-open on/off, open delay and close delay (each 0–1 s; defaults 0.2 s and 0.3 s), per-feature toggles | v1 | Rest of customization is #26b (later) |

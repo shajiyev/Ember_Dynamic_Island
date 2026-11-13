@@ -46,4 +46,8 @@ struct PillStyleTests {
         #expect(PillStyle.animation(to: .active) == .spring(response: 0.38, dampingFraction: 1))
         #expect(PillStyle.animation(to: .open) == .spring(response: 0.38, dampingFraction: 0.8))
     }
+
+    @Test func theGlowIsEmberRoseLikeTheLogo() {
+        #expect(PillStyle.glowColor == Color(red: 0xD9 / 255, green: 0x77 / 255, blue: 0x6B / 255))
+    }
 }

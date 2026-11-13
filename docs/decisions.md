@@ -394,3 +394,25 @@ All ten manual checks passed on a 14" MacBook Pro, macOS 26.6.2.
 - **Values tuned by eye:** none in the wings or the panel; the pill's closing spring went
   from 0.8 to 1.0 damping (see the entry above).
 - No checks accepted as known limits.
+
+## 2026-11-12 — Ember's glow colour: rose instead of orange
+The brand glow is now Ember rose, `#D9776B` (`PillStyle.glowColor`), with a paler
+`#F2A496` for the logo's close edge. It replaces ember orange `#FF7A1E` everywhere the
+brand glow appears: the logo and app icon, the pill at rest, songs without a cover, and
+the website's pill demo. The name stays Ember.
+- **Why:** the user likes the landing page's clay rose (`#A8524A`) and wanted the app
+  and logo to match it. Clay rose itself is too dark to glow on black, so the glow uses
+  lighter roses based on it ("Rose, lit"), chosen over plain clay rose and over "Spark"
+  (the site's gold-to-rose glow) in a browser comparison.
+- **The timer stays orange** (`TimerLook.color`, `#FF7A1E`): its symbol, its glow while
+  running or paused, and the open panel's Timer tab. **Why:** people know timers as orange
+  from Apple's Clock app (the user's call).
+- **Unchanged:** the warning colours keep their own hues: battery green, yellow and red,
+  and the amber "Time's up" (`#FFA826`).
+- **To check on screen:** rose is darker than orange, so the pill's glow may look weaker
+  at the same opacity; tune `PillStyle`'s glow opacity by eye if it does.
+
+## 2026-11-12 — Panel tabs show icons only
+The tab row shows each tab's symbol without its name; the name appears as a tooltip on
+hover and is the VoiceOver label. **Why:** more tabs are coming (Calendar, file shelf,
+Bluetooth…), and names would not fit in the panel's top row next to the battery.

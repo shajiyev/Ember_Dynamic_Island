@@ -31,7 +31,7 @@ works inside the sandbox. Browsers, YouTube and podcast apps are not covered.
 - **Glow:** the cover's dominant colour, whatever it is, so it changes with each song and
   carries its mood. Black, white and grey pixels are left out; of the rest, the hue
   covering the most area wins, vivid pixels counting more. Covers with almost no colour
-  (black and white) glow soft white; songs without a cover glow Ember orange.
+  (black and white) glow soft white; songs without a cover glow Ember rose.
 - **Paused or stopped:** the wings go; the pill returns to rest.
 
 ### Which lasting activity wins
@@ -49,7 +49,8 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
 
 ### Open panel: tabs
 
-- The top row gets a tab row on the left: **Music | Timer**. The battery stays on the
+- The top row gets a tab row on the left: **Music | Timer**, as icons only since
+  2026-11-12 (the name shows on hover and is read by VoiceOver). The battery stays on the
   right.
 - **Which tab the panel opens on:** when the wings show something, its tab (the song:
   Music; a countdown or "Time's up": Timer). When they show nothing, the tab the panel
@@ -69,7 +70,8 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
 - Artwork, title and artist (each cut with "…" if too long), a scrubber with the time
   played and the length, and previous / play-pause / next.
 - While the Music tab shows a song, the open panel glows in that song's colour, like the
-  closed pill; the Timer tab and "Nothing playing" glow Ember orange. Only the panel's
+  closed pill; "Nothing playing" glows Ember rose and the Timer tab the timer's orange
+  (`PanelTab.glowColor`, since 2026-11-12). Only the panel's
   shape glows; nothing inside it (artwork, icons, text) casts a glow.
 - **Dragging the scrubber** seeks when released.
 - **A paused song** (the player is open with a song loaded) shows with its play button,

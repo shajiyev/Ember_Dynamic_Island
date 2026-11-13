@@ -11,9 +11,13 @@ nonisolated enum TimerLook {
     /// `soundRepeatLimit` seconds.
     static let soundRepeatInterval: TimeInterval = 2
     static let soundRepeatLimit: TimeInterval = 60
-    /// The glow while a timer runs or is paused: Ember orange, like the resting glow.
-    static let runningGlowColor: Color? = PillStyle.glowColor
-    /// "Time's up": a brighter amber, between Ember orange and the unplugged yellow, #FFA826.
+    /// The timer's own orange, #FF7A1E, not Ember rose: people know timers as orange from
+    /// Apple's Clock app. Used for the timer symbol, a running or paused timer's glow and
+    /// the Timer tab's glow.
+    static let color = Color(red: 0xFF / 255, green: 0x7A / 255, blue: 0x1E / 255)
+    /// The glow while a timer runs or is paused.
+    static let runningGlowColor: Color? = color
+    /// "Time's up": a brighter amber, #FFA826, between the timer's orange and the unplugged yellow.
     static let timesUpColor = Color(red: 0xFF / 255, green: 0xA8 / 255, blue: 0x26 / 255)
 
     /// Whether the sound repeats once the timer finishes. It rings only once if nobody can
@@ -24,12 +28,12 @@ nonisolated enum TimerLook {
     }
 
     static func running(secondsLeft: Int) -> LiveActivity {
-        LiveActivity(symbolName: "timer", symbolColor: PillStyle.glowColor,
+        LiveActivity(symbolName: "timer", symbolColor: color,
                      text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor)
     }
 
     static func paused(secondsLeft: Int) -> LiveActivity {
-        LiveActivity(symbolName: "pause.fill", symbolColor: PillStyle.glowColor,
+        LiveActivity(symbolName: "pause.fill", symbolColor: color,
                      text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor)
     }
 

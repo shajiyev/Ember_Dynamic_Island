@@ -1,3 +1,4 @@
+import SwiftUI
 import Testing
 @testable import Ember
 
@@ -17,13 +18,13 @@ struct TimerLookTests {
 
     @Test func runningShowsTheTimerSymbolAndTimeLeft() {
         #expect(TimerLook.running(secondsLeft: 299) == LiveActivity(
-            symbolName: "timer", symbolColor: PillStyle.glowColor, text: "4:59",
+            symbolName: "timer", symbolColor: TimerLook.color, text: "4:59",
             glowColor: TimerLook.runningGlowColor))
     }
 
     @Test func pausedShowsThePauseSymbolAndTimeLeft() {
         #expect(TimerLook.paused(secondsLeft: 299) == LiveActivity(
-            symbolName: "pause.fill", symbolColor: PillStyle.glowColor, text: "4:59",
+            symbolName: "pause.fill", symbolColor: TimerLook.color, text: "4:59",
             glowColor: TimerLook.runningGlowColor))
     }
 
@@ -33,12 +34,17 @@ struct TimerLookTests {
             glowColor: TimerLook.timesUpColor, endsWhenSeen: true))
     }
 
-    @Test func aRunningTimerGlowsEmberOrange() {
-        #expect(TimerLook.runningGlowColor == PillStyle.glowColor)
+    @Test func theTimerIsOrangeLikeApplesTimerNotEmberRose() {
+        #expect(TimerLook.color == Color(red: 0xFF / 255, green: 0x7A / 255, blue: 0x1E / 255))
+        #expect(TimerLook.color != PillStyle.glowColor)
     }
 
-    @Test func timesUpStandsApartFromEmberOrangeAndTheLowBatteryYellow() {
-        #expect(TimerLook.timesUpColor != PillStyle.glowColor)
+    @Test func aRunningTimerGlowsTimerOrange() {
+        #expect(TimerLook.runningGlowColor == TimerLook.color)
+    }
+
+    @Test func timesUpStandsApartFromTimerOrangeAndTheLowBatteryYellow() {
+        #expect(TimerLook.timesUpColor != TimerLook.color)
         #expect(TimerLook.timesUpColor != BatteryAlert.yellow)
     }
 

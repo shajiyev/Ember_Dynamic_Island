@@ -38,7 +38,7 @@ Rules:
 - Launching Ember never fires an alert; the first reading has nothing to compare with.
 - A new alert replaces one still showing, and its own time starts from zero.
 - Alert colours apply only to the active (winged) state. The open panel keeps its soft
-  orange glow. (might later add those colours to the glow as well)
+  Ember glow (rose since 2026-11-12). (might later add those colours to the glow as well)
 - If the panel is open when an alert fires, it stays open. When it closes, the pill
   shows the alert only if the alert's time has not run out yet.
 
@@ -82,8 +82,8 @@ same way.
 |---|---|---|---|
 | Live activity | `Ember/Activity/LiveActivity.swift` | A plain value: wing symbol name, symbol colour, wing text, glow colour, duration. | SwiftUI `Color` |
 | Pill controller (changed) | `Ember/Pill/PillController.swift` | New `show(_ activity:)`: sets `currentActivity`, sends `activityChanged(true)`, and after the activity's duration clears it and sends `activityChanged(false)`. A newer activity replaces the current one and restarts the timer. This timer is separate from the open and close delays. Is given the open panel's content when it starts. | Live activity |
-| Pill view (changed) | `Ember/Pill/PillView.swift` | In the active state draws the wings from `currentActivity` and uses its glow colour (Ember orange when none). In the open state shows the panel content it was given. | Controller |
-| Pill style (changed) | `Ember/Pill/PillStyle.swift` | The glow colour becomes an input instead of a fixed value; Ember orange stays the default. | — |
+| Pill view (changed) | `Ember/Pill/PillView.swift` | In the active state draws the wings from `currentActivity` and uses its glow colour (the Ember glow when none: rose since 2026-11-12). In the open state shows the panel content it was given. | Controller |
+| Pill style (changed) | `Ember/Pill/PillStyle.swift` | The glow colour becomes an input instead of a fixed value; the Ember glow stays the default (rose since 2026-11-12). | — |
 | Panel content | `Ember/Panel/PanelView.swift` | Top row (empty left side, status items on the right) above the placeholder. | Battery status view |
 | Battery reading | `Ember/Battery/BatteryReading.swift` | Percentage and whether the adapter is plugged in, plus the SF Symbol for that reading. Built from one IOKit power-source description dictionary; returns nothing if required keys are missing. Pure. | Nothing |
 | Battery alerts | `Ember/Battery/BatteryAlerts.swift` | The rules: takes each new reading, compares it with the previous one, returns an alert (`pluggedIn`, `unplugged`, `low`, `veryLow`) or nothing, and keeps track of which thresholds are armed. Maps each alert to its `LiveActivity`. All alert colours, symbols, thresholds and durations are defined here. Pure, no timers. | Reading, live activity |

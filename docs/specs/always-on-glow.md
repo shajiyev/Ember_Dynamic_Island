@@ -10,7 +10,7 @@ brings back the invisible rest.
 
 ## What the user sees
 
-- **At rest:** a soft Ember-orange glow (`PillStyle.glowColor`, #FF7A1E) around the notch,
+- **At rest:** a soft Ember glow (`PillStyle.glowColor`, Ember rose #D9776B since 2026-11-12; first #FF7A1E) around the notch,
   and a thin brighter line that traces both sides and the bottom of the notch, fading out
   towards the top of the screen.
 - **Alerts, "Time's up" and the open panel** are unchanged; they flare to their full glow.

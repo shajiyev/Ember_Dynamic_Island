@@ -10,7 +10,7 @@ import SwiftUI
 final class NowPlayingModel {
     /// The chosen player's track, or nil when neither has one.
     private(set) var current: Track?
-    /// The chosen song's glow from its cover, or nil without a cover (Ember orange).
+    /// The chosen song's glow from its cover, or nil without a cover (Ember rose).
     private(set) var glow: Color?
     /// The players installed on this Mac, for the Open buttons.
     let installed = Player.allCases.filter { $0.appURL != nil }

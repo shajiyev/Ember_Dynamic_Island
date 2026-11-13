@@ -26,9 +26,14 @@
 - **Done (website):** the landing page (`site/`), light mode, spec
   docs/specs/landing-page.md, plan docs/plans/landing-page.md (all 6 tasks). Checked in
   headless Chrome on macOS 26; Safari check by the user still to do.
-- **Done:** new logo and app icon (Night Glow): graphite, warm-white E with an ember
-  glow, one icon for light and dark mode. Spec docs/specs/logo.md. Built on macOS 26.6.2;
-  not yet seen in the real Dock.
+- **Done:** new logo and app icon (Night Glow): graphite, warm-white E with a rose
+  glow, one icon for light and dark mode. Spec docs/specs/logo.md.
+- **Done:** Ember's glow colour is now Ember rose `#D9776B` (was ember orange `#FF7A1E`):
+  the logo, the pill's glow (`PillStyle.glowColor`: the resting glow and songs without a
+  cover) and the website. The timer keeps its orange (`TimerLook.color`), in the wings
+  and on the Timer tab. Tests pass on macOS 26.6.2; checked on screen by the user.
+- **Done:** the panel's tabs show icons only (name on hover and for VoiceOver), so more
+  tabs fit.
 - **Next:** choose and design milestone 2's next feature (by the agreed order: Bluetooth
   devices, #8).
   Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with

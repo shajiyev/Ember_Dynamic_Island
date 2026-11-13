@@ -6,9 +6,9 @@ that blends into the notch. When something happens (music playing, charging, a t
 running) a warm glow and compact info appear beside the notch. Hover or click and it
 expands into controls and quick tools.
 
-Brand: the logo is a warm-white block "E" with a tight ember glow on a graphite
+Brand: the logo is a warm-white block "E" with a tight rose glow on a graphite
 background (`assets/Ember_logo.svg`, spec docs/specs/logo.md). On screen, the pill is
-black and lights up with a warm ember glow when something is happening.
+black and lights up with a warm rose glow (Ember rose, `#D9776B`) when something is happening.
 
 ## Why
 - A polished tool the author uses every day.

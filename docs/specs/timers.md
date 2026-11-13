@@ -54,11 +54,13 @@ Playing, the first time two features need the panel body.
 
 ### Closed pill while running
 
-- The left wing shows the `timer` symbol in Ember orange; the right wing shows the time
-  left in white. While paused, the left wing shows `pause.fill` instead and the time left
+- The left wing shows the `timer` symbol in the timer's orange, #FF7A1E (`TimerLook.color`);
+  the right wing shows the time left in white. While paused, the left wing shows `pause.fill` instead and the time left
   stays still.
-- The pill glows Ember orange while the timer runs or is paused, like the resting glow
-  (`TimerLook.runningGlowColor`; chosen on screen, see docs/decisions.md).
+- The pill glows the timer's orange while the timer runs or is paused
+  (`TimerLook.runningGlowColor`; chosen on screen, see docs/decisions.md). The orange
+  stays when Ember's own glow became rose (2026-11-12): timers are orange in Apple's
+  Clock app. The open panel's Timer tab glows the same orange.
 - Wing text, to fit a 34-point wing:
   - under an hour: minutes and seconds, `24:59`, `0:42`
   - from an hour up: hours and minutes, `1h25`, `23h59`

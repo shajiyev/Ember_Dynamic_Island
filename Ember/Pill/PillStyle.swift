@@ -22,8 +22,8 @@ nonisolated struct PillStyle: Equatable {
     var edgeSideOutset: CGFloat = 0
     var edgeBottomOutset: CGFloat = 0
 
-    /// The ember glow, #FF7A1E.
-    static let glowColor = Color(red: 1.0, green: 0.478, blue: 0.118)
+    /// The Ember glow: rose, #D9776B, the same as the logo's glow (docs/specs/logo.md).
+    static let glowColor = Color(red: 0xD9 / 255, green: 0x77 / 255, blue: 0x6B / 255)
     /// A soft glow at rest, so the notch stays lit while nothing is happening (#29). Off
     /// makes the pill invisible at rest. A Settings toggle will drive this later.
     static let alwaysOnGlow = true

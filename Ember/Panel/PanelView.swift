@@ -31,8 +31,8 @@ struct PanelView: View {
         }
         .padding(.horizontal, 32)   // clears the open panel's flared and rounded corners
         .environment(\.colorScheme, .dark)   // the panel is always black
-        // The panel glows in the song's colour while the Music tab shows a song.
-        .preference(key: PanelGlowColorKey.self, value: selection.tab == .music ? nowPlaying.glow : nil)
+        // The panel glows in the song's colour on the Music tab, the timer's orange on Timer.
+        .preference(key: PanelGlowColorKey.self, value: selection.tab.glowColor(songGlow: nowPlaying.glow))
         // The panel's content appears each time it opens.
         .onAppear { selection.panelOpened() }
     }
