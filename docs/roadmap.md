@@ -67,8 +67,9 @@
   docs/plans/calendar.md.
 - **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 2 of 5 done (the plain Calendar tab).
 - **Next:** build #14 task by task.
-  Website: the checks before deploying (Safari on Mac and iPhone, phones), then deploy on
-  Vercel (steps in docs/architecture.md; the Vercel MCP is connected). The demo grows as features are finished. Later for
+  Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
+  how it looks and performs; not announced). Still to do: the user's check in Safari on
+  Mac and iPhone; a custom domain once bought. The demo grows as features are finished. Later for
   the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 

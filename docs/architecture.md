@@ -145,7 +145,13 @@ tests are kept out of the deploy by `site/.vercelignore`.
 
 ### Deploying (Vercel)
 
-One-time setup, done by the repo owner in the Vercel dashboard (labels may differ slightly):
+Live at **https://ember-sigma-two.vercel.app** (Vercel project `ember`, on the owner's
+Hobby account; first deployed 2026-11-14 through the Vercel MCP). Production deploys from
+`main`; each deployment's own preview address asks for a Vercel login (Vercel's standard
+protection), the production address is public.
+
+The one-time setup, for reference (it was done through the MCP; dashboard labels may
+differ slightly):
 
 1. Add New → Project → import `shajiyev/Ember_Dynamic_Island` from GitHub. Give the
    Vercel GitHub app access to this repository only.

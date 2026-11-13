@@ -530,3 +530,15 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
   Download, chosen over a round icon button and a bare icon. **Why:** clearest about the
   current mode. On phones up to 400 px the top bar tightens (smaller logo, slimmer
   padding) so it fits.
+
+## 2026-11-14 — The repo went public and the site was first deployed
+- **The GitHub repo is public.** **Why:** Ember is open source, and the site's GitHub
+  buttons, "Report a bug" and link-preview image all point at it (they returned 404 while
+  it was private). Its full history is public with it, including the sharp album covers
+  from earlier commits; rewriting history to remove them was not worth a force-push.
+- **The demo's album covers are blurred in the files** (not with CSS), so the site never
+  serves the sharp artwork. **Why:** the artwork belongs to its owners; the blur keeps the
+  colours and the glow.
+- **Deployed now, before Ember ships,** to see how the site looks and performs live. The
+  reminders for testimonials, donations, a live star count and the interactive Mac view
+  wait until the project is declared ready to ship.
