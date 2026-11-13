@@ -34,8 +34,9 @@
   and on the Timer tab. Tests pass on macOS 26.6.2; checked on screen by the user.
 - **Done:** the panel's tabs show icons only (name on hover and for VoiceOver), so more
   tabs fit.
-- **Next:** choose and design milestone 2's next feature (by the agreed order: Bluetooth
-  devices, #8).
+- **Done:** milestone 2's fourth feature chosen and designed: Bluetooth audio devices
+  (#8). Spec docs/specs/bluetooth.md, plan docs/plans/bluetooth.md (5 tasks).
+- **Next:** plan task 1, reading audio devices and the sandbox check (needs AirPods).
   Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
   the light/dark toggle (its own spec). Now Playing is in the demo (2026-11-13). Later for
   the site: testimonials, donations, a live GitHub star count, the
