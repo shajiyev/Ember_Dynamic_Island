@@ -184,19 +184,32 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .button-icon { width: 18px; height: 18px; fill: currentColor; }
 
 .button-github {
+  isolation: isolate;
   background: linear-gradient(180deg, var(--github-ground-top), var(--github-ground-bottom));
   color: var(--github-text);
+  /* At rest: darker, with a softer rose edge and glow. */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--rose-edge), transparent 80%),
+    0 0 12px 0 color-mix(in srgb, var(--rose-glow), transparent 80%);
+  transition: box-shadow 0.25s ease-out;
+}
+/* The darkening is a layer over the graphite (a gradient can't fade by itself); it sits
+   under the label and icon. */
+.button-github::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(0 0 0 / 0.4);
+  transition: opacity 0.25s ease-out;
+}
+/* Hover brightens it to the full graphite, with the rose edge and glow at full strength. */
+.button-github:hover::before { opacity: 0; }
+.button-github:hover {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--rose-edge), transparent 65%),
     0 0 14px 0 color-mix(in srgb, var(--rose-glow), transparent 65%);
-  transition: box-shadow 0.25s ease-out, filter 0.25s ease-out;
-}
-/* Hover: the tile lifts a shade and its rose edge and glow grow. */
-.button-github:hover {
-  filter: brightness(1.15);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--rose-edge), transparent 40%),
-    0 0 20px 2px color-mix(in srgb, var(--rose-glow), transparent 50%);
 }
 
 /* The nav's Download: clay rose with a warm-white label, and the pill's resting glow

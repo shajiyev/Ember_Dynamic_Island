@@ -59,7 +59,9 @@ sparks). No text, images, code or assets come from that site, and the site never
    - Two buttons side by side:
      - **GitHub:** a small piece of the logo: the logo's graphite ground (`#26262A` →
        `#111114`), warm-white text and mark (`#FFF1E2`, about 16:1), a thin pale-rose edge
-       and a soft rose glow; on hover it lifts a shade and the glow grows. Chosen so it
+       and a soft rose glow. At rest it is darker (40% deeper, softer edge and glow); hover
+       brightens it to the full graphite with the edge and glow at full strength (the
+       user asked for the earlier resting look to become the hover). Chosen so it
        stands apart from the fact chips (it was a see-through ghost button that looked
        like them). Opens the repo in a new tab. (Same in Get started.)
      - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot
