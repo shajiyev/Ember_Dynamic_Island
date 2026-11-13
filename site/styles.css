@@ -45,10 +45,11 @@
   --app-glow: #D9776B;   /* Ember rose, PillStyle.glowColor */
   --app-timer: #FF7A1E;  /* the timer's orange, TimerLook.color */
   --app-green: #30D158;
-  /* The demo song's cover colour: an abstract, dark slate-blue cover drawn for the site
-     (no real artwork); like the app, the music glow takes the cover's colour, here a soft
-     pale blue. */
-  --demo-cover: #A7C2FF;
+  /* The demo songs' glows: what the app's CoverColor gives each cover
+     (docs/specs/landing-demo-song-skip.md). Song A's cover is mostly white with red bars,
+     so it glows red; song B's is black and white, so it glows the app's soft white. */
+  --song-a: #FF4C53;
+  --song-b: #E6E6E6;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
@@ -583,6 +584,11 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
    and the bottom corners have a radius of 14 (Ember/Pill/NotchGeometry.swift and
    PillStyle.swift). */
 
+/* Registered so they animate: the glow changes colour smoothly between songs, and the
+   flares grow with the open panel. */
+@property --glow { syntax: '<color>'; inherits: true; initial-value: #D9776B; }
+@property --flare { syntax: '<length>'; inherits: true; initial-value: 6px; }
+
 .screen {
   max-width: 760px;
   margin: 0 auto;
@@ -617,6 +623,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   height: 33px;
   border-radius: 0 0 14px 14px;
   background: #000;
+  transform-origin: top center;
   /* At rest: a soft glow, centred (PillStyle rest: opacity 0.6, radius 8, offset 0). */
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--glow) 60%, transparent));
 }
@@ -624,7 +631,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 /* On narrow phones the wide pill (269 + flares) would fill the whole mock screen, so the
    pill is drawn at 80%, scaled from its top centre so it stays on the notch. */
 @media (max-width: 420px) {
-  .pill { transform-origin: top center; scale: 0.8; }
+  .pill { scale: 0.8; }
 }
 
 /* The top corners flare outward where the pill meets the top of the screen. */
@@ -666,7 +673,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
    (PillStyle active: opacity 0.85, radius 10, offset 5). The spring roughly matches
    PillStyle.animation (response 0.38, damping 0.8). */
 .pill {
-  transition: width 0.45s cubic-bezier(0.3, 1.2, 0.5, 1), filter 0.45s ease;
+  transition: width 0.45s cubic-bezier(0.3, 1.2, 0.5, 1), height 0.45s cubic-bezier(0.3, 1.2, 0.5, 1),
+    border-radius 0.45s ease, --flare 0.45s ease, scale 0.45s ease, filter 0.45s ease, --glow 0.4s ease;
 }
 .pill[data-state="active"] {
   width: calc(var(--notch-width) + 2 * var(--wing));
@@ -675,7 +683,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 /* Active edge line: 1 wide on the edge, fading in from the middle to the bottom. */
 .edge { transition: opacity 0.45s ease; }
-.pill[data-state="active"] .edge {
+.pill:is([data-state="active"], [data-state="open"]) .edge {
   inset: 0 -0.5px -0.5px;
   border-width: 0 1px 1px;
   border-radius: 0 0 14.5px 14.5px;
@@ -683,6 +691,19 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   -webkit-mask-image: linear-gradient(to bottom, transparent 50%, #000);
   mask-image: linear-gradient(to bottom, transparent 50%, #000);
 }
+
+/* Open: the app's panel, 620 × 200, with rounder corners and a wider glow pushed down
+   (PillStyle open: flares 19, bottom corners 24, glow opacity 0.55, radius 16, offset 8).
+   Scaled down to fit narrow screens (demo.js sets --open-scale). */
+.pill[data-state="open"] {
+  --flare: 19px;
+  width: 620px;
+  height: 200px;
+  border-radius: 0 0 24px 24px;
+  scale: var(--open-scale, 1);
+  filter: drop-shadow(0 8px 16px color-mix(in srgb, var(--glow) 55%, transparent));
+}
+.pill[data-state="open"] .edge { border-radius: 0 0 24.5px 24.5px; opacity: 0.55; }
 
 /* The wings sharpen out of a blur just after the pill starts to grow, and leave quickly
    (PillStyle.contentTransition: in 0.3 s after 0.1 s, out 0.15 s). */
@@ -714,17 +735,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 /* Now Playing (Ember/Pill/PillView.swift, EqualizerView.swift): a 20 × 20 cover with
    rounded corners in the left wing, and an equalizer of four bars in the cover's colour in
-   the right. The cover here is abstract, drawn for the site. */
-.wing-cover {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  /* Dark and moody: slate blue, with a faint soft light like a moon behind haze. */
-  background:
-    radial-gradient(circle at 62% 34%, rgb(214 226 255 / 0.55), rgb(167 194 255 / 0.18) 22%, transparent 42%),
-    radial-gradient(ellipse at 40% 110%, rgb(10 12 18 / 0.9), transparent 60%),
-    linear-gradient(160deg, #3A4560, #1C2230 55%, #0E1118);
-}
+   the right. The covers are below. */
+.wing-cover { width: 20px; height: 20px; border-radius: 5px; }
 .wing-eq { display: flex; align-items: center; gap: 2px; height: 12px; }
 .wing-eq i { width: 2.5px; height: 8px; border-radius: 2px; background: var(--glow); }
 
@@ -735,9 +747,127 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .pill[data-kind="music"] .wing-cover { display: block; }
 .pill[data-kind="music"] .wing-eq { display: flex; }
 
+/* The open panel (Ember/Panel/PanelView.swift, NowPlayingPanelView.swift): a top row
+   beside the notch, then the player; 32 px at the sides clears the open corners. Centred,
+   so it is uncovered from the middle, and shown like the wings: out of a blur just after
+   the pill starts to grow, gone quickly. */
+.panel {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  width: 620px;
+  height: 200px;
+  padding: 0 32px;
+  color: #FFFFFF;
+  font-family: var(--font);
+  text-align: left;
+  opacity: 0;
+  filter: blur(3px);
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+.pill[data-state="open"] .panel {
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.3s ease 0.1s, filter 0.3s ease 0.1s;
+}
+
+.panel-top { display: flex; align-items: center; justify-content: space-between; height: 32px; }
+.panel-tabs { display: flex; gap: 4px; }
+.panel-tab { display: flex; padding: 4px 8px; border-radius: 999px; color: rgb(255 255 255 / 0.55); fill: currentColor; }
+.pill:not([data-tab="timer"]) .panel-tab-music,
+.pill[data-tab="timer"] .panel-tab-timer { background: rgb(255 255 255 / 0.15); color: #FFFFFF; }
+.panel-battery { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; fill: currentColor; }
+
+.player { display: flex; flex: 1; align-items: center; gap: 18px; }
+.panel-cover { width: 96px; height: 96px; border-radius: 12px; }
+.player-info { display: flex; flex: 1; flex-direction: column; gap: 6px; }
+.song-title { display: block; font-size: 15px; font-weight: 600; }
+.song-artist { display: block; margin-top: 6px; font-size: 13px; color: rgb(255 255 255 / 0.6); }
+
+/* The scrubber: a thin white track with a round knob; it jumps back on the new song. */
+.scrubber { height: 4px; margin-top: 6px; border-radius: 2px; background: rgb(255 255 255 / 0.2); }
+.scrubber-fill {
+  position: relative;
+  display: block;
+  width: 27%;
+  height: 100%;
+  border-radius: inherit;
+  background: #FFFFFF;
+  transition: width 0.4s ease;
+}
+.scrubber-fill::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+}
+.pill[data-song="b"] .scrubber-fill { width: 1%; }
+.times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -2px;
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 0.5);
+}
+
+.controls { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 2px; fill: currentColor; }
+/* The Timer tab (Ember/Timer/TimerPanelView.swift): the digits with arrows on the left,
+   the presets above Start and Reset on the right, 48 apart. Shown instead of the player. */
+.pill:not([data-tab="timer"]) .timer-view,
+.pill[data-tab="timer"] .player { display: none; }
+.timer-view { display: flex; flex: 1; align-items: center; justify-content: center; gap: 48px; }
+.timer-digits { display: flex; align-items: center; gap: 4px; }
+.timer-unit { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.timer-unit svg { margin: 4.5px 0; color: rgb(255 255 255 / 0.7); transition: opacity 0.2s ease; }
+.timer-value, .timer-colon { font-size: 36px; font-weight: 500; line-height: 1.2; }
+.timer-value { min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+.timer-colon { color: rgb(255 255 255 / 0.5); }
+.timer-side { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.timer-row { display: flex; justify-content: center; gap: 8px; transition: opacity 0.2s ease; }
+/* macOS's bordered buttons, on the always-dark panel. */
+.timer-button { padding: 3px 10px; border-radius: 6px; background: rgb(255 255 255 / 0.14); font-size: 13px; line-height: 16px; }
+/* What can't be used is dimmed, like the app's disabled controls: Start and Reset until a
+   time is set; the presets and arrows while the timer runs. Start and Reset become Pause
+   and Cancel once it runs. */
+.pill[data-timer="empty"] .when-stopped,
+.pill[data-timer="running"] .timer-presets,
+.pill[data-timer="running"] .timer-unit svg { opacity: 0.4; }
+.pill[data-timer="running"] .when-stopped,
+.pill:not([data-timer="running"]) .when-running { visibility: hidden; }
+
+/* A press, on the buttons the demo "clicks" (⏭, the Timer tab, 25m, Start, Cancel): it shrinks and dims, then
+   springs back when released. A text button lights up instead of dimming. */
+[data-press] { transition: scale 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), opacity 0.25s ease, background-color 0.25s ease; }
+[data-press].is-pressed { scale: 0.8; opacity: 0.55; transition-duration: 0.12s; }
+.timer-button[data-press].is-pressed { scale: 0.9; opacity: 1; background: rgb(255 255 255 / 0.3); }
+
+/* Both songs' covers and texts are always there; the pill's data-song shows one, and they
+   crossfade when it changes. */
+.stack { display: grid; }
+.stack > * { grid-area: 1 / 1; }
+.for-a, .for-b, .cover::before, .cover::after { transition: opacity 0.4s ease; }
+.pill[data-song="b"] .for-a,
+.pill:not([data-song="b"]) .for-b { opacity: 0; }
+
+.cover { position: relative; flex: none; overflow: hidden; }
+.cover::before, .cover::after { content: ""; position: absolute; inset: 0; }
+/* The songs' real covers, 192 px for sharp 96 px panels on Retina screens. */
+.cover::before { background: url("assets/covers/empire-state-of-mind.jpg") center / cover; }
+.cover::after { background: url("assets/covers/ultraviolence.jpg") center / cover; opacity: 0; }
+.pill[data-song="b"] .cover::after { opacity: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   /* As specific as the active rules above, so it wins over their transitions. */
-  .pill, .pill[data-state] .edge, .pill[data-state] .wings { transition: none; }
+  .pill, .pill[data-state] .edge, .pill[data-state] .wings, .pill[data-state] .panel { transition: none; }
 }
 
 /* Motion (spec: "Motion"). All of it is inside prefers-reduced-motion: no-preference,

@@ -1,12 +1,33 @@
-// Plays the pill demo in the hero: rest, a song, a running timer and a charging alert, with
-// rest between them, again. The steps live in demo-steps.js; this file only applies them.
-import { STEPS, STILL_STEP, textAt } from './demo-steps.js';
+// Plays the pill demo in the hero: song A, the panel skipping to song B, the panel setting
+// a timer, its countdown, a charging alert taking over from it for a moment, and the panel
+// cancelling it, again.
+// The steps live in demo-steps.js; this file only applies them.
+import { STEPS, STILL_STEP, textAt, nextTick, timerUnits } from './demo-steps.js';
 
 const pill = document.querySelector('.pill');
 const icon = pill.querySelector('.wing-icon');
 const text = pill.querySelector('.wing-text');
+const buttons = pill.querySelectorAll('[data-press]');
+const timerValues = pill.querySelectorAll('.timer-value');
+
+// The open panel is the app's 620 wide; on narrower screens it is scaled down to fit.
+const PANEL_WIDTH = 620;
+function fitPanel() {
+  const room = pill.closest('.wallpaper').clientWidth - 16;
+  pill.style.setProperty('--open-scale', Math.min(1, room / PANEL_WIDTH));
+}
+
+function showPanel(step) {
+  pill.dataset.tab = step.tab;
+  if (step.timerSeconds === undefined) return;
+  const units = timerUnits(step.timerSeconds);
+  for (const value of timerValues) value.textContent = units[value.dataset.unit];
+  // Nothing set yet, set, or running: what can be used changes (styles.css).
+  pill.dataset.timer = step.running ? 'running' : step.timerSeconds > 0 ? 'set' : 'empty';
+}
 
 function show(step, elapsed) {
+  for (const button of buttons) button.classList.toggle('is-pressed', button.dataset.press === step.press);
   if (step.name === 'rest') {
     // The wings keep their content while they fade out; only the glow changes back.
     pill.style.removeProperty('--glow');
@@ -14,8 +35,14 @@ function show(step, elapsed) {
     return;
   }
   pill.style.setProperty('--glow', `var(${step.color})`);
-  // "music" shows the cover and the equalizer; the others a symbol and text (styles.css).
-  pill.dataset.kind = step.cover ? 'music' : 'symbol';
+  if (step.song) pill.dataset.song = step.song;
+  if (step.name === 'panel') {
+    showPanel(step);
+    pill.dataset.state = 'open';
+    return;
+  }
+  // Songs show a cover and the equalizer; the others a symbol and text (styles.css).
+  pill.dataset.kind = step.song ? 'music' : 'symbol';
   if (step.icon) {
     icon.dataset.icon = step.icon;
     icon.querySelector('use').setAttribute('href', `#icon-${step.icon}`);
@@ -25,14 +52,13 @@ function show(step, elapsed) {
 }
 
 function play(index, elapsed) {
-  const step = STEPS[index];
-  show(step, elapsed);
-  const [nextIndex, nextElapsed] = elapsed + 1 < step.seconds
-    ? [index, elapsed + 1]
-    : [(index + 1) % STEPS.length, 0];
-  setTimeout(() => play(nextIndex, nextElapsed), 1000);
+  show(STEPS[index], elapsed);
+  const next = nextTick(index, elapsed);
+  setTimeout(() => play(next.index, next.elapsed), next.wait * 1000);
 }
 
+fitPanel();
+addEventListener('resize', fitPanel);
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   show(STILL_STEP, 0);
 } else {

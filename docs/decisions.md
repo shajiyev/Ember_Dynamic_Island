@@ -416,3 +416,40 @@ the website's pill demo. The name stays Ember.
 The tab row shows each tab's symbol without its name; the name appears as a tooltip on
 hover and is the VoiceOver label. **Why:** more tabs are coming (Calendar, file shelf,
 Bluetooth…), and names would not fit in the panel's top row next to the battery.
+
+## 2026-11-13 — Bluetooth audio devices dropped (#8)
+The design (commit cf97f59) was built up to its last task and then removed before
+committing; nothing of it is in the app.
+- **Dropped.** **Why:** macOS already shows its own animation with the battery when
+  AirPods and other Apple headphones connect, so an alert at the notch would only repeat
+  it (the user's call, the same reasoning as the camera/mic indicator, #6).
+- **Found while building, worth knowing if it comes back:**
+  - Inside the App Sandbox, with the `com.apple.security.device.bluetooth` entitlement
+    and `NSBluetoothAlwaysUsageDescription`, `IOBluetooth` sees paired devices and their
+    connect notices; the sandbox would not need to be turned off.
+  - AirPods battery levels have no public API; the undocumented `IOBluetoothDevice`
+    properties `batteryPercentLeft`, `batteryPercentRight`, `batteryPercentCase` and
+    `batteryPercentSingle` return them (0 = unknown), checked on macOS 26.6.2.
+  - An AirPod resting in the case keeps reporting its battery, and the undocumented
+    "in ear" flags (`inEar`, `primaryInEar`, `secondaryInEar`) read 0 even while worn, so
+    Ember cannot tell which earbuds are worn.
+
+## 2026-11-13 — The website's pill demo opens the panel, with real songs
+- **The demo opens the panel** and presses its buttons (no cursor drawn): it skips from
+  song A to song B on the Music tab, switches to the Timer tab, sets 25 minutes and starts
+  it, lets the charger's alert take over the wings from the countdown, then opens the
+  panel again and cancels the timer. **Why:** one song with one glow colour read as "the
+  music glow is blue"; skipping to a different cover shows the glow follows the artwork,
+  and the panel shows the controls the demo never did. The order and timings are the
+  user's (table in docs/specs/landing-demo-song-skip.md).
+- **Real songs, real covers, real names:** "Empire State Of Mind" (JAŸ-Z) and
+  "Ultraviolence" (Lana Del Rey). **Why:** the user's call; it shows Ember as it really
+  looks. This reverses "real album art can't be used" (landing-page spec). The covers
+  belong to their owners and are not under the GPL (noted in the README); if an owner
+  objects, the abstract drawings come back.
+- **The glows come from the app's own code:** the covers were cropped from screenshots of
+  the app's panel and run through `CoverColor` (red `#FF4C53`; soft white `#E6E6E6` for
+  the black-and-white cover), so the demo matches the app. Abstract covers with pale blue,
+  coral and sunset-orange glows were tried first and replaced.
+- **The open panel is drawn at the app's size** (620 × 200), so on desktop it fills most of
+  the mock screen; on narrow screens it is scaled down to fit.

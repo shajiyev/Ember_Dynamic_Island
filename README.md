@@ -11,7 +11,7 @@ activities and quick tools.
 ## Planned for the first release
 
 - Now Playing: artwork, playback controls and scrubber
-- Live activities: battery and charging, Bluetooth devices
+- Live activities: battery and charging
 - Timers
 - Calendar and reminders preview
 - File shelf: drop files on the notch
@@ -54,4 +54,6 @@ documents are in [docs/](docs/): vision, roadmap, feature list and a log of deci
 
 Ember is licensed under the [GNU General Public License v3.0](LICENSE). Small portions of
 code are adapted from [Atoll](https://github.com/Ebullioscopic/Atoll) and
-[Boring Notch](https://github.com/TheBoredTeam/boring.notch) (GPL-3.0).
+[Boring Notch](https://github.com/TheBoredTeam/boring.notch) (GPL-3.0). The two album
+covers in the website's demo (`site/assets/covers/`) belong to their owners and are not
+covered by this licence.

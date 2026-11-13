@@ -121,16 +121,19 @@ of the app, and `.gitattributes` keeps it out of GitHub's language statistics.
 |---|---|
 | `site/index.html` | All page content, meta tags and the inline SVG icons |
 | `site/styles.css` | Colour variables (defined once, at the top), then layout, then the pill demo |
-| `site/demo.js` | Plays `demo-steps.js` on the page; with Reduce Motion it shows charging, still |
-| `site/demo-steps.js` | The pill demo's steps and wing text. Pure, tested in `site/tests/` |
+| `site/demo.js` | Plays `demo-steps.js` on the page: sets the pill's `data-state` (rest, active, open), `data-song`, `data-tab`, `data-timer` and the pressed button; fits the open panel to narrow screens. With Reduce Motion it shows charging, still |
+| `site/demo-steps.js` | The pill demo's script: the steps, their timings, wing text and the panel's timer. Pure, tested in `site/tests/`; the timings are in `docs/specs/landing-demo-song-skip.md` |
 | `site/motion.js` | Scroll reveals and the cards' light. All motion styles sit in one block at the end of `styles.css`, inside `prefers-reduced-motion: no-preference` |
-| `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen) |
+| `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen); `covers/` holds the demo songs' album covers (192 px) |
 
 The page's sections, their order and their text are set in
 `docs/specs/landing-page.md`.
 
 The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
-`BatteryAlert`); when those change in the app, update the pill section of `styles.css`.
+`BatteryAlert`) and its open panel (`PanelView`, `NowPlayingPanelView`,
+`TimerPanelView`); when those change in the app, update the pill section of `styles.css`.
+Everything the demo shows is in the markup; CSS shows the right part from the pill's data
+attributes, so `demo.js` only sets attributes and text.
 Serve locally with `python3 scripts/serve-site.py` (http://localhost:8765). It sends
 `Cache-Control: no-cache`, so the browser never mixes a new page with an old stylesheet
 (plain `python3 -m http.server` let Chrome keep stale CSS).

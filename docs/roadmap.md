@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-12)
+## Current status (2026-11-13)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -22,7 +22,6 @@
   and Spotify. Spec docs/specs/now-playing.md.
 - **Done:** milestone 2, feature 3: Now Playing (#1), Apple Music and Spotify. Verified on
   macOS 26.6.2 with the checklist in docs/plans/now-playing.md.
-- **In progress:** nothing in the app.
 - **Done (website):** the landing page (`site/`), light mode, spec
   docs/specs/landing-page.md, plan docs/plans/landing-page.md (all 6 tasks). Checked in
   headless Chrome on macOS 26; Safari check by the user still to do.
@@ -34,11 +33,20 @@
   and on the Timer tab. Tests pass on macOS 26.6.2; checked on screen by the user.
 - **Done:** the panel's tabs show icons only (name on hover and for VoiceOver), so more
   tabs fit.
-- **Done:** milestone 2's fourth feature chosen and designed: Bluetooth audio devices
-  (#8). Spec docs/specs/bluetooth.md, plan docs/plans/bluetooth.md (5 tasks).
-- **Next:** plan task 1, reading audio devices and the sandbox check (needs AirPods).
+- **Dropped:** Bluetooth audio devices (#8), designed and built but removed before
+  committing: macOS already shows its own animation when AirPods connect. See
+  docs/decisions.md.
+- **Done (website):** the hero's pill demo opens the panel: Empire State Of Mind skips to
+  Ultraviolence (the glow follows each real cover), the Timer tab sets 25 minutes, the
+  charger's alert takes over from the countdown, and the timer is cancelled; 21.05 s a
+  loop. Spec docs/specs/landing-demo-song-skip.md (with the timing table), plan
+  docs/plans/landing-demo-song-skip.md. Tests pass; checked in headless Chrome on macOS
+  26.6.2, desktop and phone widths.
+- **In progress:** nothing in the app.
+- **Next:** choose and design milestone 2's next feature (by the v1 list's order:
+  calendar & reminders, #14).
   Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
-  the light/dark toggle (its own spec). Now Playing is in the demo (2026-11-13). Later for
+  the light/dark toggle (its own spec). The demo grows as features are finished. Later for
   the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 

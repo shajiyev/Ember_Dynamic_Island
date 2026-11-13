@@ -76,12 +76,12 @@ sparks). No text, images, code or assets come from that site, and the site never
      behind it breathes slowly, and a few sparks drift up from the notch.
 2. **Features** (`#features`): small label "Features", heading **"It glows when it
    matters."**, the line "At rest, Ember is a black pill that blends into the notch. When
-   something happens, it glows. Hover, and it opens.", then six cards: Now Playing;
-   battery and charging; Bluetooth and AirPods; timers; calendar and reminders; file
-   shelf. Features not yet built carry a "Planned" tag. Built today: Now Playing, battery
+   something happens, it glows. Hover, and it opens.", then five cards: Now Playing;
+   battery and charging; timers; calendar and reminders; file shelf. Features not yet built carry a "Planned" tag. Built today: Now Playing, battery
    and timers (updated to the roadmap 2026-11-12).
    The grid follows the v1 table in `docs/features.md`; when a feature is dropped or
-   finished there, the grid changes too.
+   finished there, the grid changes too (Bluetooth and AirPods removed 2026-11-13, when #8
+   was dropped).
 3. **Safe to open. Private by design.** (`#privacy`): text below. Placed after Features,
    where someone who is interested is deciding whether to install.
 4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
@@ -190,14 +190,14 @@ Text, as agreed:
 > Ember's code is public, so anyone can check exactly what it does.
 >
 > **Why it asks for permissions.** Some features need macOS's permission: Music and
-> Spotify to show what's playing and control it, Calendar and Reminders to show what's
-> next, and Bluetooth to show your AirPods' battery. Ember asks
+> Spotify to show what's playing and control it, and Calendar and Reminders to show what's
+> next. Ember asks
 > for each permission only when you turn on the feature that needs it, during setup or
 > later in Settings. Say no, and only that feature stays off. You can change your mind any
 > time in System Settings → Privacy & Security.
 >
 > **What stays on your Mac: everything.** No account, no analytics, no tracking, no
-> servers. Your music, calendar, devices and files are read on your Mac, shown in the
+> servers. Your music, calendar and files are read on your Mac, shown in the
 > notch, and never sent anywhere. Ember only goes online to check GitHub for updates and
 > to fetch the cover of the song Spotify is playing.
 
@@ -219,29 +219,19 @@ Text, as agreed:
 
 - **Setting:** the top edge of a MacBook screen drawn across the hero as a dark strip with
   the notch cut into its middle; the pill sits around the notch as in the app.
-- **Loop**, about 4 seconds per step, showing only features that are built:
-  1. **Rest:** black, almost hidden in the notch, with the soft always-on glow in Ember
-     rose, as in the app.
-  2. **Charging:** the pill widens, battery icon on one side and "82%" on the other; the
-     glow brightens.
-  3. **Timer:** a countdown ticks beside the notch, in the timer's own orange `#FF7A1E`
-     (`TimerLook.color`), as in the app.
-  4. **Now Playing** (added 2026-11-13, once the feature was finished): a 20 × 20 cover
-     with rounded corners in the left wing, an equalizer of four bars in the right, and the
-     glow in the cover's colour, as in the app. The cover is abstract, drawn for the site:
-     dark slate blue with a faint soft light; glow and equalizer a soft pale blue
-     `#A7C2FF`, from the user's reference song (violet and a red-coral were tried and not
-     kept). Real album art can't be used.
-  Order (chosen by the user): rest 3 s → music 6 s → rest 2 s → timer 6 s → rest 2 s →
-  charging 3 s, then again.
-- **Matches the app:** shapes, sizes, timings and glow are taken from the app's pill
-  metrics and its battery, timer and Now Playing views (`NowPlayingLook`,
+- **Loop**, showing only features that are built: since 2026-11-13 it opens the panel,
+  skips from one real song to another, sets a timer on the Timer tab, lets the charger's
+  alert take over from the countdown, and cancels the timer. The scene, the two songs and
+  the timing table are in docs/specs/landing-demo-song-skip.md. (Before, it was rest,
+  one abstract song, timer and charging in the wings only.)
+- **Matches the app:** shapes, sizes and glow are taken from the app's pill
+  metrics, its open panel and its battery, timer and Now Playing views (`NowPlayingLook`,
   `EqualizerView`: bars 2.5 px wide, 2 px apart, 4–12 px tall at their own speeds).
 - **Reduced motion:** with Reduce Motion on, the loop stops and shows the charging step,
   still.
 - **Narrow phones** (420 px and narrower): the pill is drawn at 80%, so the wide pill fits
-  inside the mock screen.
-- **Later:** other features (Bluetooth next) join the loop only when the user says they
+  inside the mock screen; the open panel is scaled down to fit the screen's width.
+- **Later:** other features join the loop only when the user says they
   are finished. A real screen recording may replace the CSS demo later.
 
 ## Look (light mode)

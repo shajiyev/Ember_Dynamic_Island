@@ -39,6 +39,27 @@
       <circle cx="8" cy="9" r="5.75" fill="none" stroke="currentColor" stroke-width="1.6"/>
       <path d="M8 9V5.8M6.2 1.75h3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
     </symbol>
+    <!-- The open panel's icons: Music tab, battery, and the player's controls. -->
+    <symbol id="icon-music" viewBox="0 0 16 16">
+      <path d="M5.4 3.4 14 1.5v2.3L5.4 5.7zM5.4 4h1.5v8.4H5.4zM12.5 2h1.5v8.4h-1.5z"/>
+      <ellipse cx="4.6" cy="12.4" rx="2.3" ry="1.8"/><ellipse cx="11.7" cy="10.5" rx="2.3" ry="1.8"/>
+    </symbol>
+    <symbol id="icon-battery" viewBox="0 0 28 14">
+      <rect x="1" y="1" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <rect x="3" y="3" width="15.6" height="8" rx="2"/>
+      <path d="M25.75 5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+    </symbol>
+    <symbol id="icon-backward" viewBox="0 0 22 14">
+      <path d="M10 2v10L2.5 7zM19.5 2v10L12 7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-forward" viewBox="0 0 22 14">
+      <path d="M2.5 2v10L10 7zM12 2v10l7.5-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-pause" viewBox="0 0 14 14">
+      <rect x="2.5" y="1.5" width="3.4" height="11" rx="1.2"/><rect x="8.1" y="1.5" width="3.4" height="11" rx="1.2"/>
+    </symbol>
+    <symbol id="icon-chevron-up" viewBox="0 0 16 16"><path d="M3.5 10.5 8 6l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 16 16"><path d="M3.5 5.5 8 10l4.5-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <!-- The fact chips' icons: code, a laptop, a screen with a notch. Their <svg> tags carry
          size and colour too, so they stay small even if the stylesheet is stale or missing. -->
     <symbol id="icon-code" viewBox="0 0 16 16"><path d="M5.5 5 2.5 8l3 3M10.5 5l3 3-3 3"/></symbol>
@@ -105,12 +126,66 @@
                 <div class="wings">
                   <span class="wing">
                     <svg class="wing-icon" data-icon="battery-bolt" width="22" height="11"><use href="#icon-battery-bolt"/></svg>
-                    <span class="wing-cover"></span>
+                    <span class="cover wing-cover"></span>
                   </span>
                   <span class="wing">
                     <span class="wing-text">82%</span>
                     <span class="wing-eq"><i></i><i></i><i></i><i></i></span>
                   </span>
+                </div>
+                <!-- The open panel's Music tab, as in the app (Ember/Panel/PanelView.swift,
+                     Ember/NowPlaying/NowPlayingPanelView.swift). Both songs are here; the
+                     pill's data-song shows one. -->
+                <div class="panel">
+                  <div class="panel-top">
+                    <span class="panel-tabs">
+                      <span class="panel-tab panel-tab-music"><svg width="12" height="12"><use href="#icon-music"/></svg></span>
+                      <span class="panel-tab panel-tab-timer" data-press="timer-tab"><svg width="12" height="12"><use href="#icon-timer"/></svg></span>
+                    </span>
+                    <span class="panel-battery">82%<svg width="25" height="12"><use href="#icon-battery"/></svg></span>
+                  </div>
+                  <div class="player">
+                    <span class="cover panel-cover"></span>
+                    <div class="player-info">
+                      <div class="stack">
+                        <span class="for-a"><span class="song-title">Empire State Of Mind</span><span class="song-artist">JAŸ-Z</span></span>
+                        <span class="for-b"><span class="song-title">Ultraviolence</span><span class="song-artist">Lana Del Rey</span></span>
+                      </div>
+                      <span class="scrubber"><span class="scrubber-fill"></span></span>
+                      <div class="stack">
+                        <span class="times for-a"><span>1:15</span><span>4:36</span></span>
+                        <span class="times for-b"><span>0:00</span><span>4:11</span></span>
+                      </div>
+                      <div class="controls">
+                        <svg width="22" height="14"><use href="#icon-backward"/></svg>
+                        <svg width="14" height="14"><use href="#icon-pause"/></svg>
+                        <svg data-press="next" width="22" height="14"><use href="#icon-forward"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- The Timer tab (Ember/Timer/TimerPanelView.swift): hours, minutes and
+                       seconds with arrows, the presets, and Start and Reset, which become
+                       Pause and Cancel once it runs. demo.js fills in the digits. -->
+                  <div class="timer-view">
+                    <div class="timer-digits">
+                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="hours">0</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
+                      <span class="timer-colon">:</span>
+                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="minutes">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
+                      <span class="timer-colon">:</span>
+                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="seconds">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
+                    </div>
+                    <div class="timer-side">
+                      <div class="timer-row timer-presets">
+                        <span class="timer-button">5m</span>
+                        <span class="timer-button" data-press="preset">25m</span>
+                        <span class="timer-button">45m</span>
+                      </div>
+                      <div class="stack">
+                        <div class="timer-row when-stopped"><span class="timer-button" data-press="start">Start</span><span class="timer-button">Reset</span></div>
+                        <div class="timer-row when-running"><span class="timer-button">Pause</span><span class="timer-button" data-press="cancel">Cancel</span></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -135,10 +210,6 @@
           <article class="card" data-reveal>
             <h3>Battery and charging</h3>
             <p>A glance when you plug in or unplug, and a heads-up at 20% and 10%.</p>
-          </article>
-          <article class="card" data-reveal>
-            <h3>Bluetooth and AirPods <span class="tag">Planned</span></h3>
-            <p>See your AirPods connect, with their battery level.</p>
           </article>
           <article class="card" data-reveal>
             <h3>Timers</h3>
@@ -167,11 +238,11 @@
           </article>
           <article class="card" data-reveal>
             <h3>Why it asks for permissions</h3>
-            <p>Some features need macOS's permission: Music and Spotify to show what's playing and control it, Calendar and Reminders to show what's next, and Bluetooth to show your AirPods' battery. Ember asks for each permission only when you turn on the feature that needs it, during setup or later in Settings. Say no, and only that feature stays off. You can change your mind any time in System Settings → Privacy &amp; Security.</p>
+            <p>Some features need macOS's permission: Music and Spotify to show what's playing and control it, and Calendar and Reminders to show what's next. Ember asks for each permission only when you turn on the feature that needs it, during setup or later in Settings. Say no, and only that feature stays off. You can change your mind any time in System Settings → Privacy &amp; Security.</p>
           </article>
           <article class="card" data-reveal>
             <h3>What stays on your Mac: everything</h3>
-            <p>No account, no analytics, no tracking, no servers. Your music, calendar, devices and files are read on your Mac, shown in the notch, and never sent anywhere. Ember only goes online to check GitHub for updates and to fetch the cover of the song Spotify is playing.</p>
+            <p>No account, no analytics, no tracking, no servers. Your music, calendar and files are read on your Mac, shown in the notch, and never sent anywhere. Ember only goes online to check GitHub for updates and to fetch the cover of the song Spotify is playing.</p>
           </article>
         </div>
       </div>
