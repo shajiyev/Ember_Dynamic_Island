@@ -1,12 +1,18 @@
+<div align="center">
+
 <img src="assets/Ember_app_icon.png" width="128" alt="Ember app icon">
 
-# Ember
+<h1>Ember</h1>
 
+<p>
 A Dynamic Island for the MacBook notch. Ember is a black pill that sits around the
 notch, glows when something is happening, and expands into media controls, live
 activities and quick tools.
+</p>
 
-> **Status: early development.** There is nothing to install yet.
+<p><strong>Status: early development.</strong> There is nothing to install yet.</p>
+
+</div>
 
 ## Planned for the first release
 
