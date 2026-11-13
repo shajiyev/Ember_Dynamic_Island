@@ -10,13 +10,6 @@ const text = pill.querySelector('.wing-text');
 const buttons = pill.querySelectorAll('[data-press]');
 const timerValues = pill.querySelectorAll('.timer-value');
 
-// The open panel is the app's 620 wide; on narrower screens it is scaled down to fit.
-const PANEL_WIDTH = 620;
-function fitPanel() {
-  const room = pill.closest('.wallpaper').clientWidth - 16;
-  pill.style.setProperty('--open-scale', Math.min(1, room / PANEL_WIDTH));
-}
-
 function showPanel(step) {
   pill.dataset.tab = step.tab;
   if (step.timerSeconds === undefined) return;
@@ -57,8 +50,6 @@ function play(index, elapsed) {
   setTimeout(() => play(next.index, next.elapsed), next.wait * 1000);
 }
 
-fitPanel();
-addEventListener('resize', fitPanel);
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   show(STILL_STEP, 0);
 } else {

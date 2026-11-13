@@ -18,6 +18,7 @@
        It marks the page itself, so nothing is hidden unless it runs. -->
   <script src="motion.js" defer></script>
   <script type="module" src="demo.js"></script>
+  <script type="module" src="screen.js"></script>
 </head>
 <body>
   <!-- Icons, drawn for this site. Used with <svg><use href="#icon-…"/></svg>; each <svg> also
@@ -48,6 +49,9 @@
       <rect x="1" y="1" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
       <rect x="3" y="3" width="15.6" height="8" rx="2"/>
       <path d="M25.75 5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+    </symbol>
+    <symbol id="icon-wifi" viewBox="0 0 16 12">
+      <path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.5 7a6.4 6.4 0 0 1 9 0l-1.2 1.2a4.7 4.7 0 0 0-6.6 0zM1.2 4.7a9.6 9.6 0 0 1 13.6 0l-1.2 1.2a7.9 7.9 0 0 0-11.2 0z"/>
     </symbol>
     <symbol id="icon-backward" viewBox="0 0 22 14">
       <path d="M10 2v10L2.5 7zM19.5 2v10L12 7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
@@ -109,80 +113,90 @@
         <li><svg width="15" height="15" fill="none" stroke="#A8524A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-laptop"/></svg>macOS 15 or later</li>
         <li><svg width="15" height="15" fill="none" stroke="#A8524A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-notch"/></svg>MacBooks with a notch</li>
       </ul>
+    </div>
 
-      <div class="hero-visual" data-reveal>
+    <!-- The screen is wider than the text (up to 1280 px), so it has its own container;
+         --reveal-order keeps it appearing after the text (motion.js numbers only the
+         text container's children). -->
+    <div class="container-wide">
+      <div class="hero-visual" data-reveal style="--reveal-order: 4">
         <div class="hero-glow" aria-hidden="true"></div>
         <div class="sparks" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span><span></span>
         </div>
         <div class="screen" role="img" aria-label="The top of a MacBook screen, with Ember's pill around the notch">
-          <div class="wallpaper">
-            <div class="menubar"></div>
-            <div class="pill" data-state="rest">
-              <span class="flare flare-left"></span>
-              <span class="flare flare-right"></span>
-              <span class="edge"></span>
-              <div class="pill-body">
-                <div class="wings">
-                  <span class="wing">
-                    <svg class="wing-icon" data-icon="battery-bolt" width="22" height="11"><use href="#icon-battery-bolt"/></svg>
-                    <span class="cover wing-cover"></span>
-                  </span>
-                  <span class="wing">
-                    <span class="wing-text">82%</span>
-                    <span class="wing-eq"><i></i><i></i><i></i><i></i></span>
-                  </span>
-                </div>
-                <!-- The open panel's Music tab, as in the app (Ember/Panel/PanelView.swift,
-                     Ember/NowPlaying/NowPlayingPanelView.swift). Both songs are here; the
-                     pill's data-song shows one. -->
-                <div class="panel">
-                  <div class="panel-top">
-                    <span class="panel-tabs">
-                      <span class="panel-tab panel-tab-music"><svg width="12" height="12"><use href="#icon-music"/></svg></span>
-                      <span class="panel-tab panel-tab-timer" data-press="timer-tab"><svg width="12" height="12"><use href="#icon-timer"/></svg></span>
+          <div class="screen-stage">
+            <div class="wallpaper">
+              <div class="menubar">
+                <span class="menu-items"><b>Finder</b><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span></span>
+                <span class="menu-items"><svg width="16" height="12"><use href="#icon-wifi"/></svg><svg width="22" height="11"><use href="#icon-battery"/></svg><span class="menu-clock"></span></span>
+              </div>
+              <div class="pill" data-state="rest">
+                <span class="flare flare-left"></span>
+                <span class="flare flare-right"></span>
+                <span class="edge"></span>
+                <div class="pill-body">
+                  <div class="wings">
+                    <span class="wing">
+                      <svg class="wing-icon" data-icon="battery-bolt" width="22" height="11"><use href="#icon-battery-bolt"/></svg>
+                      <span class="cover wing-cover"></span>
                     </span>
-                    <span class="panel-battery">82%<svg width="25" height="12"><use href="#icon-battery"/></svg></span>
+                    <span class="wing">
+                      <span class="wing-text">82%</span>
+                      <span class="wing-eq"><i></i><i></i><i></i><i></i></span>
+                    </span>
                   </div>
-                  <div class="player">
-                    <span class="cover panel-cover"></span>
-                    <div class="player-info">
-                      <div class="stack">
-                        <span class="for-a"><span class="song-title">Empire State Of Mind</span><span class="song-artist">JAŸ-Z</span></span>
-                        <span class="for-b"><span class="song-title">Ultraviolence</span><span class="song-artist">Lana Del Rey</span></span>
-                      </div>
-                      <span class="scrubber"><span class="scrubber-fill"></span></span>
-                      <div class="stack">
-                        <span class="times for-a"><span>1:15</span><span>4:36</span></span>
-                        <span class="times for-b"><span>0:00</span><span>4:11</span></span>
-                      </div>
-                      <div class="controls">
-                        <svg width="22" height="14"><use href="#icon-backward"/></svg>
-                        <svg width="14" height="14"><use href="#icon-pause"/></svg>
-                        <svg data-press="next" width="22" height="14"><use href="#icon-forward"/></svg>
+                  <!-- The open panel's Music tab, as in the app (Ember/Panel/PanelView.swift,
+                       Ember/NowPlaying/NowPlayingPanelView.swift). Both songs are here; the
+                       pill's data-song shows one. -->
+                  <div class="panel">
+                    <div class="panel-top">
+                      <span class="panel-tabs">
+                        <span class="panel-tab panel-tab-music"><svg width="12" height="12"><use href="#icon-music"/></svg></span>
+                        <span class="panel-tab panel-tab-timer" data-press="timer-tab"><svg width="12" height="12"><use href="#icon-timer"/></svg></span>
+                      </span>
+                      <span class="panel-battery">82%<svg width="25" height="12"><use href="#icon-battery"/></svg></span>
+                    </div>
+                    <div class="player">
+                      <span class="cover panel-cover"></span>
+                      <div class="player-info">
+                        <div class="stack">
+                          <span class="for-a"><span class="song-title">Empire State Of Mind</span><span class="song-artist">JAŸ-Z</span></span>
+                          <span class="for-b"><span class="song-title">Ultraviolence</span><span class="song-artist">Lana Del Rey</span></span>
+                        </div>
+                        <span class="scrubber"><span class="scrubber-fill"></span></span>
+                        <div class="stack">
+                          <span class="times for-a"><span>1:15</span><span>4:36</span></span>
+                          <span class="times for-b"><span>0:00</span><span>4:11</span></span>
+                        </div>
+                        <div class="controls">
+                          <svg width="22" height="14"><use href="#icon-backward"/></svg>
+                          <svg width="14" height="14"><use href="#icon-pause"/></svg>
+                          <svg data-press="next" width="22" height="14"><use href="#icon-forward"/></svg>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <!-- The Timer tab (Ember/Timer/TimerPanelView.swift): hours, minutes and
-                       seconds with arrows, the presets, and Start and Reset, which become
-                       Pause and Cancel once it runs. demo.js fills in the digits. -->
-                  <div class="timer-view">
-                    <div class="timer-digits">
-                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="hours">0</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
-                      <span class="timer-colon">:</span>
-                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="minutes">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
-                      <span class="timer-colon">:</span>
-                      <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="seconds">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
-                    </div>
-                    <div class="timer-side">
-                      <div class="timer-row timer-presets">
-                        <span class="timer-button">5m</span>
-                        <span class="timer-button" data-press="preset">25m</span>
-                        <span class="timer-button">45m</span>
+                    <!-- The Timer tab (Ember/Timer/TimerPanelView.swift): hours, minutes and
+                         seconds with arrows, the presets, and Start and Reset, which become
+                         Pause and Cancel once it runs. demo.js fills in the digits. -->
+                    <div class="timer-view">
+                      <div class="timer-digits">
+                        <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="hours">0</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
+                        <span class="timer-colon">:</span>
+                        <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="minutes">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
+                        <span class="timer-colon">:</span>
+                        <span class="timer-unit"><svg width="13" height="13"><use href="#icon-chevron-up"/></svg><span class="timer-value" data-unit="seconds">00</span><svg width="13" height="13"><use href="#icon-chevron-down"/></svg></span>
                       </div>
-                      <div class="stack">
-                        <div class="timer-row when-stopped"><span class="timer-button" data-press="start">Start</span><span class="timer-button">Reset</span></div>
-                        <div class="timer-row when-running"><span class="timer-button">Pause</span><span class="timer-button" data-press="cancel">Cancel</span></div>
+                      <div class="timer-side">
+                        <div class="timer-row timer-presets">
+                          <span class="timer-button">5m</span>
+                          <span class="timer-button" data-press="preset">25m</span>
+                          <span class="timer-button">45m</span>
+                        </div>
+                        <div class="stack">
+                          <div class="timer-row when-stopped"><span class="timer-button" data-press="start">Start</span><span class="timer-button">Reset</span></div>
+                          <div class="timer-row when-running"><span class="timer-button">Pause</span><span class="timer-button" data-press="cancel">Cancel</span></div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -223,6 +237,32 @@
             <h3>File shelf <span class="tag">Planned</span></h3>
             <p>Drop files on the notch to keep them handy, or send them with AirDrop.</p>
           </article>
+          <article class="card" data-reveal>
+            <h3>And many more</h3>
+            <p>A glow you can make your own, colour picker, clipboard history and more. A few are here today; the rest are on the way.</p>
+          </article>
+        </div>
+        <!-- The rest of docs/features.md: "Already in Ember" = done, "On the way" = later. -->
+        <div class="more" data-reveal>
+          <h3>Already in Ember</h3>
+          <ul class="more-list">
+            <li>Always-on glow around the notch</li>
+            <li>Glow in the colour of the song's cover</li>
+            <li>Opens on the tab you left</li>
+          </ul>
+          <h3>On the way</h3>
+          <ul class="more-list">
+            <li>Your own glow colour presets</li>
+            <li>Choose how fast it opens and closes</li>
+            <li>Shuffle, repeat and skip 10 seconds buttons</li>
+            <li>Clipboard history</li>
+            <li>Colour picker</li>
+            <li>Keep your Mac awake</li>
+            <li>Webcam mirror</li>
+            <li>CPU, memory and temperature stats</li>
+            <li>Resizable panel</li>
+            <li>Macs without a notch and external displays</li>
+          </ul>
         </div>
       </div>
     </section>

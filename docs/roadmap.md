@@ -42,6 +42,14 @@
   loop. Spec docs/specs/landing-demo-song-skip.md (with the timing table), plan
   docs/plans/landing-demo-song-skip.md. Tests pass; checked in headless Chrome on macOS
   26.6.2, desktop and phone widths.
+- **Done (website):** the hero's Mac screen is wider and true to scale: up to 1280 px, a
+  menu bar with the visitor's own time, scaled to fit from 800 px up, a close-up on
+  phones; the open panel now takes about half the screen, as on a real MacBook. Spec
+  docs/specs/landing-hero-screen.md, plan docs/plans/landing-hero-screen.md. Tests pass;
+  checked in headless Chrome on macOS 26.6.2 from 320 to 1440 px wide.
+- **Done (website):** the features grid has a sixth card, "And many more", and below it
+  the other features as chips: Already in Ember, and On the way. Checked in headless
+  Chrome on macOS 26.6.2, desktop and phone widths.
 - **In progress:** nothing in the app.
 - **Next:** choose and design milestone 2's next feature (by the v1 list's order:
   calendar & reminders, #14).

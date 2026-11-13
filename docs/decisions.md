@@ -466,3 +466,16 @@ committing; nothing of it is in the app.
   shows its own indicator; Ember does not replace what the Mac already does well (same
   reasoning as #6 and #8). It would also have needed Accessibility permission.
 - **Keep your Mac awake (#18) stays** on the "later" list.
+
+## 2026-11-13 — The hero's Mac screen is wider and true to scale
+- **Up to 1280 px wide with a menu bar, the pill and panel at the app's size** (option A;
+  B, a whole MacBook drawn at about 60%, was shown and not chosen). **Why:** on the 736 px
+  strip the 620-wide open panel filled 84% of the screen, as if it opened across the whole
+  top of the Mac; on a real 14" MacBook it fills 41%, and now about 48%. A whole MacBook
+  would have shrunk the panel's text to about 9 px.
+- **Scaled as one from 800 px up, a close-up below.** **Why:** scaling keeps the
+  proportions on laptops and tablets; on phones everything would be tiny, so they keep the
+  close-up around the notch.
+- **No Apple logo in the menu bar** ("Finder File Edit…" instead): it is Apple's
+  trademark, and the site uses none of Apple's assets. The clock shows the visitor's own
+  time.

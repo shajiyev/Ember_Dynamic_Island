@@ -82,6 +82,10 @@ sparks). No text, images, code or assets come from that site, and the site never
    The grid follows the v1 table in `docs/features.md`; when a feature is dropped or
    finished there, the grid changes too (Bluetooth and AirPods removed 2026-11-13, when #8
    was dropped).
+   A sixth card, **"And many more"**, fills the grid to 3 × 2 (added 2026-11-13). Below the
+   grid, the rest of `docs/features.md` as plain chips in two groups: **Already in Ember**
+   (`done` features without a card) and **On the way** (`later` features). Like the
+   cards, the chips change when a feature is finished or dropped there.
 3. **Safe to open. Private by design.** (`#privacy`): text below. Placed after Features,
    where someone who is interested is deciding whether to install.
 4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
@@ -217,8 +221,11 @@ Text, as agreed:
 
 ## The pill demo
 
-- **Setting:** the top edge of a MacBook screen drawn across the hero as a dark strip with
-  the notch cut into its middle; the pill sits around the notch as in the app.
+- **Setting:** the top of a MacBook screen, up to 1280 px wide (wider than the text), with
+  a menu bar (Finder's menus, Wi-Fi, battery and the visitor's own time) and the notch in
+  its middle; the pill sits around the notch as in the app, at the app's size. Narrower
+  windows scale the whole screen; phones show a close-up around the notch. Details in
+  docs/specs/landing-hero-screen.md (2026-11-13; it was a 760 px strip before).
 - **Loop**, showing only features that are built: since 2026-11-13 it opens the panel,
   skips from one real song to another, sets a timer on the Timer tab, lets the charger's
   alert take over from the countdown, and cancels the timer. The scene, the two songs and

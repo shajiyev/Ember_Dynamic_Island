@@ -419,6 +419,31 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   color: var(--link);
 }
 
+/* Below the feature cards: the other features, as plain chips like the hero's facts. */
+.more { margin-top: 36px; }
+
+.more h3 { margin: 24px 0 0; font-size: 15px; font-weight: 650; color: var(--clay-rose-text); }
+.more h3:first-child { margin-top: 0; }
+
+.more-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.more-list li {
+  padding: 5px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface), transparent 30%);
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--text-secondary);
+}
+
 /* FAQ: native <details>; opening one closes the others. */
 
 .faq { max-width: 760px; margin-top: 28px; }
@@ -589,24 +614,65 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 @property --glow { syntax: '<color>'; inherits: true; initial-value: #D9776B; }
 @property --flare { syntax: '<length>'; inherits: true; initial-value: 6px; }
 
+/* The hero's screen sits below the text in a wider container, up to 1280 px (the nav's
+   width). */
+.container-wide { max-width: 1312px; margin: 0 auto; padding: 0 16px; }
+
+/* The screen is drawn at 1280 px wide on a stage (bezel and wallpaper) and scaled down
+   with it to fit narrower windows (screen.js sets --screen-scale), so the open panel keeps
+   its true share of the width: 620 of 1280, close to a 14" MacBook's 620 of 1512.
+   Without JavaScript it shows its middle at 1:1. */
 .screen {
-  max-width: 760px;
-  margin: 0 auto;
+  --screen-scale: 1;
+  height: calc(312px * var(--screen-scale));
+  overflow: hidden;
+  border-radius: calc(24px * var(--screen-scale)) calc(24px * var(--screen-scale)) 0 0;
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--brown), transparent 55%);
+}
+.screen-stage {
+  position: relative;
+  left: 50%;
+  width: 1280px;
   padding: 12px 12px 0;
   border-radius: 24px 24px 0 0;
   background: #000;
-  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--brown), transparent 55%);
+  translate: -50% 0;
+  transform-origin: top center;
+  scale: var(--screen-scale);
 }
 
 .wallpaper {
   position: relative;
-  height: 220px;
+  height: 300px;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
   background: radial-gradient(120% 140% at 50% 0%, #42240F 0%, #1A190B 70%);
 }
 
-.menubar { height: 32px; background: rgb(255 255 255 / 0.06); }
+/* The menu bar: Finder's menus on the left; Wi-Fi, battery and the visitor's own time on
+   the right (screen.js). No Apple logo: the site uses none of Apple's assets. */
+.menubar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 16px;
+  background: rgb(255 255 255 / 0.06);
+  color: rgb(255 255 255 / 0.92);
+  font: 500 13px/1 var(--font);
+  white-space: nowrap;
+}
+.menu-items { display: flex; align-items: center; gap: 20px; fill: currentColor; }
+.menu-items b { font-weight: 700; }
+
+/* Phones and narrow windows: scaled, everything would be tiny, so the screen is a
+   close-up around the notch instead, at 1:1, without the menus. */
+@media (max-width: 799px) {
+  .screen { height: auto; border-radius: 24px 24px 0 0; }
+  .screen-stage { left: 0; width: auto; translate: none; scale: none; }
+  .wallpaper { height: 220px; }
+  .menu-items { display: none; }
+}
 
 .pill {
   --glow: var(--app-glow);
