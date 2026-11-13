@@ -25,12 +25,9 @@ explicitly decide to revive something.
 
 | # | Area | Feature | Status | Notes |
 |---|------|---------|--------|-------|
-| 2 | Media | Audio visualizer | later | Needs audio-capture permission |
-| 3 | Media | Gestures: swipe to open/close, swipe to skip/seek | later | |
 | 5 | Live activity | Focus / Do Not Disturb | later | No public API |
 | 7 | Live activity | Screen recording indicator | later | |
 | 10 | Live activity | Network connectivity changes | later | |
-| 11 | HUD | Replace volume / brightness / keyboard-backlight HUD | later | Needs Accessibility permission |
 | 16 | Productivity | Clipboard history | later | Privacy-sensitive |
 | 17 | Productivity | Color picker | later | |
 | 18 | Productivity | Caffeinate (keep Mac awake) | later | |
@@ -57,3 +54,6 @@ explicitly decide to revive something.
 | 25 | Extensions API for third-party apps | A platform of its own; out of scope |
 | 6 | Camera / mic in-use (privacy) indicator | Dropped 2026-11-12: macOS already shows the camera light and the microphone dot; see decisions |
 | 8 | Bluetooth device connected (AirPods + battery) | Dropped 2026-11-13: macOS already shows its own animation with the battery when AirPods connect; see decisions |
+| 2 | Audio visualizer | Dropped 2026-11-13: already covered by the equalizer bars in the wings while music plays (#1); a real visualizer would need audio-capture permission; see decisions |
+| 3 | Gestures: swipe to open/close, swipe to skip/seek | Dropped 2026-11-13: adds complexity for little gain; hover and click already open the pill, and the panel's buttons skip and seek; see decisions |
+| 11 | Replace volume / brightness / keyboard-backlight HUD | Dropped 2026-11-13: macOS already shows its own volume and brightness indicator; see decisions |

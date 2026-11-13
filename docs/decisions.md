@@ -453,3 +453,16 @@ committing; nothing of it is in the app.
   coral and sunset-orange glows were tried first and replaced.
 - **The open panel is drawn at the app's size** (620 × 200), so on desktop it fills most of
   the mock screen; on narrow screens it is scaled down to fit.
+
+## 2026-11-13 — Dropped the audio visualizer, swipe gestures and the volume/brightness HUD
+- **Audio visualizer (#2) dropped.** **Why:** Ember already shows equalizer bars in the
+  wings while music plays (#1). They move to a set pattern rather than the real sound,
+  which is enough and needs no audio-capture permission.
+- **Swipe gestures (#3) dropped.** **Why:** they add complexity for little gain. Hover
+  and click already open the pill, and the panel's buttons skip and seek.
+- **Click to open stays.** **Why:** it is the only way to open the pill for someone who
+  turns hover-to-open off (#26a), and it opens at once without the hover delay.
+- **Volume / brightness / keyboard-backlight HUD (#11) dropped.** **Why:** macOS already
+  shows its own indicator; Ember does not replace what the Mac already does well (same
+  reasoning as #6 and #8). It would also have needed Accessibility permission.
+- **Keep your Mac awake (#18) stays** on the "later" list.
