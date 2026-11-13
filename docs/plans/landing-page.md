@@ -3189,3 +3189,9 @@ button.hidden = false;
 
 - [x] **Step 1:** remove the `.more` block ("Already in Ember", "On the way") from `site/index.html` and its styles (`.more`, `.more h3`, `.more-list`) from `site/styles.css`. The "And many more" card stays.
 - [x] **Step 2: Check:** no `more-list` left in `site/`; screenshots of Features in light and dark; the 20 tests pass.
+
+## Part 7: Blurred covers, ready to deploy (2026-11-14)
+
+- [x] **Step 1:** blur `site/assets/covers/*.jpg` in place (Core Image `CIGaussianBlur`, radius 6, edges clamped, JPEG 85%), so the site serves no sharp album artwork.
+- [x] **Step 2: Checks before the first deploy:** every referenced file exists; no duplicate IDs; tags nest correctly; no personal paths or secrets in `site/`; no sideways scrolling at 320, 375, 390, 430, 768, 1024, 1280 and 1440 px in light and dark; the 20 tests pass. Found: the repo is private, so the GitHub links and the link-preview image return 404 until the user makes it public.
+- [ ] **Step 3: Deploy** — the user makes the repo public; a Vercel project linked to the repo with Root Directory `site` (no build); check the deployed page.

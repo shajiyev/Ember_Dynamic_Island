@@ -319,7 +319,10 @@ running `Ember/NowPlaying/CoverColor.swift` on them, so the demo matches the app
 (Two earlier choices, an abstract slate-blue song and a sunset song, were replaced.)
 
 Album artwork belongs to its owners, not to Ember's GPL-3.0 licence; the user accepted
-that (2026-11-13). If an owner objects, the covers go back to abstract drawings.
+that (2026-11-13). Before the first deploy (2026-11-14) the cover files were blurred
+(Gaussian, radius 6 on the 192 px image, with Core Image), so the site never serves the
+sharp artwork: the colours and the glow stay, the details don't. If an owner objects, the
+covers go back to abstract drawings.
 
 ### Timings (one loop, 21.05 s)
 
@@ -468,7 +471,7 @@ replaced: the site moved to Ember rose with the new logo.)
 - `site/assets/`: the app icon in small sizes for the hero and the favicon, resized from
   the repo's `assets/` (Vercel only sees files inside `site/`). The link-preview image
   points at the full app icon on GitHub, because link previews need an absolute URL and
-  the site has no domain yet. `covers/` holds the demo songs' covers (192 px).
+  the site has no domain yet. `covers/` holds the demo songs' covers (192 px, blurred).
 - `.gitattributes` (repo root): hides `site/` from GitHub's language statistics.
 
 ## Credit
