@@ -48,7 +48,9 @@
   docs/specs/landing-hero-screen.md, plan docs/plans/landing-hero-screen.md. Tests pass;
   checked in headless Chrome on macOS 26.6.2 from 320 to 1440 px wide.
 - **Done (website):** the features grid has a sixth card, "And many more", and below it
-  the other features as chips: Already in Ember, and On the way. Checked in headless
+  the other features as chips: Already in Ember, and On the way. The browser tab's title
+  is now "Ember – a Dynamic Island for your MacBook", so "Light up your notch." is only
+  the closing section's heading. Checked in headless
   Chrome on macOS 26.6.2, desktop and phone widths.
 - **In progress:** nothing in the app.
 - **Next:** choose and design milestone 2's next feature (by the v1 list's order:
