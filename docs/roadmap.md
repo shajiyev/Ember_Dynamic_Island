@@ -23,7 +23,7 @@
 - **Done:** milestone 2, feature 3: Now Playing (#1), Apple Music and Spotify. Verified on
   macOS 26.6.2 with the checklist in docs/plans/now-playing.md.
 - **Done (website):** the landing page (`site/`), light mode, spec
-  docs/specs/landing-page.md, plan docs/plans/landing-page.md (all 6 tasks). Checked in
+  docs/specs/landing-page.md, plan docs/plans/landing-page.md (part 1). Checked in
   headless Chrome on macOS 26; Safari check by the user still to do.
 - **Done:** new logo and app icon (Night Glow): graphite, warm-white E with a rose
   glow, one icon for light and dark mode. Spec docs/specs/logo.md.
@@ -39,24 +39,36 @@
 - **Done (website):** the hero's pill demo opens the panel: Empire State Of Mind skips to
   Ultraviolence (the glow follows each real cover), the Timer tab sets 25 minutes, the
   charger's alert takes over from the countdown, and the timer is cancelled; 21.05 s a
-  loop. Spec docs/specs/landing-demo-song-skip.md (with the timing table), plan
-  docs/plans/landing-demo-song-skip.md. Tests pass; checked in headless Chrome on macOS
+  loop. Spec docs/specs/landing-page.md ("The pill demo", with the timing table), plan
+  docs/plans/landing-page.md (part 2). Tests pass; checked in headless Chrome on macOS
   26.6.2, desktop and phone widths.
 - **Done (website):** the hero's Mac screen is wider and true to scale: up to 1280 px, a
   menu bar with the visitor's own time, scaled to fit from 800 px up, a close-up on
   phones; the open panel now takes about half the screen, as on a real MacBook. Spec
-  docs/specs/landing-hero-screen.md, plan docs/plans/landing-hero-screen.md. Tests pass;
+  docs/specs/landing-page.md ("The screen"), plan docs/plans/landing-page.md (part 3). Tests pass;
   checked in headless Chrome on macOS 26.6.2 from 320 to 1440 px wide.
 - **Done (website):** the features grid has a sixth card, "And many more", and below it
   the other features as chips: Already in Ember, and On the way. The browser tab's title
   is now "Ember – a Dynamic Island for your MacBook", so "Light up your notch." is only
   the closing section's heading. Checked in headless
   Chrome on macOS 26.6.2, desktop and phone widths.
-- **In progress:** nothing in the app.
-- **Next:** choose and design milestone 2's next feature (by the v1 list's order:
-  calendar & reminders, #14).
-  Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
-  the light/dark toggle (its own spec). The demo grows as features are finished. Later for
+- **Done (website):** dark mode (Graphite): the page follows the device's light or dark
+  mode, and a sun/moon switch in the top bar overrides it (the browser remembers the
+  choice). Spec
+  docs/specs/landing-page.md ("Dark mode"), plan docs/plans/landing-page.md (part 4).
+  Tests pass; checked in headless Chrome on macOS 26.6.2 at 320, 375, 390 and 1280 px.
+- **Done (website):** every section is centred on the page like the hero (headings, intro,
+  FAQ), and the footer's links sit in the centre. The feature chips under the cards were
+  removed (plan part 6); the full list is in docs/features.md. Plan part 5. Measured in
+  headless Chrome on macOS 26.6.2 at 1280 and 390 px.
+- **Done:** milestone 2's fourth feature chosen and designed: Calendar & reminders (#14).
+  A plain month calendar that needs no permission; two menu switches add events and
+  reminders; a heads-up 5 minutes before each event. Spec docs/specs/calendar.md, plan
+  docs/plans/calendar.md.
+- **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 2 of 5 done (the plain Calendar tab).
+- **Next:** build #14 task by task.
+  Website: the checks before deploying (Safari on Mac and iPhone, phones), then deploy on
+  Vercel (steps in docs/architecture.md; the Vercel MCP is connected). The demo grows as features are finished. Later for
   the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 

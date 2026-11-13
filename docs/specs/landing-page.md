@@ -1,6 +1,11 @@
 # Design: landing page
 
-Date: 2026-11-12. Status: built 2026-11-12 (light mode; dark mode and the "Later" list still to come).
+Date: 2026-11-12. Status: built 2026-11-12 (light mode; the "Later" list still to come).
+Later rounds, each agreed with the user and built: the pill demo opens the panel, with real
+songs (2026-11-13); a wider, true-scale Mac screen in the hero (2026-11-13); the "And many
+more" card (2026-11-13); dark mode with a sun/moon switch (2026-11-13).
+This is the one spec for the site: later changes
+are made here, and the work for each round is a part of docs/plans/landing-page.md.
 
 ## Goal
 
@@ -49,7 +54,7 @@ sparks). No text, images, code or assets come from that site, and the site never
    blink (see Motion item 9): brighter, a touch more colour and a rose glow, eased in over
    0.25 s, and rises 2 px (not with Reduce Motion); the blinking pauses while hovered.
    Pressing sets it back down and dims it slightly. The
-   light/dark toggle joins it with dark mode. A thin line under the bar
+   light/dark switch sits just before it (see Dark mode). A thin line under the bar
    fades in once the page scrolls. On phones (600 px and narrower) the section links are
    hidden. The brand glow sits on the page background, so it shows through the bar.
 1. **Hero**, text first, then the visual:
@@ -77,15 +82,15 @@ sparks). No text, images, code or assets come from that site, and the site never
 2. **Features** (`#features`): small label "Features", heading **"It glows when it
    matters."**, the line "At rest, Ember is a black pill that blends into the notch. When
    something happens, it glows. Hover, and it opens.", then five cards: Now Playing;
-   battery and charging; timers; calendar and reminders; file shelf. Features not yet built carry a "Planned" tag. Built today: Now Playing, battery
+   battery and charging; timers; calendar and reminders; file shelf. Features not yet built carry a "Planned" tag, on its own line under the title. Built today: Now Playing, battery
    and timers (updated to the roadmap 2026-11-12).
    The grid follows the v1 table in `docs/features.md`; when a feature is dropped or
    finished there, the grid changes too (Bluetooth and AirPods removed 2026-11-13, when #8
    was dropped).
-   A sixth card, **"And many more"**, fills the grid to 3 × 2 (added 2026-11-13). Below the
-   grid, the rest of `docs/features.md` as plain chips in two groups: **Already in Ember**
-   (`done` features without a card) and **On the way** (`later` features). Like the
-   cards, the chips change when a feature is finished or dropped there.
+   A sixth card, **"And many more"**, fills the grid to 3 × 2 (added 2026-11-13). (A list
+   of the other features as chips, "Already in Ember" and "On the way", sat below the grid
+   for a day; removed 2026-11-13 at the user's request: the full list lives in
+   `docs/features.md`.)
 3. **Safe to open. Private by design.** (`#privacy`): text below. Placed after Features,
    where someone who is interested is deciding whether to install.
 4. **FAQ** (`#faq`): small label "FAQ", heading "Questions, answered", six questions that
@@ -221,25 +226,153 @@ Text, as agreed:
 
 ## The pill demo
 
-- **Setting:** the top of a MacBook screen, up to 1280 px wide (wider than the text), with
-  a menu bar (Finder's menus, Wi-Fi, battery and the visitor's own time) and the notch in
-  its middle; the pill sits around the notch as in the app, at the app's size. Narrower
-  windows scale the whole screen; phones show a close-up around the notch. Details in
-  docs/specs/landing-hero-screen.md (2026-11-13; it was a 760 px strip before).
-- **Loop**, showing only features that are built: since 2026-11-13 it opens the panel,
-  skips from one real song to another, sets a timer on the Timer tab, lets the charger's
-  alert take over from the countdown, and cancels the timer. The scene, the two songs and
-  the timing table are in docs/specs/landing-demo-song-skip.md. (Before, it was rest,
-  one abstract song, timer and charging in the wings only.)
-- **Matches the app:** shapes, sizes and glow are taken from the app's pill
-  metrics, its open panel and its battery, timer and Now Playing views (`NowPlayingLook`,
-  `EqualizerView`: bars 2.5 px wide, 2 px apart, 4–12 px tall at their own speeds).
-- **Reduced motion:** with Reduce Motion on, the loop stops and shows the charging step,
-  still.
-- **Narrow phones** (420 px and narrower): the pill is drawn at 80%, so the wide pill fits
-  inside the mock screen; the open panel is scaled down to fit the screen's width.
-- **Later:** other features join the loop only when the user says they
-  are finished. A real screen recording may replace the CSS demo later.
+The hero's visual: the pill on a mock MacBook screen, playing a short loop of what Ember
+does. It shows only features that are built; others join the loop only when the user says
+they are finished. A real screen recording may replace the CSS demo later. (Until
+2026-11-13 it was a 736 px strip with one abstract song, and timer and charging in the
+wings only.)
+
+**Matches the app:** shapes, sizes and glow are taken from the app's pill metrics, its
+open panel and its battery, timer and Now Playing views (`NowPlayingLook`,
+`EqualizerView`: bars 2.5 px wide, 2 px apart, 4–12 px tall at their own speeds). The pill
+and the open panel are drawn at the app's size: 1 CSS px = 1 point.
+
+### The screen
+
+Agreed 2026-11-13 (option A of two shown side by side; B, a whole MacBook drawn at about
+60%, was not chosen). On the old 736 px strip the 620-wide open panel filled 84% of the
+screen, as if it opened across the whole top of the Mac; on a real 14" MacBook (1512
+points wide) it fills 41%.
+
+- **Up to 1280 px wide**, the nav bar's width, so wider than the page's 960 px text column.
+  It sits in its own wide container below the hero's text. At full width the open panel
+  fills about 48% of the screen, close to the real 41%.
+- **Wallpaper 300 px tall**, so the open panel (200) and its glow fit inside.
+- **A menu bar** gives the eye a scale: on the left "Finder File Edit View Go Window Help"
+  (Finder in bold), on the right our own Wi-Fi and battery icons and a clock. No Apple
+  logo: it is Apple's trademark, and the site uses none of Apple's assets. The open panel
+  covers the menus near the notch, as on a real Mac.
+- **The clock shows the visitor's real time**, in their own format (for example
+  "Fri 13 Nov 14:52" or "Fri Nov 13 2:52 PM"), and keeps up with it.
+- **The notch** is in the menu bar's middle; the pill sits around it as in the app. The
+  brand glow and sparks behind the screen are centred on the notch.
+- **Look:** black bezel, warm wallpaper, shadow.
+- **800 px wide and up:** the whole screen (bezel, menu bar, pill, panel) is drawn at
+  1280 px and scaled down together to fit, so the panel keeps its true share of the
+  width. At a 1024 px window it is drawn at about 75%; at 800 px about 60%.
+- **Below 800 px** (phones and narrow windows): scaling would make everything tiny, so the
+  screen is a close-up around the notch: 220 px tall wallpaper, no menu items (the bar
+  stays). Below 420 px the pill is drawn at 80%, so the wide pill fits inside the mock
+  screen. The open panel is scaled down to fit the screen's width.
+
+### The scene
+
+Agreed 2026-11-13. Skipping to a second song with a very different cover shows that the
+glow follows the artwork (one song with one glow colour read as "the music glow is
+blue"), and opening the panel shows the controls. The skip happens about 5 seconds in, so
+nearly every visitor sees it.
+
+1. **Song A** plays in the wings: cover on the left, equalizer on the right, glowing in
+   the cover's colour.
+2. The pill **springs open into the panel** on the Music tab, as in the app
+   (`PanelView.swift`, `NowPlayingPanelView.swift`, open size 620 × 200): a top row with
+   the tab icons on the left (Music selected, Timer) and the battery ("82%" and a battery
+   symbol) on the right; below it the 96 × 96 cover, title, artist, scrubber with times,
+   and ⏮ ⏸ ⏭.
+3. **⏭ "presses"**: it shrinks and dims for a moment, then springs back. No cursor is
+   drawn.
+4. **Song B** comes in: the cover crossfades, title and artist change, the scrubber goes
+   back to the start, and the glow shifts to song B's colour.
+5. The **panel closes** back to the pill, now with song B in the wings.
+6. Straight from the song, with no rest between, the panel **opens on the Music tab**
+   again (song B), and the **Timer tab icon presses**: the panel switches to the Timer tab
+   (`TimerPanelView.swift`) and the glow changes to the timer's orange. It shows hours,
+   minutes and seconds (0:00:00) with arrows above and below, and beside them the presets
+   5m, 25m, 45m above Start and Reset (dimmed: nothing is set yet).
+7. **25m presses**; the digits jump to 0:25:00 and Start and Reset light up.
+8. **Start presses**; the timer runs (0:24:59), Start and Reset turn into Pause and
+   Cancel, and the presets and arrows dim.
+9. The **panel closes**; the countdown carries on in the wings, in orange.
+10. A charger is **plugged in**: the charging alert takes the wings over from the timer
+    (green bolt battery, "82%", green glow), showing that an alert comes first, as in the
+    app (`PillController.show(_:)`: a brief activity shows over the ongoing one).
+11. The alert ends and the **countdown comes back**, having kept counting.
+12. The panel **opens on the running timer** and **Cancel presses**: the timer stops and
+    the panel shows the time that was set (0:25:00) with Start and Reset, as in the app.
+13. The panel **closes to rest**: no timer any more. Then again from the start.
+
+### The two songs
+
+The user chose to show the real songs: their real artwork, title and artist, in the wings
+and the panel. Each glows in the colour the app gave it.
+
+| | Song A | Song B |
+|---|---|---|
+| Song | "Empire State Of Mind", JAŸ-Z | "Ultraviolence", Lana Del Rey |
+| Cover | `site/assets/covers/empire-state-of-mind.jpg` | `site/assets/covers/ultraviolence.jpg` |
+| Glow and equalizer | `#FF4C53` red | `#E6E6E6` soft white (a black-and-white cover) |
+| Panel times | 1:15 of 4:36 | 0:00 of 4:11 |
+
+The covers are 192 × 192, cropped from the user's screenshots of the app's open panel
+(2026-11-13). The glows are what the app's `CoverColor` gives those covers, computed by
+running `Ember/NowPlaying/CoverColor.swift` on them, so the demo matches the app exactly.
+(Two earlier choices, an abstract slate-blue song and a sunset song, were replaced.)
+
+Album artwork belongs to its owners, not to Ember's GPL-3.0 licence; the user accepted
+that (2026-11-13). If an owner objects, the covers go back to abstract drawings.
+
+### Timings (one loop, 21.05 s)
+
+Kept here so the user can ask for changes later.
+
+| # | Step | Length |
+|---|---|---|
+| 1 | Rest | 2 s |
+| 2 | Song A in the wings | 2 s |
+| 3 | Panel opens on Music, song A | 0.8 s |
+| 4 | ⏭ press | 0.25 s |
+| 5 | Song B crossfades in (0.4 s), glow shifts to song B's colour; hold | 1.1 s |
+| 6 | Panel closes, song B in the wings | 2 s |
+| 7 | Panel opens on Music, song B | 0.8 s |
+| 8 | Timer tab press | 0.25 s |
+| 9 | Timer tab, 0:00:00 (glow turns orange) | 1 s |
+| 10 | 25m press | 0.25 s |
+| 11 | 0:25:00; hold | 0.6 s |
+| 12 | Start press | 0.25 s |
+| 13 | Running: 0:24:59, Pause and Cancel; hold | 0.9 s |
+| 14 | Panel closes, countdown in the wings (24:58 → 24:56) | 3 s |
+| 15 | Charger plugged in: the charging alert takes over the wings | 2.5 s |
+| 16 | The countdown comes back (24:53 → 24:52) | 1.5 s |
+| 17 | Panel opens on the running timer (0:24:52) | 1 s |
+| 18 | Cancel press | 0.25 s |
+| 19 | Stopped: 0:25:00, Start and Reset; then the panel closes to rest | 0.6 s |
+
+The countdown ticks once a second. The charging alert is shorter than the app's 3 s, by
+the user's choice, to keep the loop short.
+
+### The demo's motion
+
+- Opening and closing use the pill's existing spring; opening overshoots slightly, like
+  `PillStyle.openAnimation`. The open shape uses the app's open style: top flares 19,
+  bottom corners 24, a wider glow pushed down (opacity 0.55, radius 16, offset 8).
+- The panel's content sharpens out of a blur just after the shape starts to grow, and
+  leaves quickly, like the wings (`PillStyle.contentTransition`).
+- The glow colour, the cover, the title and the scrubber change with a short crossfade.
+- A press: the button shrinks and dims for a moment, then springs back.
+
+### Edge cases
+
+- **Reduce Motion:** the loop stops and shows the charging pill, still. The screen still
+  scales to fit (sizing is not motion), and the clock still shows the time.
+- **Without JavaScript:** the pill rests. The screen is not scaled: it shows its middle at
+  1:1, cut off at the sides on narrower windows.
+- **Screen readers:** the mock screen is an image (`role="img"`), so the menu names, the
+  clock and the panel's text are not read out.
+
+### Not now
+
+Clicking or hovering the demo (that is the "interactive Mac view" in the "Later" list), a
+third song, rotating songs between loops.
 
 ## Look (light mode)
 
@@ -258,6 +391,11 @@ palette so the two modes share a base.
 
 - **Glow:** a radial gradient from pale rose through Ember rose to clay rose, spreading
   from behind the pill, like the light around the logo's E. Focus rings are clay rose. The pill itself stays black, as on a real Mac.
+- **Alignment:** every section is centred on the page, like the hero and Get started: its
+  small label, heading and intro line are centred, the FAQ's 760 px column sits in the
+  middle. Text inside cards and FAQ answers stays left-aligned. The footer has three columns like the nav, so its links sit in
+  the page's centre. (2026-11-13: before, Features, Privacy and FAQ were left-aligned and
+  the FAQ was pinned left, which made the page look off-centre.)
 - **Type:** Apple's system font (`-apple-system`, SF Pro); no web fonts.
 - **Icons:** our own small inline SVGs, drawn to resemble the app's. Apple's licence does
   not allow SF Symbols on websites.
@@ -268,23 +406,69 @@ palette so the two modes share a base.
   at the user's request) is capped at 74% of the screen width (with room for its breathing scale), because a wider glow made phones zoom out to
   fit the page and the pinned nav misbehave.
 
-## Dark mode (not in this round)
+## Dark mode
 
-A toggle in the navigation bar, next to Download, will switch to a dark theme built from the user's second palette:
-`#E5753D`, `#B2451A`, `#762216`, `#42240F`, `#1A190B`. It gets its own spec when the user
-is ready.
+Agreed with the user on 2026-11-13. (The orange second palette planned earlier was
+replaced: the site moved to Ember rose with the new logo.)
+
+- **Follows the system:** the page opens in the device's light or dark mode (the browser's
+  `prefers-color-scheme`, on phones too), and follows it if it changes while the page is
+  open. The switch overrides it: the chosen mode is remembered in that browser
+  (`localStorage`) and kept on later visits, even if the system mode changes. A small
+  inline script in `<head>` applies a saved choice before the page is drawn, so the page
+  never flashes the other mode. (Changed the same day from "always light first".)
+- **Without JavaScript** the page still follows the system (it is plain CSS); only the
+  switch, which needs JavaScript, stays hidden.
+- **The change** cross-fades the page (a view transition, about 0.3 s) where the browser
+  supports it; elsewhere, and with Reduce Motion on, it is instant.
+- **Colours: Graphite,** chosen by the user over Warm night and Deep clay: the near-black
+  of the logo's ground, warm-white text. Only the job variables change
+  in `styles.css`, plus `color-scheme: dark`, in two rules with the same values: the
+  system's dark mode when no light mode was chosen, and dark chosen with the switch.
+  (CSS's `light-dark()` would avoid the repetition but breaks colours before iOS 17.5.)
+
+| Job | Hex | Contrast |
+|---|---|---|
+| Page background | `#121214` | |
+| Cards, the fact chips, the switch (surface) | `#1C1C20` | |
+| Body text | `#FFF1E2` (the logo E's warm white) | 16.9:1 |
+| Secondary text | `#BDB4AB` | 9.2:1 |
+| Large headings, "spark", small accent text (clay rose's job) | `#E38A7E` | 7.3:1 |
+| Links, eyebrows, tags | `#F2A496` (pale rose) | 9.4:1 |
+| Lines | warm white at 12% | |
+| The screen's shadow | black (brown would not show) | |
+
+  The same in both modes: the black pill, the mock screen and its panel, every rose glow,
+  the graphite GitHub buttons, the clay rose Download buttons, step circles and focus rings
+  (3.5:1 on the dark page, above the 3:1 rings need), and the "Coming soon" badge.
+- **The switch:** in the top bar just before Download, on phones too. A pill holding a sun
+  and a moon, both always shown; a clay rose dot with a soft rose glow sits under the one
+  that is on and slides across (0.25 s; instant with Reduce Motion). The icon on the dot is
+  warm white, the other is faded text colour. It is one button with `role="switch"`,
+  named "Dark mode", `aria-checked` on in dark mode; keyboard focus shows the clay rose
+  ring.
+- **Room on phones:** the switch (66 px) would push the bar past the screen on phones up
+  to 400 px wide (it measures 4 px over at 375, 60 px over at 320). There the bar tightens:
+  side padding 16 px (was 24), the logo 40 px and "Ember" 20 px (were 60 and 25), 8 px
+  between the switch and Download, and Download's sides 14 px (were 20).
 
 ## Files
 
 - `site/index.html`: all page content, plus page title, description and link-preview
   (Open Graph) tags.
 - `site/styles.css`: colour variables, then the layout and the demo's look.
+- `site/demo-steps.js`: the pill demo's script (steps, timings, what the pill shows); pure,
+  tested in `site/tests/`.
 - `site/demo.js`: runs the pill demo loop and respects Reduce Motion.
+- `site/screen.js`: sizes the mock screen and the open panel; runs the menu bar clock.
+- `site/clock.js`: the clock's text in the visitor's own format; pure, tested in
+  `site/tests/`.
 - `site/motion.js`: scroll reveals and the cards' light; respects Reduce Motion.
+- `site/theme.js`: the light/dark switch; remembers the choice.
 - `site/assets/`: the app icon in small sizes for the hero and the favicon, resized from
   the repo's `assets/` (Vercel only sees files inside `site/`). The link-preview image
   points at the full app icon on GitHub, because link previews need an absolute URL and
-  the site has no domain yet.
+  the site has no domain yet. `covers/` holds the demo songs' covers (192 px).
 - `.gitattributes` (repo root): hides `site/` from GitHub's language statistics.
 
 ## Credit
@@ -305,7 +489,7 @@ carry no per-file header (see the 2026-11-10 credit decision).
 - With JavaScript off, all content is visible.
 - The download buttons cannot be clicked or focused; the GitHub buttons open the repo in a
   new tab; the nav's Download button jumps to Get started.
-- Every text colour pair meets 4.5:1 (3:1 for large text). The disabled button's faded
+- Every text colour pair meets 4.5:1 (3:1 for large text), in both modes. The disabled button's faded
   text is the one exception (contrast rules exempt disabled controls), but it stays
   readable.
 - No personal paths, secrets or email addresses in any file.

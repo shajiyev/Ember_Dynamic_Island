@@ -1,7 +1,7 @@
 // The pill demo's script: the steps in order, how long each lasts, and what the pill
 // shows. The looks copy the app (Ember/Battery/BatteryAlerts.swift,
 // Ember/Timer/TimerLook.swift, Ember/NowPlaying/NowPlayingLook.swift and
-// NowPlayingPanelView.swift); the timings are in docs/specs/landing-demo-song-skip.md.
+// NowPlayingPanelView.swift); the timings are in docs/specs/landing-page.md ("The pill demo").
 // Pure, no DOM, so `node --test` can run it.
 
 // The two songs, each glowing in its cover's colour, as in the app.

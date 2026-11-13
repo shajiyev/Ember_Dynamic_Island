@@ -479,3 +479,54 @@ committing; nothing of it is in the app.
 - **No Apple logo in the menu bar** ("Finder File Edit…" instead): it is Apple's
   trademark, and the site uses none of Apple's assets. The clock shows the visitor's own
   time.
+
+## 2026-11-13 — One spec and one plan for the landing page
+- **The three landing-page specs became one, `docs/specs/landing-page.md`,** and the three
+  plans one, `docs/plans/landing-page.md`. **Why:** the user's call: one feature, one spec,
+  one plan, so there is a single place to read how the site should be. The demo's scene,
+  songs and timings and the true-scale screen are now sections of "The pill demo"; the
+  plans are kept as they were run, as parts 1–3. Earlier entries that point to
+  `docs/specs/landing-demo-song-skip.md` or `landing-hero-screen.md` mean those sections.
+- **From now on, changes to the site update that spec in place, and their work is the
+  plan's next part,** instead of a new spec and plan per change.
+
+## 2026-11-13 — Calendar & reminders design (milestone 2, fourth feature)
+Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
+- **A plain calendar that needs no permission is the heart of the feature.** Two switches,
+  "Show Calendar Events" and "Show Reminders", both off by default, each ask for their own
+  permission when turned on. **Why:** the user's key wish: other notch apps show a calendar
+  only as a list of events behind a permission prompt; Ember is useful without granting
+  anything, and keeps the privacy promise (each permission belongs to a feature the user
+  turns on). Considered one mode switch (no events without reminders) and "plain until
+  allowed" (no way back but revoking the permission).
+- **Month grid with the selected day, large; clicking a day selects it.** Considered a week
+  strip and big date + week; both are kept for a Calendar style option in Settings (#34).
+- **Switches in the menu bar menu until the Settings window exists.** **Why:** the plain tab
+  stays clean, and building Settings first would be a large detour.
+- **One heads-up 5 minutes before each timed event,** never for all-day or started events.
+  Considered following each event's own alarms (macOS already shows those as
+  notifications) and a second alert at the start; the lead time and a second heads-up
+  become Settings options (#35).
+- **Reminders: due on the day, plus overdue on today, tickable.** Reminders without a due
+  date are not shown.
+- **One timer for the next heads-up,** recalculated on calendar changes, wake, clock and
+  time zone changes and midnight. **Why:** Ember does no work between alerts; checking
+  every minute would wake the app all day.
+- **Full access for both permissions.** **Why:** macOS has no read-only access to events,
+  and completing reminders needs write access.
+
+## 2026-11-13 — Dark mode for the website
+- **Graphite** (`#121214` page, `#1C1C20` cards, warm-white `#FFF1E2` text, `#E38A7E`
+  headings, pale rose links), chosen over Warm night and Deep clay. **Why:** it is the
+  logo's own ground, calm and Mac-like, and the rose glow stands out most on it. The
+  orange second palette planned earlier was dropped with the move to Ember rose.
+- **The page follows the system's light or dark mode; the switch overrides it and the
+  choice is remembered.** (First agreed as "always light first", changed the same day.)
+  **Why:** most people choose their device's mode on purpose, so following it feels native,
+  and in CSS it works without JavaScript too. The dark values are written twice (system
+  dark, and dark chosen) rather than with `light-dark()`, which breaks colours before
+  iOS 17.5.
+- **A sun/moon switch** (both icons shown, a clay rose dot slides to the one on) before
+  Download, chosen over a round icon button and a bare icon. **Why:** clearest about the
+  current mode. On phones up to 400 px the top bar tightens (smaller logo, slimmer
+  padding) so it fits.

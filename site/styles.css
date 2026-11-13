@@ -33,6 +33,7 @@
   --download-bg: var(--clay-rose);
   --download-text: #FFF1E2;
   --line: color-mix(in srgb, var(--brown), transparent 82%);
+  --screen-shadow: var(--brown);
   --badge-bg: var(--rose-edge);
   --badge-text: var(--brown);
   --halo-1: color-mix(in srgb, var(--rose-edge), transparent 45%);
@@ -46,13 +47,48 @@
   --app-timer: #FF7A1E;  /* the timer's orange, TimerLook.color */
   --app-green: #30D158;
   /* The demo songs' glows: what the app's CoverColor gives each cover
-     (docs/specs/landing-demo-song-skip.md). Song A's cover is mostly white with red bars,
+     (docs/specs/landing-page.md, "The pill demo"). Song A's cover is mostly white with red bars,
      so it glows red; song B's is black and white, so it glows the app's soft white. */
   --song-a: #FF4C53;
   --song-b: #E6E6E6;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
+
+/* Dark mode (spec: "Dark mode"): Graphite, the logo's ground. Only the jobs change; the
+   pill, the glows and the buttons keep their colours. The page follows the system's
+   setting, also without JavaScript, unless the switch chose a mode (data-theme on <html>,
+   theme.js). The two rules hold the same values. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #121214;
+    --surface: #1C1C20;
+    --text: #FFF1E2;
+    --text-secondary: #BDB4AB;
+    --heading-accent: #E38A7E;
+    --clay-rose-text: #E38A7E;
+    --link: #F2A496;
+    --line: rgb(255 241 226 / 0.12);
+    --screen-shadow: #000;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121214;
+  --surface: #1C1C20;
+  --text: #FFF1E2;
+  --text-secondary: #BDB4AB;
+  --heading-accent: #E38A7E;
+  --clay-rose-text: #E38A7E;
+  --link: #F2A496;
+  --line: rgb(255 241 226 / 0.12);
+  --screen-shadow: #000;
+}
+
+/* Switching cross-fades the page (theme.js), a touch slower than the browser's default. */
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 0.3s; }
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -157,6 +193,58 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 }
 
 .nav-actions { display: flex; align-items: center; gap: 12px; justify-self: end; }
+
+/* The light/dark switch: a sun and a moon; a clay rose dot with the pill's soft glow sits
+   under the one that is on and slides across. Hidden until theme.js runs. */
+.theme-switch {
+  position: relative;
+  display: flex;
+  gap: 6px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.theme-switch[hidden] { display: none; }
+.theme-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--clay-rose);
+  box-shadow: 0 0 10px -2px var(--rose-glow);
+  transition: translate 0.25s ease;
+}
+.theme-switch[aria-checked="true"]::before { translate: 32px 0; }
+.theme-switch svg {
+  position: relative;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  padding: 5px;
+  opacity: 0.55;
+  transition: color 0.25s, opacity 0.25s;
+}
+.theme-switch[aria-checked="false"] .theme-sun,
+.theme-switch[aria-checked="true"] .theme-moon { color: var(--download-text); opacity: 1; }
+.theme-switch:focus-visible { outline: 3px solid var(--clay-rose); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .theme-switch::before, .theme-switch svg { transition: none; }
+}
+
+/* Phones up to 400 px: the bar tightens so the switch fits beside Download. */
+@media (max-width: 400px) {
+  .nav-inner { padding: 0 16px; }
+  .nav-brand { font-size: 20px; }
+  .nav-brand img { width: 40px; height: 40px; }
+  .nav-actions { gap: 8px; }
+  .nav-actions .button-small { padding: 0 14px; }
+}
 
 /* On phones the section links go; the name and Download stay. */
 @media (max-width: 600px) {
@@ -380,7 +468,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   color: var(--heading-accent);
 }
 
-.section-intro { max-width: 620px; margin: 14px 0 0; color: var(--text-secondary); }
+/* Sections are centred like the hero and Get started: their label, heading and intro. */
+.eyebrow, .section h2 { text-align: center; }
+.section-intro { max-width: 620px; margin: 14px auto 0; color: var(--text-secondary); text-align: center; }
 
 .grid {
   display: grid;
@@ -399,11 +489,12 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   background: var(--surface);
 }
 
+/* A "Planned" tag sits on its own line under the card's title. */
 .card h3 {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   font-size: 18px;
   font-weight: 650;
 }
@@ -419,34 +510,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   color: var(--link);
 }
 
-/* Below the feature cards: the other features, as plain chips like the hero's facts. */
-.more { margin-top: 36px; }
-
-.more h3 { margin: 24px 0 0; font-size: 15px; font-weight: 650; color: var(--clay-rose-text); }
-.more h3:first-child { margin-top: 0; }
-
-.more-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.more-list li {
-  padding: 5px 13px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--surface), transparent 30%);
-  font-size: 14px;
-  font-weight: 550;
-  color: var(--text-secondary);
-}
-
 /* FAQ: native <details>; opening one closes the others. */
 
-.faq { max-width: 760px; margin-top: 28px; }
+.faq { max-width: 760px; margin: 28px auto 0; }
 
 .faq-item { border-bottom: 1px solid var(--line); }
 
@@ -495,7 +561,6 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     0 0 120px 12px color-mix(in srgb, var(--clay-rose), transparent 93%);
   text-align: center;
 }
-.cta .section-intro { margin-left: auto; margin-right: auto; }
 
 /* The three install steps on a fuse. Drawn here fully lit, which is what you see without
    motion; the motion rules play the spark along it once. */
@@ -566,10 +631,11 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 .footer { padding: 64px 0; border-top: 1px solid var(--line); font-size: 14px; color: var(--text-secondary); }
 
+/* Three columns like the nav, so the links sit in the page's centre. */
 .footer-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 32px;
 }
 
@@ -577,6 +643,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   display: inline-flex;
   align-items: center;
   gap: 14px;
+  justify-self: start;
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
@@ -596,11 +663,11 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .footer-links a:hover { color: var(--text); }
 .footer-links svg { width: 16px; height: 16px; fill: currentColor; }
 
-.footer-legal { text-align: right; }
+.footer-legal { justify-self: end; text-align: right; }
 .footer-legal p { margin: 0; font-size: 13px; }
 
 @media (max-width: 760px) {
-  .footer-inner { flex-direction: column; text-align: center; }
+  .footer-inner { display: flex; flex-direction: column; text-align: center; }
   .footer-legal { text-align: center; }
 }
 
@@ -627,7 +694,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   height: calc(312px * var(--screen-scale));
   overflow: hidden;
   border-radius: calc(24px * var(--screen-scale)) calc(24px * var(--screen-scale)) 0 0;
-  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--brown), transparent 55%);
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--screen-shadow), transparent 55%);
 }
 .screen-stage {
   position: relative;

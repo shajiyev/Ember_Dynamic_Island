@@ -122,10 +122,11 @@ of the app, and `.gitattributes` keeps it out of GitHub's language statistics.
 | `site/index.html` | All page content, meta tags and the inline SVG icons |
 | `site/styles.css` | Colour variables (defined once, at the top), then layout, then the pill demo |
 | `site/demo.js` | Plays `demo-steps.js` on the page: sets the pill's `data-state` (rest, active, open), `data-song`, `data-tab`, `data-timer` and the pressed button. With Reduce Motion it shows charging, still |
-| `site/demo-steps.js` | The pill demo's script: the steps, their timings, wing text and the panel's timer. Pure, tested in `site/tests/`; the timings are in `docs/specs/landing-demo-song-skip.md` |
+| `site/demo-steps.js` | The pill demo's script: the steps, their timings, wing text and the panel's timer. Pure, tested in `site/tests/`; the timings are in `docs/specs/landing-page.md` ("The pill demo") |
 | `site/screen.js` | Sizes the hero's mock screen: drawn at 1280 px and scaled to fit from 800 px up (`--screen-scale`), a close-up below that; scales the open panel to fit narrow screens (`--open-scale`); runs the menu bar clock |
 | `site/clock.js` | The menu bar clock's text in the visitor's own format. Pure, tested in `site/tests/` |
 | `site/motion.js` | Scroll reveals and the cards' light. All motion styles sit in one block at the end of `styles.css`, inside `prefers-reduced-motion: no-preference` |
+| `site/theme.js` | The light/dark switch: shows it, sets `data-theme` on `<html>`, saves the choice in `localStorage` (`theme`) and keeps the switch in step with a system change; an inline script in `<head>` applies a saved choice before the page is drawn. Without a choice the page follows the system's mode in CSS (`prefers-color-scheme`); the dark colours are a second set of job variables in `styles.css` |
 | `site/assets/` | The app icon in small sizes (hero, favicon, iOS home screen); `covers/` holds the demo songs' album covers (192 px) |
 
 The page's sections, their order and their text are set in
