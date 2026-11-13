@@ -22,13 +22,12 @@
   --clay-rose-text: color-mix(in srgb, var(--clay-rose), var(--ink) 10%);   /* #9A4C44, 4.8:1: for small text */
   --heading-accent: var(--clay-rose);
   --link: var(--rust);
-  /* GitHub buttons are "ghost" buttons, like the reference site's: see-through with a
-     thin border, so the Download button is the one that stands out. */
-  --github-bg: color-mix(in srgb, var(--surface), transparent 50%);
-  --github-bg-hover: var(--surface);
-  --github-border: color-mix(in srgb, var(--brown), transparent 70%);
-  --github-border-hover: color-mix(in srgb, var(--brown), transparent 50%);
-  --github-text: var(--text);
+  /* GitHub buttons are a small piece of the logo: its graphite ground (docs/specs/logo.md),
+     warm-white text like the E, a thin pale-rose edge and a soft rose glow. They stand
+     apart from the fact chips, which are plain pills. */
+  --github-ground-top: #26262A;
+  --github-ground-bottom: #111114;
+  --github-text: #FFF1E2;   /* the logo E's warm white: about 16:1 on graphite */
   /* Download buttons: one distinct, muted brand colour, like the reference site's. Clay
      rose, with the label in the logo E's warm white (4.8:1). */
   --download-bg: var(--clay-rose);
@@ -181,12 +180,20 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .button-icon { width: 18px; height: 18px; fill: currentColor; }
 
 .button-github {
-  border: 1px solid var(--github-border);
-  background: var(--github-bg);
+  background: linear-gradient(180deg, var(--github-ground-top), var(--github-ground-bottom));
   color: var(--github-text);
-  transition: background-color 0.15s, border-color 0.15s;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--rose-edge), transparent 65%),
+    0 0 14px 0 color-mix(in srgb, var(--rose-glow), transparent 65%);
+  transition: box-shadow 0.25s ease-out, filter 0.25s ease-out;
 }
-.button-github:hover { border-color: var(--github-border-hover); background: var(--github-bg-hover); }
+/* Hover: the tile lifts a shade and its rose edge and glow grow. */
+.button-github:hover {
+  filter: brightness(1.15);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--rose-edge), transparent 40%),
+    0 0 20px 2px color-mix(in srgb, var(--rose-glow), transparent 50%);
+}
 
 /* The nav's Download: clay rose with a warm-white label, and the pill's resting glow
    (PillStyle rest): a soft Ember rose light around it, always on, and a thin pale-rose
@@ -242,7 +249,6 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   font-weight: 700;
   letter-spacing: 0.02em;
   white-space: nowrap;
-  box-shadow: 0 0 0 3px var(--bg);
 }
 
 .actions {
@@ -295,6 +301,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 }
 
 .facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 6px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -302,6 +311,16 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   font-size: 14px;
   font-weight: 550;
   color: var(--text-secondary);
+}
+
+.facts svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--clay-rose);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .hero-visual { position: relative; isolation: isolate; margin-top: 120px; }
@@ -884,11 +903,13 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     22%           { filter: brightness(1.12) saturate(1.1) drop-shadow(0 0 14px color-mix(in srgb, var(--rose-glow), transparent 35%)); }
   }
 
-  /* 6. The "Coming soon" badge pulses softly. */
+  /* 6. The "Coming soon" badge pulses softly with an Ember rose glow, which shows on cream
+     (a pale glow and a cream ring around the badge read as white-on-white). Starts from
+     transparent rose, not "transparent", which would fade through grey. */
   .badge { animation: badge-pulse 2.4s ease-in-out infinite; }
   @keyframes badge-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px var(--bg), 0 0 0 0 transparent; }
-    50%      { box-shadow: 0 0 0 3px var(--bg), 0 0 14px 2px color-mix(in srgb, var(--rose-edge), transparent 30%); }
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--rose-glow), transparent 100%); }
+    50%      { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--rose-glow), transparent 40%); }
   }
 
   /* 7. FAQ answers open smoothly where the browser can animate it; elsewhere instantly. */

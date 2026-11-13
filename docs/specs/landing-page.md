@@ -57,15 +57,18 @@ sparks). No text, images, code or assets come from that site, and the site never
      few seconds.
    - Below it: "A free, open-source Dynamic Island for your MacBook."
    - Two buttons side by side:
-     - **GitHub:** a "ghost" button like the reference site's: see-through cream with a
-       thin brown border, dark text and the GitHub mark; a little more solid on hover.
-       Opens the repo in a new tab. (Same in Get started.)
+     - **GitHub:** a small piece of the logo: the logo's graphite ground (`#26262A` →
+       `#111114`), warm-white text and mark (`#FFF1E2`, about 16:1), a thin pale-rose edge
+       and a soft rose glow; on hover it lifts a shade and the glow grows. Chosen so it
+       stands apart from the fact chips (it was a see-through ghost button that looked
+       like them). Opens the repo in a new tab. (Same in Get started.)
      - **Download for macOS:** outlined with faded text and a "not allowed" cursor; cannot
        be clicked or reached with Tab (`aria-disabled="true"`, no link). A small pale-rose
        "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
        it becomes a solid button linking to the release, and the badge goes.
    - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
-     with a notch". (This replaces the separate Requirements section.)
+     with a notch", each with a small clay rose icon (code, a laptop, a screen with a
+     notch). (This replaces the separate Requirements section.)
    - The visual, well below the badges (120 px) so the glow doesn't sit behind them: the
      pill demo (see below) at the top of a MacBook screen. The glow
      behind it breathes slowly, and a few sparks drift up from the notch.
@@ -159,7 +162,8 @@ sparks. Without JavaScript, all content is visible.
    around the letters breathes (4 s), and every 3 seconds (was 5, made more frequent at the
    user's request) three tiny rose sparks pop off the top of the "k" and fade. (A one-time flare when the page opened was moved to the
    nav's Download button, at the user's request.)
-6. **The "Coming soon" badge pulses softly.**
+6. **The "Coming soon" badge pulses softly** with an Ember rose glow (no cream ring:
+   it read as a white outline on the cream page).
 7. **FAQ answers open smoothly** when clicked (instantly where the browser can't animate
    it).
 8. **Light the fuse:** when Get started scrolls into view, a spark appears at step 1 and

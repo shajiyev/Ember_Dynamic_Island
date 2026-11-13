@@ -12,7 +12,8 @@
 - `assets/` — logo and other repository artwork (not bundled into the app).
   `Ember_logo.svg` is the logo master; `Ember_logo.png` is exported from it.
 - `docs/` — planning documents.
-- `scripts/` — helper scripts. `make-app-icon.swift` regenerates the app icon from the logo.
+- `scripts/` — helper scripts. `make-app-icon.swift` regenerates the app icon from the logo;
+  `serve-site.py` serves the website locally without caching.
 - `site/` — the website (see Website below). Not part of the app.
 
 ## Modules
@@ -68,7 +69,7 @@
   - `NowPlayingPanelView.swift`: the Music tab.
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
   up" always; the song if the panel was closed on the Music tab; otherwise the timer.
-- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs, and `PanelSelection`: the tab,
+- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs (icons only), and `PanelSelection`: the tab,
   remembered between openings, and the tab of what the wings show, which the panel opens
   on.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
@@ -130,7 +131,9 @@ The page's sections, their order and their text are set in
 
 The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
 `BatteryAlert`); when those change in the app, update the pill section of `styles.css`.
-Serve locally with `python3 -m http.server 8765 --directory site`.
+Serve locally with `python3 scripts/serve-site.py` (http://localhost:8765). It sends
+`Cache-Control: no-cache`, so the browser never mixes a new page with an old stylesheet
+(plain `python3 -m http.server` let Chrome keep stale CSS).
 Test the demo's steps with `node --test 'site/tests/*.test.mjs'` (Node 22.12 or later); the
 tests are kept out of the deploy by `site/.vercelignore`.
 
