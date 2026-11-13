@@ -53,8 +53,8 @@ You need a Mac with Xcode 27 or later.
 
 ## Built with AI
 
-Ember is built with [Claude Code](https://claude.com/claude-code). The planning
-documents are in [docs/](docs/): vision, roadmap, feature list and a log of decisions.
+Ember is built with [Claude Code](https://claude.com/claude-code). The documents about the logic of development
+are in [docs/](docs/): vision, roadmap, feature list and a log of decisions.
 
 ## License
 
