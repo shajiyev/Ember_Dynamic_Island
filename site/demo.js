@@ -1,5 +1,5 @@
-// Plays the pill demo in the hero: rest, a charging alert, rest, a running timer, again.
-// The steps live in demo-steps.js; this file only applies them to the page.
+// Plays the pill demo in the hero: rest, a song, a running timer and a charging alert, with
+// rest between them, again. The steps live in demo-steps.js; this file only applies them.
 import { STEPS, STILL_STEP, textAt } from './demo-steps.js';
 
 const pill = document.querySelector('.pill');
@@ -14,8 +14,12 @@ function show(step, elapsed) {
     return;
   }
   pill.style.setProperty('--glow', `var(${step.color})`);
-  icon.dataset.icon = step.icon;
-  icon.querySelector('use').setAttribute('href', `#icon-${step.icon}`);
+  // "music" shows the cover and the equalizer; the others a symbol and text (styles.css).
+  pill.dataset.kind = step.cover ? 'music' : 'symbol';
+  if (step.icon) {
+    icon.dataset.icon = step.icon;
+    icon.querySelector('use').setAttribute('href', `#icon-${step.icon}`);
+  }
   text.textContent = textAt(step, elapsed);
   pill.dataset.state = 'active';
 }

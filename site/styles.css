@@ -45,6 +45,10 @@
   --app-glow: #D9776B;   /* Ember rose, PillStyle.glowColor */
   --app-timer: #FF7A1E;  /* the timer's orange, TimerLook.color */
   --app-green: #30D158;
+  /* The demo song's cover colour: an abstract, dark slate-blue cover drawn for the site
+     (no real artwork); like the app, the music glow takes the cover's colour, here a soft
+     pale blue. */
+  --demo-cover: #A7C2FF;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 }
@@ -695,6 +699,29 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   font-variant-numeric: tabular-nums;
 }
 
+/* Now Playing (Ember/Pill/PillView.swift, EqualizerView.swift): a 20 × 20 cover with
+   rounded corners in the left wing, and an equalizer of four bars in the cover's colour in
+   the right. The cover here is abstract, drawn for the site. */
+.wing-cover {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  /* Dark and moody: slate blue, with a faint soft light like a moon behind haze. */
+  background:
+    radial-gradient(circle at 62% 34%, rgb(214 226 255 / 0.55), rgb(167 194 255 / 0.18) 22%, transparent 42%),
+    radial-gradient(ellipse at 40% 110%, rgb(10 12 18 / 0.9), transparent 60%),
+    linear-gradient(160deg, #3A4560, #1C2230 55%, #0E1118);
+}
+.wing-eq { display: flex; align-items: center; gap: 2px; height: 12px; }
+.wing-eq i { width: 2.5px; height: 8px; border-radius: 2px; background: var(--glow); }
+
+/* Which wing content shows: a symbol and text, or (for music) the cover and equalizer. */
+.wing-cover, .wing-eq { display: none; }
+.pill[data-kind="music"] .wing-icon,
+.pill[data-kind="music"] .wing-text { display: none; }
+.pill[data-kind="music"] .wing-cover { display: block; }
+.pill[data-kind="music"] .wing-eq { display: flex; }
+
 @media (prefers-reduced-motion: reduce) {
   /* As specific as the active rules above, so it wins over their transitions. */
   .pill, .pill[data-state] .edge, .pill[data-state] .wings { transition: none; }
@@ -901,6 +928,18 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   @keyframes download-blink {
     0%, 40%, 100% { filter: brightness(1) saturate(1) drop-shadow(0 0 0 color-mix(in srgb, var(--rose-glow), transparent 100%)); }
     22%           { filter: brightness(1.12) saturate(1.1) drop-shadow(0 0 14px color-mix(in srgb, var(--rose-glow), transparent 35%)); }
+  }
+
+  /* 10. The demo's equalizer: each bar rises and falls at its own speed, like the app's
+     (height 4 + 8 × |sin|, at 2.2, 2.9, 3.6 and 4.3 rad/s: half-periods of 1.43, 1.08,
+     0.87 and 0.73 s). */
+  .wing-eq i { animation: eq-bar 1.43s ease-in-out infinite alternate; }
+  .wing-eq i:nth-child(2) { animation-duration: 1.08s; animation-delay: -0.3s; }
+  .wing-eq i:nth-child(3) { animation-duration: 0.87s; animation-delay: -0.5s; }
+  .wing-eq i:nth-child(4) { animation-duration: 0.73s; animation-delay: -0.2s; }
+  @keyframes eq-bar {
+    from { height: 4px; }
+    to   { height: 12px; }
   }
 
   /* 6. The "Coming soon" badge pulses softly with an Ember rose glow, which shows on cream

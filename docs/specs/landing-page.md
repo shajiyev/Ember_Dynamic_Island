@@ -224,13 +224,22 @@ Text, as agreed:
      glow brightens.
   3. **Timer:** a countdown ticks beside the notch, in the timer's own orange `#FF7A1E`
      (`TimerLook.color`), as in the app.
+  4. **Now Playing** (added 2026-11-13, once the feature was finished): a 20 × 20 cover
+     with rounded corners in the left wing, an equalizer of four bars in the right, and the
+     glow in the cover's colour, as in the app. The cover is abstract, drawn for the site:
+     dark slate blue with a faint soft light; glow and equalizer a soft pale blue
+     `#A7C2FF`, from the user's reference song (violet and a red-coral were tried and not
+     kept). Real album art can't be used.
+  Order (chosen by the user): rest 3 s → music 6 s → rest 2 s → timer 6 s → rest 2 s →
+  charging 3 s, then again.
 - **Matches the app:** shapes, sizes, timings and glow are taken from the app's pill
-  metrics and its battery and timer views, read before the demo is written.
+  metrics and its battery, timer and Now Playing views (`NowPlayingLook`,
+  `EqualizerView`: bars 2.5 px wide, 2 px apart, 4–12 px tall at their own speeds).
 - **Reduced motion:** with Reduce Motion on, the loop stops and shows the charging step,
   still.
 - **Narrow phones** (420 px and narrower): the pill is drawn at 80%, so the wide pill fits
   inside the mock screen.
-- **Later:** Now Playing and other features join the loop only when the user says they
+- **Later:** other features (Bluetooth next) join the loop only when the user says they
   are finished. A real screen recording may replace the CSS demo later.
 
 ## Look (light mode)

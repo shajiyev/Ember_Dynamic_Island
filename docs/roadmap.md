@@ -37,8 +37,8 @@
 - **Next:** choose and design milestone 2's next feature (by the agreed order: Bluetooth
   devices, #8).
   Website: the user connects Vercel (steps in docs/architecture.md); then dark mode with
-  the light/dark toggle (its own spec), and Now Playing in the demo when that feature is
-  done. Later for the site: testimonials, donations, a live GitHub star count, the
+  the light/dark toggle (its own spec). Now Playing is in the demo (2026-11-13). Later for
+  the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 
 ## Milestones (draft)
