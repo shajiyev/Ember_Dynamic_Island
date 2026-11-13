@@ -54,7 +54,7 @@ You need a Mac with Xcode 27 or later.
 ## Built with AI
 
 Ember is built with [Claude Code](https://claude.com/claude-code). The documents about the logic of development
-are in [docs/](docs/): vision, roadmap, feature list and a log of decisions.
+are in [docs/](docs/): plans, specs, architecture, vision, roadmap, feature list and a log of decisions.
 
 ## License
 
