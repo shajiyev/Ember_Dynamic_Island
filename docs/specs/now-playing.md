@@ -74,6 +74,13 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
   (`PanelTab.glowColor`, since 2026-11-12). Only the panel's
   shape glows; nothing inside it (artwork, icons, text) casts a glow.
 - **Dragging the scrubber** seeks when released.
+- **Spotify-style scrubber and controls** (since 2026-11-14, with #11): the scrubber is a
+  thin capsule bar (about 4 pt) with a white fill on grey and no knob, shared with the
+  volume and brightness strip (`CapsuleBar`, see docs/specs/volume-brightness.md), with
+  the time played left of it and the length right of it. Clicking anywhere on it seeks
+  there; dragging moves the fill and seeks on release. Previous and next are
+  `backward.end.fill` / `forward.end.fill` in light grey (white on hover); play/pause is
+  black on a filled white circle.
 - **A paused song** (the player is open with a song loaded) shows with its play button,
   so one click resumes it.
 - **Neither player open:** "Nothing playing" and buttons **Open Music** and **Open

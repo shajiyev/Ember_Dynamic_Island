@@ -614,3 +614,21 @@ All nine manual checks passed on a MacBook Pro 14-inch (Mac15,6), macOS 26.6.2.
   - The month arrows have a small click area (about 11 points).
   - Thinner tests than the spec listed: months starting on Sunday and Monday only, and the
     events heading tested for "Today" only.
+
+## 2026-11-14 — Volume and brightness in the pill: design
+- **A strip below the pill, not the wings.** The pill grows down by a strip about the
+  notch's height and keeps the width of its current state (rest, activity, open panel).
+  Whatever the wings show stays. **Why:** the user's idea; nothing on the pill is
+  interrupted, and the bar gets real width instead of a 42-point wing.
+- **Ember takes the keys** (event tap, Accessibility) instead of watching for changes and
+  switching off macOS's indicator. **Why:** stopping the system process that draws it is
+  fragile and breaks with macOS updates; taking the keys never fights macOS, and without
+  the permission the keys simply work as before.
+- **Switch off by default**, like the calendar switches, so nobody gets a permission prompt
+  they did not ask for.
+- **No keyboard backlight** (the user's choice).
+- **One capsule bar for the strip and the Music tab**, thin like Spotify's (the user's
+  screenshots), with step dots only in the strip. The Music tab's controls follow Spotify
+  too. **Why:** the two bars always look alike; dots mean something only where keys move
+  in steps.
+

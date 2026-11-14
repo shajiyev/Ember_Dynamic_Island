@@ -66,12 +66,15 @@
   reminders stay at the end of the list); a heads-up with one sound 5 minutes before each
   timed event. Verified on macOS 26.6.2 with the checklist in docs/plans/calendar.md.
   Spec docs/specs/calendar.md.
-- **In progress:** nothing in the app.
+- **Done:** volume and brightness in the pill (#11) designed and planned: the pill grows
+  down by a strip at the width of its current state; the Music tab gets the same thin
+  capsule bar and Spotify-style controls; App Sandbox to be turned off. Spec
+  docs/specs/volume-brightness.md.
+- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 1 of 6 next (the Music tab's capsule bar and Spotify-style controls).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
-- **Next:** design volume and brightness in the pill (#11, revived for v1 on 2026-11-14),
-  as the user asked to take it up after #14.
+- **Next:** finish volume and brightness in the pill (#11) with the plan's six tasks.
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on
   Mac and iPhone; a custom domain once bought. The demo grows as features are finished. Later for
