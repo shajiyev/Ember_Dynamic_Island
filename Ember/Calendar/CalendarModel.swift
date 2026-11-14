@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 import Observation
 
-/// The Calendar tab's state: the month the grid shows, the selected day, the two switches
+/// The Calendar tab's state: the month the grid shows, the selected day, the two switches,
 /// the selected day's events and reminders, and the one timer for the next heads-up. Each time
 /// the panel shows the tab, it returns to today. Nothing is read from EventKit while both
 /// switches are off; while the tab is hidden, only the next heads-up is looked up.
@@ -94,8 +94,14 @@ final class CalendarModel {
         refresh()
     }
 
+    /// Drops the day's lists and any answer still on its way, so reopening never shows a
+    /// stale day.
     func panelHidden() {
         isPanelShown = false
+        refreshCount += 1
+        events = []
+        reminders = []
+        done = []
     }
 
     /// Selects a day; a day outside the shown month also moves the grid to its month.
@@ -150,11 +156,12 @@ final class CalendarModel {
         }
     }
 
-    /// Reads the selected day's lists while the tab shows them.
+    /// Reads the selected day's lists while the tab shows them. A revoked permission turns its
+    /// switch off even while the tab is hidden.
     private func refresh() {
         refreshCount += 1
-        guard isPanelShown else { return }
         turnOffSwitchesWithoutAccess()
+        guard isPanelShown else { return }
         let day = calendar.startOfDay(for: selectedDay)
         let nextDay = calendar.date(byAdding: .day, value: 1, to: day)!
         events = showsEvents ? CalendarItems.sorted(store.events(from: day, to: nextDay)) : []
@@ -182,7 +189,8 @@ final class CalendarModel {
     /// events only while Show Calendar Events is on.
     private func scheduleHeadsUp() {
         headsUpTimer?.cancel()
-        guard showsEvents, store.hasAccess(to: .events) else { return }
+        turnOffSwitchesWithoutAccess()
+        guard showsEvents else { return }
         let now = Date()
         announcedStarts = announcedStarts.filter { $0 > now }
         let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: calendar.startOfDay(for: now))!
@@ -196,11 +204,12 @@ final class CalendarModel {
         }
     }
 
-    /// Shows the heads-up unless the event has started meanwhile (the Mac slept), then sets
-    /// the timer for the next one.
+    /// Shows the heads-up unless the event has started meanwhile (the Mac slept) or access was
+    /// revoked, then sets the timer for the next one.
     private func announce(_ event: DayEvent) {
         let now = Date()
-        if event.start > now {
+        turnOffSwitchesWithoutAccess()
+        if showsEvents, event.start > now {
             announcedStarts.insert(event.start)
             onHeadsUp?(CalendarLook.headsUp(for: event, now: now))
             NSSound(named: CalendarLook.soundName)?.play()

@@ -1,6 +1,6 @@
 # Milestone 2, feature 4 design: calendar & reminders (#14)
 
-Date: 2026-11-13. Status: designed, not built.
+Date: 2026-11-13. Status: built 2026-11-14 (plan: docs/plans/calendar.md).
 
 ## Goal
 

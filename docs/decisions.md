@@ -594,3 +594,23 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
 - **One "Ping" as the heads-up appears, never repeated.** **Why:** the user asked for an
   alarm like the timer's, but a heads-up 5 minutes ahead is not urgent enough to repeat
   until seen. "Ping", not the timer's "Glass", so the two can be told apart by ear.
+
+## 2026-11-14 — Calendar & reminders results
+All nine manual checks passed on a MacBook Pro 14-inch (Mac15,6), macOS 26.6.2.
+- **EventKit in the sandbox:** the `ENABLE_RESOURCE_ACCESS_CALENDARS` build setting put
+  the Calendars entitlement into the app by itself; `Ember.entitlements` was not edited.
+  Reminders needed nothing more: its own prompt appeared and access worked.
+- **Revoking access** makes System Settings offer to quit and reopen Ember; that is macOS's
+  standard behaviour. Ember also turns the switch off on its next check while it runs.
+- No values were tuned: the heads-up stays 6 s.
+- **Known limits, accepted for v1:**
+  - Done reminders are grouped by the day they were completed: one ticked while a future
+    day is selected moves to today's list, and unticking one with no due date (or due on
+    another day) removes it from the day shown rather than moving it back up.
+  - Hovering a heads-up opens the Calendar tab, which counts as the last tab chosen: with a
+    timer and music both running, the countdown then gets the wings, as the existing rule
+    for the last tab says.
+  - The Ping plays even without a notch display (v1 is notch-only).
+  - The month arrows have a small click area (about 11 points).
+  - Thinner tests than the spec listed: months starting on Sunday and Monday only, and the
+    events heading tested for "Today" only.
