@@ -589,3 +589,8 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
   wants the change shown in the notch, in Ember's look, rather than macOS's indicator.
   Designed after Calendar & reminders (#14). The permission it needs and whether keyboard
   backlight is included are settled then.
+
+## 2026-11-14 — The calendar heads-up plays one sound
+- **One "Ping" as the heads-up appears, never repeated.** **Why:** the user asked for an
+  alarm like the timer's, but a heads-up 5 minutes ahead is not urgent enough to repeat
+  until seen. "Ping", not the timer's "Glass", so the two can be told apart by ear.

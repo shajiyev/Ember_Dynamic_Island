@@ -1886,7 +1886,7 @@ The user runs Ember from Xcode. For each item, record pass or fail.
 2. Arrows move months; clicking a day selects it; closing and reopening returns to today.
 3. Show Calendar Events on → prompt → Allow: today's events appear with colours and times.
 4. Show Reminders on → prompt → Allow: due and overdue reminders appear; ticking one off in Ember shows it completed in Reminders.app and moves it to the end of the list, dimmed and struck through; it is still there after closing the panel; clicking it again undoes it.
-5. An event created 6 minutes ahead gives the heads-up 5 minutes before; hovering opens the Calendar tab.
+5. An event created 6 minutes ahead gives the heads-up 5 minutes before, with one "Ping" sound that does not repeat; hovering opens the Calendar tab.
 6. Refusing a permission leaves the switch off and shows the alert; Open System Settings opens the right page.
 7. Revoking access in System Settings: the list disappears and the switch turns off.
 8. After changing the Mac's clock past midnight (System Settings → General → Date & Time) or overnight: today's circle moves.

@@ -25,6 +25,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     private var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
+    /// While a calendar heads-up shows, the panel opens on the Calendar tab.
+    private var calendarHeadsUpShowing = false
+    private var calendarHeadsUpEnd: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
@@ -51,6 +54,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         panelSelection.onChange = { [weak self] in self?.showLastingActivity() }
         nowPlaying.start()
+        calendar.onHeadsUp = { [weak self] activity in self?.showCalendarHeadsUp(activity) }
         calendar.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
@@ -62,7 +66,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
                                          musicTabChosen: panelSelection.tab == .music)
         controller.setOngoing(shown)
-        panelSelection.openingTab = shown == nil ? nil : shown == musicActivity ? .music : .timer
+        let lastingTab: PanelTab? = shown == nil ? nil : shown == musicActivity ? .music : .timer
+        panelSelection.openingTab = calendarHeadsUpShowing ? .calendar : lastingTab
+    }
+
+    /// Shows the heads-up over whatever the wings show, and opens the panel on the Calendar
+    /// tab until it goes.
+    private func showCalendarHeadsUp(_ activity: LiveActivity) {
+        controller.show(activity)
+        calendarHeadsUpShowing = true
+        showLastingActivity()
+        calendarHeadsUpEnd?.cancel()
+        calendarHeadsUpEnd = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(activity.duration ?? 0))
+            guard !Task.isCancelled, let self else { return }
+            calendarHeadsUpShowing = false
+            showLastingActivity()
+        }
     }
 }
 

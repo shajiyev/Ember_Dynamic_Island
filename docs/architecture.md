@@ -67,9 +67,20 @@
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
     notices settle, publishes the chosen track and sends commands.
   - `NowPlayingPanelView.swift`: the Music tab.
+- `Ember/Calendar/` — calendar & reminders (#14).
+  - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `CalendarLook.swift`:
+    the pure rules: the month's 42 days, a day's events and reminders and their order, the
+    next heads-up, and every calendar value (lead time, colours, texts).
+  - `CalendarStore.swift`: the only EventKit code; access, events, due reminders and the
+    day's done reminders, completing and reopening a reminder, change notices.
+  - `CalendarModel.swift`: the shown month, the selected day, the two switches, the day's
+    lists (events, due reminders and done reminders) and the one heads-up timer.
+  - `CalendarAccessAlert.swift`: the alert after a refused permission.
+  - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
+    Calendar tab.
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
   up" always; the song if the panel was closed on the Music tab; otherwise the timer.
-- `Ember/Panel/PanelTabs.swift` — the Music | Timer tabs (icons only), and `PanelSelection`: the tab,
+- `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
   remembered between openings, and the tab of what the wings show, which the panel opens
   on.
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
@@ -103,6 +114,16 @@ the model hands the app delegate an activity with the cover, the equalizer and t
 glow. The app delegate passes the timer's and the music's activities through
 `LastingChoice` to `PillController.setOngoing`. The Music tab reads the model and sends its
 commands.
+
+Calendar: the tab works without EventKit: `MonthGrid` lays out the month and the model
+keeps the selected day. The menu's two switches call `CalendarModel.turn`, which asks
+`CalendarStore` for the permission. While the tab shows, the model reads the selected
+day's events, due reminders and done reminders for the switches that are on, again after any
+`EKEventStoreChanged`. With events on, the model reads the coming events, asks
+`HeadsUpSchedule` for the next heads-up and sets one timer; it works this out again after a
+store change, a wake, a clock or time zone change and midnight. The heads-up goes to the
+app delegate, which shows it with `PillController.show` and sets the panel's opening tab to
+Calendar while it shows.
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The

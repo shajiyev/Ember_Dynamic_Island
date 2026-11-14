@@ -108,8 +108,11 @@ Only while "Show Calendar Events" is on.
   calendar colour. Right wing: the minutes left, rounded up (normally `5 min`). Glow:
   the calendar colour. It stays about 6 s (to tune by eye), and shows over the timer or
   music like a battery alert does.
+- **Sound:** one macOS system sound ("Ping") as the heads-up appears, played once, never
+  repeated. It differs from the timer's "Glass" so the two can be told apart.
 - **Hovering or clicking** while the heads-up shows opens the panel on the Calendar tab,
-  with today selected.
+  with today selected. Exception: if the timer's "Time's up" is ringing at that moment,
+  the panel opens on Timer, so the ring is seen and stopped.
 
 ## Later, in Settings
 

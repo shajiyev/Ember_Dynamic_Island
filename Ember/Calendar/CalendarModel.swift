@@ -1,9 +1,11 @@
+import AppKit
 import Foundation
 import Observation
 
 /// The Calendar tab's state: the month the grid shows, the selected day, the two switches
-/// and the selected day's events and reminders. Each time the panel shows the tab, it
-/// returns to today. Nothing is read from EventKit while a switch is off or the tab is hidden.
+/// the selected day's events and reminders, and the one timer for the next heads-up. Each time
+/// the panel shows the tab, it returns to today. Nothing is read from EventKit while both
+/// switches are off; while the tab is hidden, only the next heads-up is looked up.
 @Observable
 final class CalendarModel {
     private(set) var today = Date()
@@ -25,6 +27,13 @@ final class CalendarModel {
     @ObservationIgnored private let store = CalendarStore()
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var isPanelShown = false
+    /// Called with the heads-up activity 5 minutes before an event.
+    @ObservationIgnored var onHeadsUp: ((LiveActivity) -> Void)?
+    /// The one timer, set for the next heads-up.
+    @ObservationIgnored private var headsUpTimer: Task<Void, Never>?
+    /// Start times already announced, so an event is announced once.
+    @ObservationIgnored private var announcedStarts: Set<Date> = []
+    @ObservationIgnored private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     /// Counts refreshes, so an older answer from EventKit is dropped.
     @ObservationIgnored private var refreshCount = 0
     private static let eventsKey = "showsCalendarEvents"
@@ -52,8 +61,17 @@ final class CalendarModel {
     }
 
     func start() {
-        store.onChange = { [weak self] in self?.refresh() }
+        store.onChange = { [weak self] in
+            self?.refresh()
+            self?.scheduleHeadsUp()
+        }
         turnOffSwitchesWithoutAccess()
+        // Waking, a clock or time zone change and midnight can each move the next heads-up.
+        observe(NSWorkspace.shared.notificationCenter, NSWorkspace.didWakeNotification)
+        observe(.default, .NSSystemClockDidChange)
+        observe(.default, .NSSystemTimeZoneDidChange)
+        observe(.default, .NSCalendarDayChanged)
+        scheduleHeadsUp()
     }
 
     /// Turning a switch on asks for its permission. If it is refused, the switch stays off
@@ -65,6 +83,7 @@ final class CalendarModel {
         }
         setShows(source, on)
         refresh()
+        scheduleHeadsUp()
     }
 
     func panelShown(now: Date = Date()) {
@@ -157,5 +176,56 @@ final class CalendarModel {
             let stillDue = Set(reminders.map(\.id))
             completing = completing.filter { stillDue.contains($0) }
         }
+    }
+
+    /// Sets the one timer for the next heads-up, replacing any earlier one. Reads the coming
+    /// events only while Show Calendar Events is on.
+    private func scheduleHeadsUp() {
+        headsUpTimer?.cancel()
+        guard showsEvents, store.hasAccess(to: .events) else { return }
+        let now = Date()
+        announcedStarts = announcedStarts.filter { $0 > now }
+        let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: calendar.startOfDay(for: now))!
+        guard let next = HeadsUpSchedule.next(events: store.events(from: now, to: endOfTomorrow), now: now,
+                                              leadTime: CalendarLook.leadTime,
+                                              announcedStarts: announcedStarts) else { return }
+        headsUpTimer = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(max(0, next.date.timeIntervalSinceNow)))
+            guard !Task.isCancelled else { return }
+            self?.announce(next.event)
+        }
+    }
+
+    /// Shows the heads-up unless the event has started meanwhile (the Mac slept), then sets
+    /// the timer for the next one.
+    private func announce(_ event: DayEvent) {
+        let now = Date()
+        if event.start > now {
+            announcedStarts.insert(event.start)
+            onHeadsUp?(CalendarLook.headsUp(for: event, now: now))
+            NSSound(named: CalendarLook.soundName)?.play()
+        }
+        scheduleHeadsUp()
+    }
+
+    /// After a wake, a clock change or midnight: a new day moves today's circle and selects
+    /// today; the next heads-up is worked out again either way.
+    private func timeMayHaveChanged() {
+        let now = Date()
+        if !calendar.isDate(now, inSameDayAs: today) {
+            today = now
+            selectedDay = now
+            shownMonth = now
+            refresh()
+        }
+        scheduleHeadsUp()
+    }
+
+    private func observe(_ center: NotificationCenter, _ name: Notification.Name) {
+        let token = center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+            // The observer runs on the main queue, so this is already on the main actor.
+            MainActor.assumeIsolated { self?.timeMayHaveChanged() }
+        }
+        observers.append((center, token))
     }
 }

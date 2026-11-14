@@ -65,9 +65,10 @@
   A plain month calendar that needs no permission; two menu switches add events and
   reminders; a heads-up 5 minutes before each event. Spec docs/specs/calendar.md, plan
   docs/plans/calendar.md.
-- **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 3 of 5 done (events and reminders behind their switches; done reminders stay at the end of the list).
+- **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 4 of 5 done (the heads-up in the wings).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
-  layout settings (#38: panel size, calendar in the Music tab). See docs/features.md.
+  layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
+  on (#39: the last one, or one the user picks). See docs/features.md.
 - **Next:** build #14 task by task. After #14: design volume and brightness in the pill
   (#11, revived for v1 on 2026-11-14).
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see

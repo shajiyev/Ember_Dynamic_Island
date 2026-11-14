@@ -7,6 +7,9 @@ nonisolated enum CalendarLook {
     static let leadTime: TimeInterval = 5 * 60
     /// Seconds the heads-up stays on the pill.
     static let headsUpDuration: TimeInterval = 6
+    /// A macOS system sound, played once with each heads-up. Not the timer's, so the two
+    /// can be told apart by ear.
+    static let soundName = "Ping"
     /// Seconds a ticked-off reminder stays, filled, before it moves to the end of the list.
     static let completedReminderDelay: TimeInterval = 1
     static let symbolName = "calendar"
