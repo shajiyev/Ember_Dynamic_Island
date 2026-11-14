@@ -173,8 +173,9 @@ the first paint, so on desktop the page was drawn fully visible and nothing anim
 
 Section links (Download, Features, FAQ…) scroll to their section but leave the address
 without its `#section`, so a reload stays where the visitor is. (On iPhone, a reload after
-tapping Download went back to "Light up your notch" every time.) A shared link with a
-`#section` still opens at that section.
+tapping Download went back to "Light up your notch" every time.) A link that already ends
+in a `#section` (shared, or suggested by the browser's history) still opens at that
+section, and then the address drops it too, once the page has loaded.
 
 1. **Sections ignite as they appear:** headings and cards fade up about 24 px as they
    scroll into view (0.5 s), cards one after another (80 ms apart), and each card warms

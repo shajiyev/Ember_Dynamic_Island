@@ -28,6 +28,12 @@ for (const card of document.querySelectorAll('.card')) {
   });
 }
 
-// Section links (Download, FAQ…) scroll to their section but leave the address without its
-// #section, so a reload stays where the visitor is instead of jumping back to that section.
-addEventListener('hashchange', () => history.replaceState(null, '', location.pathname + location.search));
+// Section links (Download, FAQ…), and shared links that end in one (…/#faq), scroll to their
+// section; then the address drops the #section, so a reload stays where the visitor is
+// instead of jumping back to that section. On opening, it waits until the page has loaded
+// and the browser has scrolled there.
+function dropSection() {
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
+addEventListener('hashchange', dropSection);
+addEventListener('load', () => setTimeout(dropSection));
