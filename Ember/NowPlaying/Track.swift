@@ -30,4 +30,13 @@ nonisolated extension Track {
                   length: reading.length, position: reading.position, readAt: date,
                   isPlaying: reading.state == "playing")
     }
+
+    /// The track as it is right after seeking to `position` at `now`, before the player
+    /// answers: the bar shows the new position at once instead of jumping back.
+    func seeked(to position: TimeInterval, at now: Date) -> Track {
+        var track = self
+        track.position = min(max(position, 0), length)
+        track.readAt = now
+        return track
+    }
 }

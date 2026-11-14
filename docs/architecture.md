@@ -33,6 +33,8 @@
     open, passing it the notch height (`notchHeight` environment value). The panel content
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
     its song's.
+  - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
+    shared by the Music tab's scrubber and the volume and brightness strip.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
   pill (wing symbol, wing text, optional glow colour). A brief one has a duration and goes
   by itself; an ongoing one stays until its feature clears it, or until seen if it ends
@@ -66,7 +68,7 @@
     the wings' activity and the time text.
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
     notices settle, publishes the chosen track and sends commands.
-  - `NowPlayingPanelView.swift`: the Music tab.
+  - `NowPlayingPanelView.swift`: the Music tab, with Spotify-style controls and a `CapsuleBar` scrubber.
 - `Ember/Calendar/` — calendar & reminders (#14).
   - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `CalendarLook.swift`:
     the pure rules: the month's 42 days, a day's events and reminders and their order, the

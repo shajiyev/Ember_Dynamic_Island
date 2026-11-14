@@ -88,8 +88,7 @@ Symbol and number are the same size as the wings' symbol and text.
 
 One shared bar, modelled on Spotify's progress bar, used in two places so they always
 look alike:
-- **A thin, rounded track** (a capsule, about 4 pt tall: thinner than macOS 26's volume
-  indicator, as thin as Spotify's), no knob.
+- **A thin, rounded track** (a capsule, 2 pt tall), with no knob.
 - **The filled part is solid white;** the rest of the track is grey (about `#4D4D4D`).
 - **Step dots** (optional, from macOS's indicator): a row of 17 small dim dots under the
   track, one at each 1/16 step from 0 to 100%. Thickness, dot size and spacing are tuned
@@ -100,7 +99,13 @@ Where it is used:
   Not interactive.
 - **Music tab (Now Playing, #1):** replaces the thin `Slider` with its knob. No dots,
   because a song has no steps. Clicking anywhere on the bar seeks there; dragging moves
-  the fill with the pointer and seeks on release, as the slider does today. As in
+  the fill with the pointer and seeks on release, as the slider does today. While the
+  pointer is on the bar (as in Spotify): a small time label (10 pt text on a dark rounded box) floats above the pointer with the
+  time a click would jump to; and when the pointer is ahead of the song, the track lights
+  up in light grey from the fill to the pointer. While dragging, the fill follows the drag.
+  After the
+  release the bar stays where it was let go (it never jumps back while the player catches
+  up). As in
   Spotify, the elapsed time sits left of the bar and the length right of it, on the same
   line. `docs/specs/now-playing.md` is updated to match.
 

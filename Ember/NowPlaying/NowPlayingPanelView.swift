@@ -52,38 +52,41 @@ struct NowPlayingPanelView: View {
 
     private func scrubber(_ track: Track) -> some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
+            let length = max(track.length, 1)
             let position = dragPosition ?? track.position(at: context.date)
-            VStack(spacing: 2) {
-                Slider(value: Binding(get: { position }, set: { dragPosition = $0 }),
-                       in: 0...max(track.length, 1)) { editing in
-                    if !editing, let dragPosition {
-                        model.seek(to: dragPosition)
-                        self.dragPosition = nil
-                    }
-                }
-                .controlSize(.mini)
-                .tint(.white)
-                HStack {
-                    Text(NowPlayingLook.timeText(position))
-                    Spacer()
-                    Text(NowPlayingLook.timeText(track.length))
-                }
-                .font(.system(size: 10, weight: .medium))
-                .monospacedDigit()
-                .foregroundStyle(.white.opacity(0.5))
+            HStack(spacing: 8) {
+                Text(NowPlayingLook.timeText(position))
+                CapsuleBar(fill: position / length,
+                           onSeek: { fill, isFinal in
+                               if isFinal {
+                                   model.seek(to: fill * length)
+                                   dragPosition = nil
+                               } else {
+                                   dragPosition = fill * length
+                               }
+                           },
+                           hoverLabel: { NowPlayingLook.timeText($0 * length) })
+                Text(NowPlayingLook.timeText(track.length))
             }
+            .font(.system(size: 10, weight: .medium))
+            .monospacedDigit()
+            .foregroundStyle(.white.opacity(0.5))
         }
     }
 
     private func controls(_ track: Track) -> some View {
-        HStack(spacing: 28) {
-            Button(action: model.previous) { Image(systemName: "backward.fill") }
-            Button(action: model.playPause) { Image(systemName: track.isPlaying ? "pause.fill" : "play.fill") }
-            Button(action: model.next) { Image(systemName: "forward.fill") }
+        HStack(spacing: 26) {
+            SkipButton(symbolName: "backward.end.fill", action: model.previous)
+            Button(action: model.playPause) {
+                Image(systemName: track.isPlaying ? "pause.fill" : "play.fill")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.black)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(.white))
+            }
+            SkipButton(symbolName: "forward.end.fill", action: model.next)
         }
         .buttonStyle(.plain)
-        .font(.system(size: 17))
-        .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
     }
 
@@ -100,5 +103,21 @@ struct NowPlayingPanelView: View {
             .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// Previous or next, as in Spotify: light grey, white while the pointer is on it.
+private struct SkipButton: View {
+    let symbolName: String
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbolName)
+                .font(.system(size: 17))
+                .foregroundStyle(.white.opacity(isHovering ? 1 : 0.7))
+        }
+        .onHover { isHovering = $0 }
     }
 }

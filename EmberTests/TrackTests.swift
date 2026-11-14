@@ -31,4 +31,22 @@ struct TrackTests {
     @Test func aStoppedPlayerHasNoTrack() {
         #expect(Track(PlayerReading(state: "stopped"), from: .music, at: readAt) == nil)
     }
+
+    @Test func seekingSetsThePositionAndTheReadTime() {
+        let now = readAt.addingTimeInterval(5)
+        let seeked = track(isPlaying: true).seeked(to: 120, at: now)
+        #expect(seeked.position(at: now) == 120)
+        #expect(seeked.position(at: now.addingTimeInterval(10)) == 130)
+    }
+
+    @Test func seekingStaysWithinTheSong() {
+        #expect(track(isPlaying: true).seeked(to: 300, at: readAt).position(at: readAt) == 200)
+        #expect(track(isPlaying: true).seeked(to: -5, at: readAt).position(at: readAt) == 0)
+    }
+
+    @Test func seekingKeepsAPausedTrackPaused() {
+        let seeked = track(isPlaying: false).seeked(to: 100, at: readAt)
+        #expect(!seeked.isPlaying)
+        #expect(seeked.title == "Song")
+    }
 }

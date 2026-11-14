@@ -36,7 +36,16 @@ final class NowPlayingModel {
     func playPause() { send(.playPause) }
     func next() { send(.next) }
     func previous() { send(.previous) }
-    func seek(to position: TimeInterval) { send(.seek(position)) }
+
+    /// Seeks the shown player. The new position shows at once; the player's own reading
+    /// follows once it settles.
+    func seek(to position: TimeInterval) {
+        if let player = current?.player, let report = reports[player] {
+            reports[player]?.track = report.track.seeked(to: position, at: Date())
+            publish()
+        }
+        send(.seek(position))
+    }
 
     /// Opens a player: the only way Ember launches one.
     func open(_ player: Player) {
