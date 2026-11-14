@@ -648,6 +648,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 }
 .fuse-spark { display: none; }   /* shown by the motion rules */
 
+/* The card's closing line, under the steps. */
+.cta-outro { max-width: 560px; margin: 48px auto 0; font-size: 16px; color: var(--text-secondary); }
+
 @media (max-width: 640px) {
   .steps { grid-template-columns: 1fr; gap: 28px; }
   .fuse { display: none; }

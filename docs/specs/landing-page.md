@@ -108,6 +108,9 @@ sparks). No text, images, code or assets come from that site, and the site never
    (1 Download · 2 Drag to Applications · 3 Open Anyway). Redesigned so it no longer
    matches the reference site's centred note box; the user chose this over a split card
    with the logo. On phones the steps stack and the fuse line is hidden.
+   Under the steps, a centred closing line (added 2026-11-14, the user's idea): "Then turn
+   on the features you want, give each one the permission it asks for, and enjoy your
+   notch." Ember asks for a permission only when a feature that needs one is turned on.
 6. **Footer**, one row like the reference site's (stacked and centred at 760 px and
    narrower): left, the app icon (44 px) and "Ember" (back to the top); middle, quiet links that
    darken on hover: GitHub (with its mark, new tab), Report a bug (GitHub Issues, new

@@ -3258,3 +3258,10 @@ Spec: "The screen", below 800 px.
 
 - [x] **Step 1: The wallpaper follows the panel.** Below 800 px the wallpaper was a fixed 220 px while the open panel shrinks with the screen, so the space under it grew on smaller phones (140 px at 320 px wide). Now `height: calc(132px + 80px * var(--open-scale))`: the space under the panel is 60% of before at every width (the user asked for 40% off). `screen.js` sets `--open-scale` on the screen instead of the pill, so the wallpaper can use it too.
 - [x] **Step 2: Check.** Measured with the panel open (Chrome's debugging protocol): space under the panel 84 / 73 / 70 / 63 / 30 / 12 px at 320 / 375 / 390 / 430 / 600 / 799 px (was 140 / 122 / 117 / 105 / 50 / 20). At 799 px the panel's glow is cut a little at the bottom, as it already was. Desktop unchanged (300 px at 1440, scaled screen at 800). The 24 tests pass.
+
+## Part 15: A closing line in Get started (2026-11-14)
+
+Spec: Page sections, item 5.
+
+- [x] **Step 1:** under the steps, inside the card, `<p class="cta-outro">` (the user's idea, worded to follow step 3 and to match how Ember asks: only when a feature that needs it is turned on): "Then turn on the features you want, give each one the permission it asks for, and enjoy your notch." Centred, 16 px, the secondary text colour, up to 560 px wide, 48 px below the steps.
+- [x] **Step 2: Check.** Headless Chrome at 1440 px (dark and light) and 390 px (dark): the line sits 48 px under the steps and 65 px above the card's bottom; no sideways scrolling; the 24 tests pass.
