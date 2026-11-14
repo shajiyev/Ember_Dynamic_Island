@@ -6,6 +6,7 @@ struct PanelView: View {
     let battery: BatteryMonitor
     let timer: TimerModel
     let nowPlaying: NowPlayingModel
+    let calendar: CalendarModel
     let selection: PanelSelection
     @Environment(\.notchHeight) private var notchHeight
 
@@ -25,6 +26,7 @@ struct PanelView: View {
                 switch selection.tab {
                 case .music: NowPlayingPanelView(model: nowPlaying)
                 case .timer: TimerPanelView(timer: timer)
+                case .calendar: CalendarPanelView(model: calendar)
                 }
             }
             .frame(maxHeight: .infinity)

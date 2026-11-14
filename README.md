@@ -36,6 +36,12 @@ The full list, including what comes later, is in [docs/features.md](docs/feature
   whether Ember may control Music and Spotify. Ember uses this only to read the current
   song and to play, pause, skip and seek. You can change it later in System Settings →
   Privacy & Security → Automation.
+- **Calendars:** only if you turn on Show Calendar Events in Ember's menu. Ember reads your
+  events to show them beside the month and to give a heads-up 5 minutes before each one.
+  It never changes your events. Without it, the Calendar tab still shows the month.
+- **Reminders:** only if you turn on Show Reminders. Ember reads reminders that are due and
+  marks one completed when you tick it off (or not completed, when you untick it). It also
+  reads the reminders completed that day, to list them at the end.
 
 ## Install
 

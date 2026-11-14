@@ -41,4 +41,8 @@ struct PanelTabsTests {
         #expect(PanelTab.timer.glowColor(songGlow: .blue) == TimerLook.color)
         #expect(PanelTab.timer.glowColor(songGlow: nil) == TimerLook.color)
     }
+
+    @Test func theCalendarTabKeepsThePillsGlow() {
+        #expect(PanelTab.calendar.glowColor(songGlow: .blue) == nil)
+    }
 }

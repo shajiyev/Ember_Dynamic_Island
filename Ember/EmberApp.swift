@@ -7,7 +7,7 @@ struct EmberApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            PillMenu(controller: appDelegate.controller)
+            PillMenu(controller: appDelegate.controller, calendar: appDelegate.calendar)
         } label: {
             Image("MenuBarIcon")
         }
@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let timer = TimerModel()
     let screen = ScreenUseMonitor()
     let nowPlaying = NowPlayingModel()
+    let calendar = CalendarModel()
     let panelSelection = PanelSelection()
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     private var timerActivity: LiveActivity?
@@ -50,10 +51,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         panelSelection.onChange = { [weak self] in self?.showLastingActivity() }
         nowPlaying.start()
+        calendar.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
-                                                 selection: panelSelection))
+                                                 calendar: calendar, selection: panelSelection))
     }
 
     private func showLastingActivity() {
@@ -67,12 +69,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// The menu behind the menu bar icon.
 struct PillMenu: View {
     let controller: PillController
+    let calendar: CalendarModel
 
     var body: some View {
         if !controller.hasNotchDisplay {
             Text("No display with a notch found")
             Divider()
         }
+        ForEach(CalendarSource.allCases, id: \.self) { source in
+            Toggle(CalendarLook.switchTitle(source), isOn: switchBinding(source))
+        }
+        Divider()
         #if DEBUG
         Menu("Simulate Battery Alert") {
             Button("Plugged In") { simulate(.pluggedIn, at: 73) }
@@ -85,6 +92,12 @@ struct PillMenu: View {
         Button("Quit Ember") {
             NSApplication.shared.terminate(nil)
         }
+    }
+
+    /// A menu checkmark for a switch. Turning it on may ask for a permission first.
+    private func switchBinding(_ source: CalendarSource) -> Binding<Bool> {
+        Binding(get: { calendar.shows(source) },
+                set: { on in Task { await calendar.turn(source, on: on) } })
     }
 
     #if DEBUG

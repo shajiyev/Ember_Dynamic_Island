@@ -4,11 +4,13 @@ import SwiftUI
 nonisolated enum PanelTab: CaseIterable {
     case music
     case timer
+    case calendar
 
     var title: String {
         switch self {
         case .music: return "Music"
         case .timer: return "Timer"
+        case .calendar: return "Calendar"
         }
     }
 
@@ -16,15 +18,17 @@ nonisolated enum PanelTab: CaseIterable {
         switch self {
         case .music: return "music.note"
         case .timer: return "timer"
+        case .calendar: return "calendar"
         }
     }
 
     /// The glow the open panel asks for on this tab: the song's colour on Music (nil keeps
-    /// the pill's own glow), the timer's orange on Timer.
+    /// the pill's own glow), the timer's orange on Timer, the pill's own glow on Calendar.
     func glowColor(songGlow: Color?) -> Color? {
         switch self {
         case .music: return songGlow
         case .timer: return TimerLook.color
+        case .calendar: return nil
         }
     }
 }

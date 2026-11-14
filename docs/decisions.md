@@ -551,3 +551,34 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
   it sits below the first screenful, so its first steps played unseen.
 - **Section links don't keep their `#section` in the address.** **Why:** a reload jumped
   back to that section (on iPhone, to "Light up your notch") instead of staying put.
+- **Every push deploys the site, app-only and docs-only pushes too.** The "skip unchanged
+  deploys" switch doesn't work for a plain-HTML folder, and an Ignored Build Step command
+  was not added. **Why:** the extra deploys are free, take seconds and change nothing for
+  visitors, while a skip rule that misjudged a push could keep a real site change from
+  going live. Worth revisiting if the site gets a slow build step.
+
+## 2026-11-14 — Done reminders stay in the Calendar tab
+- **A ticked reminder moves to the end of the list instead of leaving it.** The list ends
+  with the reminders completed on the selected day, in the order they were done, dimmed and
+  struck through; clicking one again marks it not done. **Why:** the user wants to still see
+  what they ticked off.
+- **They are read from Reminders (completed that day), not remembered by Ember.** **Why:**
+  they stay after the panel closes or Ember quits, ones ticked in Reminders.app appear too,
+  and past days become a small log. Considered: keeping only the ones ticked in Ember until
+  the panel closes (simpler, but they vanish too soon).
+
+## 2026-11-14 — Themes and layout settings (ideas, not designed yet)
+- **Customization is what sets Ember apart,** now written into docs/vision.md as a goal.
+  **Why:** the user sees "make it yours" as Ember's main difference from other notch apps.
+- **Themes are whole looks** (#37): each one sets the pill, wings, panel, glow and text
+  colours together, instead of the user mixing parts. **Why:** every combination stays
+  one that was designed and checked.
+- **No white or light panel.** **Why:** the notch is black hardware; a light panel growing
+  out of it looks like a bite was taken out of its top. Black stays the default.
+- **Liquid Glass instead, only on macOS 26 and later** (hidden on older macOS). **Why:** it
+  is Apple's own look on macOS 26, so Ember fits the system, and few notch apps offer it.
+  Glass still shows the black notch over a light wallpaper, so it needs a mock-up first
+  (likely a black cap fading into the glass below the notch).
+- **Layout settings are a separate feature** (#38): panel size, the calendar inside the
+  Music tab, and more as features are built. **Why:** themes change how things look;
+  layouts change where they sit and touch every tab, so they get their own spec.

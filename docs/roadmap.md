@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-13)
+## Current status (2026-11-14)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -65,7 +65,9 @@
   A plain month calendar that needs no permission; two menu switches add events and
   reminders; a heads-up 5 minutes before each event. Spec docs/specs/calendar.md, plan
   docs/plans/calendar.md.
-- **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 2 of 5 done (the plain Calendar tab).
+- **In progress:** Calendar & reminders (#14), plan docs/plans/calendar.md: task 3 of 5 done (events and reminders behind their switches; done reminders stay at the end of the list).
+- **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
+  layout settings (#38: panel size, calendar in the Music tab). See docs/features.md.
 - **Next:** build #14 task by task.
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on
