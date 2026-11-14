@@ -364,6 +364,13 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   gap: 20px 16px;
   margin-top: 32px;
 }
+/* On phones the two buttons stay side by side: a little tighter, and "Download for
+   macOS" says just "Download" (the facts below say macOS). */
+@media (max-width: 480px) {
+  .actions { gap: 20px 10px; }
+  .actions .button { gap: 8px; padding: 0 16px; font-size: 15px; }
+  .label-extra { display: none; }
+}
 
 /* Hero: text first, then the screen with the pill demo. */
 

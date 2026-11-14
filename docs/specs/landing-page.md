@@ -74,6 +74,10 @@ sparks). No text, images, code or assets come from that site, and the site never
        be clicked or reached with Tab (`aria-disabled="true"`, no link). A small pale-rose
        "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
        it becomes a solid button linking to the release, and the badge goes.
+   - On phones (480 px and narrower) both buttons are a little tighter (16 px padding,
+     15 px text) and the second one reads just **"Download"** (the fact chips below say
+     macOS), so the two stay side by side from 360 px up (the user found them stacked
+     on top of each other). Only on a 320 px phone does the Get started pair wrap.
    - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
      with a notch", each with a small clay rose icon (code, a laptop, a screen with a
      notch). (This replaces the separate Requirements section.)
@@ -162,6 +166,16 @@ Everything is plain CSS plus one small script; no animation library. With Reduce
 on, everything is shown in place without movement, the demo is still, and there are no
 sparks. Without JavaScript, all content is visible.
 
+The page is marked for the reveals (`html.js`) by a one-line script in `<head>`, before
+anything is drawn, and the mark comes off if `motion.js` fails to load. (It used to be set
+by `motion.js` itself: on the live site the scripts arrive a few hundred milliseconds after
+the first paint, so on desktop the page was drawn fully visible and nothing animated.)
+
+Section links (Download, Features, FAQ…) scroll to their section but leave the address
+without its `#section`, so a reload stays where the visitor is. (On iPhone, a reload after
+tapping Download went back to "Light up your notch" every time.) A shared link with a
+`#section` still opens at that section.
+
 1. **Sections ignite as they appear:** headings and cards fade up about 24 px as they
    scroll into view (0.5 s), cards one after another (80 ms apart), and each card warms
    with a brief ember glow as it settles.
@@ -237,6 +251,10 @@ wings only.)
 open panel and its battery, timer and Now Playing views (`NowPlayingLook`,
 `EqualizerView`: bars 2.5 px wide, 2 px apart, 4–12 px tall at their own speeds). The pill
 and the open panel are drawn at the app's size: 1 CSS px = 1 point.
+
+**Starts when seen:** the loop starts once half of the screen is in view, so on phones,
+where it begins below the first screenful, it is seen from its first step. On desktop it
+is in view at once, so it starts as the page opens.
 
 ### The screen
 

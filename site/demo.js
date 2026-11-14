@@ -53,5 +53,12 @@ function play(index, elapsed) {
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   show(STILL_STEP, 0);
 } else {
-  play(0, 0);
+  // Starts once the screen is in view (on phones it begins below the first screenful),
+  // so the demo is seen from its first step.
+  const start = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return;
+    start.disconnect();
+    play(0, 0);
+  }, { threshold: 0.5 });
+  start.observe(document.querySelector('.screen'));
 }

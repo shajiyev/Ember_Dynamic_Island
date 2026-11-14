@@ -20,9 +20,12 @@
     try { const theme = localStorage.getItem('theme'); if (theme === 'dark' || theme === 'light') document.documentElement.dataset.theme = theme; } catch {}
   </script>
   <script src="theme.js" defer></script>
-  <!-- A plain script (not a module), so it also runs when the file is opened directly.
-       It marks the page itself, so nothing is hidden unless it runs. -->
-  <script src="motion.js" defer></script>
+  <!-- Marks the page for the reveal animations (motion.js) before anything is drawn, so
+       elements start hidden even when motion.js arrives late; if it can't load, the mark
+       comes off and nothing stays hidden. A plain script (not a module), so it also runs
+       when the file is opened directly. -->
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="motion.js" defer onerror="document.documentElement.classList.remove('js')"></script>
   <script type="module" src="demo.js"></script>
   <script type="module" src="screen.js"></script>
 </head>
@@ -116,7 +119,7 @@
              release, give it a solid style, and remove the badge. Same in Get started. -->
         <span class="button button-disabled" aria-disabled="true">
           <svg class="button-icon" width="18" height="18" aria-hidden="true"><use href="#icon-download"/></svg>
-          Download for macOS
+          <span>Download<span class="label-extra"> for macOS</span></span>
           <span class="badge">Coming soon</span>
         </span>
       </div>
@@ -325,7 +328,7 @@
             </a>
             <span class="button button-disabled" aria-disabled="true">
               <svg class="button-icon" width="18" height="18" aria-hidden="true"><use href="#icon-download"/></svg>
-              Download for macOS
+              <span>Download<span class="label-extra"> for macOS</span></span>
               <span class="badge">Coming soon</span>
             </span>
           </div>

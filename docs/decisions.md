@@ -542,3 +542,12 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
 - **Deployed now, before Ember ships,** to see how the site looks and performs live. The
   reminders for testimonials, donations, a live star count and the interactive Mac view
   wait until the project is declared ready to ship.
+
+## 2026-11-14 — First fixes from the live site
+- **On phones the hero's second button reads just "Download"** (with "Coming soon"), not
+  "Download for macOS". **Why:** the user wanted the two buttons side by side, and with
+  the full label they don't fit a phone; the fact chips right below say macOS.
+- **The pill demo starts when it is in view**, not when the page opens. **Why:** on phones
+  it sits below the first screenful, so its first steps played unseen.
+- **Section links don't keep their `#section` in the address.** **Why:** a reload jumped
+  back to that section (on iPhone, to "Light up your notch") instead of staying put.
