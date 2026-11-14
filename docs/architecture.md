@@ -157,10 +157,11 @@ differ slightly):
    Vercel GitHub app access to this repository only.
 2. Framework Preset: **Other**. Root Directory: **site**. Leave the build and output
    settings empty: there is no build step.
-3. Deploy. Every push to `main` that changes `site/` deploys again.
-4. Settings → Build and Deployment → Root Directory: turn on **Skip deployments when there
-   are no changes to the root directory or its dependencies**, so app-only commits do not
-   deploy.
-5. Settings → Domains: add the custom domain and set the DNS records Vercel shows.
+3. Deploy. Every push to `main` deploys again, app-only and docs-only pushes too (an
+   identical copy of the site; free, a few seconds, nothing changes for visitors). The
+   "Skip deployments when there are no changes to the root directory" switch is on but
+   has no effect: as far as we know it needs a JavaScript workspace (`package.json`),
+   which `site/` doesn't have. Left this way on purpose (see docs/decisions.md).
+4. Settings → Domains: add the custom domain and set the DNS records Vercel shows.
 
 Files in `site/.vercelignore` (the tests) are not deployed.

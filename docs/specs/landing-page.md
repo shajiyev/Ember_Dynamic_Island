@@ -20,9 +20,9 @@ and deploys on its own.
 
 - **Folder:** `site/` in this repo, on `main`. Xcode only builds `Ember/`, so the site never
   enters the app; app and site changes go into separate commits.
-- **Host:** Vercel, connected to the GitHub repo, with Root Directory set to `site` and
-  "skip deployments when there are no changes to the root directory" turned on. A push to
-  `main` that touches `site/` deploys; other pushes do not. Live since 2026-11-14 at
+- **Host:** Vercel, connected to the GitHub repo, with Root Directory set to `site`.
+  Every push to `main` deploys, including app-only and docs-only pushes (an identical
+  copy of the site; see docs/architecture.md, "Deploying"). Live since 2026-11-14 at
   https://ember-sigma-two.vercel.app (project `ember`). The custom domain is added in
   Vercel once one is bought.
 - **Built with:** plain HTML, CSS and a little JavaScript. No build step, no dependencies.
