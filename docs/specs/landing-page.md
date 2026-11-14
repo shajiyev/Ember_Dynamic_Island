@@ -217,7 +217,14 @@ user after the address fix alone didn't stop Safari on their iPhone from going b
     with a rose glow (Ember rose in light mode, pale rose in dark). They fan out like a
     real fire (the user's request): each leans towards its own side as it rises, the
     ones at the edges about 34 px, the middle ones almost straight up, with a small sway
-    (2–4 px) that doesn't hide the lean. Four in
+    (2–4 px) that doesn't hide the lean. **Hot spots:** where each ember lifts off, the
+    letters under it flash brighter for a moment (a pale light about 0.8em across: pale
+    rose in light mode, a paler warm pink in dark), so the embers are born from the text;
+    it runs on each ember's own timing, so it adds no rhythm of its own (chosen over
+    smouldering letters and a heat wave; a softer version on "Light up" only was tried and
+    the user kept the full one). The light falls on the letters only, never the page
+    around them: each hot spot is a copy of the heading's text, added by `motion.js` and
+    hidden from screen readers, filled only at that spot. Four in
     each third of the heading, all starting near the top of the letters, so the centre
     shows as many as the sides (the user's request: when the centre ones started lower,
     inside the letters, half as many showed there). The middle four are placed from the
