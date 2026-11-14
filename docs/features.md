@@ -19,6 +19,7 @@ explicitly decide to revive something.
 | 13 | Productivity | Timers | done | One countdown: per-unit arrows, presets 5/25/45 min, Reset; countdown in the wings with an orange glow (the timer keeps orange when Ember's glow is rose); amber Time's up with a sound that repeats until seen. Spec docs/specs/timers.md. Typing a time with the keyboard is a later addition (needs the panel to take keyboard focus) |
 | 14 | Productivity | Calendar & reminders preview | in progress | Calendar tab with a month grid that needs no permission; "Show Calendar Events" and "Show Reminders" (menu now, Settings later) add the day's events and due reminders, each asking its own permission; heads-up in the wings 5 minutes before each timed event. Spec docs/specs/calendar.md |
 | 15 | Productivity | File shelf (drop files on the notch, AirDrop) | v1 | |
+| 11 | System | Volume and brightness in the pill, replacing macOS's own indicator (which Ember turns off) | v1 | Revived 2026-11-14 (dropped 2026-11-13); see decisions. To design after #14. To settle then: how macOS's indicator is turned off and back on, the permission it needs (likely Accessibility, for the media keys), whether keyboard backlight is included, and the look in the wings |
 | 26a | Customization | Basics: hover-to-open on/off, open delay and close delay (each 0–1 s; defaults 0.2 s and 0.3 s), per-feature toggles | v1 | Rest of customization is #26b (later) |
 
 ## Later — after v1 (we pick the order after v1 ships)
@@ -61,4 +62,3 @@ explicitly decide to revive something.
 | 8 | Bluetooth device connected (AirPods + battery) | Dropped 2026-11-13: macOS already shows its own animation with the battery when AirPods connect; see decisions |
 | 2 | Audio visualizer | Dropped 2026-11-13: already covered by the equalizer bars in the wings while music plays (#1); a real visualizer would need audio-capture permission; see decisions |
 | 3 | Gestures: swipe to open/close, swipe to skip/seek | Dropped 2026-11-13: adds complexity for little gain; hover and click already open the pill, and the panel's buttons skip and seek; see decisions |
-| 11 | Replace volume / brightness / keyboard-backlight HUD | Dropped 2026-11-13: macOS already shows its own volume and brightness indicator; see decisions |

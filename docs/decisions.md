@@ -582,3 +582,10 @@ Spec: docs/specs/calendar.md. Plan: docs/plans/calendar.md.
 - **Layout settings are a separate feature** (#38): panel size, the calendar inside the
   Music tab, and more as features are built. **Why:** themes change how things look;
   layouts change where they sit and touch every tab, so they get their own spec.
+
+## 2026-11-14 — Volume and brightness in the pill are back in v1 (#11)
+- **Revived for v1:** the pill shows volume and brightness changes itself, and Ember turns
+  off macOS's own indicator while it does. Reverses the 2026-11-13 drop. **Why:** the user
+  wants the change shown in the notch, in Ember's look, rather than macOS's indicator.
+  Designed after Calendar & reminders (#14). The permission it needs and whether keyboard
+  backlight is included are settled then.
