@@ -306,7 +306,9 @@ points wide) it fills 41%.
   "Fri 13 Nov 14:52" or "Fri Nov 13 2:52 PM"), and keeps up with it.
 - **The notch** is in the menu bar's middle; the pill sits around it as in the app. The
   brand glow and sparks behind the screen are centred on the notch.
-- **Look:** black bezel, warm wallpaper, shadow.
+- **Look:** black bezel, neutral graphite wallpaper (`#232326` → `#141416`), shadow. The
+  wallpaper was warm orange-brown until 2026-11-14; the user chose neutral so the only
+  colour on the screen is Ember's own glow (four warmth levels were compared side by side).
 - **800 px wide and up:** the whole screen (bezel, menu bar, pill, panel) is drawn at
   1280 px and scaled down together to fit, so the panel keeps its true share of the
   width. At a 1024 px window it is drawn at about 75%; at 800 px about 60%.

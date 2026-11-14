@@ -741,7 +741,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   height: 300px;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
-  background: radial-gradient(120% 140% at 50% 0%, #42240F 0%, #1A190B 70%);
+  /* Neutral graphite, so the only colour on the screen is Ember's own glow. */
+  background: radial-gradient(120% 140% at 50% 0%, #232326 0%, #141416 70%);
 }
 
 /* The menu bar: Finder's menus on the left; Wi-Fi, battery and the visitor's own time on

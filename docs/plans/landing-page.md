@@ -3243,3 +3243,11 @@ Spec: "The pill demo" (steps 4, 10 and 13, the timings, Reduce Motion) and the h
 - [x] **Step 3: The charger shows.** `pluggedIn(index)`: from the charging alert to the end of the loop. The menu bar's and the panel's batteries switch to the bolt battery then, and back while the loop rests (no unplugged alert, the user's choice). Reduce Motion's still charging pill shows the bolt too.
 - [x] **Step 4: Phone buttons** (from a parallel session): on phones the second button keeps "Download for macOS", with text and padding shrinking with the screen; the Get started card's sides slim to 16 px.
 - [x] **Step 5: Check.** 24 tests pass. Headless Chrome: the played time reads 1:15 → 1:16 → 1:17, then 0:00 → 0:01, and 0:04 when the panel reopens on song B; the batteries are plain before the plug-in, bolts from it to the end, plain again after the loop restarts; Reduce Motion shows the bolts. At 360 and 320 px (set through Chrome's debugging protocol): no sideways scrolling, the hero buttons side by side, the Get started pair wrapping only at 320 px. Found while checking: a second, plain local server on the same port served a cached old page with the new script, which froze the demo at song A; the project's `serve-site.py` sends no-cache and doesn't.
+
+## Part 13: Neutral wallpaper (2026-11-14)
+
+Spec: "The screen", Look.
+
+- [x] **Step 1: Compare.** The pill at rest in light and dark, with the wallpaper at its warm orange-brown and 50%, 70%, 85% and 100% of the way to neutral graphite, side by side (the demo stopped, only the wallpaper changed). The user chose 100%.
+- [x] **Step 2: Neutral wallpaper.** `.wallpaper` becomes `#232326` → `#141416` (was `#42240F` → `#1A190B`), so the only colour on the screen is Ember's glow.
+- [x] **Step 3: Check.** Headless Chrome, light and dark, the pill at rest: neutral graphite screen, the rose halo and pill glow unchanged; the 24 tests pass.
