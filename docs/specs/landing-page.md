@@ -212,15 +212,20 @@ user after the address fix alone didn't stop Safari on their iPhone from going b
 10. **"Light up your notch." is on fire** (chosen 2026-11-14 from several rounds in the
     visual companion: reveals and calm, steady glows were turned down; the user wanted
     something as lively as "spark" but not the same). The heading always has a soft rose
-    glow. Once Get started scrolls into view, the glow breathes (5 s) and 14 small embers
-    keep rising from all of the heading, swaying and fading (3.4–4.6 s each, at staggered
-    times): 4 px, with a rose glow (Ember rose in light mode, pale rose in dark). The
-    embers start at different heights in the heading, so if it wraps to two lines they
-    rise from both lines, not just from "notch" (the user's request); the ones near the
-    sides start in the top line, which is the wider one. (A flint strike on "notch" every
-    5 s, with sparks flying off the "n", was built first and removed the same day at the
-    user's request, with more embers instead: 9 → 14.) Without motion: the heading with
-    its soft glow, no embers.
+    glow. Once Get started scrolls into view, the glow breathes (5 s) and 12 small embers
+    keep rising from all of the heading, fading (3.4–4.6 s each, at staggered times): 4 px,
+    with a rose glow (Ember rose in light mode, pale rose in dark). They fan out like a
+    real fire (the user's request): each leans towards its own side as it rises, the
+    ones at the edges about 34 px, the middle ones almost straight up, with a small sway
+    (2–4 px) that doesn't hide the lean. Four in
+    each third of the heading, all starting near the top of the letters, so the centre
+    shows as many as the sides (the user's request: when the centre ones started lower,
+    inside the letters, half as many showed there). The middle four are placed from the
+    bottom line and the others from the top line, so if the heading wraps to two lines on
+    a small phone they rise from both lines, not just from "notch" (also the user's
+    request). (A flint strike on "notch" every 5 s, with sparks flying off the "n", was
+    built first and removed the same day at the user's request, with more embers instead:
+    9 → 14 → 15, then 12 at the user's request.) Without motion: the heading with its soft glow, no embers.
 
 ## Safe to open. Private by design.
 
