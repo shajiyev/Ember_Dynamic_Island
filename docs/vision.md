@@ -19,6 +19,9 @@ black and lights up with a warm rose glow (Ember rose, `#D9776B`) when something
 2. Members of the public who download Ember from GitHub Releases.
 
 ## Goals
+- Make it yours: almost everything about how the notch looks and behaves can be changed
+  in Settings (themes, glow colours, layout, per-feature options). This is what sets
+  Ember apart from other notch apps.
 - Feels native: smooth SwiftUI animations, low CPU/battery use, no jank.
 - Easy to install for free: DMG on GitHub Releases, auto-updates, and clear first-launch
   instructions (Ember is not notarized, so macOS shows a warning the first time).
