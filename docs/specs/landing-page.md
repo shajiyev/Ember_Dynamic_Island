@@ -209,6 +209,18 @@ user after the address fix alone didn't stop Safari on their iPhone from going b
    It only blinks towards brightness, never darker (the user removed the dim step). Based
    on the flare "spark" once had when the page opened; a fifth of its strength was tried
    first and was too faint.
+10. **"Light up your notch." is on fire** (chosen 2026-11-14 from several rounds in the
+    visual companion: reveals and calm, steady glows were turned down; the user wanted
+    something as lively as "spark" but not the same). The heading always has a soft rose
+    glow. Once Get started scrolls into view, the glow breathes (5 s) and 14 small embers
+    keep rising from all of the heading, swaying and fading (3.4–4.6 s each, at staggered
+    times): 4 px, with a rose glow (Ember rose in light mode, pale rose in dark). The
+    embers start at different heights in the heading, so if it wraps to two lines they
+    rise from both lines, not just from "notch" (the user's request); the ones near the
+    sides start in the top line, which is the wider one. (A flint strike on "notch" every
+    5 s, with sparks flying off the "n", was built first and removed the same day at the
+    user's request, with more embers instead: 9 → 14.) Without motion: the heading with
+    its soft glow, no embers.
 
 ## Safe to open. Private by design.
 
