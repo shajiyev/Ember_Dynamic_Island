@@ -632,3 +632,19 @@ All nine manual checks passed on a MacBook Pro 14-inch (Mac15,6), macOS 26.6.2.
   too. **Why:** the two bars always look alike; dots mean something only where keys move
   in steps.
 
+## 2026-11-14 — Music tab restyle (with #11, task 1)
+Tried on screen with the user, step by step:
+- **Bar:** 4 pt, as thick as Spotify's (tried 4 → 2 → 4). **No knob:** a knob on hover
+  was tried, at the playing position, and the user preferred the bar without it. Kept from
+  Spotify: a time label above the pointer and a light grey preview up to the pointer.
+- **No jump-back after a seek:** the model takes the new position at once
+  (`Track.seeked`) instead of waiting about 0.5 s for the player's next reading.
+- **The player's icon** by the title, read from the installed app at run time. **Why:**
+  Ember ships no Spotify or Apple logos (their trademarks, and not ours to put in a GPL
+  repo); the app's own icon is what Finder and the Dock show anyway.
+- **Clicking the cover, title, artist or icon** brings the player to the front and closes
+  the panel (also Open Music / Open Spotify). The panel's content asks the pill through a
+  `closePanel` environment action, so the pill still knows nothing about music.
+- **Favourite star held back** (#40): Spotify cannot do it without its Web API, and the
+  user wants it for both players or not yet. **Lyrics** logged as #41.
+

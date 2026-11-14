@@ -6,6 +6,7 @@ struct NowPlayingPanelView: View {
     let model: NowPlayingModel
     /// The scrubber's position while it is dragged; the song seeks when it is released.
     @State private var dragPosition: TimeInterval?
+    @Environment(\.closePanel) private var closePanel
 
     var body: some View {
         if let track = model.current {
@@ -18,20 +19,42 @@ struct NowPlayingPanelView: View {
     private func player(_ track: Track) -> some View {
         HStack(spacing: 18) {
             cover(track)
+                .onTapGesture { openPlayer(track.player) }
             VStack(alignment: .leading, spacing: 6) {
-                Text(track.title)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
+                HStack(spacing: 8) {
+                    Text(track.title)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                        .onTapGesture { openPlayer(track.player) }
+                    Spacer(minLength: 0)
+                    playerIcon(track.player)
+                        .onTapGesture { openPlayer(track.player) }
+                }
                 Text(track.artist)
                     .font(.system(size: 13))
                     .foregroundStyle(.white.opacity(0.6))
                     .lineLimit(1)
+                    .onTapGesture { openPlayer(track.player) }
                 scrubber(track)
                 controls(track)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Which player the song comes from: its own app icon, small, at the right end of the
+    /// title's line.
+    private func playerIcon(_ player: Player) -> some View {
+        Group {
+            if let icon = player.appIcon {
+                Image(nsImage: icon)
+                    .resizable()
+                    .frame(width: 19, height: 19)
+            }
+        }
+        .help(player.name)
+        .accessibilityLabel(player.name)
     }
 
     private func cover(_ track: Track) -> some View {
@@ -90,6 +113,13 @@ struct NowPlayingPanelView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// Brings the player to the front (or launches it) and closes the panel, which would
+    /// otherwise stay over it.
+    private func openPlayer(_ player: Player) {
+        model.open(player)
+        closePanel()
+    }
+
     private var nothingPlaying: some View {
         VStack(spacing: 12) {
             Text("Nothing playing")
@@ -97,7 +127,7 @@ struct NowPlayingPanelView: View {
                 .foregroundStyle(.white.opacity(0.6))
             HStack(spacing: 8) {
                 ForEach(model.installed) { player in
-                    Button("Open \(player.name)") { model.open(player) }
+                    Button("Open \(player.name)") { openPlayer(player) }
                 }
             }
             .buttonStyle(.bordered)

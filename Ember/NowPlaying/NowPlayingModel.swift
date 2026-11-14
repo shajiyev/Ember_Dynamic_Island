@@ -47,7 +47,8 @@ final class NowPlayingModel {
         send(.seek(position))
     }
 
-    /// Opens a player: the only way Ember launches one.
+    /// Opens a player, or brings it to the front when it is running: the only way Ember
+    /// launches one.
     func open(_ player: Player) {
         guard let url = player.appURL else { return }
         NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())

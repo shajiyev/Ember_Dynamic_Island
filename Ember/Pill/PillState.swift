@@ -16,6 +16,8 @@ nonisolated enum PillEvent: Equatable {
     case openDelayElapsed
     case closeDelayElapsed
     case activityChanged(Bool)
+    /// The panel's content asked to close, e.g. after sending the user to another app.
+    case closeRequested
 }
 
 /// What the owner of a `PillModel` must do after an event.
@@ -66,6 +68,12 @@ nonisolated struct PillModel {
         case .activityChanged(let isActive):
             hasActivity = isActive
             return nil
+
+        case .closeRequested:
+            // The pointer still rests where the panel was; it must enter again to reopen.
+            isOpen = false
+            isPointerInside = false
+            return .cancelDelay
         }
     }
 }

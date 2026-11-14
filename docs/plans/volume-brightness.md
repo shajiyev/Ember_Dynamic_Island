@@ -19,7 +19,7 @@ Spec: [docs/specs/volume-brightness.md](../specs/volume-brightness.md)
 - Steps: 1/16 per press, 1/64 with Shift-Option, snapped to the step marks, within 0…1. Volume up unmutes; volume down keeps mute; mute switches mute on or off once per press (not on repeats).
 - The strip stays 1.5 s after the last key press (`LevelLook.duration`). Strip height 32 pt (`PillMetrics.levelStripHeight`), at the width of the pill's current state.
 - Ember lets the key through to macOS when: the switch is off; Accessibility is not granted; there is no notch display; (volume) the output cannot change its volume; (brightness) the built-in screen is closed or off.
-- Capsule bar: track 2 pt, fill white, track `#4D4D4D`. No knob. Only on a seekable bar, while hovered: a time label above the pointer, and light grey from the fill to the pointer when ahead. Step dots (17, one per 1/16 mark) only in the level strip.
+- Capsule bar: track 4 pt, fill white, track `#4D4D4D`. No knob. Only on a seekable bar, while hovered: a time label above the pointer, and light grey from the fill to the pointer when ahead. Step dots (17, one per 1/16 mark) only in the level strip.
 - The pill module (`Ember/Pill/`) and `Ember/Activity/` never refer to `Ember/Levels/` types.
 - The app and test targets use `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`. Pure value types are declared `nonisolated`.
 - The project uses `SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY`: every file imports each module it uses directly.

@@ -88,7 +88,7 @@ Symbol and number are the same size as the wings' symbol and text.
 
 One shared bar, modelled on Spotify's progress bar, used in two places so they always
 look alike:
-- **A thin, rounded track** (a capsule, 2 pt tall), with no knob.
+- **A thin, rounded track** (a capsule, 4 pt tall, as thick as Spotify's), with no knob.
 - **The filled part is solid white;** the rest of the track is grey (about `#4D4D4D`).
 - **Step dots** (optional, from macOS's indicator): a row of 17 small dim dots under the
   track, one at each 1/16 step from 0 to 100%. Thickness, dot size and spacing are tuned

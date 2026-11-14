@@ -30,4 +30,10 @@ nonisolated enum Player: String, CaseIterable, Identifiable, Sendable {
     var appURL: URL? {
         NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)
     }
+
+    /// The installed app's own icon, read from the app at run time (Ember ships no player
+    /// logos), or nil when it is not installed.
+    var appIcon: NSImage? {
+        appURL.map { NSWorkspace.shared.icon(forFile: $0.path) }
+    }
 }

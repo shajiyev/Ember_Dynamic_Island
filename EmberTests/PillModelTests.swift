@@ -101,4 +101,20 @@ struct PillModelTests {
         model.handle(.clicked)
         return model
     }
+
+    @Test func aCloseRequestClosesTheOpenPanelAtOnce() {
+        var model = PillModel()
+        model.handle(.clicked)
+        #expect(model.handle(.closeRequested) == .cancelDelay)
+        #expect(model.state == .rest)
+    }
+
+    @Test func afterACloseRequestALateOpenDelayDoesNotReopen() {
+        // The pointer is still where the panel was until it moves; only entering again opens.
+        var model = PillModel()
+        model.handle(.clicked)
+        model.handle(.closeRequested)
+        model.handle(.openDelayElapsed)
+        #expect(model.state == .rest)
+    }
 }

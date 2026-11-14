@@ -17,7 +17,7 @@ struct CapsuleBar: View {
     /// nil shows no label. Only on a seekable bar.
     var hoverLabel: ((_ fill: Double) -> String)? = nil
 
-    static let trackHeight: CGFloat = 2
+    static let trackHeight: CGFloat = 4
     static let trackColor = Color(white: 0x4D / 255)
     /// A seekable bar is taller than its track, so it is easy to grab.
     private static let grabHeight: CGFloat = 12

@@ -60,22 +60,30 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
 
 ```
 ┌─ [♫ Music] [⏱ Timer] ───── notch ──────── 73% 🔋 ┐
-│  ┌────┐  Song title                             │
+│  ┌────┐  Song title                      [app] │
 │  │ 💿 │  Artist                                 │
-│  └────┘  ──────●────────────  1:12 / 3:40       │
-│                 ⏮    ⏯    ⏭                     │
+│  └────┘  1:12 ━━━━━━━━──────────────── 3:40     │
+│                 ⏮    (⏯)    ⏭                   │
 └─────────────────────────────────────────────────┘
 ```
 
-- Artwork, title and artist (each cut with "…" if too long), a scrubber with the time
-  played and the length, and previous / play-pause / next.
+- Artwork, title and artist (each cut with "…" if too long), the player's icon, a
+  scrubber with the time played and the length, and previous / play-pause / next.
+  (Layout as of 2026-11-14; the details are in the bullets below.)
 - While the Music tab shows a song, the open panel glows in that song's colour, like the
   closed pill; "Nothing playing" glows Ember rose and the Timer tab the timer's orange
   (`PanelTab.glowColor`, since 2026-11-12). Only the panel's
   shape glows; nothing inside it (artwork, icons, text) casts a glow.
 - **Dragging the scrubber** seeks when released.
+- **Which player** (since 2026-11-14): the player's own app icon (19 pt), read from the
+  installed app at run time, sits at the right end of the title's line, so it is clear
+  whether the song comes from Music or Spotify. Its name shows on hover. Ember ships no
+  player logos.
+- **Clicking the cover, the title, the artist or the player's icon** opens that player
+  (brings it to the front) and closes the panel, so it does not stay over the player;
+  since 2026-11-14. **Open Music** / **Open Spotify** close the panel the same way.
 - **Spotify-style scrubber and controls** (since 2026-11-14, with #11): the scrubber is a
-  thin capsule bar (2 pt) with a white fill on grey, shared with the
+  thin capsule bar (4 pt, as thick as Spotify's) with a white fill on grey, shared with the
   volume and brightness strip (`CapsuleBar`, see docs/specs/volume-brightness.md), with
   the time played left of it and the length right of it. Clicking anywhere on it seeks
   there; dragging moves the fill and seeks on release, and the bar stays where it was let

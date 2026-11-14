@@ -19,6 +19,7 @@
 ## Modules
 - `Ember/Pill/` — the pill.
   - `PillState.swift`: the rules (`PillModel`). Events in, state out. No timers, no UI.
+    `closeRequested` closes the open panel at once (the panel's content asks for it).
   - `NotchGeometry.swift`: where the notch is (the reported width, centred on the screen)
     and the rectangle for each state.
   - `PillController.swift`: owns the model, runs the open and close delays, manages the
@@ -32,7 +33,8 @@
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch height (`notchHeight` environment value). The panel content
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
-    its song's.
+    its song's. It can also close the panel (`closePanel` environment action), as the Music
+    tab does after sending the user to a player.
   - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
     shared by the Music tab's scrubber and the volume and brightness strip.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
@@ -60,15 +62,19 @@
     asleep), so the sound rings only once when nobody can be watching.
   - `TimerPanelView.swift`, `HoldRepeatButton.swift`: the timer in the open panel.
 - `Ember/NowPlaying/` — Now Playing for Apple Music and Spotify (#1).
-  - `Player.swift`, `PlayerScripts.swift`: the two players, and short AppleScript commands
-    that read them and send play/pause, skip and seek; never to a closed player, and off
-    the main thread.
+  - `Player.swift`, `PlayerScripts.swift`: the two players (with each one's app icon, read
+    from the installed app), and short AppleScript commands that read them and send
+    play/pause, skip and seek; never to a closed player, and off the main thread.
   - `Track.swift`, `PlayerChoice.swift`, `CoverColor.swift`, `NowPlayingLook.swift`: the
     pure rules: the song and its position, which player to show, the glow from the cover,
     the wings' activity and the time text.
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
-    notices settle, publishes the chosen track and sends commands.
-  - `NowPlayingPanelView.swift`: the Music tab, with Spotify-style controls and a `CapsuleBar` scrubber.
+    notices settle, publishes the chosen track and sends commands. A seek shows its new
+    position at once (`Track.seeked`), before the player's own reading confirms it.
+  - `NowPlayingPanelView.swift`: the Music tab: cover, title with the player's icon,
+    artist, a `CapsuleBar` scrubber with a time label on hover, and Spotify-style controls.
+    Clicking the cover, title, artist or icon brings the player to the front and closes the
+    panel.
 - `Ember/Calendar/` — calendar & reminders (#14).
   - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `CalendarLook.swift`:
     the pure rules: the month's 42 days, a day's events and reminders and their order, the

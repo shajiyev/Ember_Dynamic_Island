@@ -58,6 +58,7 @@ struct PillView: View {
                     if state == .open {
                         panelContent
                             .environment(\.notchHeight, notchHeight)
+                            .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
                             .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
                             .transition(PillStyle.contentTransition)
                     }
@@ -137,7 +138,17 @@ nonisolated struct PanelGlowColorKey: PreferenceKey {
     }
 }
 
+/// Closes the open panel, for content that sends the user elsewhere (such as to a player).
+/// The pill does not know why.
+struct ClosePanelAction {
+    let close: () -> Void
+
+    func callAsFunction() { close() }
+}
+
 extension EnvironmentValues {
     /// The height of the notch, so panel content can line up a row beside it.
     @Entry var notchHeight: CGFloat = 0
+    /// Closes the open panel; does nothing outside it.
+    @Entry var closePanel = ClosePanelAction {}
 }
