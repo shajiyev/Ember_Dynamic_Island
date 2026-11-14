@@ -37,3 +37,7 @@ function dropSection() {
 }
 addEventListener('hashchange', dropSection);
 addEventListener('load', () => setTimeout(dropSection));
+
+// A reload always opens at the top, on the hero: the browser doesn't put the visitor back
+// where they were (Safari on iPhone kept putting them back at "Light up your notch").
+history.scrollRestoration = 'manual';

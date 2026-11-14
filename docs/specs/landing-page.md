@@ -177,6 +177,11 @@ tapping Download went back to "Light up your notch" every time.) A link that alr
 in a `#section` (shared, or suggested by the browser's history) still opens at that
 section, and then the address drops it too, once the page has loaded.
 
+**A reload always opens at the top, on the hero** (`history.scrollRestoration =
+'manual'`): the browser doesn't put the visitor back where they were. Asked for by the
+user after the address fix alone didn't stop Safari on their iPhone from going back to
+"Light up your notch".
+
 1. **Sections ignite as they appear:** headings and cards fade up about 24 px as they
    scroll into view (0.5 s), cards one after another (80 ms apart), and each card warms
    with a brief ember glow as it settles.
