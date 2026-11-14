@@ -372,12 +372,11 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   gap: 20px 16px;
   margin-top: 32px;
 }
-/* On phones the two buttons stay side by side: a little tighter, and "Download for
-   macOS" says just "Download" (the facts below say macOS). */
+/* On phones the two buttons stay side by side and keep the full "Download for macOS":
+   padding and text shrink with the screen (15 px text at 420 px, 13 px at 360 px). */
 @media (max-width: 480px) {
-  .actions { gap: 20px 10px; }
-  .actions .button { gap: 8px; padding: 0 16px; font-size: 15px; }
-  .label-extra { display: none; }
+  .actions { gap: 20px 8px; }
+  .actions .button { gap: 6px; padding: 0 clamp(12px, 3.6vw, 16px); font-size: clamp(12px, 3.6vw, 15px); }
 }
 
 /* Hero: text first, then the screen with the pill demo. */
@@ -575,6 +574,10 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
     0 0 70px 6px color-mix(in srgb, var(--clay-rose), transparent 84%),
     0 0 120px 12px color-mix(in srgb, var(--clay-rose), transparent 93%);
   text-align: center;
+}
+/* On phones the card's sides slim down, so its two buttons fit side by side from 360 px. */
+@media (max-width: 480px) {
+  .cta { padding-inline: 16px; }
 }
 
 /* "Light up your notch.": lit, with a soft rose glow. The embers and hot spots are in the
@@ -945,7 +948,8 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 .song-title { display: block; font-size: 15px; font-weight: 600; }
 .song-artist { display: block; margin-top: 6px; font-size: 13px; color: rgb(255 255 255 / 0.6); }
 
-/* The scrubber: a thin white track with a round knob; it jumps back on the new song. */
+/* The scrubber: a thin white track with a round knob. demo.js moves it as the song plays
+   and sets it back on the new song. */
 .scrubber { height: 4px; margin-top: 6px; border-radius: 2px; background: rgb(255 255 255 / 0.2); }
 .scrubber-fill {
   position: relative;
@@ -954,7 +958,6 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   height: 100%;
   border-radius: inherit;
   background: #FFFFFF;
-  transition: width 0.4s ease;
 }
 .scrubber-fill::after {
   content: "";
@@ -966,7 +969,6 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
   border-radius: 50%;
   background: #FFFFFF;
 }
-.pill[data-song="b"] .scrubber-fill { width: 1%; }
 .times {
   display: flex;
   justify-content: space-between;

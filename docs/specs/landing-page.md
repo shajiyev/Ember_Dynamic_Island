@@ -74,10 +74,11 @@ sparks). No text, images, code or assets come from that site, and the site never
        be clicked or reached with Tab (`aria-disabled="true"`, no link). A small pale-rose
        "Coming soon" badge overlaps its top-right corner and pulses softly. When v1 ships
        it becomes a solid button linking to the release, and the badge goes.
-   - On phones (480 px and narrower) both buttons are a little tighter (16 px padding,
-     15 px text) and the second one reads just **"Download"** (the fact chips below say
-     macOS), so the two stay side by side from 360 px up (the user found them stacked
-     on top of each other). Only on a 320 px phone does the Get started pair wrap.
+   - On phones (480 px and narrower) the second button still reads **"Download for
+     macOS"**: both buttons' text and padding shrink with the screen (15 px text at
+     420 px, 13 px at 360 px, never below 12 px), and the Get started card slims its
+     sides to 16 px, so the two stay side by side from 360 px up (the user found them
+     stacked on top of each other). Only on a 320 px phone does the Get started pair wrap.
    - A row of three small badges: "Free & open source", "macOS 15 or later", "MacBooks
      with a notch", each with a small clay rose icon (code, a laptop, a screen with a
      notch). (This replaces the separate Requirements section.)
@@ -332,6 +333,13 @@ nearly every visitor sees it.
    drawn.
 4. **Song B** comes in: the cover crossfades, title and artist change, the scrubber goes
    back to the start, and the glow shifts to song B's colour.
+
+   While a song is in the panel it **plays**: its time ticks once a second and the
+   scrubber glides along at the song's real pace (added 2026-11-14: in the shorter panel
+   steps the scrubber stood still and the song looked paused). The real pace was chosen
+   over a faster scrubber: the line only creeps (about 2 px a second), so the ticking time
+   carries most of it. The song keeps playing while the panel is closed, so song B is at
+   0:04 when the panel opens on it again.
 5. The **panel closes** back to the pill, now with song B in the wings.
 6. Straight from the song, with no rest between, the panel **opens on the Music tab**
    again (song B), and the **Timer tab icon presses**: the panel switches to the Timer tab
@@ -345,10 +353,15 @@ nearly every visitor sees it.
 10. A charger is **plugged in**: the charging alert takes the wings over from the timer
     (green bolt battery, "82%", green glow), showing that an alert comes first, as in the
     app (`PillController.show(_:)`: a brief activity shows over the ongoing one).
+    From here the Mac is plugged in: the menu bar's battery and the panel's battery show a
+    bolt, as in macOS and the app (`BatteryReading.symbolName`). Added 2026-11-14: with
+    plain batteries the plug-in looked like it changed nothing.
 11. The alert ends and the **countdown comes back**, having kept counting.
 12. The panel **opens on the running timer** and **Cancel presses**: the timer stops and
     the panel shows the time that was set (0:25:00) with Start and Reset, as in the app.
-13. The panel **closes to rest**: no timer any more. Then again from the start.
+13. The panel **closes to rest**: no timer any more. Then again from the start. The
+    charger comes out quietly while the loop rests (no unplugged alert, by the user's
+    choice, to keep the loop short), so each loop starts on battery.
 
 ### The two songs
 
@@ -360,7 +373,7 @@ and the panel. Each glows in the colour the app gave it.
 | Song | "Empire State Of Mind", JAŸ-Z | "Ultraviolence", Lana Del Rey |
 | Cover | `site/assets/covers/empire-state-of-mind.jpg` | `site/assets/covers/ultraviolence.jpg` |
 | Glow and equalizer | `#FF4C53` red | `#E6E6E6` soft white (a black-and-white cover) |
-| Panel times | 1:15 of 4:36 | 0:00 of 4:11 |
+| Panel times | from 1:15 of 4:36 (1:13 in the wings) | from 0:00 of 4:11 |
 
 The covers are 192 × 192, cropped from the user's screenshots of the app's open panel
 (2026-11-13). The glows are what the app's `CoverColor` gives those covers, computed by
@@ -373,7 +386,7 @@ that (2026-11-13). Before the first deploy (2026-11-14) the cover files were blu
 sharp artwork: the colours and the glow stay, the details don't. If an owner objects, the
 covers go back to abstract drawings.
 
-### Timings (one loop, 21.05 s)
+### Timings (one loop, 23.15 s)
 
 Kept here so the user can ask for changes later.
 
@@ -381,11 +394,11 @@ Kept here so the user can ask for changes later.
 |---|---|---|
 | 1 | Rest | 2 s |
 | 2 | Song A in the wings | 2 s |
-| 3 | Panel opens on Music, song A | 0.8 s |
+| 3 | Panel opens on Music, song A (1:15 → 1:16) | 2 s |
 | 4 | ⏭ press | 0.25 s |
-| 5 | Song B crossfades in (0.4 s), glow shifts to song B's colour; hold | 1.1 s |
+| 5 | Song B crossfades in (0.4 s), glow shifts to song B's colour (0:00 → 0:01) | 2 s |
 | 6 | Panel closes, song B in the wings | 2 s |
-| 7 | Panel opens on Music, song B | 0.8 s |
+| 7 | Panel opens on Music, song B (0:04) | 0.8 s |
 | 8 | Timer tab press | 0.25 s |
 | 9 | Timer tab, 0:00:00 (glow turns orange) | 1 s |
 | 10 | 25m press | 0.25 s |
@@ -409,12 +422,14 @@ the user's choice, to keep the loop short.
   bottom corners 24, a wider glow pushed down (opacity 0.55, radius 16, offset 8).
 - The panel's content sharpens out of a blur just after the shape starts to grow, and
   leaves quickly, like the wings (`PillStyle.contentTransition`).
-- The glow colour, the cover, the title and the scrubber change with a short crossfade.
+- The glow colour, the cover and the title change with a short crossfade; the scrubber
+  jumps to the new song at once.
 - A press: the button shrinks and dims for a moment, then springs back.
 
 ### Edge cases
 
-- **Reduce Motion:** the loop stops and shows the charging pill, still. The screen still
+- **Reduce Motion:** the loop stops and shows the charging pill, still, with the menu
+  bar's battery plugged in (bolt). The screen still
   scales to fit (sizing is not motion), and the clock still shows the time.
 - **Without JavaScript:** the pill rests. The screen is not scaled: it shows its middle at
   1:1, cut off at the sides on narrower windows.

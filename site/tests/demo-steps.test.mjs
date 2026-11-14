@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { STEPS, STILL_STEP, textAt, wingText, nextTick, timerUnits } from '../demo-steps.js';
+import { STEPS, STILL_STEP, SONGS, textAt, wingText, nextTick, timerUnits, songSeconds, pluggedIn } from '../demo-steps.js';
 
 const step = (name) => STEPS.find((s) => s.name === name);
 const panels = (tab) => STEPS.filter((s) => s.name === 'panel' && s.tab === tab);
@@ -30,10 +30,31 @@ test('the loop: song A, skip to song B, switch to Timer, set it, its countdown, 
   assert.deepEqual(STEPS.filter((s) => s.song).map((s) => s.song), ['a', 'a', 'a', 'b', 'b', 'b', 'b']);
 });
 
-test('timings follow the spec: 21.05 s a loop', () => {
+test('timings follow the spec: 23.15 s a loop', () => {
   assert.deepEqual(STEPS.map((s) => s.seconds),
-    [2, 2, 0.8, 0.25, 1.1, 2, 0.8, 0.25, 1, 0.25, 0.6, 0.25, 0.9, 3, 2.5, 1.5, 1, 0.25, 0.6]);
-  near(STEPS.reduce((sum, s) => sum + s.seconds, 0), 21.05);
+    [2, 2, 2, 0.25, 2, 2, 0.8, 0.25, 1, 0.25, 0.6, 0.25, 0.9, 3, 2.5, 1.5, 1, 0.25, 0.6]);
+  near(STEPS.reduce((sum, s) => sum + s.seconds, 0), 23.15);
+});
+
+test('the panel opens on song A at 1:15 and its time ticks once a second', () => {
+  const opened = pressed('next') - 1;
+  assert.equal(songSeconds(opened, 0), 75);
+  assert.equal(wingText(songSeconds(opened, 1)), '1:16');
+  assert.equal(wingText(songSeconds(pressed('next'), 0)), '1:17');
+});
+
+test('song B starts at 0:00 after ⏭ and keeps playing while the panel is closed', () => {
+  const songB = pressed('next') + 1;
+  assert.equal(songSeconds(songB, 0), 0);
+  assert.equal(songSeconds(songB, 1), 1);
+  // Song B plays 2 s in the panel and 2 s in the wings before the panel opens on it again.
+  assert.equal(songSeconds(pressed('timer-tab') - 1, 0), 4);
+});
+
+test('the songs fit inside their lengths', () => {
+  for (const [i, s] of STEPS.entries()) {
+    if (s.song) assert.ok(songSeconds(i, s.seconds) < SONGS[s.song].length, `step ${i + 1}`);
+  }
 });
 
 test('from song B in the wings, the panel opens on Music and the Timer tab is pressed', () => {
@@ -143,6 +164,13 @@ test('after the cancelled timer, the loop starts again', () => {
   const end = nextTick(STEPS.length - 1, 0);
   assert.equal(end.index, 0);
   near(end.wait, 0.6);
+});
+
+test('the charger goes in with the charging alert and stays in to the end of the loop', () => {
+  const charging = STEPS.indexOf(step('charging'));
+  for (const [i] of STEPS.entries()) assert.equal(pluggedIn(i), i >= charging, `step ${i + 1}`);
+  // Pulled out quietly while the loop rests, so it starts again on battery.
+  assert.equal(STEPS[0].name, 'rest');
 });
 
 test('Reduce Motion shows charging, still', () => {

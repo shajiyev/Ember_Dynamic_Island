@@ -7,6 +7,9 @@
 // The two songs, each glowing in its cover's colour, as in the app.
 const SONG_A = { song: 'a', color: '--song-a' };
 const SONG_B = { song: 'b', color: '--song-b' };
+// Where each song is when it first shows, and how long it is, in seconds. Song A starts
+// at 1:13, so the panel opens on it at 1:15.
+export const SONGS = { a: { from: 73, length: 4 * 60 + 36 }, b: { from: 0, length: 4 * 60 + 11 } };
 // The open panel on each tab. The Timer tab glows in the timer's orange, as in the app.
 const MUSIC_TAB = { name: 'panel', tab: 'music' };
 const TIMER_TAB = { name: 'panel', tab: 'timer', color: '--app-timer' };
@@ -16,9 +19,9 @@ export const STEPS = [
   // Song A in the wings: its cover on the left, the equalizer on the right.
   { name: 'music', seconds: 2, ...SONG_A },
   // The panel opens on the Music tab, ⏭ is pressed, and song B comes in.
-  { ...MUSIC_TAB, seconds: 0.8, ...SONG_A },
+  { ...MUSIC_TAB, seconds: 2, ...SONG_A },
   { ...MUSIC_TAB, seconds: 0.25, ...SONG_A, press: 'next' },
-  { ...MUSIC_TAB, seconds: 1.1, ...SONG_B },
+  { ...MUSIC_TAB, seconds: 2, ...SONG_B },
   // The panel closes on song B.
   { name: 'music', seconds: 2, ...SONG_B },
   // The panel opens on the Music tab again, and the Timer tab is pressed.
@@ -48,6 +51,12 @@ export const STEPS = [
 /** The step shown, without movement, when the visitor has Reduce Motion on. */
 export const STILL_STEP = STEPS.find((step) => step.name === 'charging');
 
+/** Whether the charger is in at step `index`: from the charging alert to the end of the
+    loop. It comes out quietly while the loop rests, so each loop starts on battery. */
+export function pluggedIn(index) {
+  return index >= STEPS.indexOf(STILL_STEP);
+}
+
 /** The next update, from `elapsed` whole seconds into step `index`: a second later in the
     same step (so the timer ticks), or the next step after this one's last fraction. */
 export function nextTick(index, elapsed) {
@@ -55,6 +64,15 @@ export function nextTick(index, elapsed) {
   return left > 1
     ? { index, elapsed: elapsed + 1, wait: 1 }
     : { index: (index + 1) % STEPS.length, elapsed: 0, wait: left };
+}
+
+/** How far into its song step `index` is, `elapsed` seconds in: the song plays on through
+    the steps before it, in the wings and in the panel. */
+export function songSeconds(index, elapsed) {
+  const { song } = STEPS[index];
+  let seconds = SONGS[song].from + elapsed;
+  for (let i = index - 1; i >= 0 && STEPS[i].song === song; i--) seconds += STEPS[i].seconds;
+  return seconds;
 }
 
 /** The right wing's text, `elapsed` whole seconds into the step; none for songs. */
