@@ -3251,3 +3251,10 @@ Spec: "The screen", Look.
 - [x] **Step 1: Compare.** The pill at rest in light and dark, with the wallpaper at its warm orange-brown and 50%, 70%, 85% and 100% of the way to neutral graphite, side by side (the demo stopped, only the wallpaper changed). The user chose 100%.
 - [x] **Step 2: Neutral wallpaper.** `.wallpaper` becomes `#232326` → `#141416` (was `#42240F` → `#1A190B`), so the only colour on the screen is Ember's glow.
 - [x] **Step 3: Check.** Headless Chrome, light and dark, the pill at rest: neutral graphite screen, the rose halo and pill glow unchanged; the 24 tests pass.
+
+## Part 14: Less space under the open panel on phones (2026-11-14)
+
+Spec: "The screen", below 800 px.
+
+- [x] **Step 1: The wallpaper follows the panel.** Below 800 px the wallpaper was a fixed 220 px while the open panel shrinks with the screen, so the space under it grew on smaller phones (140 px at 320 px wide). Now `height: calc(132px + 80px * var(--open-scale))`: the space under the panel is 60% of before at every width (the user asked for 40% off). `screen.js` sets `--open-scale` on the screen instead of the pill, so the wallpaper can use it too.
+- [x] **Step 2: Check.** Measured with the panel open (Chrome's debugging protocol): space under the panel 84 / 73 / 70 / 63 / 30 / 12 px at 320 / 375 / 390 / 430 / 600 / 799 px (was 140 / 122 / 117 / 105 / 50 / 20). At 799 px the panel's glow is cut a little at the bottom, as it already was. Desktop unchanged (300 px at 1440, scaled screen at 800). The 24 tests pass.

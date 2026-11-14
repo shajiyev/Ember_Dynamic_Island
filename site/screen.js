@@ -8,13 +8,13 @@ const PANEL_WIDTH = 620;   // the app's open panel
 
 const screen = document.querySelector('.screen');
 const wallpaper = screen.querySelector('.wallpaper');
-const pill = screen.querySelector('.pill');
 const clock = screen.querySelector('.menu-clock');
 
 function fit() {
   screen.style.setProperty('--screen-scale', Math.min(1, screen.clientWidth / SCREEN_WIDTH));
   const room = wallpaper.clientWidth - 16;
-  pill.style.setProperty('--open-scale', Math.min(1, room / PANEL_WIDTH));
+  // On the screen, so the pill and, below 800 px, the wallpaper's height both use it.
+  screen.style.setProperty('--open-scale', Math.min(1, room / PANEL_WIDTH));
 }
 
 function showTime() {

@@ -766,7 +766,9 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 @media (max-width: 799px) {
   .screen { height: auto; border-radius: 24px 24px 0 0; }
   .screen-stage { left: 0; width: auto; translate: none; scale: none; }
-  .wallpaper { height: 220px; }
+  /* Just taller than the open panel, which shrinks with the screen: the space below it is
+     60% of what a fixed 220 px left (117 → 70 px at 390 px wide). */
+  .wallpaper { height: calc(132px + 80px * var(--open-scale, 1)); }
   .menu-items { display: none; }
 }
 
@@ -856,7 +858,7 @@ html { scroll-padding-top: 76px; }   /* section links land below the bar */
 
 /* Open: the app's panel, 620 × 200, with rounder corners and a wider glow pushed down
    (PillStyle open: flares 19, bottom corners 24, glow opacity 0.55, radius 16, offset 8).
-   Scaled down to fit narrow screens (demo.js sets --open-scale). */
+   Scaled down to fit narrow screens (screen.js sets --open-scale). */
 .pill[data-state="open"] {
   --flare: 19px;
   width: 620px;

@@ -313,7 +313,9 @@ points wide) it fills 41%.
   1280 px and scaled down together to fit, so the panel keeps its true share of the
   width. At a 1024 px window it is drawn at about 75%; at 800 px about 60%.
 - **Below 800 px** (phones and narrow windows): scaling would make everything tiny, so the
-  screen is a close-up around the notch: 220 px tall wallpaper, no menu items (the bar
+  screen is a close-up around the notch: the wallpaper just taller than the open panel
+  (132 px + 80 px × the panel's scale, about 173 px at 390 px wide; it was a fixed 220 px
+  until 2026-11-14, when the user had the space below the panel cut by 40%), no menu items (the bar
   stays). Below 420 px the pill is drawn at 80%, so the wide pill fits inside the mock
   screen. The open panel is scaled down to fit the screen's width.
 
