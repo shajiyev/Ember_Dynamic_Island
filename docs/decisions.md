@@ -648,3 +648,22 @@ Tried on screen with the user, step by step:
 - **Favourite star held back** (#40): Spotify cannot do it without its Web API, and the
   user wants it for both players or not yet. **Lyrics** logged as #41.
 
+
+## 2026-11-14 — App Sandbox turned off
+Ember no longer runs in the App Sandbox (`ENABLE_APP_SANDBOX` = NO), for volume and
+brightness in the pill (#11).
+**Why:** checked on macOS 26.6.2: inside the sandbox, reading the built-in screen's
+brightness through DisplayServices fails (error 1000) and setting it silently does
+nothing; outside, both work. Taking the media keys needs Accessibility, which is also on
+solid ground only outside the sandbox. Ember is not headed for the Mac App Store, the only
+place the sandbox is required.
+- Removed the sandbox-only settings: outgoing network connections, the Calendars resource
+  access, user-selected files, and the Apple Events scripting targets. Kept
+  `com.apple.security.automation.apple-events`, which the hardened runtime needs.
+- Settings saved by sandboxed builds stay in the old container: the calendar switches and
+  the remembered tab reset once.
+- Key check (terminal, built-in keyboard, macOS 26.6.2): the five keys arrive as
+  system-defined events of subtype 8 with codes 0 (volume up), 1 (volume down), 7 (mute),
+  2 (brightness up) and 3 (brightness down), state 0x0A on press and 0x0B on release.
+  Taking volume up hid macOS's indicator and left the volume unchanged. The repeat bit and
+  Shift-Option were not observed yet; they are checked in Task 6.

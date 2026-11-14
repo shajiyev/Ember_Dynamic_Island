@@ -70,7 +70,7 @@
   down by a strip at the width of its current state; the Music tab gets the same thin
   capsule bar and Spotify-style controls; App Sandbox to be turned off. Spec
   docs/specs/volume-brightness.md.
-- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 1 of 6 done (the Music tab's capsule bar and Spotify-style controls, then at the user's request: the player's icon by the title, and clicking the song opens its player and closes the panel).
+- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 2 of 6 done (App Sandbox off; the keys checked).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
