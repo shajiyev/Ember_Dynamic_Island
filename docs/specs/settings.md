@@ -1,6 +1,6 @@
 # Milestone 2, feature 6 design: the Settings window (#0) with the basics (#26a)
 
-Date: 2026-11-15. Status: designed, not built.
+Date: 2026-11-15. Status: built 2026-11-15 (plan: docs/plans/settings.md).
 
 ## Goal
 
@@ -111,6 +111,9 @@ Every change applies at once, with no restart.
 - With all three off, the tab row is empty and the body shows one quiet line, "Turn on a
   feature in Settings", and an **Open Settings** button that closes the panel and opens
   Settings on the Music page. The top row's battery stays if its switch is on.
+- A **Settings button** (a gear, drawn like the tab icons, "Settings" on hover) always sits
+  at the far right of the top row, after the battery. It closes the panel and opens
+  Settings on General. Added 2026-11-15 after the checks (plan part 2).
 
 ### Share Feedback
 
@@ -157,7 +160,8 @@ Changed:
 - `PanelTabs.swift`: `PanelSelection` knows the tabs that are on and falls back to the
   first one; `PanelTabRow` shows only those.
 - `PanelView.swift`: the battery item follows its switch; the all-off message and button
-  (`AllFeaturesOffView.swift`, new, in `Ember/Panel/`).
+  (`AllFeaturesOffView.swift`, new, in `Ember/Panel/`); the gear at the top right
+  (`PanelSettingsButton.swift`, new, in `Ember/Panel/`).
 - `NowPlayingModel.swift`, `CalendarModel.swift`, `BatteryMonitor.swift`: a `stop()` that
   ends their observers, timers and Apple Events. `BatteryMonitor` sends alerts only while
   alerts are on.

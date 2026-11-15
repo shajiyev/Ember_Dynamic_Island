@@ -11,15 +11,28 @@ final class BatteryMonitor {
     /// Called with the live activity for each battery alert.
     @ObservationIgnored var onAlert: ((LiveActivity) -> Void)?
     @ObservationIgnored private var rules = BatteryAlertRules()
+    /// IOKit's change notices, while listening.
+    @ObservationIgnored private var source: CFRunLoopSource?
 
     /// Takes a first reading and starts listening for power-source changes. IOKit keeps
     /// an unretained pointer to the monitor, so the monitor must live as long as the app.
     func start() {
+        guard source == nil else { return }   // already listening
         let context = Unmanaged.passUnretained(self).toOpaque()
-        if let source = IOPSNotificationCreateRunLoopSource(powerSourcesChanged, context)?.takeRetainedValue() {
+        source = IOPSNotificationCreateRunLoopSource(powerSourcesChanged, context)?.takeRetainedValue()
+        if let source {
             CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
         }
         refresh()
+    }
+
+    /// Stops listening for power-source changes and forgets the reading.
+    func stop() {
+        guard let source else { return }
+        CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        self.source = nil
+        reading = nil
+        rules = BatteryAlertRules()   // a later start must not compare with a reading from before the stop
     }
 
     fileprivate func refresh() {

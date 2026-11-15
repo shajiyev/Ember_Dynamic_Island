@@ -849,3 +849,16 @@ Spec docs/specs/settings.md, plan docs/plans/settings.md.
   **Why:** room for the later per-page options (#30, #33–#39).
 - **Search in the sidebar from the start.** **Why:** the user expects many more options
   soon; each setting is listed once in an index with extra words.
+
+## 2026-11-15 — Settings window results
+All checks in docs/plans/settings.md passed on the user's MacBook, macOS 26.6.2.
+- **Fixed during review, beyond the plan:** a song's cover read finishing after Music was
+  turned off no longer brings the song back; the battery's alert rules start fresh after a
+  stop, so turning alerts back on gives no stale alert; the heads-up timer cannot be set
+  while Calendar is off; Launch at login shows on while macOS waits for approval, so it
+  can be turned off; the macOS 26 glass is drawn on a clear view (the plan's filled shape
+  would have shown as a solid slab).
+- **Added after the checks: a Settings button (gear) at the far right of the panel's top
+  row,** always shown. It opens Settings on General, as the menu does. Considered opening
+  the page of the current tab. **Why:** the user preferred one predictable place.
+- No values were tuned. No checks accepted as known limits.

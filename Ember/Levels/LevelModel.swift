@@ -25,7 +25,7 @@ protocol BrightnessControl: AnyObject {
     var isPointedAt: Bool { get }
 }
 
-/// Volume and brightness in the pill (#11): the menu switch, and for each key, whether
+/// Volume and brightness in the pill (#11): the Settings switch, and for each key, whether
 /// Ember takes it from macOS and what the pill shows.
 @Observable
 final class LevelModel {

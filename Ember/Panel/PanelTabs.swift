@@ -48,16 +48,24 @@ final class PanelSelection {
     func panelOpened() {
         if let openingTab { tab = openingTab }
     }
+
+    /// The tab the panel shows, among the tabs that are on (Settings): the chosen one, or
+    /// the first that is on when the chosen one is off; nil when every tab is off. The
+    /// chosen tab is kept, so it comes back when it is turned on again.
+    func visibleTab(among shown: [PanelTab]) -> PanelTab? {
+        shown.contains(tab) ? tab : shown.first
+    }
 }
 
-/// The tab row on the left of the panel's top row: icons only, so more tabs still fit. The
-/// name shows as a tooltip on hover and is what VoiceOver reads.
+/// The tab row on the left of the panel's top row, with the tabs that are on: icons only,
+/// so more tabs still fit. The name shows as a tooltip on hover and is what VoiceOver reads.
 struct PanelTabRow: View {
+    let tabs: [PanelTab]
     @Binding var selection: PanelTab
 
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(PanelTab.allCases, id: \.self) { tab in
+            ForEach(tabs, id: \.self) { tab in
                 Button {
                     selection = tab
                 } label: {

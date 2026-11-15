@@ -26,9 +26,6 @@ nonisolated struct PillStyle: Equatable {
 
     /// The Ember glow: rose, #D9776B, the same as the logo's glow (docs/specs/logo.md).
     static let glowColor = Color(red: 0xD9 / 255, green: 0x77 / 255, blue: 0x6B / 255)
-    /// A soft glow at rest, so the notch stays lit while nothing is happening (#29). Off
-    /// makes the pill invisible at rest. A Settings toggle will drive this later.
-    static let alwaysOnGlow = true
     /// The brighter line on the pill's bottom edge: the glow colour mixed with white.
     static func edgeColor(for glowColor: Color) -> Color {
         glowColor.mix(with: .white, by: 0.45)
@@ -49,7 +46,9 @@ nonisolated struct PillStyle: Equatable {
                     removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
     }
 
-    static func style(for state: PillState) -> PillStyle {
+    /// The look for a state. `alwaysOnGlow` (#29) keeps a soft glow around the notch at rest;
+    /// off, the pill is invisible at rest.
+    static func style(for state: PillState, alwaysOnGlow: Bool = true) -> PillStyle {
         switch state {
         case .rest:
             // The resting glow surrounds the notch: centred, and its edge line runs up both

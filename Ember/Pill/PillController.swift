@@ -2,8 +2,7 @@ import AppKit
 import Observation
 import SwiftUI
 
-/// How long the pill waits before opening and closing. These become user settings later
-/// (feature #26a), so they are passed in instead of being written into the logic.
+/// How long the pill waits before opening and closing (Settings → General).
 nonisolated struct PillTiming: Equatable {
     /// How long the pointer must rest on the pill before it opens.
     var openDelay: TimeInterval = 0.2
@@ -30,7 +29,15 @@ final class PillController {
 
     var hasNotchDisplay: Bool { geometry != nil }
 
-    @ObservationIgnored private let timing: PillTiming
+    /// The open and close delays; a change applies from the next delay.
+    @ObservationIgnored var timing: PillTiming
+    /// Whether resting the pointer on the pill opens the panel.
+    var opensOnHover: Bool {
+        get { model.opensOnHover }
+        set { model.opensOnHover = newValue }
+    }
+    /// The soft glow around the notch at rest (#29).
+    var alwaysOnGlow = true
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
     /// Called when the user has seen an activity that ends when seen: they hovered over or

@@ -89,6 +89,24 @@ struct PillControllerTests {
         #expect(PillTiming().closeDelay == 0.3)
     }
 
+    @Test func aNewTimingAppliesFromTheNextHover() async throws {
+        let controller = PillController(timing: PillTiming(openDelay: 5, closeDelay: 5))
+        controller.timing = fast
+        controller.send(.pointerEntered)
+        try await settle()
+        #expect(controller.state == .open)
+    }
+
+    @Test func withHoverOffTheControllerWaitsForAClick() async throws {
+        let controller = PillController(timing: fast)
+        controller.opensOnHover = false
+        controller.send(.pointerEntered)
+        try await settle()
+        #expect(controller.state == .rest)
+        controller.send(.clicked)
+        #expect(controller.state == .open)
+    }
+
     @Test func hoverOpensAfterTheOpenDelay() async throws {
         let controller = PillController(timing: fast)
         controller.send(.pointerEntered)

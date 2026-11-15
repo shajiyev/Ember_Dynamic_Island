@@ -24,6 +24,7 @@ final class NowPlayingModel {
     private static let settleDelay: TimeInterval = 0.3
 
     func start() {
+        guard observers.isEmpty else { return }   // already listening
         // The players' own change notices; their names are not documented by Apple.
         let distributed = DistributedNotificationCenter.default()
         observe(distributed, Notification.Name("com.apple.Music.playerInfo")) { $0.refresh(.music) }
@@ -31,6 +32,19 @@ final class NowPlayingModel {
         let workspace = NSWorkspace.shared.notificationCenter
         observe(workspace, NSWorkspace.didTerminateApplicationNotification) { $0.refreshAll() }
         refreshAll()
+    }
+
+    /// Stops listening to the players and forgets them: no change notices and no Apple Events
+    /// until `start()`. The song leaves the wings.
+    func stop() {
+        guard !observers.isEmpty else { return }
+        for (center, token) in observers { center.removeObserver(token) }
+        observers = []
+        for read in pendingReads.values { read.cancel() }
+        pendingReads = [:]
+        reports = [:]
+        artworkCache = [:]
+        publish()
     }
 
     func playPause() { send(.playPause) }
@@ -63,6 +77,7 @@ final class NowPlayingModel {
     /// of order, so each new announcement replaces the waiting or running read: a stale
     /// answer never overwrites a newer one.
     private func refresh(_ player: Player) {
+        guard !observers.isEmpty else { return }   // stopped
         pendingReads[player]?.cancel()
         pendingReads[player] = Task {
             try? await Task.sleep(for: .seconds(Self.settleDelay))
@@ -89,6 +104,7 @@ final class NowPlayingModel {
             return
         }
         track.artwork = await artwork(for: reading, from: player)
+        guard !observers.isEmpty else { return }   // Music was turned off during the artwork read
         reports[player] = PlayerReport.updated(reports[player], with: track, at: now)
         publish()
     }

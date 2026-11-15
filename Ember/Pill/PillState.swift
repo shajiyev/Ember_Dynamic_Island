@@ -34,6 +34,8 @@ nonisolated struct PillModel {
     private var isOpen = false
     private var hasActivity = false
     private var isPointerInside = false
+    /// With hover off (Settings → General), only a click opens the panel.
+    var opensOnHover = true
 
     var state: PillState {
         if isOpen { return .open }
@@ -45,7 +47,8 @@ nonisolated struct PillModel {
         switch event {
         case .pointerEntered:
             isPointerInside = true
-            return isOpen ? .cancelDelay : .startOpenDelay
+            if isOpen { return .cancelDelay }
+            return opensOnHover ? .startOpenDelay : .cancelDelay
 
         case .pointerExited:
             isPointerInside = false
@@ -58,7 +61,7 @@ nonisolated struct PillModel {
             return .cancelDelay
 
         case .openDelayElapsed:
-            if isPointerInside { isOpen = true }
+            if isPointerInside && opensOnHover { isOpen = true }
             return nil
 
         case .closeDelayElapsed:

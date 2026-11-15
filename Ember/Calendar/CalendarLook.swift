@@ -67,7 +67,7 @@ nonisolated enum CalendarLook {
         return day.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
     }
 
-    /// The switch's title in the menu (and in Settings later).
+    /// The switch's title in Settings → Calendar.
     static func switchTitle(_ source: CalendarSource) -> String {
         switch source {
         case .events: return "Show Calendar Events"

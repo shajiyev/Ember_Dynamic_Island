@@ -7,7 +7,7 @@ struct EmberApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            PillMenu(controller: appDelegate.controller, calendar: appDelegate.calendar, levels: appDelegate.levels)
+            PillMenu(controller: appDelegate.controller, settingsWindow: appDelegate.settingsWindow)
         } label: {
             Image("MenuBarIcon")
         }
@@ -24,8 +24,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let panelSelection = PanelSelection()
     let levels = LevelModel(volume: SystemVolume(), brightness: BuiltInBrightness())
     let mediaKeys = MediaKeyTap()
+    let settings = AppSettings()
+    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels)
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
-    private var timerActivity: LiveActivity?
+    var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
     /// While a calendar heads-up shows, the panel opens on the Calendar tab.
     private var calendarHeadsUpShowing = false
@@ -34,8 +36,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
         guard NSClassFromString("XCTestCase") == nil else { return }
-        battery.onAlert = { [controller] activity in controller.show(activity) }
-        battery.start()
+        battery.onAlert = { [weak self] activity in
+            guard let self, settings.batteryAlertsOn else { return }
+            controller.show(activity)
+        }
         timer.onActivity = { [weak self] activity in
             self?.timerActivity = activity
             self?.showLastingActivity()
@@ -55,9 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.panelSelection.openingTab = .timer
         }
         panelSelection.onChange = { [weak self] in self?.showLastingActivity() }
-        nowPlaying.start()
         calendar.onHeadsUp = { [weak self] activity in self?.showCalendarHeadsUp(activity) }
-        calendar.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
         levels.onReadout = { [controller] readout in controller.showLevel(readout) }
@@ -69,11 +71,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if on { mediaKeys.start(askForAccess: true) } else { mediaKeys.stop() }
         }
         if levels.isOn { mediaKeys.start(askForAccess: false) }
+        // Starts the features that are on; later changes in Settings apply at once.
+        settings.onChange = { [weak self] in self?.applySettings() }
+        applySettings()
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
-                                                 calendar: calendar, selection: panelSelection))
+                                                 calendar: calendar, selection: panelSelection,
+                                                 settings: settings,
+                                                 openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }))
     }
 
-    private func showLastingActivity() {
+    func showLastingActivity() {
         let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
                                          musicTabChosen: panelSelection.tab == .music)
         controller.setOngoing(shown)
@@ -100,18 +107,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// The menu behind the menu bar icon.
 struct PillMenu: View {
     let controller: PillController
-    let calendar: CalendarModel
-    let levels: LevelModel
+    let settingsWindow: SettingsWindow
 
     var body: some View {
         if !controller.hasNotchDisplay {
             Text("No display with a notch found")
             Divider()
         }
-        ForEach(CalendarSource.allCases, id: \.self) { source in
-            Toggle(CalendarLook.switchTitle(source), isOn: switchBinding(source))
-        }
-        Toggle(LevelLook.switchTitle, isOn: Binding(get: { levels.isOn }, set: { levels.turn(on: $0) }))
+        Button("Settings…") { settingsWindow.show() }
+            .keyboardShortcut(",")
+        Button(SettingsItem.shareFeedback.title) { Feedback.open() }
+            .disabled(Feedback.url == nil)
         Divider()
         #if DEBUG
         Menu("Simulate Battery Alert") {
@@ -128,12 +134,6 @@ struct PillMenu: View {
         Button("Quit Ember") {
             NSApplication.shared.terminate(nil)
         }
-    }
-
-    /// A menu checkmark for a switch. Turning it on may ask for a permission first.
-    private func switchBinding(_ source: CalendarSource) -> Binding<Bool> {
-        Binding(get: { calendar.shows(source) },
-                set: { on in Task { await calendar.turn(source, on: on) } })
     }
 
     #if DEBUG

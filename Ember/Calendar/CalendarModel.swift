@@ -61,6 +61,7 @@ final class CalendarModel {
     }
 
     func start() {
+        guard observers.isEmpty else { return }   // already started
         store.onChange = { [weak self] in
             self?.refresh()
             self?.scheduleHeadsUp()
@@ -72,6 +73,17 @@ final class CalendarModel {
         observe(.default, .NSSystemTimeZoneDidChange)
         observe(.default, .NSCalendarDayChanged)
         scheduleHeadsUp()
+    }
+
+    /// Stops the heads-up timer and the change watching until `start()`. The two switches
+    /// keep their saved state; permissions are not touched.
+    func stop() {
+        guard !observers.isEmpty else { return }
+        store.onChange = nil
+        for (center, token) in observers { center.removeObserver(token) }
+        observers = []
+        headsUpTimer?.cancel()
+        headsUpTimer = nil
     }
 
     /// Turning a switch on asks for its permission. If it is refused, the switch stays off
@@ -195,6 +207,7 @@ final class CalendarModel {
     /// events only while Show Calendar Events is on.
     private func scheduleHeadsUp() {
         headsUpTimer?.cancel()
+        guard !observers.isEmpty else { return }   // Calendar is off
         turnOffSwitchesWithoutAccess()
         guard showsEvents else { return }
         let now = Date()

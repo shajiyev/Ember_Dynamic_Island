@@ -7,10 +7,15 @@ struct PillStyleTests {
     @Test func restGlowsSofterThanActiveWhileTheAlwaysOnGlowIsOn() {
         let rest = PillStyle.style(for: .rest)
         let active = PillStyle.style(for: .active)
-        #expect(PillStyle.alwaysOnGlow)
         #expect(rest.glowOpacity > 0 && rest.glowRadius > 0)
         #expect(rest.glowOpacity < active.glowOpacity)
         #expect(rest.glowRadius < active.glowRadius)
+    }
+
+    @Test func withoutTheAlwaysOnGlowRestIsInvisible() {
+        #expect(PillStyle.style(for: .rest, alwaysOnGlow: false).glowOpacity == 0)
+        #expect(PillStyle.style(for: .active, alwaysOnGlow: false) == PillStyle.style(for: .active))
+        #expect(PillStyle.style(for: .open, alwaysOnGlow: false) == PillStyle.style(for: .open))
     }
 
     @Test func restGlowIsCentredSoItReachesTheSidesOfTheNotch() {

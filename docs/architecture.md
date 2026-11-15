@@ -31,7 +31,7 @@
     duration, apart from the activities.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
-    `PillStyle.alwaysOnGlow` switches the resting glow (#29) on or off.
+    `PillController.alwaysOnGlow` (from Settings) switches the resting glow (#29) on or off.
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch height (`notchHeight` environment value). The panel content
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
@@ -100,7 +100,7 @@
 - `Ember/Levels/` — volume and brightness in the pill (#11).
   - `LevelKey.swift`, `LevelStep.swift`, `LevelLook.swift`: the pure rules: reading a media
     key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,
-    texts, 1.5 s, the menu title).
+    texts, 1.5 s, the switch's title).
   - `MediaKeyTap.swift`: the only event-tap code; waits for Accessibility, then takes the
     keys `LevelModel` asks for.
   - `SystemVolume.swift` (Core Audio) and `BuiltInBrightness.swift` (DisplayServices,
@@ -115,8 +115,26 @@
 - `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
   remembered between openings, and the tab of what the wings show, which the panel opens
   on.
+- `Ember/Panel/AllFeaturesOffView.swift` — the panel's body with Music, Timer and Calendar
+  all off, with an Open Settings button. `PanelSettingsButton.swift` — the gear at the
+  far right of the top row, which opens Settings on General.
+- `Ember/Settings/` — the Settings window (#0, #26a).
+  - `AppSettings.swift`: hover, the two delays, the glow, and a switch per feature, saved
+    in UserDefaults; `onChange` after every change.
+  - `SettingsPage.swift`, `SettingsSearch.swift`: the pure rules: the pages and their
+    sidebar groups, every setting once with its extra search words, and which pages and
+    settings match a search.
+  - `SettingsWindow.swift`: the AppKit window, made on open and dropped on close; the Dock
+    icon (activation policy `.regular`) only while it is open.
+  - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
+    styled after Atoll's settings; glass on macOS 26.
+  - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
+    the pages, the search tint and the delay row.
+  - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
+    destination, nil until chosen).
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
-  bar icon and menu.
+  bar icon and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
+  `applySettings()`.
 
 ## Data flow
 Pointer and click events go from `PillView` to `PillController.send`. The controller
@@ -148,7 +166,7 @@ glow. The app delegate passes the timer's and the music's activities through
 commands.
 
 Calendar: the tab works without EventKit: `MonthGrid` lays out the month and the model
-keeps the selected day. The menu's two switches call `CalendarModel.turn`, which asks
+keeps the selected day. The Calendar page's two switches call `CalendarModel.turn`, which asks
 `CalendarStore` for the permission. While the tab shows, the model reads the selected
 day's events, due reminders and done reminders for the switches that are on, again after any
 `EKEventStoreChanged`. With events on, the model reads the coming events, asks
@@ -156,6 +174,12 @@ day's events, due reminders and done reminders for the switches that are on, aga
 store change, a wake, a clock or time zone change and midnight. The heads-up goes to the
 app delegate, which shows it with `PillController.show` and sets the panel's opening tab to
 Calendar while it shows.
+
+Settings: a change in the Settings window sets `AppSettings`, which saves it and calls
+`onChange`; the app delegate's `applySettings()` sets the pill's timing, hover and glow,
+starts or stops Now Playing, Calendar and Battery (`stop()` ends their observers and
+timers), and cancels the timer when it is turned off. `PanelView` reads
+`AppSettings.shownTabs` and `batteryInPanelOn` directly.
 
 Volume and brightness: a media key reaches `MediaKeyTap`, which asks the app delegate's
 handler. With a notch display, that asks `LevelModel.handle`, which either lets the key go

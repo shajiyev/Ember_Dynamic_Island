@@ -21,7 +21,7 @@ struct PillView: View {
     var body: some View {
         let state = controller.state
         let level = controller.level
-        let style = PillStyle.style(for: state)
+        let style = PillStyle.style(for: state, alwaysOnGlow: controller.alwaysOnGlow)
         let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
         // The state's own height: the wings and the panel stay in it, the strip goes below.
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0

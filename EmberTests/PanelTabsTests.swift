@@ -45,4 +45,20 @@ struct PanelTabsTests {
     @Test func theCalendarTabKeepsThePillsGlow() {
         #expect(PanelTab.calendar.glowColor(songGlow: .blue) == nil)
     }
+
+    @Test func theChosenTabShowsWhileItIsOn() {
+        let selection = PanelSelection()
+        selection.tab = .timer
+        #expect(selection.visibleTab(among: [.music, .timer, .calendar]) == .timer)
+    }
+
+    @Test func aTabThatIsOffGivesWayToTheFirstThatIsOn() {
+        let selection = PanelSelection()
+        selection.tab = .music
+        #expect(selection.visibleTab(among: [.timer, .calendar]) == .timer)
+    }
+
+    @Test func withEveryTabOffNoTabShows() {
+        #expect(PanelSelection().visibleTab(among: []) == nil)
+    }
 }

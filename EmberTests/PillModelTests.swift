@@ -117,4 +117,29 @@ struct PillModelTests {
         model.handle(.openDelayElapsed)
         #expect(model.state == .rest)
     }
+
+    @Test func withHoverOffThePointerEnteringDoesNotOpen() {
+        var model = PillModel()
+        model.opensOnHover = false
+        #expect(model.handle(.pointerEntered) == .cancelDelay)
+        model.handle(.openDelayElapsed)   // a timer started before hover was turned off
+        #expect(model.state == .rest)
+    }
+
+    @Test func withHoverOffAClickStillOpens() {
+        var model = PillModel()
+        model.opensOnHover = false
+        model.handle(.pointerEntered)
+        #expect(model.handle(.clicked) == .cancelDelay)
+        #expect(model.state == .open)
+    }
+
+    @Test func withHoverOffLeavingTheOpenPanelStillClosesIt() {
+        var model = PillModel()
+        model.opensOnHover = false
+        model.handle(.clicked)
+        #expect(model.handle(.pointerExited) == .startCloseDelay)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .rest)
+    }
 }

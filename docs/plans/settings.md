@@ -1771,3 +1771,27 @@ Run `git diff | grep -i -E "users/|api[_-]?key|token|secret"`. Expected: no outp
 ```bash
 git add docs/roadmap.md docs/features.md docs/decisions.md docs/architecture.md docs/specs/settings.md && git commit -m "Finished the Settings window" -m $'- Recorded the results and marked the Settings window, the basics and the glow switch as done\n- Verified by hand on <Mac model>, macOS <version>, with the checks in docs/plans/settings.md' && git push
 ```
+
+---
+
+# Part 2: A Settings button in the panel
+
+Added 2026-11-15, after Task 8's checks passed (spec: "The panel's tabs" in
+docs/specs/settings.md). Built inline by the controller. Same Global Constraints and Commands.
+
+### Task 9: The gear at the top right of the panel
+
+**Files:**
+- Create: `Ember/Panel/PanelSettingsButton.swift`: a `gearshape.fill` button drawn like the
+  tab icons (11 pt semibold, 14 × 14 frame, padding 7 × 3, white at 55%, white under the
+  pointer), tooltip and VoiceOver label "Settings"; it calls `closePanel()` then
+  `openSettings()`.
+- Modify: `Ember/Panel/PanelView.swift`: `openSettings: (SettingsPage) -> Void`; the gear
+  always sits last in the top row (`openSettings(.general)`); the all-off message calls
+  `openSettings(.music)`.
+- Modify: `Ember/EmberApp.swift`: `openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }`.
+
+- [x] TEST and BUILD: 282 tests pass; Debug and Release build with no warnings.
+- [ ] The user checks on screen: the gear sits at the far right of the top row, after the
+  battery, on every tab and with every tab off; clicking it closes the panel and opens
+  Settings on General.
