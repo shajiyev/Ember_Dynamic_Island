@@ -5,6 +5,14 @@ import SwiftUI
 nonisolated enum CalendarSource: CaseIterable, Sendable {
     case events
     case reminders
+
+    /// The Apple app that keeps these items: Calendar or Reminders.
+    var appBundleID: String {
+        switch self {
+        case .events: return "com.apple.iCal"
+        case .reminders: return "com.apple.reminders"
+        }
+    }
 }
 
 /// One event on a day, copied out of EventKit.

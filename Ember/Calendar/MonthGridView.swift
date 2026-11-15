@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// The month grid on the left of the Calendar tab: the month and year with ‹ › arrows,
-/// the weekday letters, and six weeks of days. Clicking a day selects it.
+/// the weekday letters, and six weeks of days. Clicking a day selects it; clicking the
+/// month and year opens Calendar.
 struct MonthGridView: View {
     let model: CalendarModel
 
@@ -15,11 +16,14 @@ struct MonthGridView: View {
 
     private var header: some View {
         HStack(spacing: 4) {
-            Text(model.shownMonth.formatted(.dateTime.month(.wide)))
-                .font(.system(size: 12, weight: .semibold))
-            Text(model.shownMonth.formatted(.dateTime.year()))
-                .font(.system(size: 12))
-                .foregroundStyle(.white.opacity(0.45))
+            HStack(spacing: 4) {
+                Text(model.shownMonth.formatted(.dateTime.month(.wide)))
+                    .font(.system(size: 12, weight: .semibold))
+                Text(model.shownMonth.formatted(.dateTime.year()))
+                    .font(.system(size: 12))
+                    .foregroundStyle(.white.opacity(0.45))
+            }
+            .opensApp(for: .events, model: model)
             Spacer()
             Button { model.moveMonth(by: -1) } label: { Image(systemName: "chevron.left") }
                 .help("Previous month")

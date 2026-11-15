@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import SwiftUI
 import Testing
@@ -64,5 +65,12 @@ struct CalendarItemsTests {
         let b = DoneReminder(id: "1", title: "B", completed: moment)
         let a = DoneReminder(id: "2", title: "A", completed: moment)
         #expect(CalendarItems.done([b, a], on: moment, calendar: cal) == [a, b])
+    }
+
+    @Test func eachSourceNamesItsAppleApp() {
+        let names = CalendarSource.allCases.map {
+            NSWorkspace.shared.urlForApplication(withBundleIdentifier: $0.appBundleID)?.lastPathComponent
+        }
+        #expect(names == ["Calendar.app", "Reminders.app"])
     }
 }

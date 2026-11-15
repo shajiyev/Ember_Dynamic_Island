@@ -701,3 +701,15 @@ only `TimerPanelView.swift`.
   minute to a running timer is the common case.
 - **The white circle and plain icons are shared** (`Ember/Panel/PanelButtons.swift`), as
   `CapsuleBar` already is, so the two tabs cannot drift apart.
+
+## 2026-11-15 — The Calendar tab's month and headings open Calendar and Reminders
+Clicking the month and year, or the events heading ("Today" or the date), brings
+Calendar.app to the front (or launches it); clicking the "Reminders" heading does the same
+for Reminders.app. The panel closes, through the `closePanel` action the Music tab uses.
+**Why:** the user asked for the Music tab's "open the app" in the other tab, on the
+labels only. Event rows, reminder titles and the big date keep their behaviour.
+- **Only the app opens, not the event or the reminder.** Apple's deep links to one event
+  or reminder are undocumented, and jumping Calendar to a day needs AppleScript and a new
+  Automation prompt; neither was wanted.
+- `CalendarSource` names each app's bundle ID (`com.apple.iCal`, `com.apple.reminders`); a
+  test checks they resolve to Calendar.app and Reminders.app.

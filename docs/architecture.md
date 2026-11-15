@@ -36,7 +36,7 @@
     open, passing it the notch height (`notchHeight` environment value). The panel content
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
     its song's. It can also close the panel (`closePanel` environment action), as the Music
-    tab does after sending the user to a player.
+    and Calendar tabs do after sending the user to another app.
   - `LevelStrip.swift`: the level strip below the pill (symbol, `CapsuleBar` with step dots, text).
   - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
     shared by the Music tab's scrubber and the volume and brightness strip.
@@ -89,10 +89,12 @@
   - `CalendarStore.swift`: the only EventKit code; access, events, due reminders and the
     day's done reminders, completing and reopening a reminder, change notices.
   - `CalendarModel.swift`: the shown month, the selected day, the two switches, the day's
-    lists (events, due reminders and done reminders) and the one heads-up timer.
+    lists (events, due reminders and done reminders) and the one heads-up timer; opens
+    Calendar or Reminders (`openApp(for:)`).
   - `CalendarAccessAlert.swift`: the alert after a refused permission.
   - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
-    Calendar tab.
+    Calendar tab. `.opensApp(for:model:)` makes the month and the list headings open
+    their app and close the panel.
 - `Ember/Levels/` — volume and brightness in the pill (#11).
   - `LevelKey.swift`, `LevelStep.swift`, `LevelLook.swift`: the pure rules: reading a media
     key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,

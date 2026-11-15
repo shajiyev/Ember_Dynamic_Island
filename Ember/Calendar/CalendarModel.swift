@@ -138,6 +138,12 @@ final class CalendarModel {
         refresh()
     }
 
+    /// Opens Calendar or Reminders, or brings it to the front when it is running.
+    func openApp(for source: CalendarSource) {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: source.appBundleID) else { return }
+        NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
+    }
+
     private func setShows(_ source: CalendarSource, _ on: Bool) {
         switch source {
         case .events:

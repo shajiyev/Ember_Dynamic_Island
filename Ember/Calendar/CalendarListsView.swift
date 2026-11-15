@@ -8,6 +8,7 @@ struct EventListView: View {
         VStack(alignment: .leading, spacing: 6) {
             CalendarListHeading(text: CalendarLook.eventsHeading(for: model.selectedDay, today: model.today,
                                                                 calendar: model.calendar))
+                .opensApp(for: .events, model: model)
             if model.events.isEmpty {
                 CalendarEmptyLine(text: "No events")
             } else {
@@ -47,6 +48,7 @@ struct ReminderListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             CalendarListHeading(text: "Reminders")
+                .opensApp(for: .reminders, model: model)
             if model.reminders.isEmpty && model.done.isEmpty {
                 CalendarEmptyLine(text: "No reminders")
             } else {
@@ -114,6 +116,29 @@ struct CalendarListHeading: View {
             .font(.system(size: 10, weight: .medium))
             .tracking(0.6)
             .foregroundStyle(.white.opacity(0.45))
+    }
+}
+
+extension View {
+    /// Clicking opens the app that keeps `source`'s items (Calendar or Reminders) and closes
+    /// the panel, which would otherwise stay over it.
+    func opensApp(for source: CalendarSource, model: CalendarModel) -> some View {
+        modifier(OpensCalendarApp(source: source, model: model))
+    }
+}
+
+private struct OpensCalendarApp: ViewModifier {
+    let source: CalendarSource
+    let model: CalendarModel
+    @Environment(\.closePanel) private var closePanel
+
+    func body(content: Content) -> some View {
+        content
+            .contentShape(Rectangle())
+            .onTapGesture {
+                model.openApp(for: source)
+                closePanel()
+            }
     }
 }
 

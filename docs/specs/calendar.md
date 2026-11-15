@@ -1,6 +1,7 @@
 # Milestone 2, feature 4 design: calendar & reminders (#14)
 
-Date: 2026-11-13. Status: built 2026-11-14 (plan: docs/plans/calendar.md).
+Date: 2026-11-13. Status: built 2026-11-14 (plan: docs/plans/calendar.md); the month and the list
+headings open Calendar and Reminders since 2026-11-15.
 
 ## Goal
 
@@ -46,6 +47,8 @@ glow colour of its own).
 - **Clicking a day selects it:** it gets a rose ring, and the right side shows that day.
   Clicking a day outside the shown month also moves the grid to that month. Clicking
   today, or closing the panel, selects today again and shows today's month.
+- **Clicking the month and year** (not the arrows) brings Calendar.app to the front, or
+  launches it, and closes the panel, as the Music tab does with a player.
 
 **Right side, plain** (both switches off):
 - The selected day, large: the day number in pale rose (`#F2A496`), the weekday below
@@ -70,6 +73,9 @@ glow colour of its own).
 - With both switches on, events and reminders stand side by side under the small headings
   "Today" (or the selected date, such as "Tue 17 Nov") and "Reminders". With only one
   on, its list takes the whole right side.
+- **Clicking a heading opens its app:** "Today" (or the date) opens Calendar.app,
+  "Reminders" opens Reminders.app, and the panel closes. Event rows, reminder titles
+  and the big date are not clickable.
 - A list longer than the space scrolls.
 - An empty list shows a dim line: "No events" or "No reminders".
 
@@ -206,5 +212,6 @@ recalculates the heads-up.
 
 ## Out of scope for v1
 
-Creating or editing events and reminders; opening events in Calendar.app; meeting "Join"
+Creating or editing events and reminders; opening a single event or reminder in its app
+(only the app itself opens, from the month or a heading); meeting "Join"
 buttons; the Settings options listed under "Later, in Settings".

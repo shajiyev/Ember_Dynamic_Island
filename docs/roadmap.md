@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-14)
+## Current status (2026-11-15)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -75,6 +75,9 @@
   white circle and plain icons, and a new +1 minute. Design A ("Light touch") is kept in
   reserve in docs/specs/timers.md and docs/mockups/timer-tab.html. Tests pass; checked on
   screen by the user on macOS 26.6.2. Plan docs/plans/timers.md, part 2.
+- **Done:** in the Calendar tab, clicking the month and year or the events heading opens
+  Calendar; clicking "Reminders" opens Reminders; the panel closes, as in the Music tab.
+  Spec docs/specs/calendar.md. Tests pass; checked on screen by the user on macOS 26.6.2.
 - **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 5 of 6 done (taking the keys).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
