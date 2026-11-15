@@ -41,6 +41,44 @@ struct PillControllerTests {
         #expect(controller.currentActivity == song)
     }
 
+    @Test func aHeldLevelStaysPastItsDuration() async throws {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout())
+        controller.holdLevel(true)
+        try await settle()
+        #expect(controller.level?.text == "62%")
+    }
+
+    @Test func releasingAHeldLevelStartsItsTimeAgain() async throws {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout("62%", duration: 0.3))
+        controller.holdLevel(true)
+        try await Task.sleep(for: .milliseconds(400))
+        controller.holdLevel(false)
+        try await Task.sleep(for: .milliseconds(100))
+        // 500 ms after the readout, but only 100 ms after the release.
+        #expect(controller.level?.text == "62%")
+        try await Task.sleep(for: .milliseconds(400))
+        #expect(controller.level == nil)
+    }
+
+    @Test func aNewerLevelWhileHeldStartsNoTime() async throws {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout())
+        controller.holdLevel(true)
+        controller.showLevel(readout("30%"))
+        try await settle()
+        #expect(controller.level?.text == "30%")
+    }
+
+    @Test func draggingTheLevelTellsTheFeature() {
+        let controller = PillController(timing: fast)
+        var dragged: [Double] = []
+        controller.onLevelChange = { dragged.append($0) }
+        controller.levelDragged(to: 0.3)
+        #expect(dragged == [0.3])
+    }
+
     /// Long enough for a 0.02-second delay to have fired.
     private func settle() async throws {
         try await Task.sleep(for: .milliseconds(200))
@@ -270,5 +308,13 @@ struct PillControllerTests {
         try await settle()
         #expect(controller.state == .open)
         #expect(controller.ongoingActivity == music)
+    }
+
+    @Test func onlyTheTopPartOfAClosedPillOpensThePanelButAllOfTheOpenPanelCounts() {
+        // A 33-point resting shape with the 32-point level strip below it.
+        #expect(PillView.pointerOpensPanel(atY: 10, state: .rest, stateHeight: 33))
+        #expect(!PillView.pointerOpensPanel(atY: 50, state: .rest, stateHeight: 33))
+        #expect(!PillView.pointerOpensPanel(atY: 50, state: .active, stateHeight: 33))
+        #expect(PillView.pointerOpensPanel(atY: 215, state: .open, stateHeight: 200))
     }
 }

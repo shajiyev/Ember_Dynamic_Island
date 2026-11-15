@@ -162,6 +162,9 @@ handler. With a notch display, that asks `LevelModel.handle`, which either lets 
 on to macOS or takes it, sets the volume (`SystemVolume`) or the built-in screen's
 brightness (`BuiltInBrightness`), and passes `LevelLook`'s readout to
 `PillController.showLevel`. `PillView` grows by the strip for 1.5 s.
+Dragging the strip's bar goes back the other way: `PillController.levelDragged(to:)`, then
+`LevelModel.set(level:)`, which sets the level last shown and hands back a new readout.
+The strip stays while the pointer is on it (`PillController.holdLevel`).
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The

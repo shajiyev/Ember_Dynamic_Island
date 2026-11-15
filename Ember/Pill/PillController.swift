@@ -38,6 +38,11 @@ final class PillController {
     @ObservationIgnored var onActivitySeen: (() -> Void)?
     @ObservationIgnored private var briefTimeout: Task<Void, Never>?
     @ObservationIgnored private var levelTimeout: Task<Void, Never>?
+    /// The pointer is on the level strip or dragging it: the level stays (`holdLevel(_:)`).
+    @ObservationIgnored private var isLevelHeld = false
+    /// Called with the fill the user clicked or dragged the level strip's bar to. The
+    /// feature that showed the level sets it and shows a new readout.
+    @ObservationIgnored var onLevelChange: ((Double) -> Void)?
     /// The ongoing activity ends when seen and has been seen; it goes once the panel opens.
     @ObservationIgnored private var ongoingWasSeen = false
     /// Set while a seen activity waits for the panel to open; it replaces it then.
@@ -115,8 +120,26 @@ final class PillController {
     func showLevel(_ readout: LevelReadout) {
         level = readout
         levelTimeout?.cancel()
+        if !isLevelHeld { startLevelTimeout() }
+    }
+
+    /// Keeps the level while `held` (the pointer is on the strip, or dragging it); letting go
+    /// starts its duration again.
+    func holdLevel(_ held: Bool) {
+        isLevelHeld = held
+        levelTimeout?.cancel()
+        if !held { startLevelTimeout() }
+    }
+
+    /// The user clicked or dragged the level strip's bar to `fill`.
+    func levelDragged(to fill: Double) {
+        onLevelChange?(fill)
+    }
+
+    private func startLevelTimeout() {
+        guard let duration = level?.duration else { return }
         levelTimeout = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(readout.duration))
+            try? await Task.sleep(for: .seconds(duration))
             guard !Task.isCancelled else { return }
             self?.level = nil
         }

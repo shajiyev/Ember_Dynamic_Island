@@ -8,6 +8,15 @@ struct PillView: View {
     let panelContent: AnyView
     /// The glow the panel's content asks for while open (`PanelGlowColorKey`).
     @State private var panelGlow: Color?
+    /// The pointer is on the part of the pill that opens the panel (`pointerOpensPanel`).
+    @State private var isPointerOnPill = false
+
+    /// Whether a pointer `y` points down from the top of the pill counts as being on the
+    /// pill for opening and closing the panel: anywhere on the open panel, but not on the
+    /// level strip below a closed pill, so the strip can be dragged where it is.
+    static func pointerOpensPanel(atY y: CGFloat, state: PillState, stateHeight: CGFloat) -> Bool {
+        state == .open || y < stateHeight
+    }
 
     var body: some View {
         let state = controller.state
@@ -70,7 +79,8 @@ struct PillView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: stateHeight)
                     if let level {
-                        LevelStrip(readout: level, margin: style.topCornerRadius + style.levelStripMargin)
+                        LevelStrip(readout: level, margin: style.topCornerRadius + style.levelStripMargin,
+                                   onChange: controller.levelDragged(to:), onHold: controller.holdLevel)
                             .frame(height: PillMetrics.levelStripHeight)
                             .transition(PillStyle.contentTransition)
                     }
@@ -79,10 +89,19 @@ struct PillView: View {
                 .clipShape(shape)
             }
             .contentShape(Rectangle())
-            .onHover { isInside in
-                controller.send(isInside ? .pointerEntered : .pointerExited)
+            // One handler for the whole shape, so moving between the panel and the strip
+            // never reports leaving and entering in the wrong order.
+            .onContinuousHover { phase in
+                let isOnPill = switch phase {
+                case .active(let point): Self.pointerOpensPanel(atY: point.y, state: state, stateHeight: stateHeight)
+                case .ended: false
+                }
+                guard isOnPill != isPointerOnPill else { return }
+                isPointerOnPill = isOnPill
+                controller.send(isOnPill ? .pointerEntered : .pointerExited)
             }
-            .onTapGesture {
+            .onTapGesture { location in
+                guard Self.pointerOpensPanel(atY: location.y, state: state, stateHeight: stateHeight) else { return }
                 controller.send(.clicked)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

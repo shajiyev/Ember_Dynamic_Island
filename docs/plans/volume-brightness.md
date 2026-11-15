@@ -1671,3 +1671,51 @@ Run the project's secrets check: `git diff | grep -i -E "users/|api[_-]?key|toke
 ```bash
 git add docs/roadmap.md docs/features.md docs/decisions.md docs/specs/volume-brightness.md && git commit -m "Finished volume and brightness in the pill" -m $'- Recorded the results and marked volume and brightness as done in the roadmap, feature list and spec\n- Verified by hand on <Mac model>, macOS <version>, with the checks in docs/plans/volume-brightness.md' && git push
 ```
+
+---
+
+# Part 2: Dragging the level
+
+Added 2026-11-15 (spec: "Dragging the level" in docs/specs/volume-brightness.md). Built
+before Task 6, whose checklist gains the drag checks below. Same Global Constraints and
+Commands as Part 1.
+
+### Task 7: Click or drag the strip's bar to set the level
+
+**Files:**
+- Modify: `Ember/Levels/LevelModel.swift`, `Ember/Pill/PillController.swift`,
+  `Ember/Pill/LevelStrip.swift`, `Ember/Pill/PillView.swift`, `Ember/EmberApp.swift`
+- Test: `EmberTests/LevelModelTests.swift`, `EmberTests/PillControllerTests.swift`
+
+**Interfaces:**
+- `LevelModel.set(level: Double)`: sets the level the strip last showed (volume after a
+  volume key, brightness after a brightness key), clamped to 0…1; unmutes; hands
+  `onReadout` the new readout. Does nothing with the switch off, before any key, or when
+  that level cannot be set (output without volume, built-in screen off).
+- `PillController.onLevelChange: ((Double) -> Void)?`, `levelDragged(to: Double)`,
+  `holdLevel(_ held: Bool)`. While held, the readout has no timeout; a new readout while
+  held starts none; releasing starts the readout's duration again.
+- `LevelStrip(readout:margin:onChange:onHold:)`: its bar is seekable (no time label) and
+  reports every fill live; it holds while hovered or dragged; the fill animates only for
+  key presses, not during a drag.
+- `PillView`: hover and click on the top part (the state's own shape) open the panel as
+  before; the strip does not, except that in the open state it counts as the panel.
+
+- [ ] **Step 1: Failing tests.** `LevelModelTests`: dragging sets the volume last shown
+  (`"30%"`), unmutes, sets brightness after a brightness key, keeps within 0…1, does
+  nothing before any key, does nothing with the switch off. `PillControllerTests`: a held
+  readout stays past its duration; releasing starts its time again; a newer readout while
+  held starts no time; `levelDragged(to:)` reaches `onLevelChange`.
+- [ ] **Step 2:** Run TEST; the new tests fail (or do not compile).
+- [ ] **Step 3:** Implement `LevelModel.set(level:)` and the controller's hold and drag.
+- [ ] **Step 4:** `LevelStrip` and `PillView` as above; wire
+  `controller.onLevelChange = { levels.set(level: $0) }` in `EmberApp`.
+- [ ] **Step 5:** Run TEST (clean first) and BUILD.
+- [ ] **Step 6: Checks by the user** (also added to Task 6's checklist):
+  1. At rest, press volume up, then drag the strip's bar: the volume changes as you drag,
+     the panel does not open, and the strip stays until 1.5 s after the pointer leaves.
+  2. Click a point on the bar: the level jumps there.
+  3. The same with a song in the wings, and in the open panel (the panel stays open).
+  4. Muted, drag: it unmutes.
+  5. After a brightness key, dragging sets the built-in screen's brightness.
+- [ ] **Step 7:** Checkpoint: roadmap, decisions; the user commits.

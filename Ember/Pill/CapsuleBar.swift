@@ -16,11 +16,15 @@ struct CapsuleBar: View {
     /// The text of the label above the pointer for the fill under it, such as "2:08";
     /// nil shows no label. Only on a seekable bar.
     var hoverLabel: ((_ fill: Double) -> String)? = nil
+    /// While the pointer is anywhere on a seekable bar, or dragging it: a knob at the fill,
+    /// as on macOS's sliders, instead of the light grey from the fill to the pointer.
+    var showsKnob = false
 
     static let trackHeight: CGFloat = 4
     static let trackColor = Color(white: 0x4D / 255)
     /// A seekable bar is taller than its track, so it is easy to grab.
     private static let grabHeight: CGFloat = 12
+    private static let knobSize = CGSize(width: 18, height: 12)
 
     /// The pointer's x over the bar while it is on it, nil otherwise.
     @State private var hoverX: CGFloat?
@@ -33,6 +37,14 @@ struct CapsuleBar: View {
     static func fill(atX x: CGFloat, width: CGFloat) -> Double {
         guard width > 0 else { return 0 }
         return min(max(Double(x / width), 0), 1)
+    }
+
+    /// The knob's centre for `fill` on a bar `width` points wide, kept so the whole knob
+    /// stays on the bar at both ends.
+    static func knobCenter(fill: Double, width: CGFloat, knobWidth: CGFloat) -> CGFloat {
+        guard width > knobWidth else { return width / 2 }
+        let x = width * CGFloat(min(max(fill, 0), 1))
+        return min(max(x, knobWidth / 2), width - knobWidth / 2)
     }
 
     var body: some View {
@@ -51,7 +63,7 @@ struct CapsuleBar: View {
             let pointerFill = hoverX.map { Self.fill(atX: $0, width: width) }
             ZStack(alignment: .leading) {
                 Capsule().fill(Self.trackColor)
-                if showsHover, let pointerFill, pointerFill > current {
+                if showsHover, !showsKnob, let pointerFill, pointerFill > current {
                     Capsule().fill(.white.opacity(0.5))
                         .frame(width: width * pointerFill)
                 }
@@ -60,6 +72,22 @@ struct CapsuleBar: View {
             }
             .frame(height: Self.trackHeight)
             .frame(maxHeight: .infinity)
+            .overlay(alignment: .leading) {
+                // Placed at the level first, so it appears there and grows around its own
+                // centre; scaling after the offset would slide it in from the bar's start.
+                let knob = Self.knobSize
+                ZStack {
+                    if showsHover, showsKnob {
+                        Capsule().fill(.white)
+                            .shadow(color: .black.opacity(0.35), radius: 1.5, y: 0.5)
+                            .transition(.opacity.combined(with: .scale(scale: 0.6)))
+                    }
+                }
+                .frame(width: knob.width, height: knob.height)
+                .offset(x: Self.knobCenter(fill: current, width: width, knobWidth: knob.width) - knob.width / 2)
+                .allowsHitTesting(false)
+            }
+            .animation(.smooth(duration: 0.15), value: showsHover)
             .overlay(alignment: .topLeading) {
                 if showsHover, let pointerFill, let hoverLabel {
                     label(hoverLabel(pointerFill))

@@ -774,3 +774,13 @@ the song's, so the centred row sat lower.
   gave, so it reads as the timer's. It is drawn a fifth smaller (user's choice) with
   `scaleEffect`, which keeps its layout slot, so its centre still matches the Music
   tab's circle.
+
+## 2026-11-15 — The level strip's bar shows a macOS-style knob
+Asked for after trying the draggable strip (#11, Part 2) on macOS 26.6.2: hovering showed
+Spotify's light grey preview from the fill to the pointer.
+- On the level strip, a white knob (18 × 12 pt) appears at the current level while the
+  pointer is anywhere on the bar or dragging it, and moves with the level, like macOS's
+  own sliders; there is no grey preview. **Why:** the user preferred macOS's look for
+  setting a level.
+- The Music tab keeps the Spotify style (no knob; time label and grey preview), chosen
+  earlier the same week. `CapsuleBar.showsKnob` picks the style.

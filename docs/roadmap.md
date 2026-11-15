@@ -82,7 +82,7 @@
   jumps when switching tabs; the Timer's main button is a stopwatch (a crown and side
   button on the white circle, drawn a fifth smaller). Spec docs/specs/timers.md. Builds;
   checked on screen by the user on macOS 26.6.2.
-- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 5 of 6 done (taking the keys).
+- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: tasks 1–5 and Part 2's task 7 (dragging the level) done; task 6 (checks and finishing) left.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.

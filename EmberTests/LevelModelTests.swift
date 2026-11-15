@@ -118,4 +118,59 @@ struct LevelModelTests {
         #expect(brightness.level == 0.5)
         #expect(shown.isEmpty)
     }
+
+    @Test func draggingSetsTheVolumeLastShown() {
+        let model = makeModel()
+        var shown: [LevelReadout] = []
+        model.onReadout = { shown.append($0) }
+        _ = model.handle(press(.volumeUp))
+        model.set(level: 0.3)
+        #expect(volume.volume == 0.3)
+        #expect(shown.last?.text == "30%")
+    }
+
+    @Test func draggingTheVolumeUnmutes() {
+        let model = makeModel()
+        _ = model.handle(press(.mute))
+        model.set(level: 0.3)
+        #expect(!volume.isMuted)
+    }
+
+    @Test func draggingSetsTheBrightnessAfterABrightnessKey() {
+        let model = makeModel()
+        var shown: [LevelReadout] = []
+        model.onReadout = { shown.append($0) }
+        _ = model.handle(press(.brightnessDown))
+        model.set(level: 0.8)
+        #expect(brightness.level == 0.8)
+        #expect(volume.volume == 0.5)
+        #expect(shown.last?.symbolName == "sun.max.fill")
+    }
+
+    @Test func draggingKeepsTheLevelWithinZeroAndOne() {
+        let model = makeModel()
+        _ = model.handle(press(.volumeUp))
+        model.set(level: 1.4)
+        #expect(volume.volume == 1)
+        model.set(level: -0.2)
+        #expect(volume.volume == 0)
+    }
+
+    @Test func draggingBeforeAnyKeyDoesNothing() {
+        let model = makeModel()
+        var shown: [LevelReadout] = []
+        model.onReadout = { shown.append($0) }
+        model.set(level: 0.3)
+        #expect(volume.volume == 0.5)
+        #expect(brightness.level == 0.5)
+        #expect(shown.isEmpty)
+    }
+
+    @Test func draggingWithTheSwitchOffDoesNothing() {
+        let model = makeModel()
+        _ = model.handle(press(.volumeUp))
+        model.turn(on: false)
+        model.set(level: 0.3)
+        #expect(volume.volume == 0.5625)
+    }
 }

@@ -83,14 +83,33 @@ Symbol and number are the same size as the wings' symbol and text.
 - **How long:** the strip stays 1.5 s after the last key press. Every press (and every
   repeat while a key is held) starts the 1.5 s again. Then the pill shrinks back.
 - The strip's padding is tuned by eye on a 14" MacBook Pro.
-- Hovering over the taller pill opens the panel as usual; the strip then follows the
-  panel's rule.
+- Hovering over the pill's top part (the notch or the wings) opens the panel as usual;
+  the strip then follows the panel's rule. Hovering over the strip itself does not (see
+  "Dragging the level").
+
+### Dragging the level
+
+Added 2026-11-15, for changing a level faster than one key press per step.
+- **Click or drag the strip's bar** to set the level there, in any state (rest, activity,
+  open panel). The volume or brightness changes **live** while dragging, not only on
+  release (unlike the Music tab's bar, which seeks on release).
+- **Smooth:** the level follows the pointer freely; it does not snap to the step dots.
+  The keys still move one dot per press.
+- **The strip stays** while the pointer is on it or a drag is going on; the 1.5 s start
+  when the pointer leaves it or the drag ends.
+- **Hovering over the strip does not open the panel,** so it stays where it is while
+  being dragged. In the open panel the strip is part of the panel, so the panel stays
+  open while the pointer is on it.
+- **Muted:** dragging the volume unmutes, as macOS's Control Center slider does.
+- The strip sets whichever level it shows: the volume after a volume key, the built-in
+  screen's brightness after a brightness key.
 
 ### The capsule bar
 
 One shared bar, modelled on Spotify's progress bar, used in two places so they always
 look alike:
-- **A thin, rounded track** (a capsule, 4 pt tall, as thick as Spotify's), with no knob.
+- **A thin, rounded track** (a capsule, 4 pt tall, as thick as Spotify's), with no knob,
+  except on the level strip while the pointer is on it (see below).
 - **The filled part is solid white;** the rest of the track is grey (about `#4D4D4D`).
 - **Step dots** (optional, from macOS's indicator): a row of 17 small dim dots under the
   track, one at each 1/16 step from 0 to 100%. Thickness, dot size and spacing are tuned
@@ -98,7 +117,10 @@ look alike:
 
 Where it is used:
 - **Volume and brightness strip:** with step dots, since each key press moves one dot.
-  Not interactive.
+  Click or drag to set the level, live (since 2026-11-15, see "Dragging the level"); no
+  time label. While the pointer is anywhere on the bar, or dragging it, a white knob
+  (18 × 12 pt) sits at the current level and moves with it, as on macOS's own sliders,
+  in place of Spotify's light grey preview.
 - **Music tab (Now Playing, #1):** replaces the thin `Slider` with its knob. No dots,
   because a song has no steps. Clicking anywhere on the bar seeks there; dragging moves
   the fill with the pointer and seeks on release, as the slider does today. While the
@@ -180,7 +202,9 @@ Pill changes:
   text, fill (0…1), dimmed. The pill knows nothing about volume or brightness.
 - `PillController.showLevel(_:)`: keeps the readout for its duration, and a newer one
   restarts the time. Separate from the brief and ongoing activities, so a battery alert
-  and a volume change never clear each other.
+  and a volume change never clear each other. `holdLevel(_:)` keeps it while the pointer
+  is on the strip or dragging it; `levelDragged(to:)` passes a dragged fill on through
+  `onLevelChange`, still knowing nothing about volume or brightness.
 - `NotchGeometry.rect(for:showsLevel:)`: adds `PillMetrics.levelStripHeight` below the
   state's shape.
   `windowFrame` includes the open panel plus the strip and the glow margin.
@@ -192,6 +216,10 @@ Shared bar:
   pointer position (clamped to 0…1), is a pure function so it can be tested.
 - `NowPlayingPanelView` uses it in place of `Slider`; the drag-then-seek logic stays as it
   is today.
+
+Dragging: `LevelStrip` reports the fill under the pointer to
+`PillController.levelDragged(to:)`; the app delegate passes it to `LevelModel.set(level:)`,
+which sets the level last shown and hands back a new readout, as a key press does.
 
 Data flow: a key press goes to `MediaKeyTap`, then `LevelModel`. The model either passes
 the key on, or takes it, sets the volume or brightness, and builds a `LevelReadout` with
@@ -210,6 +238,10 @@ Unit tests:
 - `PillController`: the readout goes after its duration; a newer one restarts it; it does
   not touch the brief or ongoing activity.
 - `CapsuleBar`: the fill at a pointer position, at both ends and beyond them.
+- Dragging (2026-11-15): `LevelModel.set(level:)` sets the volume or brightness last shown,
+  unmutes, stays within 0…1, and does nothing before any key or with the switch off;
+  `PillController` keeps a held readout past its duration, starts the time again on
+  release, and passes dragged fills on.
 
 Manual checklist (on macOS 26.6.2): the Music tab's capsule bar and controls (looks, click to
 seek, drag to seek); rest, activity and open panel; mute; quarter steps;
