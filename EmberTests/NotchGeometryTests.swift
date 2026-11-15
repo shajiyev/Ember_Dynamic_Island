@@ -55,9 +55,8 @@ struct NotchGeometryTests {
         #expect(try geometry().windowFrame == CGRect(x: 406, y: 710, width: 700, height: 272))
     }
 
-    @Test func levelAddsAStripBelowRestWidenedByTheFlareSoTheBodyIsTheNotchWidth() throws {
-        // The flares lie inside the frame, so the frame reaches one flare past each side.
-        #expect(try geometry().rect(for: .rest, showsLevel: true) == CGRect(x: 657.5, y: 917, width: 197, height: 65))
+    @Test func levelAddsAStripBelowRestAtTheNotchWidth() throws {
+        #expect(try geometry().rect(for: .rest, showsLevel: true) == CGRect(x: 663.5, y: 917, width: 185, height: 65))
     }
 
     @Test func levelAddsAStripBelowTheWings() throws {

@@ -17,30 +17,23 @@ struct PillStyleTests {
         #expect(PillStyle.style(for: .rest).glowOffset == 0)
     }
 
-    @Test func restEdgeLineTracesTheSidesAndShowsOutsideTheNotch() {
+    @Test func restEdgeLineTracesTheSidesUpToTheTopOfTheScreen() {
         let rest = PillStyle.style(for: .rest)
         #expect(rest.edgeFadeStart == .top)
         #expect(rest.edgeLineWidth == 2)
-        #expect(rest.edgeSideOutset == 6)
-        #expect(rest.edgeBottomOutset == 0)
     }
 
-    @Test func restFlareIsTheRestingShapesTopCornerAndTheEdgeLinesOutset() {
-        let rest = PillStyle.style(for: .rest)
-        #expect(rest.topCornerRadius == PillMetrics.restFlare)
-        #expect(rest.edgeSideOutset == PillMetrics.restFlare)
+    @Test func restHasNoFlareSoItsBlackIsExactlyTheNotch() {
+        // The flares lie inside the frame; without them the black body is the whole frame.
+        #expect(PillStyle.style(for: .rest).topCornerRadius == 0)
     }
 
-    @Test func restWithTheLevelStripDrawsItsEdgeLineOnTheShapesOwnEdge() {
-        // The shape is widened by the flare, so the line stays on the notch's edges.
-        let style = PillStyle.style(for: .rest, showsLevel: true)
-        #expect(style.edgeSideOutset == 0)
-        #expect(style.topCornerRadius == PillMetrics.restFlare)
-    }
-
-    @Test func theLevelStripChangesNoOtherStatesStyle() {
-        for state in [PillState.active, .open] {
-            #expect(PillStyle.style(for: state, showsLevel: true) == PillStyle.style(for: state), "\(state)")
+    @Test func theEdgeLineLiesWhollyOutsideTheShapeInEveryState() {
+        // The line is centred on an outline half its width outside the shape, so its inner
+        // edge touches the shape: no hardware covers half of it, and no gap shows.
+        for state in [PillState.rest, .active, .open] {
+            let style = PillStyle.style(for: state)
+            #expect(style.edgeOutset == style.edgeLineWidth / 2, "\(state)")
         }
     }
 
@@ -49,7 +42,6 @@ struct PillStyleTests {
             let style = PillStyle.style(for: state)
             #expect(style.edgeFadeStart == .center && style.edgeFadeEnd == .bottom, "\(state)")
             #expect(style.edgeLineWidth == 1, "\(state)")
-            #expect(style.edgeSideOutset == 0 && style.edgeBottomOutset == 0, "\(state)")
         }
     }
 

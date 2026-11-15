@@ -57,9 +57,9 @@ symbol, capsule bar and number.
    └─────────────────────────────────────────┘
 ```
 
-- **Rest:** the pill keeps the notch's width and grows down. Its black body below the
-  notch is the notch's full width (since 2026-11-15, see docs/decisions.md), so the frame
-  reaches one top flare past each side of the notch.
+- **Rest:** the pill keeps the notch's width and grows down. Its black below the notch is
+  the notch's full width, as the resting shape has no flare (since 2026-11-15, see
+  docs/decisions.md).
 - **Activity** (battery alert, timer, song, calendar heads-up): the wings keep showing the
   activity; the strip grows below at the active width.
 - **Open panel:** the strip runs along the bottom of the panel. The tab content does not

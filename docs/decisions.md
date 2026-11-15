@@ -735,3 +735,17 @@ Ember in System Settings and adding it back did not replace the stored signature
   stays signed ad hoc.
 - Still open for release: which certificate signs releases, and keeping its key safe, so
   users' permissions survive updates.
+
+## 2026-11-15 — The black is exactly the notch at rest, and the edge line lies outside it
+Found in the #11 checks on a 14" MacBook Pro, macOS 26.6.2: the resting edge line was
+thinner beside the notch than below it, with a step where the notch ends.
+**Why:** the line was centred on the notch's edge, so the hardware covered its inner half
+beside the notch but not below it. And the resting shape's top flares made its black 12
+points narrower than the notch, made up for by drawing the line 6 points out: that only
+works where the notch hides the gap, and would show on a screen without a notch (#28).
+- **Rest has no top flare** (`topCornerRadius` 0), so its black is exactly the notch. The
+  active pill and the open panel keep theirs; the shape grows them as it opens.
+- **In every state the edge line lies wholly outside the shape, touching it**
+  (`PillStyle.edgeOutset`, half the line's width). This replaces the per-state outsets and
+  the earlier widening of the rest shape with the level strip (`PillMetrics.restFlare`,
+  both removed), so the strip at rest no longer shows flares at the top of the screen.

@@ -34,11 +34,11 @@ Chosen by eye on a 14" MacBook Pro with temporary sliders and menu items (remove
 
 - **One switch:** `PillStyle.alwaysOnGlow`. Off gives the old invisible rest. The Settings
   toggle will drive this value.
-- **The edge line is drawn on an outline outside the shape.** At rest the shape is the
-  notch, so its sides lie on the physical notch's edges and its rounded corners (radius 14)
-  curve inside the notch, where the screen has no pixels. The line is therefore drawn on
-  an outline 6 points out at each side, where it can be seen. At the bottom it stays on
-  the shape's edge, which already lies 1 point below the notch.
+- **The edge line lies wholly outside the shape, touching it** (since 2026-11-15, in every
+  state; see docs/decisions.md). At rest the shape is exactly the notch, with no top flare,
+  so the line runs just outside the physical notch's edges, where the screen has pixels.
+  (Until then the resting shape had flares that made its black 12 points narrower than the
+  notch, and the line was drawn 6 points out at each side to make up for it.)
 - **Rest reaches 1 point below the reported notch height,** like the active pill
   (`PillMetrics.bottomExtension`). The physical notch is about 0.5 point taller than macOS
   reports; with the glow off the extra point is invisible.

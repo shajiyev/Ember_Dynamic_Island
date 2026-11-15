@@ -12,7 +12,7 @@ struct PillView: View {
     var body: some View {
         let state = controller.state
         let level = controller.level
-        let style = PillStyle.style(for: state, showsLevel: level != nil)
+        let style = PillStyle.style(for: state)
         let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
         // The state's own height: the wings and the panel stay in it, the strip goes below.
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0
@@ -34,13 +34,13 @@ struct PillView: View {
             .fill(.black)
             .frame(width: size.width, height: size.height)
             .overlay {
-                // A thin bright line that fades in towards the bottom edge, on an outline
-                // outside the shape by the style's outsets. The mask reaches past that outline
-                // so the half of the line outside it still shows.
-                let side = style.edgeSideOutset
+                // A thin bright line that fades in towards the bottom edge, just outside the
+                // shape (`PillStyle.edgeOutset`). The mask reaches past the line's outline so
+                // its outer half still shows.
+                let outset = style.edgeOutset
                 shape
                     .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity), lineWidth: style.edgeLineWidth)
-                    .padding(EdgeInsets(top: 0, leading: -side, bottom: -style.edgeBottomOutset, trailing: -side))
+                    .padding(EdgeInsets(top: 0, leading: -outset, bottom: -outset, trailing: -outset))
                     .mask(LinearGradient(colors: [.clear, .black],
                                          startPoint: style.edgeFadeStart, endPoint: style.edgeFadeEnd)
                         .padding(-style.edgeLineWidth))

@@ -33,7 +33,8 @@ rounded bottom corners. Corner radii, as starting values to tune on a real scree
 
 | | Top (flare) | Bottom |
 |---|---|---|
-| Rest and active | 6 | 14 |
+| Rest | 0 (since 2026-11-15: the black is exactly the notch) | 14 |
+| Active | 6 | 14 |
 | Open | 19 | 24 |
 
 ### Glow

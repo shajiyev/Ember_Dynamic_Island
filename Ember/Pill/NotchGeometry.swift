@@ -15,11 +15,6 @@ nonisolated enum PillMetrics {
     /// Height of the strip that shows a volume or brightness level below the pill (#11):
     /// about the notch's height, so it reads as a second pill under the first.
     static let levelStripHeight: CGFloat = 32
-    /// The resting shape's top flare (`PillStyle`'s top corner radius at rest). The flares lie
-    /// inside the shape's frame, so at rest the black body is this much narrower than the
-    /// notch on each side, hidden inside it. With the level strip the body shows below the
-    /// notch, so the frame widens by this much on each side to make the body the notch's width.
-    static let restFlare: CGFloat = 6
 }
 
 /// Where the notch is on one screen, and the rectangle the pill fills in each state.
@@ -49,15 +44,11 @@ nonisolated struct NotchGeometry: Equatable {
 
     /// The frame of the pill's shape in the given state, with the level strip below it
     /// when `showsLevel` is true. The strip never changes the width.
-    /// At rest the strip also widens the frame by the flare on each side, so the black body
-    /// below the notch is as wide as the notch.
     func rect(for state: PillState, showsLevel: Bool = false) -> CGRect {
         let shape = shapeRect(for: state)
         guard showsLevel else { return shape }
         let strip = PillMetrics.levelStripHeight
-        let flare = state == .rest ? PillMetrics.restFlare : 0
-        return CGRect(x: shape.minX - flare, y: shape.minY - strip,
-                      width: shape.width + 2 * flare, height: shape.height + strip)
+        return CGRect(x: shape.minX, y: shape.minY - strip, width: shape.width, height: shape.height + strip)
     }
 
     private func shapeRect(for state: PillState) -> CGRect {

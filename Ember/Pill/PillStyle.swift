@@ -14,13 +14,13 @@ nonisolated struct PillStyle: Equatable {
     /// both measured on the shape's height.
     var edgeFadeStart: UnitPoint = .center
     var edgeFadeEnd: UnitPoint = .bottom
-    /// Centred on the line's outline, so half of it lies outside that outline.
     var edgeLineWidth: CGFloat = 1
+
     /// How far the edge line's outline lies outside the shape, at each side and at the
-    /// bottom. At rest the shape hides inside the physical notch, so the line must sit
-    /// outside it.
-    var edgeSideOutset: CGFloat = 0
-    var edgeBottomOutset: CGFloat = 0
+    /// bottom: half the line's width, so the line lies wholly outside the black and touches
+    /// it. At rest no part of it is then hidden by the physical notch, and on a screen
+    /// without a notch no gap shows between the black and the line.
+    var edgeOutset: CGFloat { edgeLineWidth / 2 }
 
     /// The Ember glow: rose, #D9776B, the same as the logo's glow (docs/specs/logo.md).
     static let glowColor = Color(red: 0xD9 / 255, green: 0x77 / 255, blue: 0x6B / 255)
@@ -47,22 +47,16 @@ nonisolated struct PillStyle: Equatable {
                     removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
     }
 
-    /// - Parameter showsLevel: whether the level strip shows below the pill (#11).
-    static func style(for state: PillState, showsLevel: Bool = false) -> PillStyle {
-        let flare = PillMetrics.restFlare
+    static func style(for state: PillState) -> PillStyle {
         switch state {
         case .rest:
             // The resting glow surrounds the notch: centred, and its edge line runs up both
-            // sides, fading out at the top of the screen. The shape lies on the physical
-            // notch's edges and its corners are rounder than the notch's, so the line is
-            // drawn on an outline outside the shape, where the screen has pixels. With the
-            // level strip the shape is widened by the flare (`NotchGeometry`), so the line is
-            // drawn on the shape's own edge: the same place, now with the black up to it.
+            // sides, fading out at the top of the screen. No flare, so the black is exactly
+            // the notch and the line just outside it, where the screen has pixels.
             return alwaysOnGlow
-                ? PillStyle(topCornerRadius: flare, bottomCornerRadius: 14, glowOpacity: 0.6, glowRadius: 8, glowOffset: 0,
-                            edgeFadeStart: .top, edgeFadeEnd: UnitPoint(x: 0.5, y: 0.6), edgeLineWidth: 2,
-                            edgeSideOutset: showsLevel ? 0 : flare, edgeBottomOutset: 0)
-                : PillStyle(topCornerRadius: flare, bottomCornerRadius: 14, glowOpacity: 0, glowRadius: 0, glowOffset: 0)
+                ? PillStyle(topCornerRadius: 0, bottomCornerRadius: 14, glowOpacity: 0.6, glowRadius: 8, glowOffset: 0,
+                            edgeFadeStart: .top, edgeFadeEnd: UnitPoint(x: 0.5, y: 0.6), edgeLineWidth: 2)
+                : PillStyle(topCornerRadius: 0, bottomCornerRadius: 14, glowOpacity: 0, glowRadius: 0, glowOffset: 0)
         case .active:
             return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.85, glowRadius: 10, glowOffset: 5)
         case .open:
