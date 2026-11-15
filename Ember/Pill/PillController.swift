@@ -24,6 +24,10 @@ final class PillController {
     /// The notch on the display the pill lives on, or nil when no display has a notch.
     private(set) var geometry: NotchGeometry?
 
+    /// A volume or brightness level, shown in a strip below the pill until its duration
+    /// runs out (`showLevel(_:)`).
+    private(set) var level: LevelReadout?
+
     var hasNotchDisplay: Bool { geometry != nil }
 
     @ObservationIgnored private let timing: PillTiming
@@ -33,6 +37,7 @@ final class PillController {
     /// clicked the pill, or the panel was already open when it arrived.
     @ObservationIgnored var onActivitySeen: (() -> Void)?
     @ObservationIgnored private var briefTimeout: Task<Void, Never>?
+    @ObservationIgnored private var levelTimeout: Task<Void, Never>?
     /// The ongoing activity ends when seen and has been seen; it goes once the panel opens.
     @ObservationIgnored private var ongoingWasSeen = false
     /// Set while a seen activity waits for the panel to open; it replaces it then.
@@ -103,6 +108,18 @@ final class PillController {
             ongoingActivity = activity
         }
         activityDidChange()
+    }
+
+    /// Shows a level in the strip below the pill for its duration. A newer level replaces it
+    /// and starts its own time from zero. The pill's state and activities stay as they are.
+    func showLevel(_ readout: LevelReadout) {
+        level = readout
+        levelTimeout?.cancel()
+        levelTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(readout.duration))
+            guard !Task.isCancelled else { return }
+            self?.level = nil
+        }
     }
 
     /// Puts the pill on the display that has a notch and keeps it there when displays

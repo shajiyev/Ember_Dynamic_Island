@@ -25,6 +25,25 @@ struct PillStyleTests {
         #expect(rest.edgeBottomOutset == 0)
     }
 
+    @Test func restFlareIsTheRestingShapesTopCornerAndTheEdgeLinesOutset() {
+        let rest = PillStyle.style(for: .rest)
+        #expect(rest.topCornerRadius == PillMetrics.restFlare)
+        #expect(rest.edgeSideOutset == PillMetrics.restFlare)
+    }
+
+    @Test func restWithTheLevelStripDrawsItsEdgeLineOnTheShapesOwnEdge() {
+        // The shape is widened by the flare, so the line stays on the notch's edges.
+        let style = PillStyle.style(for: .rest, showsLevel: true)
+        #expect(style.edgeSideOutset == 0)
+        #expect(style.topCornerRadius == PillMetrics.restFlare)
+    }
+
+    @Test func theLevelStripChangesNoOtherStatesStyle() {
+        for state in [PillState.active, .open] {
+            #expect(PillStyle.style(for: state, showsLevel: true) == PillStyle.style(for: state), "\(state)")
+        }
+    }
+
     @Test func activeAndOpenEdgeLinesStayOnTheLowerHalf() {
         for state in [PillState.active, .open] {
             let style = PillStyle.style(for: state)

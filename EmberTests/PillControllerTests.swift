@@ -1,9 +1,45 @@
 import Foundation
+import SwiftUI
 import Testing
 @testable import Ember
 
 struct PillControllerTests {
     private let fast = PillTiming(openDelay: 0.02, closeDelay: 0.02)
+
+    private func readout(_ text: String = "62%", duration: TimeInterval = 0.05) -> LevelReadout {
+        LevelReadout(symbolName: "speaker.wave.2.fill", text: text, fill: 0.62, steps: 16, duration: duration)
+    }
+
+    @Test func aLevelShowsForItsDurationThenGoes() async throws {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout())
+        #expect(controller.level?.text == "62%")
+        try await settle()
+        #expect(controller.level == nil)
+    }
+
+    @Test func aNewerLevelReplacesTheShownOneAndStartsItsTimeAgain() async throws {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout("62%", duration: 0.3))
+        try await Task.sleep(for: .milliseconds(200))
+        controller.showLevel(readout("69%", duration: 0.3))
+        try await Task.sleep(for: .milliseconds(200))
+        // 400 ms after the first readout, which would have gone at 300 ms; the second goes at 500.
+        #expect(controller.level?.text == "69%")
+        try await settle()
+        #expect(controller.level == nil)
+    }
+
+    @Test func aLevelLeavesTheStateAndTheActivityAlone() {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout())
+        #expect(controller.state == .rest)
+        let song = LiveActivity(symbolName: "music.note", symbolColor: .white, text: "", glowColor: nil)
+        controller.setOngoing(song)
+        controller.showLevel(readout("69%"))
+        #expect(controller.state == .active)
+        #expect(controller.currentActivity == song)
+    }
 
     /// Long enough for a 0.02-second delay to have fired.
     private func settle() async throws {

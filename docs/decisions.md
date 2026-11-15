@@ -667,3 +667,21 @@ place the sandbox is required.
   2 (brightness up) and 3 (brightness down), state 0x0A on press and 0x0B on release.
   Taking volume up hid macOS's indicator and left the volume unchanged. The repeat bit and
   Shift-Option were not observed yet; they are checked in Task 6.
+
+## 2026-11-15 — The level strip at rest is as wide as the notch
+Found in the Task 4 check of #11, on a 14" MacBook Pro, macOS 26.6.2: below the notch the
+strip's black was narrower than the notch, with the glow line a few points outside it.
+**Why:** the resting shape's top flares lie inside its frame, so its black body is 6
+points narrower than the notch on each side, and its edge line is drawn 6 points outside
+the shape to land on the notch's edges (2026-11-11). Both were hidden inside the notch
+until the strip showed the shape below it.
+- While the strip shows at rest, the frame widens by the flare on each side
+  (`PillMetrics.restFlare`), so the body is the notch's width, and the edge line is drawn
+  on the shape's own edge. The line stays on the notch's edges; the black now meets it.
+- Two 6-point flares then show at the top of the screen beside the notch, like the ones
+  the active pill has. Rest without the strip is unchanged.
+- **The strip's content is padded 14 points from the black body, not the frame**
+  (`LevelStrip`'s `inset`, the state's top flare, as the wings do). **Why:** in the open
+  panel the body starts 19 points in, so the symbol and the number were cut off by the
+  panel's flared and rounded corners. At rest and with an activity the bar is 12 points
+  shorter than before.

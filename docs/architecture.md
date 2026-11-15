@@ -21,12 +21,14 @@
   - `PillState.swift`: the rules (`PillModel`). Events in, state out. No timers, no UI.
     `closeRequested` closes the open panel at once (the panel's content asks for it).
   - `NotchGeometry.swift`: where the notch is (the reported width, centred on the screen)
-    and the rectangle for each state.
+    and the rectangle for each state. With a level showing, each state's rectangle grows down
+    by `PillMetrics.levelStripHeight`; the window holds the open panel with the strip.
   - `PillController.swift`: owns the model, runs the open and close delays, manages the
     window, keeps a brief live activity for its duration and an ongoing one until its
     feature clears it (the brief one shows over the ongoing one), and holds the open
     panel's content it is given at start. `onActivitySeen` tells the app when the user
-    has seen an activity that ends when seen.
+    has seen an activity that ends when seen. `showLevel(_:)` keeps a `LevelReadout` for its
+    duration, apart from the activities.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
     `PillStyle.alwaysOnGlow` switches the resting glow (#29) on or off.
@@ -35,12 +37,16 @@
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
     its song's. It can also close the panel (`closePanel` environment action), as the Music
     tab does after sending the user to a player.
+  - `LevelStrip.swift`: the level strip below the pill (symbol, `CapsuleBar` with step dots, text).
   - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
     shared by the Music tab's scrubber and the volume and brightness strip.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
   pill (wing symbol, wing text, optional glow colour). A brief one has a duration and goes
   by itself; an ongoing one stays until its feature clears it, or until seen if it ends
   when seen.
+- `Ember/Activity/LevelReadout.swift` — `LevelReadout`: what the pill shows in the strip
+  below its shape for a volume or brightness change (symbol, text, fill, step dots,
+  dimmed). It leaves the pill's state and wings alone.
 - `Ember/Panel/PanelView.swift` — the open panel's content: a top row beside the notch
   (status items on the right, the tab row on the left later) above the body.
 - `Ember/Battery/` — the battery feature (#4).

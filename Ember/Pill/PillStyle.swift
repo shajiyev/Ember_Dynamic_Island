@@ -47,18 +47,22 @@ nonisolated struct PillStyle: Equatable {
                     removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
     }
 
-    static func style(for state: PillState) -> PillStyle {
+    /// - Parameter showsLevel: whether the level strip shows below the pill (#11).
+    static func style(for state: PillState, showsLevel: Bool = false) -> PillStyle {
+        let flare = PillMetrics.restFlare
         switch state {
         case .rest:
             // The resting glow surrounds the notch: centred, and its edge line runs up both
             // sides, fading out at the top of the screen. The shape lies on the physical
             // notch's edges and its corners are rounder than the notch's, so the line is
-            // drawn on an outline outside the shape, where the screen has pixels.
+            // drawn on an outline outside the shape, where the screen has pixels. With the
+            // level strip the shape is widened by the flare (`NotchGeometry`), so the line is
+            // drawn on the shape's own edge: the same place, now with the black up to it.
             return alwaysOnGlow
-                ? PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.6, glowRadius: 8, glowOffset: 0,
+                ? PillStyle(topCornerRadius: flare, bottomCornerRadius: 14, glowOpacity: 0.6, glowRadius: 8, glowOffset: 0,
                             edgeFadeStart: .top, edgeFadeEnd: UnitPoint(x: 0.5, y: 0.6), edgeLineWidth: 2,
-                            edgeSideOutset: 6, edgeBottomOutset: 0)
-                : PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0, glowRadius: 0, glowOffset: 0)
+                            edgeSideOutset: showsLevel ? 0 : flare, edgeBottomOutset: 0)
+                : PillStyle(topCornerRadius: flare, bottomCornerRadius: 14, glowOpacity: 0, glowRadius: 0, glowOffset: 0)
         case .active:
             return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.85, glowRadius: 10, glowOffset: 5)
         case .open:

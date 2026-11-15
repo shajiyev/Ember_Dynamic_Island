@@ -107,6 +107,9 @@ struct PillMenu: View {
             Button("Low") { simulate(.low, at: 20) }
             Button("Very Low") { simulate(.veryLow, at: 10) }
         }
+        Button("Simulate Volume Change") {
+            controller.showLevel(LevelLook.readout(volume: VolumeState(level: 0.62, isMuted: false)))
+        }
         Divider()
         #endif
         Button("Quit Ember") {

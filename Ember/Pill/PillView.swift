@@ -11,8 +11,11 @@ struct PillView: View {
 
     var body: some View {
         let state = controller.state
-        let style = PillStyle.style(for: state)
-        let size = controller.geometry?.rect(for: state).size ?? .zero
+        let level = controller.level
+        let style = PillStyle.style(for: state, showsLevel: level != nil)
+        let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
+        // The state's own height: the wings and the panel stay in it, the strip goes below.
+        let stateHeight = controller.geometry?.rect(for: state).height ?? 0
         let notchHeight = controller.geometry?.notchRect.height ?? 0
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
@@ -50,20 +53,29 @@ struct PillView: View {
                 // This container always exists and is clipped to the shape, so its clip
                 // grows and shrinks with the shape. Content that appears is uncovered by
                 // the black instead of showing beside it before the shape gets there.
-                ZStack {
-                    if state == .active, let activity = controller.currentActivity {
-                        ActivityWings(activity: activity, inset: style.topCornerRadius, height: notchHeight)
-                            .transition(PillStyle.contentTransition)
+                VStack(spacing: 0) {
+                    ZStack {
+                        if state == .active, let activity = controller.currentActivity {
+                            ActivityWings(activity: activity, inset: style.topCornerRadius, height: notchHeight)
+                                .transition(PillStyle.contentTransition)
+                        }
+                        if state == .open {
+                            panelContent
+                                .environment(\.notchHeight, notchHeight)
+                                .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
+                                .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
+                                .transition(PillStyle.contentTransition)
+                        }
                     }
-                    if state == .open {
-                        panelContent
-                            .environment(\.notchHeight, notchHeight)
-                            .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
-                            .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: stateHeight)
+                    if let level {
+                        LevelStrip(readout: level, inset: style.topCornerRadius)
+                            .frame(height: PillMetrics.levelStripHeight)
                             .transition(PillStyle.contentTransition)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .clipShape(shape)
             }
             .contentShape(Rectangle())
@@ -78,6 +90,7 @@ struct PillView: View {
             .animation(PillStyle.animation(to: state), value: state)
             .animation(PillStyle.animation, value: activityGlow)
             .animation(PillStyle.animation, value: panelGlow)
+            .animation(PillStyle.animation, value: level != nil)
     }
 }
 
