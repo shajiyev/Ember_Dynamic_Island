@@ -68,6 +68,8 @@
     asleep), so the sound rings only once when nobody can be watching.
   - `TimerPanelView.swift`, `TimerRing.swift`, `HoldRepeatButton.swift`: the Timer tab,
     built like the Music tab (the ring tile where the cover would be).
+  - `StopwatchButton.swift`: the Timer tab's main button, the white circle drawn as a
+    stopwatch.
 - `Ember/NowPlaying/` — Now Playing for Apple Music and Spotify (#1).
   - `Player.swift`, `PlayerScripts.swift`: the two players (with each one's app icon, read
     from the installed app), and short AppleScript commands that read them and send
@@ -108,8 +110,8 @@
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
   up" always; the song if the panel was closed on the Music tab; otherwise the timer.
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
-  (light grey, white under the pointer), shared by the Music and Timer tabs so they
-  always look alike.
+  (light grey, white under the pointer, all one width), shared by the Music and Timer
+  tabs so they always look alike and sit in the same place.
 - `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
   remembered between openings, and the tab of what the wings show, which the panel opens
   on.

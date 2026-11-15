@@ -759,3 +759,18 @@ screen was on, so BetterDisplay never saw one.
 - Ember now takes a brightness key only while the pointer is on the built-in screen
   (`BrightnessControl.isPointedAt`); otherwise the key goes on to macOS and any other tool.
   Volume keys are unchanged: they follow the sound output, not a screen.
+
+## 2026-11-15 — The Music and Timer controls sit in one place; the Timer's main button is a stopwatch
+Asked by the user: switching between the Music and Timer tabs made the play/start button
+jump a little, and the two tabs' main buttons looked the same.
+**Why it jumped:** the side buttons had different widths (⏮/⏭ against ↺, ✕ and "+1"), so
+the circle between them was centred differently, and the timer's column was taller than
+the song's, so the centred row sat lower.
+- **Plain buttons all take a 24-point slot**, and in both tabs the column beside the tile
+  is as tall as the tile and ends with the controls. The timer's taller time reaches up
+  past its ring instead of pushing the controls down.
+- **The Timer's Start, Pause and Resume button is a stopwatch** (`StopwatchButton`): the
+  white circle with a crown and a side button, from a stopwatch-with-play picture the user
+  gave, so it reads as the timer's. It is drawn a fifth smaller (user's choice) with
+  `scaleEffect`, which keeps its layout slot, so its centre still matches the Music
+  tab's circle.

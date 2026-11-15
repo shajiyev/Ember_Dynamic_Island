@@ -24,7 +24,8 @@ struct CircleButton: View {
 }
 
 /// A secondary panel button, as in Spotify: light grey, white while the pointer is on it,
-/// faded while dimmed. Shared by the Music and Timer tabs.
+/// faded while dimmed. Shared by the Music and Timer tabs. Every one is the same width, so
+/// the white circle between two of them sits in the same place on both tabs.
 struct PlainButton<Label: View>: View {
     /// What VoiceOver reads, such as "Next".
     let title: String
@@ -38,6 +39,7 @@ struct PlainButton<Label: View>: View {
             label
                 .font(.system(size: 17))
                 .foregroundStyle(.white.opacity(isEnabled ? (isHovering ? 1 : 0.7) : 0.3))
+                .frame(width: 24)
         }
         .buttonStyle(.plain)
         .onHover { isHovering = $0 }

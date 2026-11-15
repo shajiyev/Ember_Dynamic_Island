@@ -44,10 +44,19 @@ below: a plain icon, the white circle, a plain icon.
 timer's orange. The ring is grey while stopped and fills in orange as the run goes on
 (time gone ÷ length of the run).
 
-**The buttons** look exactly like the Music tab's (shared, `Ember/Panel/PanelButtons.swift`):
-the main one is a white circle with a black symbol; the others are plain light-grey
-symbols that turn white under the pointer. A dimmed button is faded. The presets are
-soft round chips that brighten under the pointer.
+**The buttons** are the Music tab's plain ones (shared, `Ember/Panel/PanelButtons.swift`):
+light-grey symbols that turn white under the pointer, each in a slot of the same width.
+The main one is the timer's own (since 2026-11-15, `StopwatchButton`): the white circle
+with a black symbol, drawn as a stopwatch, with a crown on top and a small button at the
+upper right, a fifth smaller than the Music tab's circle. A dimmed button is faded. The
+presets are soft round chips that brighten under the pointer.
+
+**Nothing moves between the Music and Timer tabs** (since 2026-11-15): in both, the
+column beside the tile is as tall as the tile and ends with the controls, so the controls
+sit level with the tile's bottom; the timer's taller time reaches up past the tile
+instead. With the plain buttons' equal slots, the main button's centre is the same on
+both tabs. The stopwatch is scaled down around that centre without changing the space it
+takes.
 
 **Setting a time (the timer is stopped):**
 - The time in 30-point digits. Three units: hours (0–23), minutes (0–59), seconds
@@ -58,7 +67,7 @@ soft round chips that brighten under the pointer.
   second, until released.
 - Presets **5m, 25m, 45m**, at the right end of the time's line, set the whole time in
   one click (for example `0:05:00`).
-- Controls: **Reset** (`arrow.counterclockwise`) · **Start** (circle, `play.fill`) ·
+- Controls: **Reset** (`arrow.counterclockwise`) · **Start** (stopwatch, `play.fill`) ·
   **+1**. Start and Reset are dimmed at `0:00:00`. Reset sets the time back to
   `0:00:00`, so a new time can be set from scratch.
 
@@ -67,8 +76,8 @@ soft round chips that brighten under the pointer.
   "Ends at 14:35" in the Mac's own time format while running, "Paused" while paused.
 - Below that, a bar like the Music tab's scrubber (`CapsuleBar`), with the time gone on
   the left and the length of the run on the right. It cannot be dragged.
-- Controls: **Cancel** (`xmark`) · **Pause** (circle, `pause.fill`) or **Resume**
-  (circle, `play.fill`) · **+1**.
+- Controls: **Cancel** (`xmark`) · **Pause** (stopwatch, `pause.fill`) or **Resume**
+  (stopwatch, `play.fill`) · **+1**.
 - The arrows and presets are gone: they only set the time of a stopped timer.
 - Cancel returns to setup with the time that was last set.
 

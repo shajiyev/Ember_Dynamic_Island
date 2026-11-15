@@ -39,6 +39,8 @@ struct NowPlayingPanelView: View {
                 scrubber(track)
                 controls(track)
             }
+            // The controls end level with the cover's bottom, as they do on the Timer tab.
+            .frame(height: 96, alignment: .bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

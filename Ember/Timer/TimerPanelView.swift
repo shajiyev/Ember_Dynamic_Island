@@ -20,6 +20,9 @@ struct TimerPanelView: View {
                 }
                 controls
             }
+            // The controls end level with the ring's bottom, as they do on the Music tab; the
+            // taller time above them reaches up past the ring instead of pushing them down.
+            .frame(height: 96, alignment: .bottom)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -65,7 +68,7 @@ struct TimerPanelView: View {
         .foregroundStyle(.white.opacity(0.5))
     }
 
-    /// Reset or Cancel, the white circle (Start, Pause or Resume), and +1.
+    /// Reset or Cancel, the stopwatch (Start, Pause or Resume), and +1.
     private var controls: some View {
         let isZero = timer.countdown.setting.totalSeconds == 0
         return HStack(spacing: 26) {
@@ -73,14 +76,14 @@ struct TimerPanelView: View {
             case .stopped:
                 PlainButton(symbolName: "arrow.counterclockwise", title: "Reset", action: timer.reset)
                     .disabled(isZero)
-                CircleButton(symbolName: "play.fill", title: "Start", action: timer.start)
+                StopwatchButton(symbolName: "play.fill", title: "Start", action: timer.start)
                     .disabled(isZero)
             case .running:
                 PlainButton(symbolName: "xmark", title: "Cancel", action: timer.cancel)
-                CircleButton(symbolName: "pause.fill", title: "Pause", action: timer.pause)
+                StopwatchButton(symbolName: "pause.fill", title: "Pause", action: timer.pause)
             case .paused:
                 PlainButton(symbolName: "xmark", title: "Cancel", action: timer.cancel)
-                CircleButton(symbolName: "play.fill", title: "Resume", action: timer.resume)
+                StopwatchButton(symbolName: "play.fill", title: "Resume", action: timer.resume)
             }
             PlainButton(title: "Add 1 minute", action: timer.addMinute) {
                 Text("+1").font(.system(size: 14, weight: .semibold))

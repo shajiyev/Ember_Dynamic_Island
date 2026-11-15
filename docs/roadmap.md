@@ -78,13 +78,18 @@
 - **Done:** in the Calendar tab, clicking the month and year or the events heading opens
   Calendar; clicking "Reminders" opens Reminders; the panel closes, as in the Music tab.
   Spec docs/specs/calendar.md. Tests pass; checked on screen by the user on macOS 26.6.2.
+- **Done:** the Music and Timer tabs' controls sit in exactly the same place, so nothing
+  jumps when switching tabs; the Timer's main button is a stopwatch (a crown and side
+  button on the white circle, drawn a fifth smaller). Spec docs/specs/timers.md. Builds;
+  checked on screen by the user on macOS 26.6.2.
 - **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 5 of 6 done (taking the keys).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
 - **Next:** finish volume and brightness in the pill (#11) with the plan's six tasks.
   Website: the pill demo's Timer tab still shows the old timer layout; update it to
-  design B (see docs/architecture.md, the pill demo copies `TimerPanelView`).
+  design B with the stopwatch button (see docs/architecture.md, the pill demo copies
+  `TimerPanelView`).
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on
   Mac and iPhone; a custom domain once bought. The demo grows as features are finished. Later for
