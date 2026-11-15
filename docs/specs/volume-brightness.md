@@ -124,8 +124,9 @@ Ember lets the key through to macOS, which shows its own indicator as it does to
 - there is no notch display to show the pill on (the lid is closed);
 - volume keys: the current sound output cannot change its volume (some HDMI and USB
   devices);
-- brightness keys: the built-in screen is closed or off. External monitors stay with
-  macOS, as v1 is for the notch display only.
+- brightness keys: the built-in screen is closed or off, or the pointer is on another
+  screen. External monitors stay with macOS, or with a tool such as BetterDisplay, as v1 is
+  for the notch display only (since 2026-11-15, see docs/decisions.md).
 
 ### The switch
 

@@ -32,6 +32,15 @@ final class BuiltInBrightness: BrightnessControl {
         _ = setFunction(display, Float(level))
     }
 
+    var isPointedAt: Bool {
+        // Global display coordinates, which `CGGetDisplaysWithPoint` expects.
+        guard let pointer = CGEvent(source: nil)?.location, let builtIn = Self.builtInDisplay() else { return false }
+        var display: CGDirectDisplayID = 0
+        var count: UInt32 = 0
+        guard CGGetDisplaysWithPoint(pointer, 1, &display, &count) == .success, count == 1 else { return false }
+        return display == builtIn
+    }
+
     /// The built-in screen while it is on. Never "the main display", which may be an
     /// external monitor (DisplayServices fails for those).
     private static func builtInDisplay() -> CGDirectDisplayID? {

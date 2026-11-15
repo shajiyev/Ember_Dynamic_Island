@@ -12,6 +12,7 @@ private final class FakeVolume: VolumeControl {
 
 private final class FakeBrightness: BrightnessControl {
     var level: Double? = 0.5
+    var isPointedAt = true
     func brightness() -> Double? { level }
     func setBrightness(_ level: Double) { self.level = level }
 }
@@ -103,6 +104,18 @@ struct LevelModelTests {
         var shown: [LevelReadout] = []
         model.onReadout = { shown.append($0) }
         #expect(!model.handle(press(.brightnessDown)))
+        #expect(shown.isEmpty)
+    }
+
+    @Test func passesBrightnessKeysWhileThePointerIsOnAnotherScreen() {
+        // An external monitor's brightness belongs to macOS or a tool such as BetterDisplay.
+        let model = makeModel()
+        brightness.isPointedAt = false
+        var shown: [LevelReadout] = []
+        model.onReadout = { shown.append($0) }
+        #expect(!model.handle(press(.brightnessUp)))
+        #expect(!model.handle(press(.brightnessUp, isDown: false)))
+        #expect(brightness.level == 0.5)
         #expect(shown.isEmpty)
     }
 }

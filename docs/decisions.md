@@ -749,3 +749,13 @@ works where the notch hides the gap, and would show on a screen without a notch 
   (`PillStyle.edgeOutset`, half the line's width). This replaces the per-state outsets and
   the earlier widening of the rest shape with the level strip (`PillMetrics.restFlare`,
   both removed), so the strip at rest no longer shows flares at the top of the screen.
+
+## 2026-11-15 — Brightness keys go to the screen the pointer is on
+Found in the #11 checks on macOS 26.6.2: with Ember on, the brightness keys no longer
+changed an external monitor.
+**Why:** BetterDisplay also takes the media keys, to set external monitors' brightness,
+and Ember's event tap comes first. Ember took every brightness key while the built-in
+screen was on, so BetterDisplay never saw one.
+- Ember now takes a brightness key only while the pointer is on the built-in screen
+  (`BrightnessControl.isPointedAt`); otherwise the key goes on to macOS and any other tool.
+  Volume keys are unchanged: they follow the sound output, not a screen.

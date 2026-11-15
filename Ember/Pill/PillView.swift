@@ -70,7 +70,7 @@ struct PillView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: stateHeight)
                     if let level {
-                        LevelStrip(readout: level, inset: style.topCornerRadius)
+                        LevelStrip(readout: level, margin: style.topCornerRadius + style.levelStripMargin)
                             .frame(height: PillMetrics.levelStripHeight)
                             .transition(PillStyle.contentTransition)
                     }

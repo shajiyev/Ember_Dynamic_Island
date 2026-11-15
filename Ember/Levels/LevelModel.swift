@@ -17,6 +17,10 @@ protocol BrightnessControl: AnyObject {
     /// 0…1, or nil when the built-in screen is closed or off.
     func brightness() -> Double?
     func setBrightness(_ level: Double)
+    /// Whether the pointer is on the built-in screen, so a brightness key is meant for it.
+    /// Otherwise it is meant for the screen the user is on, which belongs to macOS or a tool
+    /// such as BetterDisplay.
+    var isPointedAt: Bool { get }
 }
 
 /// Volume and brightness in the pill (#11): the menu switch, and for each key, whether
@@ -62,7 +66,7 @@ final class LevelModel {
             if next.isMuted != current.isMuted { volume.setMuted(next.isMuted) }
             onReadout?(LevelLook.readout(volume: next))
         } else {
-            guard let current = brightness.brightness() else { return false }
+            guard brightness.isPointedAt, let current = brightness.brightness() else { return false }
             guard press.isDown else { return true }
             let next = LevelStep.next(from: current, up: press.key == .brightnessUp, isFine: press.isFine)
             brightness.setBrightness(next)

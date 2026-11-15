@@ -45,6 +45,14 @@ struct PillStyleTests {
         }
     }
 
+    @Test func levelStripContentSitsFurtherInOnTheOpenPanel() {
+        // Measured from the black body, which starts the top flare in from the frame's edge.
+        #expect(PillStyle.style(for: .rest).levelStripMargin == 14)
+        #expect(PillStyle.style(for: .active).levelStripMargin == 14)
+        let open = PillStyle.style(for: .open)
+        #expect(open.topCornerRadius + open.levelStripMargin == 48)
+    }
+
     @Test func activeAndOpenGlowsAreStillPushedDownByHalfTheirRadius() {
         for state in [PillState.active, .open] {
             let style = PillStyle.style(for: state)

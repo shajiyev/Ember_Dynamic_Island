@@ -15,6 +15,8 @@ nonisolated struct PillStyle: Equatable {
     var edgeFadeStart: UnitPoint = .center
     var edgeFadeEnd: UnitPoint = .bottom
     var edgeLineWidth: CGFloat = 1
+    /// How far the level strip's symbol and text lie inside the black body, at each side.
+    var levelStripMargin: CGFloat = 14
 
     /// How far the edge line's outline lies outside the shape, at each side and at the
     /// bottom: half the line's width, so the line lies wholly outside the black and touches
@@ -60,7 +62,9 @@ nonisolated struct PillStyle: Equatable {
         case .active:
             return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.85, glowRadius: 10, glowOffset: 5)
         case .open:
-            return PillStyle(topCornerRadius: 19, bottomCornerRadius: 24, glowOpacity: 0.55, glowRadius: 16, glowOffset: 8)
+            // The level strip sits further in on the wide panel: 48 points from its edge.
+            return PillStyle(topCornerRadius: 19, bottomCornerRadius: 24, glowOpacity: 0.55, glowRadius: 16, glowOffset: 8,
+                             levelStripMargin: 29)
         }
     }
 }

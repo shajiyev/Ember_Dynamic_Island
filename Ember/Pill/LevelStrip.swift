@@ -4,9 +4,9 @@ import SwiftUI
 /// with step dots, and text. The same in every state; only its width follows the pill.
 struct LevelStrip: View {
     let readout: LevelReadout
-    /// The top flare: the black body starts this far in from the edge, so the content is
-    /// padded from the body, not the frame, and clears the open panel's rounder corners.
-    let inset: CGFloat
+    /// How far the symbol and the text lie in from the pill's edges: the top flare (the black
+    /// body starts that far in) plus the state's margin (`PillStyle.levelStripMargin`).
+    let margin: CGFloat
 
     var body: some View {
         HStack(spacing: 8) {
@@ -23,6 +23,6 @@ struct LevelStrip: View {
                 .frame(width: 38, alignment: .trailing)
         }
         .foregroundStyle(.white)
-        .padding(.horizontal, inset + 14)
+        .padding(.horizontal, margin)
     }
 }
