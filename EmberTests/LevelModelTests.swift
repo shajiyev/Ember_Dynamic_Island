@@ -4,6 +4,7 @@ import Testing
 
 private final class FakeVolume: VolumeControl {
     var canSetVolume = true
+    var canMute = true
     var volume = 0.5
     var isMuted = false
     func setVolume(_ level: Double) { volume = level }
@@ -22,7 +23,7 @@ struct LevelModelTests {
     private let brightness = FakeBrightness()
 
     private func freshDefaults() -> UserDefaults {
-        let name = "LevelModelTests-\(UUID().uuidString)"
+        let name = "LevelModelTests"
         let defaults = UserDefaults(suiteName: name)!
         defaults.removePersistentDomain(forName: name)
         return defaults
@@ -35,8 +36,9 @@ struct LevelModelTests {
         return model
     }
 
-    private func press(_ key: LevelKey, isDown: Bool = true, isRepeat: Bool = false) -> LevelKeyPress {
-        LevelKeyPress(key: key, isDown: isDown, isRepeat: isRepeat, isFine: false)
+    private func press(_ key: LevelKey, isDown: Bool = true, isRepeat: Bool = false,
+                       isFine: Bool = false, isShortcut: Bool = false) -> LevelKeyPress {
+        LevelKeyPress(key: key, isDown: isDown, isRepeat: isRepeat, isFine: isFine, isShortcut: isShortcut)
     }
 
     @Test func offByDefaultAndPassesEveryKey() {
@@ -68,9 +70,10 @@ struct LevelModelTests {
     @Test func takesTheReleaseWithoutChangingAnything() {
         let model = makeModel()
         var shown: [LevelReadout] = []
+        _ = model.handle(press(.volumeUp))
         model.onReadout = { shown.append($0) }
         #expect(model.handle(press(.volumeUp, isDown: false)))
-        #expect(volume.volume == 0.5)
+        #expect(volume.volume == 0.5625)
         #expect(shown.isEmpty)
     }
 
@@ -87,6 +90,84 @@ struct LevelModelTests {
         #expect(!model.handle(press(.volumeUp)))
         #expect(!model.handle(press(.mute)))
         #expect(volume.volume == 0.5)
+    }
+
+    @Test func passesMuteWhenTheOutputCannotMute() {
+        let model = makeModel()
+        volume.canMute = false
+        #expect(!model.handle(press(.mute)))
+        #expect(!model.handle(press(.mute, isDown: false)))
+        #expect(!volume.isMuted)
+    }
+
+    @Test func volumeUpStillWorksWhenTheOutputCannotMute() {
+        let model = makeModel()
+        volume.canMute = false
+        volume.isMuted = true   // stale state from another output; must stay untouched
+        #expect(model.handle(press(.volumeUp)))
+        #expect(volume.volume == 0.5625)
+        #expect(volume.isMuted)
+    }
+
+    @Test func draggingDoesNotUnmuteWhenTheOutputCannotMute() {
+        let model = makeModel()
+        _ = model.handle(press(.volumeUp))
+        volume.canMute = false
+        volume.isMuted = true
+        model.set(level: 0.3)
+        #expect(volume.volume == 0.3)
+        #expect(volume.isMuted)
+    }
+
+    @Test func takesTheReleaseOfAPressTakenBeforeThePointerLeft() {
+        let model = makeModel()
+        #expect(model.handle(press(.brightnessUp)))
+        brightness.isPointedAt = false
+        #expect(model.handle(press(.brightnessUp, isRepeat: true)))
+        #expect(model.handle(press(.brightnessUp, isDown: false)))
+        #expect(brightness.level == 0.625)   // the repeat stepped again
+    }
+
+    @Test func passesTheReleaseOfAPressPassedWhileThePointerWasAway() {
+        let model = makeModel()
+        brightness.isPointedAt = false
+        #expect(!model.handle(press(.brightnessUp)))
+        brightness.isPointedAt = true
+        #expect(!model.handle(press(.brightnessUp, isDown: false)))
+    }
+
+    @Test func takesTheReleaseAfterTheSwitchWasTurnedOffWhileHeld() {
+        let model = makeModel()
+        #expect(model.handle(press(.volumeUp)))
+        model.turn(on: false)
+        #expect(model.handle(press(.volumeUp, isDown: false)))
+    }
+
+    @Test func passesEveryKeyWhenThereIsNoNotchDisplay() {
+        let model = makeModel()
+        model.canShow = { false }
+        #expect(!model.handle(press(.volumeUp)))
+        #expect(volume.volume == 0.5)
+    }
+
+    @Test func takesTheReleaseWhenTheNotchDisplayGoesAwayWhileHeld() {
+        let model = makeModel()
+        #expect(model.handle(press(.volumeUp)))
+        model.canShow = { false }
+        #expect(model.handle(press(.volumeUp, isDown: false)))
+    }
+
+    @Test func passesAShortcutPressAndItsRelease() {
+        let model = makeModel()
+        #expect(!model.handle(press(.volumeUp, isShortcut: true)))
+        #expect(!model.handle(press(.volumeUp, isDown: false, isShortcut: true)))
+        #expect(volume.volume == 0.5)
+    }
+
+    @Test func shiftOptionIsStillAFineStep() {
+        let model = makeModel()
+        #expect(model.handle(press(.volumeUp, isFine: true)))
+        #expect(volume.volume == 0.515625)
     }
 
     @Test func takesBrightnessKeysAndShowsTheSun() {
@@ -172,5 +253,14 @@ struct LevelModelTests {
         model.turn(on: false)
         model.set(level: 0.3)
         #expect(volume.volume == 0.5625)
+    }
+
+    @Test func aPressPassedAfterALostReleasePassesItsReleaseToo() {
+        // macOS paused the tap and the first release never came.
+        let model = makeModel()
+        #expect(model.handle(press(.volumeUp)))
+        model.turn(on: false)
+        #expect(!model.handle(press(.volumeUp)))
+        #expect(!model.handle(press(.volumeUp, isDown: false)))
     }
 }

@@ -784,3 +784,31 @@ Spotify's light grey preview from the fill to the pointer.
   setting a level.
 - The Music tab keeps the Spotify style (no knob; time label and grey preview), chosen
   earlier the same week. `CapsuleBar.showsKnob` picks the style.
+
+## 2026-11-15 — Volume and brightness in the pill results
+All checks passed on a 14" MacBook Pro, macOS 26.6.2: the strip in each state, dragging
+and the knob, mute, quarter steps, holding a key, brightness on the built-in screen and
+on an external monitor, the switch, quitting, the hardware checks and the earlier
+features' checklists.
+- **No volume click:** macOS's "Play feedback when volume is changed" sound is not played,
+  because Ember takes the key. Accepted for v1; can be added later.
+- Values tuned by eye: the Music bar's track 4 pt with no knob (a 2 pt track with a knob
+  was tried first); the player icon 19 pt on the title's line; the strip's content 14 pt in
+  from the black, 48 pt from the open panel's edges (was 33); the strip's knob 18 × 12 pt.
+- Found and fixed during the checks, each logged above the same day: the strip's black
+  narrower than the notch at rest; the strip cut off in the open panel; permissions lost
+  on rebuilds (signing certificate); the edge line half hidden by the notch; external
+  monitors' brightness keys taken from BetterDisplay.
+- No checks accepted as known limits.
+- **Final review fixes:**
+  - The mute key goes to macOS when the output cannot mute.
+  - A key's press decides where its repeats and release go (a release missed while macOS
+    paused the tap is forgotten on the next press).
+  - Command, Control and Option without Shift leave a key to macOS, so Option-Volume and
+    Option-Brightness still open their settings.
+  - A cancelled drag still ends with a final call, so the strip cannot stay stuck.
+  - The tap's port is invalidated on stop.
+- **Left for later:** handling the tap's first slow event (0.4 s measured; macOS also acts
+  on the key if a tap is too slow); noticing Accessibility being revoked while Ember runs;
+  VoiceOver value and adjust actions on the capsule bar, which the Music tab's old slider
+  had, to be done before release.

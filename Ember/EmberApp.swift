@@ -63,7 +63,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         levels.onReadout = { [controller] readout in controller.showLevel(readout) }
         controller.onLevelChange = { [levels] fill in levels.set(level: fill) }
         // Without a notch display there is no pill to show the level on, so macOS keeps the keys.
-        mediaKeys.handler = { [controller, levels] press in controller.hasNotchDisplay && levels.handle(press) }
+        levels.canShow = { [controller] in controller.hasNotchDisplay }
+        mediaKeys.handler = { [levels] press in levels.handle(press) }
         levels.onSwitchChange = { [mediaKeys] on in
             if on { mediaKeys.start(askForAccess: true) } else { mediaKeys.stop() }
         }

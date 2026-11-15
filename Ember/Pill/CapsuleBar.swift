@@ -28,7 +28,13 @@ struct CapsuleBar: View {
 
     /// The pointer's x over the bar while it is on it, nil otherwise.
     @State private var hoverX: CGFloat?
-    @State private var isDragging = false
+    /// The pointer's x while the bar is pressed; nil otherwise. SwiftUI resets it when the
+    /// gesture ends or is cancelled.
+    @GestureState private var dragX: CGFloat?
+    /// The fill last reported while dragging, for the final call.
+    @State private var lastFill: Double = 0
+
+    private var isDragging: Bool { dragX != nil }
 
     /// The pointer is on a seekable bar, or dragging it: the preview and the label show.
     private var showsHover: Bool { onSeek != nil && (hoverX != nil || isDragging) }
@@ -102,6 +108,11 @@ struct CapsuleBar: View {
                 }
             }
             .gesture(seekGesture(width: width), including: onSeek == nil ? .none : .all)
+            // SwiftUI skips a gesture's `onEnded` when it is cancelled, but always resets
+            // `dragX`, so the final call comes from here: callers always get one.
+            .onChange(of: isDragging) { _, dragging in
+                if !dragging { onSeek?(lastFill, true) }
+            }
         }
         .frame(height: onSeek == nil ? Self.trackHeight : Self.grabHeight)
     }
@@ -124,14 +135,11 @@ struct CapsuleBar: View {
 
     private func seekGesture(width: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 0)
+            .updating($dragX) { value, state, _ in state = value.location.x }
             .onChanged {
-                isDragging = true
                 hoverX = $0.location.x
-                onSeek?(Self.fill(atX: $0.location.x, width: width), false)
-            }
-            .onEnded {
-                isDragging = false
-                onSeek?(Self.fill(atX: $0.location.x, width: width), true)
+                lastFill = Self.fill(atX: $0.location.x, width: width)
+                onSeek?(lastFill, false)
             }
     }
 

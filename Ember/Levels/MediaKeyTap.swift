@@ -23,7 +23,7 @@ final class MediaKeyTap {
     func start(askForAccess: Bool) {
         stop()
         if askForAccess {
-            // The value of `kAXTrustedCheckOptionPrompt`, written out because Swift 6 treats
+            // The value of `kAXTrustedCheckOptionPrompt`, written out because the compiler treats
             // that imported global as shared mutable state.
             AXIsProcessTrustedWithOptions(["AXTrustedCheckOptionPrompt": true] as CFDictionary)
         }
@@ -39,7 +39,10 @@ final class MediaKeyTap {
     func stop() {
         waitForAccess?.cancel()
         waitForAccess = nil
-        if let tap { CGEvent.tapEnable(tap: tap, enable: false) }
+        if let tap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+            CFMachPortInvalidate(tap)
+        }
         if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
         tap = nil
         source = nil
@@ -58,6 +61,18 @@ final class MediaKeyTap {
         return true
     }
 
+    /// Shift-Option: a quarter step.
+    private static func isFine(_ flags: CGEventFlags) -> Bool {
+        flags.contains([.maskShift, .maskAlternate])
+    }
+
+    /// Command, Control, or Option without Shift: a macOS shortcut, such as Option-Volume
+    /// for Sound settings.
+    private static func isShortcut(_ flags: CGEventFlags) -> Bool {
+        flags.contains(.maskCommand) || flags.contains(.maskControl)
+            || (flags.contains(.maskAlternate) && !flags.contains(.maskShift))
+    }
+
     /// Whether Ember takes the event. Also switches the tap back on when macOS paused it
     /// (it does that when a tap is slow).
     fileprivate func takes(_ event: CGEvent, type: CGEventType) -> Bool {
@@ -67,7 +82,7 @@ final class MediaKeyTap {
         }
         guard let nsEvent = NSEvent(cgEvent: event), nsEvent.type == .systemDefined,
               let press = LevelKeyPress(subtype: Int(nsEvent.subtype.rawValue), data1: nsEvent.data1,
-                                        isFine: event.flags.contains([.maskShift, .maskAlternate]))
+                                        isFine: Self.isFine(event.flags), isShortcut: Self.isShortcut(event.flags))
         else { return false }
         return handler?(press) ?? false
     }

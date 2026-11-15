@@ -82,11 +82,16 @@
   jumps when switching tabs; the Timer's main button is a stopwatch (a crown and side
   button on the white circle, drawn a fifth smaller). Spec docs/specs/timers.md. Builds;
   checked on screen by the user on macOS 26.6.2.
-- **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: tasks 1–5 and Part 2's task 7 (dragging the level) done; task 6 (checks and finishing) left.
+- **Done:** milestone 2, feature 5: volume and brightness in the pill (#11), with dragging
+  the level (Part 2), and the Music tab's capsule bar and Spotify-style controls. Verified
+  on macOS 26.6.2 with the checklist in docs/plans/volume-brightness.md. Builds are now
+  signed with a self-signed certificate (`scripts/make-signing-certificate.sh`), so
+  permissions survive rebuilds.
+- **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
-- **Next:** finish volume and brightness in the pill (#11) with the plan's six tasks.
+- **Next:** choose and design milestone 2's next feature (by the v1 list's order).
   Website: the pill demo's Timer tab still shows the old timer layout; update it to
   design B with the stopwatch button (see docs/architecture.md, the pill demo copies
   `TimerPanelView`).

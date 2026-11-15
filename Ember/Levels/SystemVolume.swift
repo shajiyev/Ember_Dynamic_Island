@@ -4,14 +4,9 @@ import CoreAudio
 /// The volume and mute of the output macOS sends sound to, through Core Audio. The only
 /// Core Audio code.
 final class SystemVolume: VolumeControl {
-    var canSetVolume: Bool {
-        guard let device = outputDevice() else { return false }
-        var address = Self.address(kAudioHardwareServiceDeviceProperty_VirtualMainVolume)
-        var settable: DarwinBoolean = false
-        return AudioObjectHasProperty(device, &address)
-            && AudioObjectIsPropertySettable(device, &address, &settable) == noErr
-            && settable.boolValue
-    }
+    var canSetVolume: Bool { isSettable(kAudioHardwareServiceDeviceProperty_VirtualMainVolume) }
+
+    var canMute: Bool { isSettable(kAudioDevicePropertyMute) }
 
     var volume: Double {
         Double(read(kAudioHardwareServiceDeviceProperty_VirtualMainVolume, empty: Float32(0)))
@@ -39,6 +34,16 @@ final class SystemVolume: VolumeControl {
         let status = AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address,
                                                 0, nil, &size, &device)
         return status == noErr && device != kAudioObjectUnknown ? device : nil
+    }
+
+    /// Whether the output has this property and it can be changed.
+    private func isSettable(_ selector: AudioObjectPropertySelector) -> Bool {
+        guard let device = outputDevice() else { return false }
+        var address = Self.address(selector)
+        var settable: DarwinBoolean = false
+        return AudioObjectHasProperty(device, &address)
+            && AudioObjectIsPropertySettable(device, &address, &settable) == noErr
+            && settable.boolValue
     }
 
     private static func address(_ selector: AudioObjectPropertySelector) -> AudioObjectPropertyAddress {

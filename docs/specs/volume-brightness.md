@@ -1,6 +1,6 @@
 # Milestone 2, feature 5 design: volume and brightness in the pill (#11)
 
-Date: 2026-11-14. Status: designed, not yet planned.
+Date: 2026-11-14. Status: built 2026-11-15 (plan: docs/plans/volume-brightness.md).
 
 ## Goal
 
@@ -30,6 +30,8 @@ and on external keyboards with media keys.
 - Shift-Option with the key moves a quarter step (1/64).
 - Holding a key repeats, as in macOS.
 - Volume up while muted unmutes, as in macOS.
+- A key's press and release always go to the same place: if Ember took the press, it takes
+  the release and repeats too, whatever changes while the key is held.
 
 ### The strip, in each state
 
@@ -146,6 +148,9 @@ Ember lets the key through to macOS, which shows its own indicator as it does to
 - there is no notch display to show the pill on (the lid is closed);
 - volume keys: the current sound output cannot change its volume (some HDMI and USB
   devices);
+- mute key: the current output cannot mute;
+- a key with Command, Control or Option (without Shift) goes to macOS, so its shortcuts
+  such as Option-Volume (Sound settings) keep working;
 - brightness keys: the built-in screen is closed or off, or the pointer is on another
   screen. External monitors stay with macOS, or with a tool such as BetterDisplay, as v1 is
   for the notch display only (since 2026-11-15, see docs/decisions.md).
