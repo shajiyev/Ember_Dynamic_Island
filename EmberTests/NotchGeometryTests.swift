@@ -39,12 +39,12 @@ struct NotchGeometryTests {
         #expect(try geometry(screenFrame: frame).notchRect == CGRect(x: 3175.5, y: 750, width: 185, height: 32))
     }
 
-    @Test func restFillsTheNotchAndReachesOnePointBelowIt() throws {
-        #expect(try geometry().rect(for: .rest) == CGRect(x: 663.5, y: 949, width: 185, height: 33))
+    @Test func restFillsTheNotchAsReported() throws {
+        #expect(try geometry().rect(for: .rest) == CGRect(x: 663.5, y: 950, width: 185, height: 32))
     }
 
-    @Test func activeAddsAWingOnEachSideAndReachesOnePointBelowTheNotch() throws {
-        #expect(try geometry().rect(for: .active) == CGRect(x: 615.5, y: 949, width: 281, height: 33))
+    @Test func activeAddsAWingOnEachSideAtTheNotchHeight() throws {
+        #expect(try geometry().rect(for: .active) == CGRect(x: 615.5, y: 950, width: 281, height: 32))
     }
 
     @Test func openIsCentredOnTheNotchAndHangsFromTheTopOfTheScreen() throws {
@@ -56,11 +56,11 @@ struct NotchGeometryTests {
     }
 
     @Test func levelAddsAStripBelowRestAtTheNotchWidth() throws {
-        #expect(try geometry().rect(for: .rest, showsLevel: true) == CGRect(x: 663.5, y: 917, width: 185, height: 65))
+        #expect(try geometry().rect(for: .rest, showsLevel: true) == CGRect(x: 663.5, y: 918, width: 185, height: 64))
     }
 
     @Test func levelAddsAStripBelowTheWings() throws {
-        #expect(try geometry().rect(for: .active, showsLevel: true) == CGRect(x: 615.5, y: 917, width: 281, height: 65))
+        #expect(try geometry().rect(for: .active, showsLevel: true) == CGRect(x: 615.5, y: 918, width: 281, height: 64))
     }
 
     @Test func levelAddsAStripBelowTheOpenPanel() throws {

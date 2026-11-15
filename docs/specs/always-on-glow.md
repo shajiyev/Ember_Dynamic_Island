@@ -39,9 +39,10 @@ Chosen by eye on a 14" MacBook Pro with temporary sliders and menu items (remove
   so the line runs just outside the physical notch's edges, where the screen has pixels.
   (Until then the resting shape had flares that made its black 12 points narrower than the
   notch, and the line was drawn 6 points out at each side to make up for it.)
-- **Rest reaches 1 point below the reported notch height,** like the active pill
-  (`PillMetrics.bottomExtension`). The physical notch is about 0.5 point taller than macOS
-  reports; with the glow off the extra point is invisible.
+- **Rest stops at the reported notch height,** like the active pill
+  (`PillMetrics.bottomExtension` 0). The physical notch is about 0.5 point taller than
+  macOS reports, so the black ends inside it and the notch hides the top half point of the
+  edge line below it.
 - **The notch is centred on the screen.** macOS reports the notch as the gap between the
   menu bar areas beside it, which are whole points (663 left, 664 right on a 14" MacBook
   Pro), so their edges put it half a point left of the physical notch. Ember keeps the
@@ -49,7 +50,7 @@ Chosen by eye on a 14" MacBook Pro with temporary sliders and menu items (remove
 
 ## Testing
 
-- Geometry: the notch is centred on the screen; rest is the notch plus 1 point below.
+- Geometry: the notch is centred on the screen; rest is exactly the reported notch.
 - Style: rest glows, softer than active and centred; the rest edge line starts at the top
   and lies outside the shape; active and open are unchanged.
 - On screen: the line traces both sides and the bottom evenly, seen from straight on.

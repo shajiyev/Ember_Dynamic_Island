@@ -812,3 +812,14 @@ features' checklists.
   on the key if a tap is too slow); noticing Accessibility being revoked while Ember runs;
   VoiceOver value and adjust actions on the capsule bar, which the Music tab's old slider
   had, to be done before release.
+
+## 2026-11-15 — The rest and active pills stop at the reported notch height
+Asked for on a 14" MacBook Pro, macOS 26.6.2, so the glowing edge line covers as little of
+the screen as possible.
+- **`PillMetrics.bottomExtension` is now 0 (was 1):** the rest and active pills, and the
+  level strip below them, sit 1 point higher. The physical notch is about 0.5 point taller
+  than reported, so the black now ends inside it. 0.5 was tried first. **Why:** the user
+  preferred the line tucked as high as possible.
+- **Accepted trade-off:** the notch now hides the top half point of the line below it, so
+  that line can look slightly thinner than the line beside the notch (about 1.5 against
+  2 points). Checked on screen by the user.
