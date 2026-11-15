@@ -42,6 +42,11 @@ The full list, including what comes later, is in [docs/features.md](docs/feature
 - **Reminders:** only if you turn on Show Reminders. Ember reads reminders that are due and
   marks one completed when you tick it off (or not completed, when you untick it). It also
   reads the reminders completed that day, to list them at the end.
+- **Accessibility:** only if you turn on Show Volume & Brightness in the Pill. Ember uses it
+  to take the volume, mute and brightness keys before macOS does, so the level shows in the
+  pill instead of macOS's own indicator. Every other key goes on to macOS untouched. Without
+  it, the keys work as usual. You can change it in System Settings → Privacy & Security →
+  Accessibility.
 
 ## Install
 

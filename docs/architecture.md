@@ -92,6 +92,16 @@
   - `CalendarAccessAlert.swift`: the alert after a refused permission.
   - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
     Calendar tab.
+- `Ember/Levels/` — volume and brightness in the pill (#11).
+  - `LevelKey.swift`, `LevelStep.swift`, `LevelLook.swift`: the pure rules: reading a media
+    key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,
+    texts, 1.5 s, the menu title).
+  - `MediaKeyTap.swift`: the only event-tap code; waits for Accessibility, then takes the
+    keys `LevelModel` asks for.
+  - `SystemVolume.swift` (Core Audio) and `BuiltInBrightness.swift` (DisplayServices,
+    private, loaded at run time; built-in screen only): the only system code for each.
+  - `LevelModel.swift`: the switch, and for each key whether Ember takes it; applies the
+    step and hands a `LevelReadout` to the pill.
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
   up" always; the song if the panel was closed on the Music tab; otherwise the timer.
 - `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
@@ -138,6 +148,12 @@ day's events, due reminders and done reminders for the switches that are on, aga
 store change, a wake, a clock or time zone change and midnight. The heads-up goes to the
 app delegate, which shows it with `PillController.show` and sets the panel's opening tab to
 Calendar while it shows.
+
+Volume and brightness: a media key reaches `MediaKeyTap`, which asks the app delegate's
+handler. With a notch display, that asks `LevelModel.handle`, which either lets the key go
+on to macOS or takes it, sets the volume (`SystemVolume`) or the built-in screen's
+brightness (`BuiltInBrightness`), and passes `LevelLook`'s readout to
+`PillController.showLevel`. `PillView` grows by the strip for 1.5 s.
 
 ## Conventions
 - A feature lives in its own folder under `Ember/` and the pill never refers to it. The

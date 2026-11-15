@@ -7,7 +7,7 @@ struct EmberApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            PillMenu(controller: appDelegate.controller, calendar: appDelegate.calendar)
+            PillMenu(controller: appDelegate.controller, calendar: appDelegate.calendar, levels: appDelegate.levels)
         } label: {
             Image("MenuBarIcon")
         }
@@ -22,6 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let nowPlaying = NowPlayingModel()
     let calendar = CalendarModel()
     let panelSelection = PanelSelection()
+    let levels = LevelModel(volume: SystemVolume(), brightness: BuiltInBrightness())
+    let mediaKeys = MediaKeyTap()
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     private var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
@@ -58,6 +60,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         calendar.start()
         screen.onChange = { [timer] inUse in timer.screenInUse = inUse }
         screen.start()
+        levels.onReadout = { [controller] readout in controller.showLevel(readout) }
+        // Without a notch display there is no pill to show the level on, so macOS keeps the keys.
+        mediaKeys.handler = { [controller, levels] press in controller.hasNotchDisplay && levels.handle(press) }
+        levels.onSwitchChange = { [mediaKeys] on in
+            if on { mediaKeys.start(askForAccess: true) } else { mediaKeys.stop() }
+        }
+        if levels.isOn { mediaKeys.start(askForAccess: false) }
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
                                                  calendar: calendar, selection: panelSelection))
     }
@@ -90,6 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct PillMenu: View {
     let controller: PillController
     let calendar: CalendarModel
+    let levels: LevelModel
 
     var body: some View {
         if !controller.hasNotchDisplay {
@@ -99,6 +109,7 @@ struct PillMenu: View {
         ForEach(CalendarSource.allCases, id: \.self) { source in
             Toggle(CalendarLook.switchTitle(source), isOn: switchBinding(source))
         }
+        Toggle(LevelLook.switchTitle, isOn: Binding(get: { levels.isOn }, set: { levels.turn(on: $0) }))
         Divider()
         #if DEBUG
         Menu("Simulate Battery Alert") {
