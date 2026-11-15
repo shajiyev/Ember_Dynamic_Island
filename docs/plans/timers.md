@@ -1388,3 +1388,519 @@ Files: `docs/roadmap.md`, `docs/features.md`, `docs/decisions.md`, `docs/specs/t
 Commit message: `Finished the timers feature`
 - Recorded the results, the glow-while-running choice, and marked timers as done in the roadmap, feature list and spec
 - Verified by hand on <Mac model>, macOS <version>, with the nine checks in docs/plans/timers.md
+
+---
+
+## Part 2: The Timer tab redesigned like the Music tab (2026-11-15)
+
+**Goal:** Rebuild the Timer tab as design B, "Music mirror" (spec: "Open panel" in
+docs/specs/timers.md): a ring tile where the cover would be, the time where the title
+would be, "Ends at …" and a time-gone bar while it runs, and the Music tab's control
+row (plain icon · white circle · +1). Design A stays written down in the spec only.
+
+**Architecture:** `Countdown` learns the length of the current run, the time gone and a
++1 minute; `TimerLook` gives the line under the time. The Music tab's white circle and
+hover-bright plain button move into `Ember/Panel/PanelButtons.swift`, shared by both
+tabs. `TimerRing` draws the tile; `TimerPanelView` is rewritten around them.
+
+**Tech Stack:** Swift, SwiftUI, Swift Testing, Xcode 27.
+
+### Global Constraints (Part 2)
+
+- Minimum macOS 15.0. Anything newer needs `if #available`.
+- The app and test targets use `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`; pure value
+  types are `nonisolated`. Every file imports each module it uses directly.
+- Files under `Ember/` and `EmberTests/` are picked up by Xcode automatically.
+- The Music tab must look exactly as before after the shared buttons move.
+- Longest timer `23:59:59` (`TimerSetting.longest`, 86 399 s); +1 never passes it.
+- The user makes every commit; past-tense message, no co-author line.
+
+Commands: TEST and BUILD as in Part 1. Before Part 2 there are 225 tests in 26 suites.
+
+### Task 1: The run's length, time gone and +1 (Countdown, TimerModel)
+
+**Files:**
+- Modify: `Ember/Timer/TimerSetting.swift`, `Ember/Timer/Countdown.swift`, `Ember/Timer/TimerModel.swift`
+- Test: `EmberTests/CountdownTests.swift`, `EmberTests/TimerModelTests.swift`
+
+**Interfaces — produces:**
+- `TimerSetting.longest: Int` (86 399)
+- `Countdown.runSeconds: Int` (length of the current run; 0 while stopped)
+- `Countdown.secondsGone(at: Date) -> Int`, `Countdown.fractionGone(at: Date) -> Double` (0 while stopped)
+- `Countdown.addMinute(at: Date)`, `TimerModel.addMinute()`
+
+- [ ] **Step 1: Write the failing tests** — append to `CountdownTests`:
+
+```swift
+    // Part 2: the redesigned Timer tab.
+
+    @Test func aRunKnowsItsLengthAndTheTimeGone() {
+        var countdown = runningFiveMinutes()
+        #expect(countdown.runSeconds == 300)
+        #expect(countdown.secondsGone(at: at(0)) == 0)
+        #expect(countdown.secondsGone(at: at(90.5)) == 90)
+        #expect(countdown.fractionGone(at: at(150)) == 0.5)
+        countdown.pause(at: at(100))
+        #expect(countdown.secondsGone(at: at(500)) == 100)
+    }
+
+    @Test func nothingIsGoneWhileStopped() {
+        var countdown = runningFiveMinutes()
+        countdown.cancel()
+        #expect(countdown.runSeconds == 0)
+        #expect(countdown.secondsGone(at: at(10)) == 0)
+        #expect(countdown.fractionGone(at: at(10)) == 0)
+    }
+
+    @Test func plusOneAddsAMinuteToTheTimeSetWhileStopped() {
+        var countdown = Countdown()
+        countdown.choosePreset(minutes: 5)
+        countdown.addMinute(at: start)
+        #expect(countdown.setting == TimerSetting(hours: 0, minutes: 6, seconds: 0))
+        countdown.choosePreset(minutes: 59)
+        countdown.addMinute(at: start)
+        #expect(countdown.setting == TimerSetting(hours: 1, minutes: 0, seconds: 0))
+    }
+
+    @Test func plusOneWhileRunningGrowsTheRunNotTheTimeSet() {
+        var countdown = runningFiveMinutes()
+        countdown.addMinute(at: at(10))
+        #expect(countdown.secondsLeft(at: at(10)) == 350)
+        #expect(countdown.runSeconds == 360)
+        #expect(countdown.secondsGone(at: at(10)) == 10)
+        #expect(countdown.setting == TimerSetting(hours: 0, minutes: 5, seconds: 0))
+        countdown.cancel()
+        #expect(countdown.secondsLeft(at: at(10)) == 300)
+    }
+
+    @Test func plusOneWhilePausedGrowsTheTimeLeft() {
+        var countdown = runningFiveMinutes()
+        countdown.pause(at: at(100))
+        countdown.addMinute(at: at(200))
+        #expect(countdown.secondsLeft(at: at(300)) == 260)
+        #expect(countdown.runSeconds == 360)
+        #expect(countdown.secondsGone(at: at(300)) == 100)
+    }
+
+    @Test func plusOneNeverGoesPastTheLongestTimer() {
+        var countdown = Countdown()
+        countdown.choosePreset(minutes: 23 * 60 + 59)
+        countdown.addMinute(at: start)
+        #expect(countdown.setting.totalSeconds == TimerSetting.longest)
+        countdown.start(at: start)
+        countdown.addMinute(at: start)
+        #expect(countdown.secondsLeft(at: start) == TimerSetting.longest)
+        #expect(countdown.runSeconds == TimerSetting.longest)
+    }
+```
+
+and to `TimerModelTests`:
+
+```swift
+    @Test func plusOneShowsTheLongerTimeAtOnce() async throws {
+        let timer = try await setToTenSeconds()
+        timer.start()
+        var shown: LiveActivity?
+        timer.onActivity = { shown = $0 }
+        timer.addMinute()
+        #expect(timer.secondsLeft == 70)
+        #expect(shown == TimerLook.running(secondsLeft: 70))
+        timer.cancel()
+    }
+```
+
+- [ ] **Step 2: Run TEST** — expected: build errors (`runSeconds`, `addMinute`, `longest` not found).
+
+- [ ] **Step 3: Implement.** In `TimerSetting.swift`, inside the struct after `totalSeconds`:
+
+```swift
+    /// The longest time a timer can have: 23:59:59.
+    static let longest = 23 * 3600 + 59 * 60 + 59
+```
+
+In `Countdown.swift`, after `phase`:
+
+```swift
+    /// The length of the current run in seconds: the time set at Start plus every +1
+    /// since. 0 while stopped.
+    private(set) var runSeconds = 0
+```
+
+In `start(at:)` add `runSeconds = setting.totalSeconds` after setting `phase`; in
+`cancel()` and in `finishIfDue(at:)` (where it sets `.stopped`) add `runSeconds = 0`.
+Then add:
+
+```swift
+    /// Adds a minute: to the time set while stopped, otherwise to this run only, so Cancel
+    /// still returns to the time set. Never past 23:59:59; near it, adds what is left.
+    mutating func addMinute(at now: Date) {
+        let added = min(60, TimerSetting.longest - secondsLeft(at: now))
+        guard added > 0 else { return }
+        switch phase {
+        case .stopped:
+            setting = TimerSetting(totalSeconds: setting.totalSeconds + added)
+        case .running(let endDate):
+            phase = .running(endDate: endDate.addingTimeInterval(TimeInterval(added)))
+            runSeconds += added
+        case .paused(let timeLeft):
+            phase = .paused(timeLeft: timeLeft + TimeInterval(added))
+            runSeconds += added
+        }
+    }
+
+    /// The whole seconds of this run gone, as the shown time counts them. 0 while stopped.
+    func secondsGone(at now: Date) -> Int {
+        isStopped ? 0 : runSeconds - secondsLeft(at: now)
+    }
+
+    /// How much of this run has gone, 0…1, for the Timer tab's ring and bar.
+    func fractionGone(at now: Date) -> Double {
+        runSeconds > 0 ? Double(secondsGone(at: now)) / Double(runSeconds) : 0
+    }
+```
+
+In `TimerModel.swift`, after `reset()`:
+
+```swift
+    /// Adds a minute (+1). A running or paused timer's wings show the longer time at once.
+    func addMinute() {
+        countdown.addMinute(at: Date())
+        if !countdown.isStopped { update() }
+    }
+```
+
+- [ ] **Step 4: Run TEST** — expected: 232 tests pass.
+
+### Task 2: The line under the time (TimerLook)
+
+**Files:** Modify `Ember/Timer/TimerLook.swift`; Test `EmberTests/TimerLookTests.swift`
+
+**Interfaces — produces:** `TimerLook.statusText(for: Countdown.Phase) -> String?`
+
+- [ ] **Step 1: Write the failing test** (append to `TimerLookTests`):
+
+```swift
+    @Test func theLineUnderTheTimeSaysWhenItEndsOrThatItIsPaused() {
+        let end = Date(timeIntervalSinceReferenceDate: 1_000)
+        #expect(TimerLook.statusText(for: .running(endDate: end))
+                == "Ends at " + end.formatted(date: .omitted, time: .shortened))
+        #expect(TimerLook.statusText(for: .paused(timeLeft: 30)) == "Paused")
+        #expect(TimerLook.statusText(for: .stopped) == nil)
+    }
+```
+
+- [ ] **Step 2: Run TEST** — expected: build error, `statusText` not found.
+
+- [ ] **Step 3: Implement** in `TimerLook`, after `wingText`:
+
+```swift
+    /// The line under the time in the Timer tab: when a running timer ends, in the Mac's
+    /// own time format ("Ends at 14:35"), "Paused" while paused, nothing while stopped.
+    static func statusText(for phase: Countdown.Phase) -> String? {
+        switch phase {
+        case .stopped: return nil
+        case .running(let endDate): return "Ends at " + endDate.formatted(date: .omitted, time: .shortened)
+        case .paused: return "Paused"
+        }
+    }
+```
+
+- [ ] **Step 4: Run TEST** — expected: 233 tests pass.
+
+### Task 3: Shared panel buttons (Music tab unchanged)
+
+**Files:** Create `Ember/Panel/PanelButtons.swift`; Modify `Ember/NowPlaying/NowPlayingPanelView.swift`
+
+**Interfaces — produces:**
+- `CircleButton(symbolName: String, title: String, action: () -> Void)`
+- `PlainButton(title: String, action: () -> Void, label: () -> Label)` and
+  `PlainButton(symbolName: String, title: String, action: () -> Void)`
+
+`title` is what VoiceOver reads; neither shows a tooltip by itself.
+
+- [ ] **Step 1: Create `Ember/Panel/PanelButtons.swift`:**
+
+```swift
+import SwiftUI
+
+/// The panel's main button, as in Spotify: a black symbol on a white circle. Shared by the
+/// Music and Timer tabs, so they always look alike. Faded while dimmed.
+struct CircleButton: View {
+    let symbolName: String
+    /// What VoiceOver reads, such as "Pause".
+    let title: String
+    let action: () -> Void
+    @Environment(\.isEnabled) private var isEnabled
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbolName)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(.black)
+                .frame(width: 32, height: 32)
+                .background(Circle().fill(.white))
+        }
+        .buttonStyle(.plain)
+        .opacity(isEnabled ? 1 : 0.3)
+        .accessibilityLabel(title)
+    }
+}
+
+/// A secondary panel button, as in Spotify: light grey, white while the pointer is on it,
+/// faded while dimmed. Shared by the Music and Timer tabs.
+struct PlainButton<Label: View>: View {
+    /// What VoiceOver reads, such as "Next".
+    let title: String
+    let action: () -> Void
+    @ViewBuilder let label: Label
+    @Environment(\.isEnabled) private var isEnabled
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            label
+                .font(.system(size: 17))
+                .foregroundStyle(.white.opacity(isEnabled ? (isHovering ? 1 : 0.7) : 0.3))
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+        .accessibilityLabel(title)
+    }
+}
+
+extension PlainButton where Label == Image {
+    /// A plain button showing an SF Symbol.
+    init(symbolName: String, title: String, action: @escaping () -> Void) {
+        self.init(title: title, action: action) { Image(systemName: symbolName) }
+    }
+}
+```
+
+- [ ] **Step 2: Use them in the Music tab.** In `NowPlayingPanelView.controls(_:)`, replace
+the body with:
+
+```swift
+        HStack(spacing: 26) {
+            PlainButton(symbolName: "backward.end.fill", title: "Previous", action: model.previous)
+            CircleButton(symbolName: track.isPlaying ? "pause.fill" : "play.fill",
+                         title: track.isPlaying ? "Pause" : "Play", action: model.playPause)
+            PlainButton(symbolName: "forward.end.fill", title: "Next", action: model.next)
+        }
+        .frame(maxWidth: .infinity)
+```
+
+and delete the private `SkipButton` struct at the end of the file.
+
+- [ ] **Step 3: Run TEST and BUILD** — expected: 233 pass, build succeeds, no warnings.
+The user checks the Music tab looks and behaves as before.
+
+### Task 4: The redesigned Timer tab (TimerRing, TimerPanelView)
+
+**Files:** Create `Ember/Timer/TimerRing.swift`; Rewrite `Ember/Timer/TimerPanelView.swift`
+
+**Interfaces — consumes:** Task 1–3 names; `CapsuleBar(fill:)`, `CapsuleBar.trackColor`,
+`NowPlayingLook.timeText(_:)`, `HoldRepeatButton`, `TimerLook.presetMinutes`, `TimerLook.color`.
+
+- [ ] **Step 1: Create `Ember/Timer/TimerRing.swift`:**
+
+```swift
+import SwiftUI
+
+/// The Timer tab's tile, where the Music tab shows the cover: a ring that fills in the
+/// timer's orange as the run goes on, around the `timer` symbol.
+struct TimerRing: View {
+    /// How much of the run has gone, 0…1; 0 while stopped.
+    let fractionGone: Double
+
+    var body: some View {
+        ZStack {
+            Circle().stroke(CapsuleBar.trackColor, lineWidth: 6)
+            if fractionGone > 0 {
+                Circle()
+                    .trim(from: 0, to: min(fractionGone, 1))
+                    .stroke(TimerLook.color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
+            Image(systemName: "timer")
+                .font(.system(size: 24, weight: .medium))
+                .foregroundStyle(TimerLook.color)
+        }
+        .padding(13)
+        .frame(width: 96, height: 96)
+        .background(RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.08)))
+        .accessibilityHidden(true)
+    }
+}
+```
+
+- [ ] **Step 2: Replace `Ember/Timer/TimerPanelView.swift` with:**
+
+```swift
+import SwiftUI
+
+/// The Timer tab, built like the Music tab: the ring tile where the cover would be, the
+/// time where the title would be, and the same row of controls. Stopped, the time has
+/// arrows and presets to set it; running or paused, it shows when it ends and a bar of the
+/// time gone. +1 adds a minute in every state.
+struct TimerPanelView: View {
+    let timer: TimerModel
+
+    private let digitFont = Font.system(size: 30, weight: .medium)
+
+    var body: some View {
+        HStack(spacing: 18) {
+            TimerRing(fractionGone: timer.countdown.fractionGone(at: timer.now))
+            VStack(alignment: .leading, spacing: 6) {
+                if timer.countdown.isStopped {
+                    setup
+                } else {
+                    progress
+                }
+                controls
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// The time with arrows to set each unit, and the presets at the end of its line.
+    private var setup: some View {
+        let shown = TimerSetting(totalSeconds: timer.secondsLeft)
+        return HStack(spacing: 2) {
+            unit(.hours, value: "\(shown.hours)")
+            separator
+            unit(.minutes, value: twoDigits(shown.minutes))
+            separator
+            unit(.seconds, value: twoDigits(shown.seconds))
+            Spacer(minLength: 16)
+            HStack(spacing: 6) {
+                ForEach(TimerLook.presetMinutes, id: \.self) { minutes in
+                    PresetChip(minutes: minutes) { timer.choosePreset(minutes: minutes) }
+                }
+            }
+        }
+    }
+
+    /// The time left, when it ends (or "Paused"), and a bar of the time gone.
+    @ViewBuilder private var progress: some View {
+        let countdown = timer.countdown
+        let left = TimerSetting(totalSeconds: timer.secondsLeft)
+        Text("\(left.hours):\(twoDigits(left.minutes)):\(twoDigits(left.seconds))")
+            .font(digitFont)
+            .monospacedDigit()
+            .foregroundStyle(.white)
+        if let status = TimerLook.statusText(for: countdown.phase) {
+            Text(status)
+                .font(.system(size: 13))
+                .foregroundStyle(.white.opacity(0.6))
+        }
+        HStack(spacing: 8) {
+            Text(NowPlayingLook.timeText(TimeInterval(countdown.secondsGone(at: timer.now))))
+            CapsuleBar(fill: countdown.fractionGone(at: timer.now))
+            Text(NowPlayingLook.timeText(TimeInterval(countdown.runSeconds)))
+        }
+        .font(.system(size: 10, weight: .medium))
+        .monospacedDigit()
+        .foregroundStyle(.white.opacity(0.5))
+    }
+
+    /// Reset or Cancel, the white circle (Start, Pause or Resume), and +1.
+    private var controls: some View {
+        let isZero = timer.countdown.setting.totalSeconds == 0
+        return HStack(spacing: 26) {
+            switch timer.countdown.phase {
+            case .stopped:
+                PlainButton(symbolName: "arrow.counterclockwise", title: "Reset", action: timer.reset)
+                    .disabled(isZero)
+                CircleButton(symbolName: "play.fill", title: "Start", action: timer.start)
+                    .disabled(isZero)
+            case .running:
+                PlainButton(symbolName: "xmark", title: "Cancel", action: timer.cancel)
+                CircleButton(symbolName: "pause.fill", title: "Pause", action: timer.pause)
+            case .paused:
+                PlainButton(symbolName: "xmark", title: "Cancel", action: timer.cancel)
+                CircleButton(symbolName: "play.fill", title: "Resume", action: timer.resume)
+            }
+            PlainButton(title: "Add 1 minute", action: timer.addMinute) {
+                Text("+1").font(.system(size: 14, weight: .semibold))
+            }
+            .help("Add 1 minute")
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// One unit: a small up arrow, its value, and a small down arrow.
+    private func unit(_ unit: TimerSetting.Unit, value: String) -> some View {
+        VStack(spacing: 0) {
+            HoldRepeatButton(action: { timer.stepUp(unit) }) { arrow("chevron.up") }
+            Text(value)
+                .font(digitFont)
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .frame(minWidth: 40)
+            HoldRepeatButton(action: { timer.stepDown(unit) }) { arrow("chevron.down") }
+        }
+    }
+
+    private func arrow(_ symbolName: String) -> some View {
+        Image(systemName: symbolName)
+            .font(.system(size: 10, weight: .semibold))
+            .foregroundStyle(.white.opacity(0.7))
+            .frame(width: 40, height: 16)
+    }
+
+    private var separator: some View {
+        Text(":")
+            .font(digitFont)
+            .foregroundStyle(.white.opacity(0.5))
+    }
+
+    private func twoDigits(_ value: Int) -> String {
+        value < 10 ? "0\(value)" : "\(value)"
+    }
+}
+
+/// A preset, such as "25m": a soft round chip that brightens under the pointer.
+private struct PresetChip: View {
+    let minutes: Int
+    let action: () -> Void
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Text("\(minutes)m")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.white.opacity(isHovering ? 1 : 0.85))
+                .padding(.horizontal, 12)
+                .frame(height: 24)
+                .background(Capsule().fill(.white.opacity(isHovering ? 0.2 : 0.1)))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovering = $0 }
+    }
+}
+```
+
+- [ ] **Step 3: Run TEST and BUILD** — expected: 233 pass, build succeeds.
+
+- [ ] **Step 4: Manual check on the notch** (macOS 26):
+  1. Stopped: tile with a grey ring; arrows step and hold-repeat; chips set 5/25/45 min
+     and brighten under the pointer; Start and Reset are faded at 0:00:00.
+  2. Start: the ring and bar start filling; "Ends at …" shows the right clock time;
+     the circle shows pause; Cancel returns to the time set.
+  3. Pause: "Paused", the ring and bar hold; Resume continues.
+  4. +1 stopped adds a minute (0:59:00 → 1:00:00); +1 running moves "Ends at" a minute
+     later, grows the bar's right-hand time, and the wings show the new time at once;
+     Cancel still returns to the time set.
+  5. "Time's up" still rings and the tab returns to setup with a grey ring.
+  6. The Music tab looks and works as before.
+
+### Task 5: Checkpoint
+
+- `docs/roadmap.md` Current status: the Timer tab redesign (design B) done, design A in
+  reserve (spec + `docs/mockups/timer-tab.html`).
+- `docs/features.md` row #13: mention the Music-style tab and +1.
+- `docs/architecture.md`: `Ember/Panel/PanelButtons.swift`, `Ember/Timer/TimerRing.swift`.
+- `docs/decisions.md`: design B chosen over A and C (A kept in reserve); +1 lets a started
+  timer's run grow, replacing "a started timer's time cannot be changed".
+- Secrets check, then list files and the commit message.

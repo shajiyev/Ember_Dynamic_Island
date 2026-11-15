@@ -1,6 +1,7 @@
 # Milestone 2, feature 2 design: timers (#13)
 
-Date: 2026-11-11. Status: built 2026-11-11 (plan: docs/plans/timers.md).
+Date: 2026-11-11. Status: built 2026-11-11; Timer tab redesigned (design B) 2026-11-15
+(plan: docs/plans/timers.md, part 2).
 
 ## Goal
 
@@ -22,35 +23,75 @@ bell and hear a sound.
 
 ### Open panel
 
-The timer replaces the "Ember" placeholder below the top row. The top row is unchanged
-(battery on the right, empty left). There are no tabs yet; the tab row arrives with Now
-Playing, the first time two features need the panel body.
+The Timer tab is built like the Music tab ("Music mirror", chosen 2026-11-15 from three
+mockups; the first version had grey macOS buttons). A 96-point tile sits where the
+song's cover would be, the time where its title would be, and the same row of controls
+below: a plain icon, the white circle, a plain icon.
 
 ```
-        ▲     ▲     ▲
-        0  :  05 :  00          [1m] [5m] [10m] [25m]
-        ▼     ▼     ▼              [ Start ] [ Reset ]
+ ┌──────┐  ▴    ▴    ▴
+ │ ◯ ⏱ │  0 : 25 : 00            (5m) (25m) (45m)        stopped
+ │      │  ▾    ▾    ▾
+ └──────┘           ↺    ( ▶ )    +1
+
+ ┌──────┐  0:18:42
+ │ ◔ ⏱ │  Ends at 14:35                                    running
+ │      │  6:18 ━━━━━━━━──────────────────────── 25:00
+ └──────┘           ✕    ( ⏸ )    +1
 ```
+
+**The tile:** a rounded square like the cover, with a ring and the `timer` symbol in the
+timer's orange. The ring is grey while stopped and fills in orange as the run goes on
+(time gone ÷ length of the run).
+
+**The buttons** look exactly like the Music tab's (shared, `Ember/Panel/PanelButtons.swift`):
+the main one is a white circle with a black symbol; the others are plain light-grey
+symbols that turn white under the pointer. A dimmed button is faded. The presets are
+soft round chips that brighten under the pointer.
 
 **Setting a time (the timer is stopped):**
-- Three units: hours (0–23), minutes (0–59), seconds (0–59). Each has ▲ above it,
-  which adds 1, and ▼ below it, which takes 1 away.
+- The time in 30-point digits. Three units: hours (0–23), minutes (0–59), seconds
+  (0–59). Each has a small ▲ above it, which adds 1, and ▼ below it, which takes 1 away.
 - Each unit wraps inside itself: ▼ at 0 goes to its top (23 or 59), ▲ at the top goes
   to 0. A unit never changes its neighbour. The longest timer is `23:59:59`.
 - Pressing an arrow steps once. Holding it repeats after 0.4 seconds, about 10 steps a
   second, until released.
-- Presets **5m, 25m, 45m** set the whole time in one click (for example `0:05:00`).
-- **Start** is dimmed at `0:00:00`.
-- **Reset** sets the time back to `0:00:00`, so a new time can be set from scratch. It is
-  dimmed at `0:00:00` and only shown while the timer is stopped.
+- Presets **5m, 25m, 45m**, at the right end of the time's line, set the whole time in
+  one click (for example `0:05:00`).
+- Controls: **Reset** (`arrow.counterclockwise`) · **Start** (circle, `play.fill`) ·
+  **+1**. Start and Reset are dimmed at `0:00:00`. Reset sets the time back to
+  `0:00:00`, so a new time can be set from scratch.
 
 **Running or paused:**
-- The same digits show the time left, counting down normally (`1:00` → `0:59`).
-- The arrows and presets are dimmed: a started timer's time cannot be changed. To use a
-  different time, cancel and start a new timer.
-- Buttons: **Pause** and **Cancel** while running; **Resume** and **Cancel** while
-  paused.
+- The time left without arrows, counting down normally (`1:00` → `0:59`). Under it,
+  "Ends at 14:35" in the Mac's own time format while running, "Paused" while paused.
+- Below that, a bar like the Music tab's scrubber (`CapsuleBar`), with the time gone on
+  the left and the length of the run on the right. It cannot be dragged.
+- Controls: **Cancel** (`xmark`) · **Pause** (circle, `pause.fill`) or **Resume**
+  (circle, `play.fill`) · **+1**.
+- The arrows and presets are gone: they only set the time of a stopped timer.
 - Cancel returns to setup with the time that was last set.
+
+**+1** adds a minute (tooltip "Add 1 minute"). Stopped, it adds to the time set. Running
+or paused, it adds to this run: the time left, the ring and the bar grow, but the time
+set, which Cancel and "Time's up" return to, stays. Nothing goes past `23:59:59`; near
+it, +1 adds only what is left.
+
+### Kept in reserve: design A, "Light touch"
+
+The user liked this one too and may switch to it. It keeps the first version's layout and
+only swaps the buttons for the Music tab's:
+- Left: the 36-point digits with ▲/▼ arrows, as in the first version. While a timer runs
+  the arrows are dimmed and a thin `CapsuleBar` (no labels) under the digits shows the
+  time gone.
+- Right, centred in a column: the 5m · 25m · 45m chips, then the controls: white circle
+  (Start / Pause / Resume) and one plain icon beside it (Reset while stopped, Cancel
+  while running or paused). No +1, no tile, no "Ends at".
+
+Mockups of today's first version, A, B and a third option (C, "Wide") at real size:
+`docs/mockups/timer-tab.html`. Switching to A means rewriting only
+`TimerPanelView.swift` (and dropping `TimerRing.swift`); the shared buttons and
+`Countdown` stay.
 
 ### Closed pill while running
 
@@ -101,10 +142,12 @@ The pill module still knows nothing about features. The timer hands the pill
 | Pill controller (changed) | `Ember/Pill/PillController.swift` | Two slots. **Brief:** `show(_:)` as today, kept for its duration (battery). **Ongoing:** new `setOngoing(_:)`; the feature sets it, replaces it every second, or clears it with nil. The pill shows the brief activity if there is one, otherwise the ongoing one, and is active while either exists. Hovering over or clicking the pill clears an ongoing activity marked `endsWhenSeen`; one set while the panel is open is treated as seen at once. | Live activity |
 | Pill view (changed) | `Ember/Pill/PillView.swift` | Draws the shown activity. An activity without a glow colour gets wings but no glow and no edge line. | Controller |
 | Timer setting | `Ember/Timer/TimerSetting.swift` | Hours, minutes, seconds; step up or down one unit with wrapping inside the unit; total seconds; set from a preset. Pure. | Nothing |
-| Countdown | `Ember/Timer/Countdown.swift` | The rules: setup → running (end time) → paused (time left) → setup, on cancel or at zero. Gives the time left and whether it has finished for a given clock time, so sleep is just a clock jump. Pure, no timers. | Timer setting |
+| Countdown | `Ember/Timer/Countdown.swift` | The rules: setup → running (end time) → paused (time left) → setup, on cancel or at zero. Gives the time left and whether it has finished for a given clock time, so sleep is just a clock jump. Keeps the length of the run for the ring and bar, and adds a minute (+1). Pure, no timers. | Timer setting |
 | Timer look | `Ember/Timer/TimerLook.swift` | The running and "Time's up" activities, symbols, colours, sound name, presets, the short wing text, and the glow-while-running value. Pure. | Live activity |
 | Timer model | `Ember/Timer/TimerModel.swift` | Owns the setting and the countdown, ticks once a second while running, hands the current activity (or none) to the pill through a closure, and plays the sound at zero. | Countdown, look |
-| Timer panel | `Ember/Timer/TimerPanelView.swift` | The digits with arrows, presets, and Start / Reset / Pause / Resume / Cancel. | Timer model |
+| Timer panel | `Ember/Timer/TimerPanelView.swift` | Design B: the tile, the time (with arrows while stopped), presets or "Ends at" and the bar, and the control row. | Timer model, timer ring, panel buttons |
+| Timer ring | `Ember/Timer/TimerRing.swift` | The 96-point tile with the orange progress ring and the `timer` symbol. | Timer look |
+| Panel buttons | `Ember/Panel/PanelButtons.swift` | The white circle button and the plain hover-bright button, shared with the Music tab. | SwiftUI |
 | Hold-repeat button | `Ember/Timer/HoldRepeatButton.swift` | A button that acts once on press and repeats while held (after 0.4 s, about 10 times a second). | SwiftUI |
 | Panel content (changed) | `Ember/Panel/PanelView.swift` | The body shows the timer panel instead of the placeholder. | Timer panel |
 | App shell (changed) | `Ember/EmberApp.swift` | Creates the timer model and connects its activity to `controller.setOngoing`. | All of the above |
@@ -120,8 +163,11 @@ before; their values gain only the explicit "brief" duration they already have.
   - Countdown: start, pause, resume, cancel; time left during a run and across a pause;
     finishing exactly at the end time; a clock jump past the end (sleep); cancel and
     finish both return to setup with the last set time; start is refused at zero.
+    Redesign (part 2): +1 while stopped, running and paused; the time set stays when a
+    run grows; the 23:59:59 cap; the run's length and time gone, across a pause and a +1.
   - Timer look: wing text at 0:59, 59:59, 1:00:00 and 23:59:59; the running, paused and
-    "Time's up" activities' symbols, colours, glow and `endsWhenSeen`.
+    "Time's up" activities' symbols, colours, glow and `endsWhenSeen`; the line under
+    the time ("Ends at …", "Paused", none while stopped).
   - Pill controller: an ongoing activity makes the pill active and stays; replacing and
     clearing it; a brief activity shows over it and the ongoing one returns when the
     brief one ends; hovering or clicking clears an `endsWhenSeen` activity but not a

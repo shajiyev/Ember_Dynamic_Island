@@ -51,4 +51,14 @@ nonisolated enum TimerLook {
         }
         return "\(minutes):" + String(format: "%02d", seconds)
     }
+
+    /// The line under the time in the Timer tab: when a running timer ends, in the Mac's
+    /// own time format ("Ends at 14:35"), "Paused" while paused, nothing while stopped.
+    static func statusText(for phase: Countdown.Phase) -> String? {
+        switch phase {
+        case .stopped: return nil
+        case .running(let endDate): return "Ends at " + endDate.formatted(date: .omitted, time: .shortened)
+        case .paused: return "Paused"
+        }
+    }
 }

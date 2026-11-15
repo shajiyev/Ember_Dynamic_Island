@@ -27,4 +27,15 @@ struct TimerModelTests {
         #expect(timer.secondsLeft == 10)
         timer.cancel()
     }
+
+    @Test func plusOneShowsTheLongerTimeAtOnce() async throws {
+        let timer = try await setToTenSeconds()
+        timer.start()
+        var shown: LiveActivity?
+        timer.onActivity = { shown = $0 }
+        timer.addMinute()
+        #expect(timer.secondsLeft == 70)
+        #expect(shown == TimerLook.running(secondsLeft: 70))
+        timer.cancel()
+    }
 }

@@ -14,6 +14,9 @@ nonisolated struct Countdown: Equatable {
     /// The time last set. It can only change while the timer is stopped.
     private(set) var setting = TimerSetting()
     private(set) var phase = Phase.stopped
+    /// The length of the current run in seconds: the time set at Start plus every +1
+    /// since. 0 while stopped.
+    private(set) var runSeconds = 0
 
     var isStopped: Bool { phase == .stopped }
 
@@ -39,6 +42,7 @@ nonisolated struct Countdown: Equatable {
     mutating func start(at now: Date) {
         guard isStopped, setting.totalSeconds > 0 else { return }
         phase = .running(endDate: now.addingTimeInterval(TimeInterval(setting.totalSeconds)))
+        runSeconds = setting.totalSeconds
     }
 
     mutating func pause(at now: Date) {
@@ -53,12 +57,31 @@ nonisolated struct Countdown: Equatable {
 
     mutating func cancel() {
         phase = .stopped
+        runSeconds = 0
+    }
+
+    /// Adds a minute: to the time set while stopped, otherwise to this run only, so Cancel
+    /// still returns to the time set. Never past 23:59:59; near it, adds what is left.
+    mutating func addMinute(at now: Date) {
+        let added = min(60, TimerSetting.longest - secondsLeft(at: now))
+        guard added > 0 else { return }
+        switch phase {
+        case .stopped:
+            setting = TimerSetting(totalSeconds: setting.totalSeconds + added)
+        case .running(let endDate):
+            phase = .running(endDate: endDate.addingTimeInterval(TimeInterval(added)))
+            runSeconds += added
+        case .paused(let timeLeft):
+            phase = .paused(timeLeft: timeLeft + TimeInterval(added))
+            runSeconds += added
+        }
     }
 
     /// Stops a running timer whose end time has come. Returns true if it just finished.
     mutating func finishIfDue(at now: Date) -> Bool {
         guard case .running(let endDate) = phase, now >= endDate else { return false }
         phase = .stopped
+        runSeconds = 0
         return true
     }
 
@@ -73,5 +96,15 @@ nonisolated struct Countdown: Equatable {
         case .paused(let timeLeft):
             return Int(timeLeft.rounded(.up))
         }
+    }
+
+    /// The whole seconds of this run gone, as the shown time counts them. 0 while stopped.
+    func secondsGone(at now: Date) -> Int {
+        isStopped ? 0 : runSeconds - secondsLeft(at: now)
+    }
+
+    /// How much of this run has gone, 0…1, for the Timer tab's ring and bar.
+    func fractionGone(at now: Date) -> Double {
+        runSeconds > 0 ? Double(secondsGone(at: now)) / Double(runSeconds) : 0
     }
 }

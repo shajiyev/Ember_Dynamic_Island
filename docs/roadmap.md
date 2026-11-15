@@ -70,11 +70,18 @@
   down by a strip at the width of its current state; the Music tab gets the same thin
   capsule bar and Spotify-style controls; App Sandbox to be turned off. Spec
   docs/specs/volume-brightness.md.
+- **Done:** the Timer tab redesigned like the Music tab (design B, "Music mirror"): a
+  ring tile where the cover would be, "Ends at …" and a time-gone bar while it runs, the
+  white circle and plain icons, and a new +1 minute. Design A ("Light touch") is kept in
+  reserve in docs/specs/timers.md and docs/mockups/timer-tab.html. Tests pass; checked on
+  screen by the user on macOS 26.6.2. Plan docs/plans/timers.md, part 2.
 - **In progress:** volume and brightness in the pill (#11), plan docs/plans/volume-brightness.md: task 5 of 6 done (taking the keys).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
 - **Next:** finish volume and brightness in the pill (#11) with the plan's six tasks.
+  Website: the pill demo's Timer tab still shows the old timer layout; update it to
+  design B (see docs/architecture.md, the pill demo copies `TimerPanelView`).
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on
   Mac and iPhone; a custom domain once bought. The demo grows as features are finished. Later for

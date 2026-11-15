@@ -70,4 +70,12 @@ struct TimerLookTests {
     @Test func presetsMatchTheSpec() {
         #expect(TimerLook.presetMinutes == [5, 25, 45])
     }
+
+    @Test func theLineUnderTheTimeSaysWhenItEndsOrThatItIsPaused() {
+        let end = Date(timeIntervalSinceReferenceDate: 1_000)
+        #expect(TimerLook.statusText(for: .running(endDate: end))
+                == "Ends at " + end.formatted(date: .omitted, time: .shortened))
+        #expect(TimerLook.statusText(for: .paused(timeLeft: 30)) == "Paused")
+        #expect(TimerLook.statusText(for: .stopped) == nil)
+    }
 }

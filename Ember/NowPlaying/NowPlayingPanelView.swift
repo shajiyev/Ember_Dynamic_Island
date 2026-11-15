@@ -99,17 +99,11 @@ struct NowPlayingPanelView: View {
 
     private func controls(_ track: Track) -> some View {
         HStack(spacing: 26) {
-            SkipButton(symbolName: "backward.end.fill", action: model.previous)
-            Button(action: model.playPause) {
-                Image(systemName: track.isPlaying ? "pause.fill" : "play.fill")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.black)
-                    .frame(width: 32, height: 32)
-                    .background(Circle().fill(.white))
-            }
-            SkipButton(symbolName: "forward.end.fill", action: model.next)
+            PlainButton(symbolName: "backward.end.fill", title: "Previous", action: model.previous)
+            CircleButton(symbolName: track.isPlaying ? "pause.fill" : "play.fill",
+                         title: track.isPlaying ? "Pause" : "Play", action: model.playPause)
+            PlainButton(symbolName: "forward.end.fill", title: "Next", action: model.next)
         }
-        .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
     }
 
@@ -133,21 +127,5 @@ struct NowPlayingPanelView: View {
             .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
-/// Previous or next, as in Spotify: light grey, white while the pointer is on it.
-private struct SkipButton: View {
-    let symbolName: String
-    let action: () -> Void
-    @State private var isHovering = false
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: symbolName)
-                .font(.system(size: 17))
-                .foregroundStyle(.white.opacity(isHovering ? 1 : 0.7))
-        }
-        .onHover { isHovering = $0 }
     }
 }

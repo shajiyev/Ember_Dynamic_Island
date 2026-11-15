@@ -29,6 +29,12 @@ final class TimerModel {
     func choosePreset(minutes: Int) { countdown.choosePreset(minutes: minutes) }
     func reset() { countdown.reset() }
 
+    /// Adds a minute (+1). A running or paused timer's wings show the longer time at once.
+    func addMinute() {
+        countdown.addMinute(at: Date())
+        if !countdown.isStopped { update() }
+    }
+
     func start() {
         countdown.start(at: Date())
         startTicking()

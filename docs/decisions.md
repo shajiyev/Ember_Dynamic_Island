@@ -685,3 +685,19 @@ until the strip showed the shape below it.
   panel the body starts 19 points in, so the symbol and the number were cut off by the
   panel's flared and rounded corners. At rest and with an activity the bar is 12 points
   shorter than before.
+
+## 2026-11-15 — Timer tab redesigned like the Music tab (design B)
+Three mockups were compared at real size against the first version (grey macOS buttons):
+A "Light touch" (same layout, Music's buttons), B "Music mirror", C "Wide". **B was
+built**: a ring tile where the cover would be, the time as the title, "Ends at …" as the
+artist line, a time-gone bar, and the Music tab's control row.
+**Why:** the two tabs now feel like one design, and "Ends at" answers what people want to
+know while a timer runs. The user liked A too, so it is **kept in reserve**: described in
+docs/specs/timers.md, mockups in docs/mockups/timer-tab.html. Switching means rewriting
+only `TimerPanelView.swift`.
+- **+1 minute lets a started timer's run grow.** This replaces "a started timer's time
+  cannot be changed". The time set stays, so Cancel and "Time's up" still return to it.
+  **Why:** it fills the Music tab's "next" slot with something useful, and adding a
+  minute to a running timer is the common case.
+- **The white circle and plain icons are shared** (`Ember/Panel/PanelButtons.swift`), as
+  `CapsuleBar` already is, so the two tabs cannot drift apart.

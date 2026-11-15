@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember – Timer tab mockups</title>
+<!-- The Timer tab options compared on 2026-11-15. B was built; A is kept in reserve.
+     See docs/specs/timers.md. -->
+<style>
+  :root { --text-secondary:#9a9aa0; }
+  body { margin:0; padding:32px; background:#1d1d1f; color:#f5f5f7; font-family:-apple-system, BlinkMacSystemFont, system-ui, sans-serif; line-height:1.5; }
+  h2 { margin:0 0 4px; } h3 { margin:0 0 4px; font-size:1rem; }
+  .subtitle { color:var(--text-secondary); margin:0 0 20px; }
+  .section { margin-bottom:24px; }
+  .options { display:flex; flex-direction:column; gap:16px; }
+  .option { display:flex; gap:14px; background:#2d2d2f; border:2px solid #424245; border-radius:12px; padding:16px 20px; }
+  .option .letter { width:28px; height:28px; border-radius:6px; background:#3d3d3f; display:flex; align-items:center; justify-content:center; font-weight:600; flex:none; }
+  .option .content { flex:1; }
+  .option .content p { color:var(--text-secondary); font-size:.85rem; margin:0; }
+</style>
+</head>
+<body>
+<style>
+  .e-stage { display:flex; flex-wrap:wrap; gap:28px; padding:22px 18px 30px; background:#2a2a2e; border-radius:12px; }
+  .e-state { display:flex; flex-direction:column; gap:8px; }
+  .e-cap { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#9a9aa0; }
+  .e-panel { width:620px; height:200px; box-sizing:border-box; background:#000; border-radius:0 0 30px 30px;
+    padding:0 32px; display:flex; flex-direction:column; color:#fff;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    box-shadow:0 6px 34px rgba(255,122,30,.38); }
+  .e-top { height:32px; flex:none; display:flex; align-items:center; justify-content:space-between; }
+  .e-tabs { display:flex; gap:4px; }
+  .e-tab { width:26px; height:22px; border-radius:11px; display:grid; place-items:center; color:rgba(255,255,255,.55); }
+  .e-tab.on { background:rgba(255,255,255,.14); color:#fff; }
+  .e-tab svg { width:13px; height:13px; }
+  .e-batt { display:flex; align-items:center; gap:5px; font-size:11px; color:rgba(255,255,255,.75); }
+  .e-batt svg { width:22px; height:11px; }
+  .e-body { flex:1; display:flex; align-items:center; justify-content:center; }
+  .e-num { font-variant-numeric:tabular-nums; }
+
+  /* digits with arrows (current, A, C) */
+  .e-time { display:flex; align-items:center; gap:4px; }
+  .e-unit { display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .e-arrow { width:48px; height:22px; display:grid; place-items:center; color:rgba(255,255,255,.7); cursor:pointer; }
+  .e-arrow svg { width:13px; height:13px; }
+  .e-arrow.dim { opacity:.3; }
+  .e-arrow.small { height:14px; }
+  .e-arrow.small svg { width:10px; height:10px; }
+  .e-arrow.hidden { visibility:hidden; }
+  .e-d { font-size:36px; font-weight:500; min-width:48px; text-align:center; line-height:1.15; }
+  .e-sep { font-size:36px; font-weight:500; color:rgba(255,255,255,.5); line-height:1.15; }
+
+  /* macOS bordered buttons (current) */
+  .e-bord { font-size:13px; padding:3px 11px; border-radius:6px; background:rgba(255,255,255,.17); color:#fff; }
+  .e-bord.dim { opacity:.4; }
+  .e-row { display:flex; gap:8px; align-items:center; }
+
+  /* Music-tab language */
+  .e-chip { font-size:12px; font-weight:500; height:24px; padding:0 12px; border-radius:12px; display:inline-flex; align-items:center;
+    background:rgba(255,255,255,.1); color:rgba(255,255,255,.85); cursor:pointer; transition:background .15s, color .15s; }
+  .e-chip:hover { background:rgba(255,255,255,.2); color:#fff; }
+  .e-chip.dim { opacity:.3; pointer-events:none; }
+  .e-play { width:32px; height:32px; border-radius:50%; background:#fff; color:#000; display:grid; place-items:center; flex:none; cursor:pointer; }
+  .e-play svg { width:14px; height:14px; }
+  .e-play.big { width:40px; height:40px; }
+  .e-play.big svg { width:17px; height:17px; }
+  .e-glyph { color:rgba(255,255,255,.7); display:grid; place-items:center; cursor:pointer; transition:color .15s; font-size:13px; font-weight:600; }
+  .e-glyph:hover { color:#fff; }
+  .e-glyph svg { width:17px; height:17px; }
+  .e-ctrl { display:flex; align-items:center; gap:26px; }
+  .e-bar { display:flex; align-items:center; gap:8px; font-size:10px; font-weight:500; color:rgba(255,255,255,.5); font-variant-numeric:tabular-nums; }
+  .e-track { flex:1; height:4px; border-radius:2px; background:#4D4D4D; position:relative; overflow:hidden; }
+  .e-track i { position:absolute; inset:0 auto 0 0; border-radius:2px; background:#fff; }
+  .e-sub { font-size:13px; color:rgba(255,255,255,.6); }
+
+  /* B: ring tile */
+  .e-tile { width:96px; height:96px; border-radius:12px; background:rgba(255,255,255,.08); display:grid; place-items:center; flex:none; position:relative; }
+  .e-tile svg.ring { width:76px; height:76px; transform:rotate(-90deg); }
+  .e-tile .mid { position:absolute; inset:0; display:grid; place-items:center; color:#FF7A1E; }
+  .e-tile .mid svg { width:24px; height:24px; }
+  .e-dB { font-size:30px; font-weight:500; min-width:40px; text-align:center; line-height:1.1; }
+  .e-sepB { font-size:30px; font-weight:500; color:rgba(255,255,255,.5); line-height:1.1; }
+
+  /* C: wide */
+  .e-dC { font-size:42px; font-weight:500; min-width:54px; text-align:center; line-height:1.1; }
+  .e-sepC { font-size:42px; font-weight:500; color:rgba(255,255,255,.5); line-height:1.1; }
+
+  .e-current { opacity:1; }
+  .e-tag { display:inline-block; font-size:11px; font-weight:600; padding:1px 8px; border-radius:10px; background:#FF7A1E; color:#000; margin-left:6px; vertical-align:2px; }
+  .e-notes { margin:6px 0 0 18px; color:var(--text-secondary); font-size:.85rem; }
+  .e-notes li { margin:2px 0; }
+  .option .content { min-width:0; }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-note" viewBox="0 0 16 16"><path fill="currentColor" d="M6 2.6 14 1v9.3a2.2 2.2 0 1 1-1.4-2.05V4.2L7.4 5.2v6.6A2.2 2.2 0 1 1 6 9.75z"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="9.2" r="5.5"/><path d="M8 9.2V6.2M6.3 1.6h3.4"/></g></symbol>
+    <symbol id="i-cal" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="2.2"/><path d="M2 6.6h12M5.2 1.5v3M10.8 1.5v3" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-play" viewBox="0 0 16 16"><path fill="currentColor" d="M4.6 2.6v10.8c0 .55.6.88 1.06.58l8.3-5.4a.7.7 0 0 0 0-1.16l-8.3-5.4c-.46-.3-1.06.03-1.06.58z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 16 16"><g fill="currentColor"><rect x="3.4" y="2.4" width="3.2" height="11.2" rx=".9"/><rect x="9.4" y="2.4" width="3.2" height="11.2" rx=".9"/></g></symbol>
+    <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.3 8.6A4.9 4.9 0 1 0 5 4.5"/><path d="M2.8 2.3v3.4h3.4"/></g></symbol>
+    <symbol id="i-up" viewBox="0 0 16 16"><path d="M3.5 10.5 8 6l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-down" viewBox="0 0 16 16"><path d="M3.5 5.5 8 10l4.5-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-batt" viewBox="0 0 24 12"><rect x=".75" y=".75" width="20" height="10.5" rx="3" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="1.2"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.6" fill="currentColor"/><path d="M22.4 4.2v3.6" stroke="currentColor" stroke-opacity=".5" stroke-width="1.4" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<h2>Timer tab redesign</h2>
+<p class="subtitle">Real size (620 × 200 panel). Each option shows the timer stopped (set to 25 min) and running. Hover the chips and the plain icons to see their hover state. </p>
+
+<!-- ====================== CURRENT ====================== -->
+<div class="section">
+  <h3>Today</h3>
+  <div class="e-stage">
+    <div class="e-state"><span class="e-cap">Stopped</span>
+      <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+        <div class="e-body" style="gap:48px">
+          <div class="e-time e-num">
+            <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">0</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+            <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">25</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+            <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">00</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+            <div class="e-row"><span class="e-bord">5m</span><span class="e-bord">25m</span><span class="e-bord">45m</span></div>
+            <div class="e-row"><span class="e-bord">Start</span><span class="e-bord">Reset</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="e-state"><span class="e-cap">Running</span>
+      <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+        <div class="e-body" style="gap:48px">
+          <div class="e-time e-num">
+            <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">0</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+            <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">18</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+            <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">42</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+            <div class="e-row"><span class="e-bord dim">5m</span><span class="e-bord dim">25m</span><span class="e-bord dim">45m</span></div>
+            <div class="e-row"><span class="e-bord">Pause</span><span class="e-bord">Cancel</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+
+<!-- ====================== A ====================== -->
+<div class="option" data-choice="a">
+  <div class="letter">A</div>
+  <div class="content">
+    <h3>Light touch: same layout, Music's buttons <span class="e-tag" style="background:#9a9aa0">In reserve</span></h3>
+    <p>Keeps today's layout. Grey boxes become soft chips; Start/Pause becomes the white circle; Reset/Cancel become plain icons that brighten on hover. A thin bar under the time shows progress while it runs.</p>
+    <div class="e-stage" style="margin-top:12px">
+      <div class="e-state"><span class="e-cap">Stopped</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="gap:52px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="e-time e-num">
+                <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">0</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+                <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">25</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+                <div class="e-unit"><div class="e-arrow"><svg><use href="#i-up"/></svg></div><div class="e-d">00</div><div class="e-arrow"><svg><use href="#i-down"/></svg></div></div>
+              </div>
+              <div class="e-track" style="visibility:hidden"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+              <div class="e-row"><span class="e-chip">5m</span><span class="e-chip">25m</span><span class="e-chip">45m</span></div>
+              <div class="e-ctrl"><div class="e-play"><svg><use href="#i-play"/></svg></div><div class="e-glyph" title="Reset"><svg><use href="#i-reset"/></svg></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="e-state"><span class="e-cap">Running</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="gap:52px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="e-time e-num">
+                <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">0</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+                <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">18</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div><div class="e-sep">:</div>
+                <div class="e-unit"><div class="e-arrow dim"><svg><use href="#i-up"/></svg></div><div class="e-d">42</div><div class="e-arrow dim"><svg><use href="#i-down"/></svg></div></div>
+              </div>
+              <div class="e-track"><i style="width:25%"></i></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;align-items:center">
+              <div class="e-row"><span class="e-chip dim">5m</span><span class="e-chip dim">25m</span><span class="e-chip dim">45m</span></div>
+              <div class="e-ctrl"><div class="e-play"><svg><use href="#i-pause"/></svg></div><div class="e-glyph" title="Cancel"><svg><use href="#i-x"/></svg></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== B ====================== -->
+<div class="option" data-choice="b">
+  <div class="letter">B</div>
+  <div class="content">
+    <h3>Music mirror <span class="e-tag">Built</span></h3>
+    <p>Built like the Music tab: a 96 pt tile on the left (an orange progress ring where the cover would be), the time as the "title", "Ends at 14:35" as the "artist", the same scrubber-style bar with elapsed and total, and the same control row — Reset/Cancel · white circle · <b>+1 min</b> (new) in the prev/next spots. Switching between Music and Timer feels like one design.</p>
+    <div class="e-stage" style="margin-top:12px">
+      <div class="e-state"><span class="e-cap">Stopped</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="gap:18px;justify-content:flex-start">
+            <div class="e-tile">
+              <svg class="ring" viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="none" stroke="#4D4D4D" stroke-width="6"/></svg>
+              <div class="mid"><svg><use href="#i-timer"/></svg></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:7px;min-width:0">
+              <div class="e-time e-num" style="gap:2px">
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:40px"><svg><use href="#i-up"/></svg></div><div class="e-dB">0</div><div class="e-arrow small" style="width:40px"><svg><use href="#i-down"/></svg></div></div><div class="e-sepB">:</div>
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:40px"><svg><use href="#i-up"/></svg></div><div class="e-dB">25</div><div class="e-arrow small" style="width:40px"><svg><use href="#i-down"/></svg></div></div><div class="e-sepB">:</div>
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:40px"><svg><use href="#i-up"/></svg></div><div class="e-dB">00</div><div class="e-arrow small" style="width:40px"><svg><use href="#i-down"/></svg></div></div>
+                <div style="flex:1"></div>
+                <div class="e-row"><span class="e-chip">5m</span><span class="e-chip">25m</span><span class="e-chip">45m</span></div>
+              </div>
+              <div class="e-ctrl" style="justify-content:center"><div class="e-glyph" title="Reset"><svg><use href="#i-reset"/></svg></div><div class="e-play"><svg><use href="#i-play"/></svg></div><div class="e-glyph" title="Add a minute">+1</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="e-state"><span class="e-cap">Running</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="gap:18px;justify-content:flex-start">
+            <div class="e-tile">
+              <svg class="ring" viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="none" stroke="#4D4D4D" stroke-width="6"/><circle cx="40" cy="40" r="34" fill="none" stroke="#FF7A1E" stroke-width="6" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="53.4"/></svg>
+              <div class="mid"><svg><use href="#i-timer"/></svg></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div class="e-num" style="font-size:30px;font-weight:500;line-height:1.1">0:18:42</div>
+              <div class="e-sub">Ends at 14:35</div>
+              <div class="e-bar"><span>6:18</span><div class="e-track"><i style="width:25%"></i></div><span>25:00</span></div>
+              <div class="e-ctrl" style="justify-content:center"><div class="e-glyph" title="Cancel"><svg><use href="#i-x"/></svg></div><div class="e-play"><svg><use href="#i-pause"/></svg></div><div class="e-glyph" title="Add a minute">+1</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== C ====================== -->
+<div class="option" data-choice="c">
+  <div class="letter">C</div>
+  <div class="content">
+    <h3>Wide: big time, controls on the right, bar across</h3>
+    <p>A bigger clock on the left, a larger white circle on the right, and a full-width bar along the bottom while it runs (the preset chips sit there while it's stopped). Uses the whole panel; reads well at a glance.</p>
+    <div class="e-stage" style="margin-top:12px">
+      <div class="e-state"><span class="e-cap">Stopped</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="flex-direction:column;align-items:stretch;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="e-time e-num" style="gap:2px">
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:54px"><svg><use href="#i-up"/></svg></div><div class="e-dC">0</div><div class="e-arrow small" style="width:54px"><svg><use href="#i-down"/></svg></div></div><div class="e-sepC">:</div>
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:54px"><svg><use href="#i-up"/></svg></div><div class="e-dC">25</div><div class="e-arrow small" style="width:54px"><svg><use href="#i-down"/></svg></div></div><div class="e-sepC">:</div>
+                <div class="e-unit" style="gap:0"><div class="e-arrow small" style="width:54px"><svg><use href="#i-up"/></svg></div><div class="e-dC">00</div><div class="e-arrow small" style="width:54px"><svg><use href="#i-down"/></svg></div></div>
+              </div>
+              <div class="e-ctrl" style="gap:22px"><div class="e-glyph" title="Reset"><svg><use href="#i-reset"/></svg></div><div class="e-play big"><svg><use href="#i-play"/></svg></div></div>
+            </div>
+            <div class="e-row" style="height:16px"><span class="e-chip">5m</span><span class="e-chip">25m</span><span class="e-chip">45m</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="e-state"><span class="e-cap">Running</span>
+        <div class="e-panel"><div class="e-top"><div class="e-tabs"><div class="e-tab"><svg><use href="#i-note"/></svg></div><div class="e-tab on"><svg><use href="#i-timer"/></svg></div><div class="e-tab"><svg><use href="#i-cal"/></svg></div></div><div class="e-batt">87%<svg><use href="#i-batt"/></svg></div></div>
+          <div class="e-body" style="flex-direction:column;align-items:stretch;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="e-arrow small hidden"></div>
+                <div class="e-num" style="font-size:42px;font-weight:500;line-height:1.1">0:18:42</div>
+                <div class="e-sub" style="height:14px;line-height:14px;font-size:12px">Ends at 14:35</div>
+              </div>
+              <div class="e-ctrl" style="gap:22px"><div class="e-glyph" title="Cancel"><svg><use href="#i-x"/></svg></div><div class="e-play big"><svg><use href="#i-pause"/></svg></div></div>
+            </div>
+            <div class="e-bar" style="height:16px"><span>6:18</span><div class="e-track"><i style="width:25%"></i></div><span>25:00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="section" style="margin-top:18px">
+  <h3>Why B</h3>
+  <ul class="e-notes">
+    <li>Same skeleton as Music (tile · title · subtitle · bar · prev/play/next), so the two tabs feel like one product.</li>
+    <li>The ring tile carries the timer's orange the way the cover carries the song's colour.</li>
+    <li>"Ends at 14:35" answers the question people actually have while a timer runs.</li>
+    <li>+1 min fills the "next" slot with something useful; drop it if you'd rather not add a feature (the row then becomes Reset/Cancel · circle).</li>
+  </ul>
+</div>
+
+</body>
+</html>

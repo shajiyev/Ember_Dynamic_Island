@@ -16,6 +16,9 @@ nonisolated struct TimerSetting: Equatable {
 
     var totalSeconds: Int { hours * 3600 + minutes * 60 + seconds }
 
+    /// The longest time a timer can have: 23:59:59.
+    static let longest = 23 * 3600 + 59 * 60 + 59
+
     subscript(unit: Unit) -> Int {
         get {
             switch unit {
