@@ -222,10 +222,11 @@ quitting Ember brings back macOS's indicator.
   reads the built-in screen (0.62) and fails (error 1000) for an external monitor, which
   is why the built-in screen is found by name. Setting it is still to be tried, and the
   check is to be repeated on macOS 15 before release.
-- **Event tap and an unsigned app:** each rebuild changes Ember's code signature, so
-  macOS may keep Ember ticked in Accessibility while the tap fails. During development,
-  switch Ember off and on again in System Settings. The stable self-signed certificate
-  (Ship it milestone) is what fixes this for users' updates.
+- **Event tap and an unsigned app:** each rebuild changed Ember's code signature, so
+  macOS kept Ember ticked in Accessibility while the tap failed. Fixed on 2026-11-15:
+  builds are signed with a self-signed certificate, so the signature stays the same (see
+  docs/decisions.md). For users' updates the same idea applies at release (Ship it
+  milestone).
 - **Key events on macOS 15 and 26:** the first task of the plan confirms that the keys
   arrive as system-defined events with the expected codes and that taking them hides
   macOS's indicator.

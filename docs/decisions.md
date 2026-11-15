@@ -713,3 +713,25 @@ labels only. Event rows, reminder titles and the big date keep their behaviour.
   Automation prompt; neither was wanted.
 - `CalendarSource` names each app's bundle ID (`com.apple.iCal`, `com.apple.reminders`); a
   test checks they resolve to Calendar.app and Reminders.app.
+
+## 2026-11-15 — Builds are signed with a self-signed certificate
+Found in the #11 checks on macOS 26.6.2: after a rebuild, the volume and brightness keys
+stayed with macOS although Ember was ticked in Accessibility.
+**Why:** "Sign to Run Locally" signs each build ad hoc, and macOS ties a permission to
+that exact signature. Every rebuild, and every other copy of Ember on the Mac (each
+build folder registers one), had a different signature, so the stored permission never
+matched. macOS's privacy log said "Failed to match existing code requirement". Removing
+Ember in System Settings and adding it back did not replace the stored signature;
+`tccutil reset Accessibility io.github.shajiyev.Ember` did.
+- The Ember target is signed with "Ember Code Signing" (`CODE_SIGN_STYLE` Manual), a
+  self-signed certificate that `scripts/make-signing-certificate.sh` adds to the login
+  keychain once per Mac. macOS then knows Ember by its bundle ID and that certificate, so
+  a permission granted once survives rebuilds. Checked by building with it: Xcode accepts
+  the certificate without marking it trusted.
+- Considered: an explicit designated requirement of only the bundle ID on ad-hoc Debug
+  builds (no setup, but any app claiming Ember's bundle ID would match its permissions),
+  and a free Apple ID team (its Team ID would have to stay out of the repository).
+- Building Ember now needs the script run once, documented in the README. The test target
+  stays signed ad hoc.
+- Still open for release: which certificate signs releases, and keeping its key safe, so
+  users' permissions survive updates.

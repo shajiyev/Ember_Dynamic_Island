@@ -59,8 +59,13 @@ to get past that will be documented here.
 You need a Mac with Xcode 27 or later.
 
 1. Clone this repository.
-2. Open `Ember.xcodeproj` in Xcode.
-3. Press Run (⌘R).
+2. Once per Mac, from the repository folder, run `scripts/make-signing-certificate.sh`. It
+   adds a self-signed certificate, "Ember Code Signing", to your login keychain, and Xcode
+   signs Ember with it. Every build then has the same signature, so permissions such as
+   Accessibility stay granted across rebuilds. The first build may ask whether codesign may
+   use the key: enter your Mac password and click Always Allow.
+3. Open `Ember.xcodeproj` in Xcode.
+4. Press Run (⌘R).
 
 ## Built with AI
 
