@@ -87,11 +87,15 @@
   on macOS 26.6.2 with the checklist in docs/plans/volume-brightness.md. Builds are now
   signed with a self-signed certificate (`scripts/make-signing-certificate.sh`), so
   permissions survive rebuilds.
+- **Done:** the Settings window (#0) with the basics (#26a) designed and planned: a
+  sidebar window in Atoll's style with search, a switch per feature that stops it
+  entirely, the menu shortened to Settings…, Share Feedback and Quit. Spec
+  docs/specs/settings.md, plan docs/plans/settings.md.
 - **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   layout settings (#38: panel size, calendar in the Music tab), and the tab the panel opens
   on (#39: the last one, or one the user picks). See docs/features.md.
-- **Next:** choose and design milestone 2's next feature (by the v1 list's order).
+- **Next:** build the Settings window, Task 1 of docs/plans/settings.md.
   Website: the pill demo's Timer tab still shows the old timer layout; update it to
   design B with the stopwatch button (see docs/architecture.md, the pill demo copies
   `TimerPanelView`).

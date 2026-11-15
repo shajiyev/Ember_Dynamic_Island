@@ -823,3 +823,29 @@ the screen as possible.
 - **Accepted trade-off:** the notch now hides the top half point of the line below it, so
   that line can look slightly thinner than the line beside the notch (about 1.5 against
   2 points). Checked on screen by the user.
+
+## 2026-11-15 — The Settings window (#0) designed, with the basics (#26a)
+Spec docs/specs/settings.md, plan docs/plans/settings.md.
+- **One feature covers everything v1 needs from Settings:** the window, launch at login,
+  #26a's hover and delays, a switch per feature, the always-on glow (#29), and the three
+  switches that were in the menu. **Why:** several finished features were waiting on it,
+  and onboarding (later) sends users to Settings.
+- **A feature that is off is fully off:** its tab and wings go, and it stops all work (no
+  Apple Events, observers or timers). **Why:** the privacy promise, and the user asked for
+  what affects the Mac's performance least. Turning Timer off cancels a running timer.
+- **With every tab off, the panel still opens** and says "Turn on a feature in Settings",
+  with an Open Settings button. **Why:** an empty or dead pill would look broken.
+- **Battery has two switches:** alerts, and the percentage in the panel.
+- **The menu becomes Settings…, Share Feedback, Quit.** Share Feedback is greyed out until
+  the destination is chosen (also on the Feedback page).
+- **Launch at login is off by default;** onboarding will ask. **Why:** nothing changes on
+  the user's Mac without their choice.
+- **Our own AppKit window, made on open and dropped on close,** over SwiftUI's `Settings`
+  or `Window` scene. **Why:** it costs nothing while closed, and it controls the two things
+  menu bar apps get wrong: opening behind other apps, and the Dock icon.
+- **The Dock icon shows while Settings is open,** so the window can be found again.
+- **Sidebar layout in Atoll's style** (grouped sidebar, gradient icon squares, grouped
+  forms with footers, glass on macOS 26), chosen over toolbar tabs and one long page.
+  **Why:** room for the later per-page options (#30, #33–#39).
+- **Search in the sidebar from the start.** **Why:** the user expects many more options
+  soon; each setting is listed once in an index with extra words.

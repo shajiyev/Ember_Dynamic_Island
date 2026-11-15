@@ -11,7 +11,7 @@ explicitly decide to revive something.
 | # | Area | Feature | Status | Notes |
 |---|------|---------|--------|-------|
 | 0 | Core | Notch pill window, hover/click expand, animations | done | Foundation for everything else |
-| 0 | Core | Settings window, menu bar icon, launch at login | in progress | Menu bar icon done (milestone 1) |
+| 0 | Core | Settings window, menu bar icon, launch at login | in progress | Menu bar icon done (milestone 1). Settings window designed and planned 2026-11-15 with #26a: spec docs/specs/settings.md, plan docs/plans/settings.md |
 | 0 | Core | Onboarding & permission requests | v1 | One page per feature that needs a permission: the user turns it on now (the page shows where and how to grant the permission) or leaves it for Settings, where every feature can be found and turned on later. Keeps the privacy promise on the website (decisions 2026-11-12) |
 | 27 | Distribution | Auto-updates | v1 | Required for public release |
 | 1 | Media | Now Playing: artwork, play/pause/skip, scrubber, multiple players | done | Apple Music and Spotify through Apple Events (MediaRemote is blocked since macOS 15.4). Cover and equalizer in the wings, glow in the cover's dominant colour; Music tab with scrubber. Restyled 2026-11-14: Spotify-style 4 pt bar with a time label on hover and controls, the player's icon by the title, clicking the song opens its player and closes the panel. Spec docs/specs/now-playing.md |
