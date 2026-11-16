@@ -13,7 +13,7 @@ nonisolated struct Track: Equatable {
     var readAt: Date
     var isPlaying: Bool
     var isShuffling = false
-    var isRepeating = false
+    var repeatMode = RepeatMode.off
     var artwork: NSImage?
 
     /// The position at `now`: it advances while playing, up to the end of the song.
@@ -32,7 +32,7 @@ nonisolated extension Track {
                   length: reading.length, position: reading.position, readAt: date,
                   isPlaying: reading.state == "playing")
         isShuffling = reading.isShuffling
-        isRepeating = reading.isRepeating
+        repeatMode = reading.repeatMode
     }
 
     /// The track as it is right after seeking to `position` at `now`, before the player

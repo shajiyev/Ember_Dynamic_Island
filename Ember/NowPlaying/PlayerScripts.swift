@@ -11,10 +11,30 @@ nonisolated struct PlayerReading: Equatable, Sendable {
     var length: TimeInterval = 0
     var position: TimeInterval = 0
     var isShuffling = false
-    /// Repeat is on: Spotify's "repeating", or Music's "song repeat" set to one or all.
-    var isRepeating = false
+    var repeatMode = RepeatMode.off
     /// Spotify's cover; Music hands its cover over as data instead (`musicArtwork()`).
     var artworkURL: String?
+}
+
+/// A player's repeat: off, the whole list, or the song that is playing.
+nonisolated enum RepeatMode: String, Sendable {
+    case off, all, one
+
+    /// A player's answer, as the read script gives it: "off", "all" or "one" (Music's
+    /// `song repeat`; Spotify's on or off becomes "all" or "off"). Off when it gave none.
+    init(reported: String?) {
+        self = reported.flatMap(RepeatMode.init(rawValue:)) ?? .off
+    }
+
+    /// What the repeat button switches to: off, all, then one, in Music's own order. Spotify
+    /// cannot be set to repeat one from outside, so it switches between off and all.
+    func next(for player: Player) -> RepeatMode {
+        switch self {
+        case .off: .all
+        case .all: player == .music ? .one : .off
+        case .one: .off
+        }
+    }
 }
 
 nonisolated enum PlayerCommand: Sendable {
@@ -23,8 +43,7 @@ nonisolated enum PlayerCommand: Sendable {
     case previous
     case seek(TimeInterval)
     case setShuffle(Bool)
-    /// On means repeat all; there is no "repeat one" (Spotify cannot).
-    case setRepeat(Bool)
+    case setRepeat(RepeatMode)
 }
 
 /// Talks to Music and Spotify with short AppleScript commands. Never sends anything to a
@@ -45,7 +64,7 @@ nonisolated enum PlayerScripts {
             reading.length = result.atIndex(5)?.doubleValue ?? 0
             reading.position = result.atIndex(6)?.doubleValue ?? 0
             reading.isShuffling = result.atIndex(7)?.booleanValue ?? false
-            reading.isRepeating = result.atIndex(8)?.booleanValue ?? false
+            reading.repeatMode = RepeatMode(reported: result.atIndex(8)?.stringValue)
             reading.artworkURL = result.atIndex(9)?.stringValue
             return reading
         }
@@ -55,20 +74,21 @@ nonisolated enum PlayerScripts {
         // Spotify gives the length in milliseconds and has an artwork URL.
         let length = player == .spotify ? "(duration of t) / 1000" : "duration of t"
         let artworkURL = player == .spotify ? ", artwork url of t" : ""
-        // Music: shuffle enabled and song repeat (off, one, all); Spotify: shuffling and repeating.
-        // Read in a `try` of their own: a player that cannot report them still shows its song.
+        // Music: shuffle enabled and song repeat (off, one, all); Spotify: shuffling and repeating
+        // (on or off, read as "all" or "off"). Read in a `try` of their own: a player that
+        // cannot report them still shows its song.
         let readShuffle = player == .spotify ? "shuffling" : "shuffle enabled"
-        let readRepeat = player == .spotify ? "repeating" : "(song repeat as text) is not \"off\""
+        let readRepeat = player == .spotify ? "if repeating then set rp to \"all\"" : "set rp to song repeat as text"
         return """
             tell application id "\(player.bundleID)"
                 set s to player state as text
                 if s is "stopped" then return {s}
                 set t to current track
                 set sh to false
-                set rp to false
+                set rp to "off"
                 try
                     set sh to \(readShuffle)
-                    set rp to \(readRepeat)
+                    \(readRepeat)
                 end try
                 return {s, name of t, artist of t, album of t, \(length), player position, sh, rp\(artworkURL)}
             end tell
@@ -90,7 +110,7 @@ nonisolated enum PlayerScripts {
         case .previous: "previous track"
         case .seek(let seconds): "set player position to \(String(format: "%.2f", seconds))"
         case .setShuffle(let on): player == .spotify ? "set shuffling to \(on)" : "set shuffle enabled to \(on)"
-        case .setRepeat(let on): player == .spotify ? "set repeating to \(on)" : "set song repeat to \(on ? "all" : "off")"
+        case .setRepeat(let mode): player == .spotify ? "set repeating to \(mode != .off)" : "set song repeat to \(mode.rawValue)"
         }
         _ = await run("tell application id \"\(player.bundleID)\" to \(action)") { _ in true }
     }
@@ -104,4 +124,27 @@ nonisolated enum PlayerScripts {
             return parse(result)
         }.value
     }
+}
+
+/// Where Now Playing gets its readings and covers and sends its commands: the players
+/// themselves, or stand-ins in the tests.
+nonisolated struct PlayerSource: Sendable {
+    var read: @Sendable (Player) async -> PlayerReading?
+    /// The cover of the reading's song, as image data.
+    var cover: @Sendable (PlayerReading, Player) async -> Data?
+    var send: @Sendable (PlayerCommand, Player) async -> Void
+
+    /// Music hands its cover over; Spotify's is downloaded.
+    static let players = PlayerSource(
+        read: PlayerScripts.read,
+        cover: { reading, player in
+            switch player {
+            case .music:
+                return await PlayerScripts.musicArtwork()
+            case .spotify:
+                guard let url = reading.artworkURL.flatMap(URL.init(string:)) else { return nil }
+                return try? await URLSession.shared.data(from: url).0
+            }
+        },
+        send: PlayerScripts.send)
 }

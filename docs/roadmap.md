@@ -109,6 +109,12 @@
   screenshots added by themselves. With it, the opening tab in Settings (#39: Last tab or a
   fixed tab) and separate times for the last tab and the Shelf tab. Tests pass on macOS
   26.6.2; checked on screen by the user. Spec docs/specs/file-shelf.md.
+- **Fixed:** the pill and the Music tab no longer fall behind the player (an old song in
+  the wings, the bar counting on after a rewind in the player). Once Ember had been active
+  (Settings, the shelf), macOS held the players' notices until it was active again; they
+  now arrive at once (the screen-lock notices too). The open Music tab also reads the
+  players every 2 s, and a stale reading can no longer overwrite a newer one. Tests pass;
+  checked on screen by the user on macOS 26.6.2. See docs/decisions.md.
 - **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.

@@ -77,8 +77,10 @@ Today's layout, plus what this feature adds to both layouts: the shuffle and rep
 
 - Each is a plain button in the controls row's style; **lit (white) when on**, grey when
   off. Clicking it switches the player's own shuffle or repeat.
-- **Repeat** switches between off and **repeat all**. Music's "repeat one" shows as on;
-  clicking it turns repeat off. (Spotify's scripting has no "repeat one".)
+- **Repeat** with Music goes off → **repeat all** → **repeat one** (the `repeat.1` symbol)
+  → off, in Music's own order (added 2026-11-16). With Spotify it switches between off and
+  repeat all: Spotify's scripting has only on or off, so Ember cannot set "repeat one";
+  Spotify's own repeat one shows as on.
 - The buttons show the player's real state, read with the rest of the song, so a change
   made in the player shows here too.
 - Back and forward 10 seconds (the rest of #33) stay on the later list.
@@ -175,8 +177,8 @@ Unit tests, written first:
 - `NotchGeometryTests`: the open rectangle follows the size it is given.
 - `NowPlayingLookTests`: the time-left text (`-3:30`, `-0:00` at the end, hours when
   longer than an hour).
-- `TrackTests` / reading tests: shuffle and repeat are read for each player; Music's
-  "repeat one" counts as on.
+- `TrackTests` / reading tests: shuffle and repeat are read for each player.
+  `RepeatModeTests`: Music cycles off, all, one; Spotify off and all.
 - `SettingsSearchTests`: "layout", "shuffle" and "repeat" find their settings.
 - `TimerLookTests`: the set-time text: `25 min`, `1 h 30 min`, `1 h`, `2 min 30 s`, `45 s`.
 

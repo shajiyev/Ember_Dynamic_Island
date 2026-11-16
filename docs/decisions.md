@@ -948,3 +948,23 @@ from a stacked music player seen in another notch app (only the idea is borrowed
   fixes found in the checks: SwiftUI sends one more drag update about 0.3 s after a drop
   (the pill ignores updates outside a drag), and a tap gesture around the items emptied a
   ⌘-click selection (it now sits behind them).
+
+## 2026-11-16 — Players' notices heard at once, and the Music tab re-checks
+- **Decision:** Ember listens to other apps' notices (Music, Spotify, the screen lock) with
+  `.deliverImmediately` (`addImmediateObserver`).
+- **Why:** the pill and the Music tab sometimes kept an old song, or counted on after a
+  rewind in the player. AppKit suspends other apps' notices for an app that is not active,
+  once it has been active (Ember is, while Settings or the shelf has focus): they wait until
+  it is active again and only the last of each name is kept. A test app proved it, and
+  Ember's tests now do too. It explains why it failed only sometimes: a freshly launched
+  Ember had never been active.
+- **Decision:** the open Music tab reads the players again every 2 s; a read under way is
+  left to finish. No reading in the background while the panel is closed.
+- **Why:** a player may not announce everything (a seek in the player). The bar is only on
+  screen while the tab shows, the read is one short Apple Event and the cover is cached;
+  while closed, the notices are enough for the wings. Skipping players with a read under
+  way keeps a slow cover download from starting over every 2 s.
+- **Decision:** a read replaced by a newer one is dropped even after its cover loaded, and
+  a command (seek, skip, shuffle, repeat) cancels a read under way.
+- **Why:** both let an older answer land last: an old song in the wings, or the bar jumping
+  back for a moment after a seek. Both were reproduced in tests before the fix.

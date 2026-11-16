@@ -30,13 +30,19 @@ final class ScreenUseMonitor {
 
     private func observe(_ center: NotificationCenter, _ name: Notification.Name,
                          _ change: @escaping (ScreenUseMonitor) -> Void) {
-        let token = center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-            // The observer runs on the main queue, so this is already on the main actor.
-            MainActor.assumeIsolated {
-                guard let self else { return }
-                let wasInUse = self.isInUse
-                change(self)
-                if self.isInUse != wasInUse { self.onChange?(self.isInUse) }
+        let receive: (Notification) -> Void = { [weak self] _ in
+            guard let self else { return }
+            let wasInUse = isInUse
+            change(self)
+            if isInUse != wasInUse { onChange?(isInUse) }
+        }
+        // The lock notices must arrive even after Ember was active (`addImmediateObserver`).
+        let token = if let distributed = center as? DistributedNotificationCenter {
+            distributed.addImmediateObserver(forName: name, using: receive)
+        } else {
+            center.addObserver(forName: name, object: nil, queue: .main) { notice in
+                // The observer runs on the main queue, so this is already on the main actor.
+                MainActor.assumeIsolated { receive(notice) }
             }
         }
         observers.append((center, token))

@@ -32,10 +32,10 @@ struct TrackTests {
         var reading = PlayerReading(state: "playing", title: "Song", artist: "Artist", album: "Album",
                                     length: 200, position: 10)
         reading.isShuffling = true
-        reading.isRepeating = true
+        reading.repeatMode = .one
         let track = Track(reading, from: .music, at: readAt)
         #expect(track?.isShuffling == true)
-        #expect(track?.isRepeating == true)
+        #expect(track?.repeatMode == .one)
     }
 
     @Test func shuffleAndRepeatAreOffUnlessReported() {
@@ -43,7 +43,7 @@ struct TrackTests {
                                     length: 200, position: 10)
         let track = Track(reading, from: .spotify, at: readAt)
         #expect(track?.isShuffling == false)
-        #expect(track?.isRepeating == false)
+        #expect(track?.repeatMode == .off)
     }
 
     @Test func aStoppedPlayerHasNoTrack() {

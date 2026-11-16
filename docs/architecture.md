@@ -86,14 +86,17 @@
     from the installed app), and short AppleScript commands that read them and send
     play/pause, skip, seek, shuffle and repeat; never to a closed player, and off the main
     thread. Shuffle and repeat are read in a `try` of their own, so a player that cannot
-    report them still shows its song.
+    report them still shows its song. `PlayerSource` bundles reading, covers and commands:
+    the real players in the app, stand-ins in the tests.
   - `Track.swift`, `PlayerChoice.swift`, `CoverColor.swift`, `NowPlayingLook.swift`: the
     pure rules: the song and its position, which player to show, the glow from the cover,
     the wings' activity and the time texts (played, length, time left).
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
     notices settle, publishes the chosen track and sends commands. A seek shows its new
     position at once (`Track.seeked`), and shuffle and repeat their new state, before the
-    player's own reading confirms it.
+    player's own reading confirms it. A newer read or a command cancels a read under way,
+    so a stale answer is never shown. `recheck()` reads the players that have no read
+    under way; the open Music tab calls it every `recheckInterval` (2 s).
   - `NowPlayingPanelView.swift`: the Music tab; draws `CompactMusicView` or its own wide
     layout from the panel's layout, or "Nothing playing". Clicking the cover, title, artist
     or icon brings the player to the front and closes the panel.
@@ -174,6 +177,9 @@
   bar icon and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
   `applySettings()`. `AppDelegate+Shelf.swift`: dropped files and screenshots to the shelf
   or AirDrop.
+- `Ember/DistributedNotificationCenter+Immediate.swift` — `addImmediateObserver`: other
+  apps' notices (the players', the screen lock) heard at once, even while macOS suspends
+  them for Ember. Every distributed notice listener uses it.
 
 ## Data flow
 Pointer and click events go from `PillView` to `PillController.send`. The controller
@@ -202,7 +208,8 @@ a `PlayerReport` per player, and publishes the track `PlayerChoice` picks. While
 the model hands the app delegate an activity with the cover, the equalizer and the cover's
 glow. The app delegate passes the timer's and the music's activities through
 `LastingChoice` to `PillController.setOngoing`. The Music tab reads the model and sends its
-commands.
+commands, and while it shows it re-checks the players every 2 s, for what they did not
+announce (a seek in the player itself).
 
 Calendar: the tab works without EventKit: `MonthGrid` lays out the month and the model
 keeps the selected day. The Calendar page's two switches call `CalendarModel.turn`, which asks

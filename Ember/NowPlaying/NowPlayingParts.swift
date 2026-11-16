@@ -130,8 +130,9 @@ struct MusicControls: View {
                 }
                 Spacer()
                 if showsRepeat {
-                    PlayerToggleButton(symbolName: "repeat", title: "Repeat", isOn: track.isRepeating,
-                                       action: model.toggleRepeat)
+                    PlayerToggleButton(symbolName: track.repeatMode == .one ? "repeat.1" : "repeat",
+                                       title: track.repeatMode == .one ? "Repeat one" : "Repeat",
+                                       isOn: track.repeatMode != .off, action: model.cycleRepeat)
                 }
             }
         }
@@ -139,7 +140,7 @@ struct MusicControls: View {
 }
 
 /// Shuffle or repeat: white while on, grey while off (lighter under the pointer), fading
-/// between the two. It does not dim while pressed, so a click never reads as a flash.
+/// between the two; a new symbol (repeat one) replaces the old one with a short effect. It does not dim while pressed, so a click never reads as a flash.
 struct PlayerToggleButton: View {
     let symbolName: String
     /// What VoiceOver reads, such as "Shuffle".
@@ -153,6 +154,7 @@ struct PlayerToggleButton: View {
             Image(systemName: symbolName)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.white.opacity(isOn ? 1 : (isHovering ? 0.75 : 0.45)))
+                .contentTransition(.symbolEffect(.replace))   // repeat ⇄ repeat one
                 .frame(width: 24, height: 24)
                 .contentShape(Rectangle())   // the whole square is clickable, not just the glyph
                 .animation(.easeInOut(duration: 0.2), value: isOn)

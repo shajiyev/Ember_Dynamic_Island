@@ -10,16 +10,26 @@ struct NowPlayingPanelView: View {
     @Environment(\.closePanel) private var closePanel
 
     var body: some View {
-        if let track = model.current {
-            switch layout {
-            case .compact:
-                CompactMusicView(track: track, model: model, showsShuffle: showsShuffle,
-                                 showsRepeat: showsRepeat, openPlayer: openPlayer)
-            case .wide:
-                wide(track)
+        Group {
+            if let track = model.current {
+                switch layout {
+                case .compact:
+                    CompactMusicView(track: track, model: model, showsShuffle: showsShuffle,
+                                     showsRepeat: showsRepeat, openPlayer: openPlayer)
+                case .wide:
+                    wide(track)
+                }
+            } else {
+                nothingPlaying
             }
-        } else {
-            nothingPlaying
+        }
+        // While the tab shows, the players are read at once and every few seconds, so the bar
+        // catches what they did not announce. SwiftUI stops this when the tab or panel closes.
+        .task {
+            while !Task.isCancelled {
+                model.recheck()
+                try? await Task.sleep(for: .seconds(NowPlayingModel.recheckInterval))
+            }
         }
     }
 
