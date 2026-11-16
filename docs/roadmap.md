@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-16)
+## Current status (2026-11-17)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -115,6 +115,12 @@
   now arrive at once (the screen-lock notices too). The open Music tab also reads the
   players every 2 s, and a stale reading can no longer overwrite a newer one. Tests pass;
   checked on screen by the user on macOS 26.6.2. See docs/decisions.md.
+- **Fixed:** the brightness keys sometimes showed BetterDisplay's brightness indicator
+  instead of Ember's strip until Ember was reopened. Ember now takes the keys before any
+  other app. Checked by the user on macOS 26.6.2 with BetterDisplay restarted after Ember;
+  tests pass. See docs/decisions.md.
+- **Fixed:** the level strip's symbol and percentage are centred on the bar's line, not on
+  the line and its step dots. Tests pass on macOS 26.6.2.
 - **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.

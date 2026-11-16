@@ -49,7 +49,9 @@ final class MediaKeyTap {
     }
 
     private func createTap() -> Bool {
-        guard let tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap,
+        // Where input enters the window server: ahead of every app's session tap (such as
+        // BetterDisplay's), whichever started last.
+        guard let tap = CGEvent.tapCreate(tap: .cghidEventTap, place: .headInsertEventTap,
                                           options: .defaultTap, eventsOfInterest: Self.systemDefinedEvents,
                                           callback: mediaKeyTapCallback,
                                           userInfo: Unmanaged.passUnretained(self).toOpaque())

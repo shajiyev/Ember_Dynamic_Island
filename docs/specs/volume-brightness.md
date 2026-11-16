@@ -189,8 +189,8 @@ New folder `Ember/Levels/`:
 - `LevelLook.swift` (pure): every value of this feature: symbols, texts (`62%`, `Muted`),
   the 1.5 s, the menu title. Builds a `LevelReadout` from a level.
 - `MediaKeyTap.swift`: the only key-capture code. Asks for Accessibility and checks every
-  2 s until it is granted; then a `CGEventTap` for system-defined events on the main run
-  loop, which asks a handler whether to take each key and re-enables itself when macOS
+  2 s until it is granted; then a `CGEventTap` for system-defined events at the HID level
+  (ahead of every app's session tap; docs/decisions.md, 2026-11-17) on the main run loop, which asks a handler whether to take each key and re-enables itself when macOS
   disables the tap for a timeout.
 - `SystemVolume.swift`: the only CoreAudio code. Reads and sets the default output's
   volume and mute, and says whether that output's volume can be set.

@@ -25,6 +25,8 @@ struct CapsuleBar: View {
     /// A seekable bar is taller than its track, so it is easy to grab.
     private static let grabHeight: CGFloat = 12
     private static let knobSize = CGSize(width: 18, height: 12)
+    /// The space between the bottom of the bar and the top of its step dots.
+    private static let stepDotsGap: CGFloat = 4
 
     /// The pointer's x over the bar while it is on it, nil otherwise.
     @State private var hoverX: CGFloat?
@@ -54,10 +56,12 @@ struct CapsuleBar: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
-            track
+        // The dots hang below the track without adding to the bar's height, so the bar's
+        // centre is the track's and a symbol beside it lines up with the line itself.
+        track.overlay(alignment: .bottom) {
             if let steps {
                 stepDots(steps)
+                    .alignmentGuide(.bottom) { _ in -Self.stepDotsGap }
             }
         }
     }

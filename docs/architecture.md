@@ -124,7 +124,7 @@
     key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,
     texts, 1.5 s, the switch's title).
   - `MediaKeyTap.swift`: the only event-tap code; waits for Accessibility, then takes the
-    keys `LevelModel` asks for.
+    keys `LevelModel` asks for. The tap sits at the HID level, ahead of other apps' taps.
   - `SystemVolume.swift` (Core Audio) and `BuiltInBrightness.swift` (DisplayServices,
     private, loaded at run time; built-in screen only): the only system code for each.
   - `LevelModel.swift`: the switch, and for each key whether Ember takes it; applies the

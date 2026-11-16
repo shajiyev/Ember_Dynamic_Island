@@ -968,3 +968,21 @@ from a stacked music player seen in another notch app (only the idea is borrowed
   a command (seek, skip, shuffle, repeat) cancels a read under way.
 - **Why:** both let an older answer land last: an old song in the wings, or the bar jumping
   back for a moment after a seek. Both were reproduced in tests before the fix.
+
+## 2026-11-17 — Ember takes the media keys at the HID level
+Found on macOS 26.6.2: now and then the brightness keys showed BetterDisplay's own
+indicator ("Built-in Display 81% • 317 nits", which looks like macOS's) instead of Ember's
+strip, until Ember was reopened.
+**Why:** Ember and BetterDisplay both had a session event tap, and macOS hands an event to
+the tap created last first. When BetterDisplay re-created its tap (it restarts, updates,
+or re-registers), it came first, took each brightness press and passed on only the
+release. Reproduced by restarting BetterDisplay after Ember; the tap list
+(`CGGetEventTapList`) showed BetterDisplay ahead, and Ember's log showed releases only.
+- **Decision:** `MediaKeyTap` creates its tap at the HID level (`.cghidEventTap`), where
+  input enters the window server, before every session tap. Checked by restarting
+  BetterDisplay after Ember: Ember got every press and showed its strip.
+- Keys Ember does not take (brightness with the pointer on an external monitor, shortcuts)
+  still go on to BetterDisplay and macOS, as before (2026-11-15).
+- Considered: re-creating the session tap when a release arrives without its press. It
+  would fight any tool that does the same, and still miss the first press.
+- Not yet checked with an external monitor attached (none at hand).
