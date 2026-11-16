@@ -986,3 +986,12 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - Considered: re-creating the session tap when a release arrives without its press. It
   would fight any tool that does the same, and still miss the first press.
 - Not yet checked with an external monitor attached (none at hand).
+
+## 2026-11-17 — Keep awake (#18) moves to v1
+- **Decision:** #18, renamed from "Caffeinate (keep Mac awake)" to **Keep awake**, joins
+  the v1 list (on 2026-11-13 it stayed "later").
+- **Why:** the user's own need: while an agent works, the Mac must stay awake with the lid
+  closed or the user away, without changing the sleep time in System Settings each time.
+- Open, to settle at design time: how the lid-closed case works. macOS sleeps on lid close
+  unless a display, power and keyboard are attached; only `pmset disablesleep` (admin)
+  stops that, and it stays on after a crash until switched back.
