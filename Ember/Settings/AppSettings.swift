@@ -31,6 +31,9 @@ final class AppSettings {
     var calendarOn: Bool { didSet { save(calendarOn, Key.calendarOn) } }
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
+    var panelLayout: PanelLayout { didSet { save(panelLayout.rawValue, Key.panelLayout) } }
+    var showsShuffle: Bool { didSet { save(showsShuffle, Key.showsShuffle) } }
+    var showsRepeat: Bool { didSet { save(showsRepeat, Key.showsRepeat) } }
 
     /// Called after every change.
     @ObservationIgnored var onChange: (() -> Void)?
@@ -46,6 +49,9 @@ final class AppSettings {
         static let calendarOn = "calendarOn"
         static let batteryAlertsOn = "batteryAlertsOn"
         static let batteryInPanelOn = "batteryInPanelOn"
+        static let panelLayout = "panelLayout"
+        static let showsShuffle = "showsShuffle"
+        static let showsRepeat = "showsRepeat"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -63,6 +69,9 @@ final class AppSettings {
         calendarOn = bool(Key.calendarOn)
         batteryAlertsOn = bool(Key.batteryAlertsOn)
         batteryInPanelOn = bool(Key.batteryInPanelOn)
+        panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
+        showsShuffle = defaults.object(forKey: Key.showsShuffle) as? Bool ?? false
+        showsRepeat = defaults.object(forKey: Key.showsRepeat) as? Bool ?? false
     }
 
     var pillTiming: PillTiming { PillTiming(openDelay: openDelay, closeDelay: closeDelay) }

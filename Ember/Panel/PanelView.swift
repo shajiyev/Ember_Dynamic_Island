@@ -30,7 +30,8 @@ struct PanelView: View {
 
             Group {
                 switch shownTab {
-                case .music: NowPlayingPanelView(model: nowPlaying)
+                case .music: NowPlayingPanelView(model: nowPlaying, showsShuffle: settings.showsShuffle,
+                                                 showsRepeat: settings.showsRepeat)
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
                 case nil: AllFeaturesOffView { openSettings(.music) }
@@ -40,6 +41,7 @@ struct PanelView: View {
         }
         .padding(.horizontal, 32)   // clears the open panel's flared and rounded corners
         .environment(\.colorScheme, .dark)   // the panel is always black
+        .environment(\.panelLayout, settings.panelLayout)
         // The panel glows in the song's colour on the Music tab, the timer's orange on Timer.
         .preference(key: PanelGlowColorKey.self, value: shownTab?.glowColor(songGlow: nowPlaying.glow))
         // The panel's content appears each time it opens.

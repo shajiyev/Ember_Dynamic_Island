@@ -66,24 +66,39 @@
     activity and rings at zero until "Time's up" is seen.
   - `ScreenUseMonitor.swift`: tells whether the screen is in use (not locked, off or
     asleep), so the sound rings only once when nobody can be watching.
-  - `TimerPanelView.swift`, `TimerRing.swift`, `HoldRepeatButton.swift`: the Timer tab,
-    built like the Music tab (the ring tile where the cover would be).
+  - `TimerPanelView.swift`: the Timer tab; draws `CompactTimerView` or its own wide
+    layout (built like the Music tab, the ring tile where the cover would be), from the
+    panel's layout.
+  - `CompactTimerView.swift`: the compact layout. Stopped, the ring on the left, the presets
+    on the right and the setter between them; started, the ring slides to the centre with
+    the time left inside, the time set on its left and when it ends on its right.
+  - `TimerParts.swift`: what both layouts share: `TimerSetter`, `TimerControls`,
+    `PresetChip`. `TimerRing.swift`: the ring tile, with the `timer` symbol or the time
+    left in its centre. `HoldRepeatButton.swift`: the setter's arrows.
   - `StopwatchButton.swift`: the Timer tab's main button, the white circle drawn as a
     stopwatch.
 - `Ember/NowPlaying/` — Now Playing for Apple Music and Spotify (#1).
   - `Player.swift`, `PlayerScripts.swift`: the two players (with each one's app icon, read
     from the installed app), and short AppleScript commands that read them and send
-    play/pause, skip and seek; never to a closed player, and off the main thread.
+    play/pause, skip, seek, shuffle and repeat; never to a closed player, and off the main
+    thread. Shuffle and repeat are read in a `try` of their own, so a player that cannot
+    report them still shows its song.
   - `Track.swift`, `PlayerChoice.swift`, `CoverColor.swift`, `NowPlayingLook.swift`: the
     pure rules: the song and its position, which player to show, the glow from the cover,
-    the wings' activity and the time text.
+    the wings' activity and the time texts (played, length, time left).
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
     notices settle, publishes the chosen track and sends commands. A seek shows its new
-    position at once (`Track.seeked`), before the player's own reading confirms it.
-  - `NowPlayingPanelView.swift`: the Music tab: cover, title with the player's icon,
-    artist, a `CapsuleBar` scrubber with a time label on hover, and Spotify-style controls.
-    Clicking the cover, title, artist or icon brings the player to the front and closes the
-    panel.
+    position at once (`Track.seeked`), and shuffle and repeat their new state, before the
+    player's own reading confirms it.
+  - `NowPlayingPanelView.swift`: the Music tab; draws `CompactMusicView` or its own wide
+    layout from the panel's layout, or "Nothing playing". Clicking the cover, title, artist
+    or icon brings the player to the front and closes the panel.
+  - `CompactMusicView.swift`: the compact layout: cover and text, the bar across the whole
+    width, the buttons in the last row.
+  - `NowPlayingParts.swift`: what both layouts share: `SongCover`, `SongTitleLine`,
+    `SongArtist`, `SongBar` (a `CapsuleBar` scrubber whose length can be clicked to show
+    the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (with shuffle
+    and repeat at the ends when switched on) and `PlayerToggleButton`.
 - `Ember/Calendar/` — calendar & reminders (#14).
   - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `CalendarLook.swift`:
     the pure rules: the month's 42 days, a day's events and reminders and their order, the
@@ -112,6 +127,9 @@
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
   (light grey, white under the pointer, all one width), shared by the Music and Timer
   tabs so they always look alike and sit in the same place.
+- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 200, the default) and
+  Wide (620 × 200), each one's name, the month grid's width, and where the compact
+  buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
 - `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
   remembered between openings, and the tab of what the wings show, which the panel opens
   on.
@@ -129,7 +147,8 @@
   - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
-    the pages, the search tint and the delay row.
+    the pages, the search tint and the delay row. `LayoutCards.swift`: the clickable panel
+    layout cards, each a small drawing of its layout.
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
@@ -176,10 +195,12 @@ app delegate, which shows it with `PillController.show` and sets the panel's ope
 Calendar while it shows.
 
 Settings: a change in the Settings window sets `AppSettings`, which saves it and calls
-`onChange`; the app delegate's `applySettings()` sets the pill's timing, hover and glow,
+`onChange`; the app delegate's `applySettings()` sets the pill's timing, hover, glow and
+open size (`PillController.openSize`, from the chosen layout; `NotchGeometry` uses it),
 starts or stops Now Playing, Calendar and Battery (`stop()` ends their observers and
 timers), and cancels the timer when it is turned off. `PanelView` reads
-`AppSettings.shownTabs` and `batteryInPanelOn` directly.
+`AppSettings.shownTabs`, `batteryInPanelOn`, the layout (passed down as `panelLayout`)
+and the shuffle and repeat switches directly.
 
 Volume and brightness: a media key reaches `MediaKeyTap`, which asks the app delegate's
 handler. With a notch display, that asks `LevelModel.handle`, which either lets the key go
@@ -220,7 +241,8 @@ The page's sections, their order and their text are set in
 
 The pill demo copies the app's sizes and colours (`PillMetrics`, `PillStyle`,
 `BatteryAlert`) and its open panel (`PanelView`, `NowPlayingPanelView`,
-`TimerPanelView`); when those change in the app, update the pill section of `styles.css`.
+`TimerPanelView`) as they were in the Wide layout; when those change in the app, update the
+pill section of `styles.css`.
 Everything the demo shows is in the markup; CSS shows the right part from the pill's data
 attributes, so `demo.js` only sets attributes and text.
 Serve locally with `python3 scripts/serve-site.py` (http://localhost:8765). It sends

@@ -4,7 +4,6 @@ import CoreGraphics
 nonisolated enum PillMetrics {
     /// Extra width on each side of the notch in the active state.
     static let wingWidth: CGFloat = 48
-    static let openSize = CGSize(width: 620, height: 200)
     /// Transparent space around the open panel so the glow is not cut off.
     static let glowMargin: CGFloat = 40
     /// How far the rest and active shapes reach below the notch height macOS reports. The
@@ -21,13 +20,16 @@ nonisolated enum PillMetrics {
 /// Rectangles use AppKit screen coordinates: origin at the bottom left, y pointing up.
 nonisolated struct NotchGeometry: Equatable {
     let notchRect: CGRect
+    /// The open panel's size: the layout chosen in Settings, handed over by the app.
+    let openSize: CGSize
 
     /// - Parameters:
     ///   - screenFrame: the screen's frame (`NSScreen.frame`).
     ///   - topLeftArea: the usable strip left of the notch (`NSScreen.auxiliaryTopLeftArea`).
     ///   - topRightArea: the usable strip right of the notch (`NSScreen.auxiliaryTopRightArea`).
+    ///   - openSize: the open panel's size.
     /// Returns nil for a screen without a notch.
-    init?(screenFrame: CGRect, topLeftArea: CGRect?, topRightArea: CGRect?) {
+    init?(screenFrame: CGRect, topLeftArea: CGRect?, topRightArea: CGRect?, openSize: CGSize) {
         guard let topLeftArea, let topRightArea else { return nil }
         let width = screenFrame.width - topLeftArea.width - topRightArea.width
         let height = topLeftArea.height
@@ -40,6 +42,7 @@ nonisolated struct NotchGeometry: Equatable {
             width: width,
             height: height
         )
+        self.openSize = openSize
     }
 
     /// The frame of the pill's shape in the given state, with the level strip below it
@@ -62,7 +65,7 @@ nonisolated struct NotchGeometry: Equatable {
             return CGRect(x: notchRect.minX - PillMetrics.wingWidth, y: notchRect.minY - extra,
                           width: notchRect.width + 2 * PillMetrics.wingWidth, height: notchRect.height + extra)
         case .open:
-            let size = PillMetrics.openSize
+            let size = openSize
             return CGRect(x: notchRect.midX - size.width / 2, y: notchRect.maxY - size.height,
                           width: size.width, height: size.height)
         }

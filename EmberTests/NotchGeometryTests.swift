@@ -9,8 +9,9 @@ struct NotchGeometryTests {
     private let left = CGRect(x: 0, y: 950, width: 663, height: 32)
     private let right = CGRect(x: 848, y: 950, width: 664, height: 32)
 
-    private func geometry(screenFrame: CGRect? = nil) throws -> NotchGeometry {
-        try #require(NotchGeometry(screenFrame: screenFrame ?? builtIn, topLeftArea: left, topRightArea: right))
+    private func geometry(screenFrame: CGRect? = nil, openSize: CGSize = CGSize(width: 620, height: 200)) throws -> NotchGeometry {
+        try #require(NotchGeometry(screenFrame: screenFrame ?? builtIn, topLeftArea: left, topRightArea: right,
+                                   openSize: openSize))
     }
 
     @Test func findsTheNotchOnA14InchScreen() throws {
@@ -25,12 +26,14 @@ struct NotchGeometryTests {
 
     @Test func screenWithoutANotchHasNoGeometry() {
         let external = CGRect(x: 0, y: 0, width: 2512, height: 1413)
-        #expect(NotchGeometry(screenFrame: external, topLeftArea: nil, topRightArea: nil) == nil)
+        #expect(NotchGeometry(screenFrame: external, topLeftArea: nil, topRightArea: nil,
+                              openSize: CGSize(width: 620, height: 200)) == nil)
     }
 
     @Test func sideAreasThatLeaveNoGapMeanNoNotch() {
         let half = CGRect(x: 0, y: 950, width: 756, height: 32)
-        #expect(NotchGeometry(screenFrame: builtIn, topLeftArea: half, topRightArea: half) == nil)
+        #expect(NotchGeometry(screenFrame: builtIn, topLeftArea: half, topRightArea: half,
+                              openSize: CGSize(width: 620, height: 200)) == nil)
     }
 
     @Test func builtInScreenBesideAnExternalMainDisplayKeepsItsOffset() throws {
@@ -49,6 +52,13 @@ struct NotchGeometryTests {
 
     @Test func openIsCentredOnTheNotchAndHangsFromTheTopOfTheScreen() throws {
         #expect(try geometry().rect(for: .open) == CGRect(x: 446, y: 782, width: 620, height: 200))
+    }
+
+    @Test func theOpenPanelTakesTheSizeItIsGiven() throws {
+        let compact = try geometry(openSize: CGSize(width: 460, height: 200))
+        #expect(compact.rect(for: .open) == CGRect(x: 526, y: 782, width: 460, height: 200))
+        // The window holds the panel, its level strip and the glow margin.
+        #expect(compact.windowFrame.width == 460 + 2 * PillMetrics.glowMargin)
     }
 
     @Test func windowCoversTheOpenPanelWithItsLevelStripPlusTheGlowMargin() throws {

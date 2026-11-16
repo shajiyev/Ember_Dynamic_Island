@@ -7,6 +7,7 @@ extension AppDelegate {
         controller.timing = settings.pillTiming
         controller.opensOnHover = settings.opensOnHover
         controller.alwaysOnGlow = settings.alwaysOnGlow
+        controller.openSize = settings.panelLayout.size
         if settings.musicOn { nowPlaying.start() } else { nowPlaying.stop() }
         if settings.calendarOn { calendar.start() } else { calendar.stop() }
         if settings.batteryAlertsOn || settings.batteryInPanelOn { battery.start() } else { battery.stop() }

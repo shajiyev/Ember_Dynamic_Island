@@ -12,6 +12,17 @@ struct MusicPage: View {
             } footer: {
                 Text("The Music tab and the song in the wings. Works with Apple Music and Spotify. Off, Ember never contacts either player.")
             }
+            Section {
+                Toggle(SettingsItem.showsShuffle.title, isOn: $settings.showsShuffle)
+                    .settingsItem(.showsShuffle)
+                Toggle(SettingsItem.showsRepeat.title, isOn: $settings.showsRepeat)
+                    .settingsItem(.showsRepeat)
+            } header: {
+                Text("In the Music tab")
+            } footer: {
+                Text("Shuffle sits at the left end of the buttons, repeat at the right. Each switches the player's own setting; repeat plays the whole list again.")
+            }
+            .disabled(!settings.musicOn)
         }
     }
 }

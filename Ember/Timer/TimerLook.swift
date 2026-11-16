@@ -61,4 +61,27 @@ nonisolated enum TimerLook {
         case .paused: return "Paused"
         }
     }
+
+    /// The run's full length, beside the ring in the compact panel: "25 min", "1 h 30 min",
+    /// "1 h", "2 min 30 s", "45 s".
+    static func setTimeText(seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutes = seconds % 3600 / 60
+        let rest = seconds % 60
+        var parts: [String] = []
+        if hours > 0 { parts.append("\(hours) h") }
+        if minutes > 0 { parts.append("\(minutes) min") }
+        if rest > 0 || parts.isEmpty { parts.append("\(rest) s") }
+        return parts.joined(separator: " ")
+    }
+
+    /// The ring's right side in the compact panel: "Ends at" over the end time while
+    /// running, "Paused" while paused, nothing while stopped.
+    static func sideStatus(for phase: Countdown.Phase) -> (title: String, value: String)? {
+        switch phase {
+        case .stopped: return nil
+        case .running(let endDate): return ("Ends at", endDate.formatted(date: .omitted, time: .shortened))
+        case .paused: return ("", "Paused")
+        }
+    }
 }

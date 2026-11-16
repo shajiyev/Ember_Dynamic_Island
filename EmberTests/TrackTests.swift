@@ -28,6 +28,24 @@ struct TrackTests {
         #expect(Track(reading, from: .spotify, at: readAt) == track(isPlaying: true))
     }
 
+    @Test func aReadingCarriesShuffleAndRepeat() {
+        var reading = PlayerReading(state: "playing", title: "Song", artist: "Artist", album: "Album",
+                                    length: 200, position: 10)
+        reading.isShuffling = true
+        reading.isRepeating = true
+        let track = Track(reading, from: .music, at: readAt)
+        #expect(track?.isShuffling == true)
+        #expect(track?.isRepeating == true)
+    }
+
+    @Test func shuffleAndRepeatAreOffUnlessReported() {
+        let reading = PlayerReading(state: "playing", title: "Song", artist: "Artist", album: "Album",
+                                    length: 200, position: 10)
+        let track = Track(reading, from: .spotify, at: readAt)
+        #expect(track?.isShuffling == false)
+        #expect(track?.isRepeating == false)
+    }
+
     @Test func aStoppedPlayerHasNoTrack() {
         #expect(Track(PlayerReading(state: "stopped"), from: .music, at: readAt) == nil)
     }

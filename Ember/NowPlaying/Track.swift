@@ -12,6 +12,8 @@ nonisolated struct Track: Equatable {
     var position: TimeInterval
     var readAt: Date
     var isPlaying: Bool
+    var isShuffling = false
+    var isRepeating = false
     var artwork: NSImage?
 
     /// The position at `now`: it advances while playing, up to the end of the song.
@@ -29,6 +31,8 @@ nonisolated extension Track {
         self.init(player: player, title: reading.title, artist: reading.artist, album: reading.album,
                   length: reading.length, position: reading.position, readAt: date,
                   isPlaying: reading.state == "playing")
+        isShuffling = reading.isShuffling
+        isRepeating = reading.isRepeating
     }
 
     /// The track as it is right after seeking to `position` at `now`, before the player

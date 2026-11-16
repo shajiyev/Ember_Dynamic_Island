@@ -7,8 +7,11 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case opensOnHover
     case openDelay
     case closeDelay
+    case panelLayout
     case alwaysOnGlow
     case music
+    case showsShuffle
+    case showsRepeat
     case timer
     case calendar
     case calendarEvents
@@ -20,9 +23,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
 
     var page: SettingsPage {
         switch self {
-        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay: return .general
+        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .panelLayout: return .general
         case .alwaysOnGlow: return .glow
-        case .music: return .music
+        case .music, .showsShuffle, .showsRepeat: return .music
         case .timer: return .timer
         case .calendar, .calendarEvents, .reminders: return .calendar
         case .batteryAlerts, .batteryInPanel: return .battery
@@ -37,8 +40,11 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return "Open the panel on hover"
         case .openDelay: return "Open delay"
         case .closeDelay: return "Close delay"
+        case .panelLayout: return "Panel layout"
         case .alwaysOnGlow: return "Always-on glow"
         case .music: return "Music"
+        case .showsShuffle: return "Show shuffle"
+        case .showsRepeat: return "Show repeat"
         case .timer: return "Timer"
         case .calendar: return "Calendar"
         case .calendarEvents: return CalendarLook.switchTitle(.events)
@@ -56,8 +62,11 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return ["hover", "click", "pointer"]
         case .openDelay: return ["hover", "wait", "speed"]
         case .closeDelay: return ["wait", "speed"]
+        case .panelLayout: return ["compact", "wide", "size", "panel"]
         case .alwaysOnGlow: return ["light", "rest", "notch"]
         case .music: return ["Apple Music", "Spotify", "now playing", "song"]
+        case .showsShuffle: return ["random", "order"]
+        case .showsRepeat: return ["loop", "again"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
         case .calendar: return ["heads-up", "month", "date"]
         case .calendarEvents: return ["permission", "privacy"]

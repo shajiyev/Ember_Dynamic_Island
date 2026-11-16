@@ -1,10 +1,15 @@
 import SwiftUI
 
 /// The Timer tab's tile, where the Music tab shows the cover: a ring that fills in the
-/// timer's orange as the run goes on, around the `timer` symbol.
+/// timer's orange as the run goes on, around the `timer` symbol, or around the time left
+/// while a timer runs in the compact panel.
 struct TimerRing: View {
+    static let size: CGFloat = 96
+
     /// How much of the run has gone, 0…1; 0 while stopped.
     let fractionGone: Double
+    /// The time left, shown in the centre instead of the symbol; nil shows the symbol.
+    var centerText: String? = nil
 
     var body: some View {
         ZStack {
@@ -15,13 +20,26 @@ struct TimerRing: View {
                     .stroke(TimerLook.color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
                     .rotationEffect(.degrees(-90))
             }
-            Image(systemName: "timer")
-                .font(.system(size: 24, weight: .medium))
-                .foregroundStyle(TimerLook.color)
+            if let centerText {
+                // "24:13" fits at 17 pt; "1:24:13" needs 13.
+                Text(centerText)
+                    .font(.system(size: centerText.count > 5 ? 13 : 17, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)   // "10:00:00" and longer just fit
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+            } else {
+                Image(systemName: "timer")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(TimerLook.color)
+            }
         }
         .padding(13)
-        .frame(width: 96, height: 96)
+        .frame(width: Self.size, height: Self.size)
         .background(RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.08)))
-        .accessibilityHidden(true)
+        .accessibilityElement(children: .ignore)
+        .accessibilityHidden(centerText == nil)
+        .accessibilityLabel("Time left")
+        .accessibilityValue(centerText ?? "")
     }
 }

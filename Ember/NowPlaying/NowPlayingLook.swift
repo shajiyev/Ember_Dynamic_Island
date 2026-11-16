@@ -15,6 +15,11 @@ nonisolated enum NowPlayingLook {
         return "\(minutes):" + String(format: "%02d", rest)
     }
 
+    /// The time left in a song, with a minus: "-3:30", "-1:02:05"; never below "-0:00".
+    static func timeLeftText(position: TimeInterval, length: TimeInterval) -> String {
+        "-" + timeText(length - position)
+    }
+
     /// The wings while a song plays: its cover (a note without one) and the equalizer, in
     /// the cover's colour, or Ember rose when the song has no cover.
     static func activity(for track: Track, glow: Color?) -> LiveActivity {

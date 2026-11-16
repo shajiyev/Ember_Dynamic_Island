@@ -10,6 +10,9 @@ nonisolated struct PlayerReading: Equatable, Sendable {
     var album = ""
     var length: TimeInterval = 0
     var position: TimeInterval = 0
+    var isShuffling = false
+    /// Repeat is on: Spotify's "repeating", or Music's "song repeat" set to one or all.
+    var isRepeating = false
     /// Spotify's cover; Music hands its cover over as data instead (`musicArtwork()`).
     var artworkURL: String?
 }
@@ -19,6 +22,9 @@ nonisolated enum PlayerCommand: Sendable {
     case next
     case previous
     case seek(TimeInterval)
+    case setShuffle(Bool)
+    /// On means repeat all; there is no "repeat one" (Spotify cannot).
+    case setRepeat(Bool)
 }
 
 /// Talks to Music and Spotify with short AppleScript commands. Never sends anything to a
@@ -38,7 +44,9 @@ nonisolated enum PlayerScripts {
             reading.album = result.atIndex(4)?.stringValue ?? ""
             reading.length = result.atIndex(5)?.doubleValue ?? 0
             reading.position = result.atIndex(6)?.doubleValue ?? 0
-            reading.artworkURL = result.atIndex(7)?.stringValue
+            reading.isShuffling = result.atIndex(7)?.booleanValue ?? false
+            reading.isRepeating = result.atIndex(8)?.booleanValue ?? false
+            reading.artworkURL = result.atIndex(9)?.stringValue
             return reading
         }
     }
@@ -47,12 +55,22 @@ nonisolated enum PlayerScripts {
         // Spotify gives the length in milliseconds and has an artwork URL.
         let length = player == .spotify ? "(duration of t) / 1000" : "duration of t"
         let artworkURL = player == .spotify ? ", artwork url of t" : ""
+        // Music: shuffle enabled and song repeat (off, one, all); Spotify: shuffling and repeating.
+        // Read in a `try` of their own: a player that cannot report them still shows its song.
+        let readShuffle = player == .spotify ? "shuffling" : "shuffle enabled"
+        let readRepeat = player == .spotify ? "repeating" : "(song repeat as text) is not \"off\""
         return """
             tell application id "\(player.bundleID)"
                 set s to player state as text
                 if s is "stopped" then return {s}
                 set t to current track
-                return {s, name of t, artist of t, album of t, \(length), player position\(artworkURL)}
+                set sh to false
+                set rp to false
+                try
+                    set sh to \(readShuffle)
+                    set rp to \(readRepeat)
+                end try
+                return {s, name of t, artist of t, album of t, \(length), player position, sh, rp\(artworkURL)}
             end tell
             """
     }
@@ -71,6 +89,8 @@ nonisolated enum PlayerScripts {
         case .next: "next track"
         case .previous: "previous track"
         case .seek(let seconds): "set player position to \(String(format: "%.2f", seconds))"
+        case .setShuffle(let on): player == .spotify ? "set shuffling to \(on)" : "set shuffle enabled to \(on)"
+        case .setRepeat(let on): player == .spotify ? "set repeating to \(on)" : "set song repeat to \(on ? "all" : "off")"
         }
         _ = await run("tell application id \"\(player.bundleID)\" to \(action)") { _ in true }
     }

@@ -33,6 +33,14 @@ struct GeneralPage: View {
             } footer: {
                 Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel.")
             }
+            Section {
+                LayoutCards(selection: $settings.panelLayout)
+                    .settingsItem(.panelLayout)
+            } header: {
+                Text(SettingsItem.panelLayout.title)
+            } footer: {
+                Text("Every tab uses the chosen layout. A change shows the next time the panel opens.")
+            }
         }
         .onAppear { loginStatus = LaunchAtLogin.status }
     }

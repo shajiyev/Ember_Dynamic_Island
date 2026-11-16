@@ -78,4 +78,21 @@ struct AppSettingsTests {
         settings.closeDelay = 0.7
         #expect(settings.pillTiming == PillTiming(openDelay: 0.4, closeDelay: 0.7))
     }
+
+    @Test func theCompactLayoutIsTheDefaultAndShuffleAndRepeatAreHidden() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.panelLayout == .compact)
+        #expect(!settings.showsShuffle && !settings.showsRepeat)
+    }
+
+    @Test func layoutAndPlayerButtonsSurviveARelaunch() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.panelLayout = .wide
+        settings.showsShuffle = true
+        settings.showsRepeat = true
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.panelLayout == .wide)
+        #expect(relaunched.showsShuffle && relaunched.showsRepeat)
+    }
 }

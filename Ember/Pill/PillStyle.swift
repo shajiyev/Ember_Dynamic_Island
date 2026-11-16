@@ -61,7 +61,7 @@ nonisolated struct PillStyle: Equatable {
         case .active:
             return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.85, glowRadius: 10, glowOffset: 5)
         case .open:
-            // The level strip sits further in on the wide panel: 48 points from its edge.
+            // The level strip sits further in on the open panel: 48 points from its edge.
             return PillStyle(topCornerRadius: 19, bottomCornerRadius: 24, glowOpacity: 0.55, glowRadius: 16, glowOffset: 8,
                              levelStripMargin: 29)
         }

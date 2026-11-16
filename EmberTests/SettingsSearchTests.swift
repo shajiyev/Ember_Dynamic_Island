@@ -18,9 +18,17 @@ struct SettingsSearchTests {
     }
 
     @Test func pagesKeepTheirSidebarOrder() {
-        // "Show Calendar Events", "Show Reminders", "Show Volume & Brightness in the Pill".
-        #expect(SettingsSearch.matches("show") == [.calendarEvents, .reminders, .levels])
-        #expect(SettingsSearch.pages(for: "show") == [.calendar, .levels])
+        // "Show shuffle", "Show repeat", "Show Calendar Events", "Show Reminders",
+        // "Show Volume & Brightness in the Pill".
+        #expect(SettingsSearch.matches("show") == [.showsShuffle, .showsRepeat, .calendarEvents, .reminders, .levels])
+        #expect(SettingsSearch.pages(for: "show") == [.music, .calendar, .levels])
+    }
+
+    @Test func theLayoutAndThePlayerButtonsAreFound() {
+        #expect(SettingsSearch.matches("compact") == [.panelLayout])
+        #expect(SettingsSearch.matches("layout") == [.panelLayout])
+        #expect(SettingsSearch.matches("shuffle") == [.showsShuffle])
+        #expect(SettingsSearch.matches("repeat") == [.showsRepeat])
     }
 
     @Test func aPageIsFoundByItsOwnName() {

@@ -51,6 +51,26 @@ final class NowPlayingModel {
     func next() { send(.next) }
     func previous() { send(.previous) }
 
+    /// Switches the shown player's shuffle. The button shows the new state at once; the
+    /// player's own reading confirms it once it settles.
+    func toggleShuffle() {
+        guard let track = current else { return }
+        let on = !track.isShuffling
+        reports[track.player]?.track.isShuffling = on
+        publish()
+        send(.setShuffle(on))
+    }
+
+    /// Switches the shown player's repeat between off and repeat all, shown at once as
+    /// shuffle is.
+    func toggleRepeat() {
+        guard let track = current else { return }
+        let on = !track.isRepeating
+        reports[track.player]?.track.isRepeating = on
+        publish()
+        send(.setRepeat(on))
+    }
+
     /// Seeks the shown player. The new position shows at once; the player's own reading
     /// follows once it settles.
     func seek(to position: TimeInterval) {

@@ -78,4 +78,21 @@ struct TimerLookTests {
         #expect(TimerLook.statusText(for: .paused(timeLeft: 30)) == "Paused")
         #expect(TimerLook.statusText(for: .stopped) == nil)
     }
+
+    @Test func theSetTimeReadsInUnits() {
+        #expect(TimerLook.setTimeText(seconds: 1500) == "25 min")
+        #expect(TimerLook.setTimeText(seconds: 5400) == "1 h 30 min")
+        #expect(TimerLook.setTimeText(seconds: 3600) == "1 h")
+        #expect(TimerLook.setTimeText(seconds: 150) == "2 min 30 s")
+        #expect(TimerLook.setTimeText(seconds: 45) == "45 s")
+    }
+
+    @Test func theRingsRightSideSaysWhenItEndsOrThatItIsPaused() {
+        let end = Date(timeIntervalSinceReferenceDate: 0)
+        let running = TimerLook.sideStatus(for: .running(endDate: end))
+        #expect(running?.title == "Ends at")
+        #expect(running?.value == end.formatted(date: .omitted, time: .shortened))
+        #expect(TimerLook.sideStatus(for: .paused(timeLeft: 60))?.value == "Paused")
+        #expect(TimerLook.sideStatus(for: .stopped) == nil)
+    }
 }

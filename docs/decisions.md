@@ -862,3 +862,26 @@ All checks in docs/plans/settings.md passed on the user's MacBook, macOS 26.6.2.
   row,** always shown. It opens Settings on General, as the menu does. Considered opening
   the page of the current tab. **Why:** the user preferred one predictable place.
 - No values were tuned. No checks accepted as known limits.
+
+## 2026-11-16 — Panel layouts: Compact and Wide (#38, with #33's shuffle and repeat)
+Spec docs/specs/panel-layouts.md, plan docs/plans/panel-layouts.md. Designed 2026-11-15
+from a stacked music player seen in another notch app (only the idea is borrowed).
+- **Compact (460 × 200) is the default; Wide (today's 620 × 200) stays as a choice,** with
+  clickable preview cards in Settings → General. Considered dropping Wide. **Why:** the
+  user wanted both, and one shared size per layout means no tab changes the panel's shape.
+- **The Timer's compact layout has no bar.** Stopped: the ring on the left, the presets on
+  the right, the setter between them. Started: the ring slides to the centre with the time
+  left inside it, "Set" and the run's full length on its left (so the user can still see
+  what they aimed at), "Ends at" on its right. Considered shrinking the ring to the top
+  left with a bar, as in Music. **Why:** the ring already shows the time gone; centred,
+  the panel stays symmetric once the presets fade.
+- **Shuffle and repeat are switched on in Settings → Music, off by default.** Repeat is off
+  or repeat all, because Spotify's scripting has no "repeat one".
+- **The bar's right end shows the song's length; a click switches it to the time left**,
+  remembered between launches.
+- **Results:** all checks passed on the user's MacBook, macOS 26.6.2. Tuned by eye after
+  the checks: the compact Music content centred between the tab row and the buttons; the
+  presets centred in a ring-wide column; shuffle and repeat switching at once with a 0.2 s
+  fade and no press dimming; the bar's length kept when the time left is shown. The final
+  review moved reading shuffle and repeat into its own `try`, so a player that cannot report
+  them still shows its song.

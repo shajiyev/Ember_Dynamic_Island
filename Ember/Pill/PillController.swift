@@ -38,6 +38,14 @@ final class PillController {
     }
     /// The soft glow around the notch at rest (#29).
     var alwaysOnGlow = true
+    /// The open panel's size (the layout chosen in Settings), compact until the app hands
+    /// over the chosen layout's size. A change after `start` moves and resizes the window at once.
+    @ObservationIgnored var openSize = CGSize(width: 460, height: 200) {
+        didSet {
+            guard openSize != oldValue, screenObserver != nil else { return }
+            refreshDisplay()
+        }
+    }
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
     /// Called when the user has seen an activity that ends when seen: they hovered over or
@@ -171,7 +179,8 @@ final class PillController {
         geometry = NSScreen.screens.lazy.compactMap { screen in
             NotchGeometry(screenFrame: screen.frame,
                           topLeftArea: screen.auxiliaryTopLeftArea,
-                          topRightArea: screen.auxiliaryTopRightArea)
+                          topRightArea: screen.auxiliaryTopRightArea,
+                          openSize: self.openSize)
         }.first
 
         guard let geometry else {
