@@ -104,12 +104,16 @@
   on (#39: the last one, or one the user picks). See docs/features.md.
 - **Next:** choose and design milestone 2's next feature (by the v1 list's order: the file
   shelf, #15).
-  Website: the pill demo still shows the old Wide panel with the old Timer layout; update it
-  to the Compact layout, the new default (see docs/architecture.md, Website: the pill demo
-  copies `PanelView`, `NowPlayingPanelView` and `TimerPanelView`).
+  Website: paused until v1 of the app is done. Then the page is reworked and every demo is
+  rebuilt from scratch to match the real app: a hero with the pill playing live
+  activities and "Good to know", highlights with their own demos, and "Explore everything
+  Ember does" (docs/specs/landing-page.md, "Redesign after v1"; decided 2026-11-16). Until
+  then the page is left as it is, although it is out of date: Calendar still says
+  "Planned", volume and brightness has no card, the permissions card leaves out
+  Accessibility, and the demo shows the old Wide panel and Timer layout.
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on
-  Mac and iPhone; a custom domain once bought. The demo grows as features are finished. Later for
+  Mac and iPhone; a custom domain once bought. Later for
   the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 

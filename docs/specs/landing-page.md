@@ -448,6 +448,29 @@ the user's choice, to keep the loop short.
 Clicking or hovering the demo (that is the "interactive Mac view" in the "Later" list), a
 third song, rotating songs between loops.
 
+## Redesign after v1 (idea agreed 2026-11-16, not designed in detail)
+
+Inspired by the layout of getcanopy.pro (its "Good to know" and "The highlights"
+sections); the words and visuals stay our own. Kept as an idea: once v1 of the app is
+done, **every demo is rebuilt from scratch** to match the real app. The current demo's
+animations were judged not true enough to it.
+
+- **Hero (direction A):** no Mac screen. Ember's pill hangs at the top of the hero and
+  plays a short loop of live activities, each in its own glow colour: rest → song 1 →
+  timer → song 2 → charging → rest. The headline and the "Dynamic Island for your MacBook"
+  line stay, so the hero says what Ember is at once. Under the buttons, **Good to know**:
+  three short facts with bold lead-ins (first draft: Free and open source · Made for the
+  notch · macOS 15 or later), replacing the fact chips.
+- **Highlights:** the main features, each with a title, one sentence and its own live
+  demo, replacing the features grid and the big screen demo.
+- **Explore everything Ember does:** a button under the highlights that opens the full
+  list, the main features included, grouped (for example Music / Your Mac / Productivity),
+  with what is on the way marked.
+- Mockups from the discussion are kept locally in `.superpowers/mockups/hero/` (not
+  committed). The useful lesson from them: the pill must follow the app's current
+  `PillStyle` and `NotchGeometry` (no flare at rest, 32 px tall, no overshoot when it
+  settles, the edge line wholly outside the black).
+
 ## Look (light mode)
 
 Colours come from the palette the user chose; the text colours come from the dark-mode

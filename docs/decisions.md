@@ -885,3 +885,13 @@ from a stacked music player seen in another notch app (only the idea is borrowed
   fade and no press dimming; the bar's length kept when the time left is shown. The final
   review moved reading shuffle and repeat into its own `try`, so a player that cannot report
   them still shows its song.
+
+## 2026-11-16 — Landing page redesign kept for after v1
+- **Decision:** the landing page will be reworked after v1 ships: a hero with the pill
+  playing live activities and a "Good to know" strip, the main features as highlights
+  with their own demos, and an "Explore everything Ember does" list. All demos will be
+  rebuilt from scratch then, to match the real app. Idea recorded in
+  docs/specs/landing-page.md ("Redesign after v1").
+- **Why:** the hero must say what Ember is at once, and the current demo's animations are
+  not true enough to the app; rebuilding once the app's look is settled avoids redoing
+  them for every change before v1.
