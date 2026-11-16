@@ -68,6 +68,7 @@ struct SettingsView: View {
         case .music: MusicPage(settings: settings)
         case .timer: TimerPage(settings: settings)
         case .calendar: CalendarPage(settings: settings, calendar: calendar)
+        case .shelf: ShelfPage(settings: settings)
         case .battery: BatteryPage(settings: settings)
         case .levels: LevelsPage(levels: levels)
         case .feedback: FeedbackPage()

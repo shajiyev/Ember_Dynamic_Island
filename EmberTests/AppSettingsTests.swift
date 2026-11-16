@@ -64,8 +64,9 @@ struct AppSettingsTests {
 
     @Test func onlyTheTabsThatAreOnAreShown() {
         let settings = AppSettings(defaults: freshDefaults())
-        #expect(settings.shownTabs == [.music, .timer, .calendar])
+        #expect(settings.shownTabs == [.music, .shelf, .timer, .calendar])
         settings.timerOn = false
+        settings.shelfOn = false
         #expect(settings.shownTabs == [.music, .calendar])
         settings.musicOn = false
         settings.calendarOn = false
@@ -94,5 +95,56 @@ struct AppSettingsTests {
         let relaunched = AppSettings(defaults: defaults)
         #expect(relaunched.panelLayout == .wide)
         #expect(relaunched.showsShuffle && relaunched.showsRepeat)
+    }
+
+    @Test func theTabCooldownIsFiveSecondsAndStaysWithinOneToTwenty() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.tabCooldown == 5)
+        settings.tabCooldown = 12
+        #expect(AppSettings(defaults: defaults).tabCooldown == 12)
+        settings.tabCooldown = 0
+        #expect(settings.tabCooldown == 1)
+        settings.tabCooldown = 99
+        #expect(settings.tabCooldown == 20)
+    }
+
+    @Test func theShelfCooldownIsFiveSecondsAndStaysWithinOneToTwenty() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.shelfCooldown == 5)
+        settings.shelfCooldown = 8
+        #expect(AppSettings(defaults: defaults).shelfCooldown == 8)
+        #expect(AppSettings(defaults: defaults).tabCooldown == 5)   // its own setting
+        settings.shelfCooldown = 0
+        #expect(settings.shelfCooldown == 1)
+        settings.shelfCooldown = 99
+        #expect(settings.shelfCooldown == 20)
+    }
+
+    @Test func thePanelOpensOnTheLastTabByDefaultAndTheChoiceSurvivesARelaunch() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.opensOnTab == nil)
+        settings.opensOnTab = .shelf
+        #expect(AppSettings(defaults: defaults).opensOnTab == .shelf)
+        settings.opensOnTab = nil
+        #expect(AppSettings(defaults: defaults).opensOnTab == nil)
+    }
+
+    @Test func screenshotsGoToTheShelfByDefault() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.screenshotsToShelf)
+        settings.screenshotsToShelf = false
+        #expect(!AppSettings(defaults: defaults).screenshotsToShelf)
+    }
+
+    @Test func theShelfIsOnByDefaultAndItsSwitchSurvivesARelaunch() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.shelfOn)
+        settings.shelfOn = false
+        #expect(!AppSettings(defaults: defaults).shelfOn)
     }
 }

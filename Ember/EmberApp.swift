@@ -25,12 +25,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let levels = LevelModel(volume: SystemVolume(), brightness: BuiltInBrightness())
     let mediaKeys = MediaKeyTap()
     let settings = AppSettings()
+    let shelf = ShelfModel()
+    let screenshots = ScreenshotWatcher()
     lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels)
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
-    /// While a calendar heads-up shows, the panel opens on the Calendar tab.
-    private var calendarHeadsUpShowing = false
     private var calendarHeadsUpEnd: Task<Void, Never>?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -56,7 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.panelSelection.tab = .timer   // calls showLastingActivity()
             // "Time's up" was on the pill, so the panel opens on its tab, although the music
             // has already taken the wings back.
-            self?.panelSelection.openingTab = .timer
+            self?.panelSelection.alertTab = .timer
         }
         panelSelection.onChange = { [weak self] in self?.showLastingActivity() }
         calendar.onHeadsUp = { [weak self] activity in self?.showCalendarHeadsUp(activity) }
@@ -72,11 +72,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         if levels.isOn { mediaKeys.start(askForAccess: false) }
         // Starts the features that are on; later changes in Settings apply at once.
+        controller.onFileDrop = { [weak self] urls, position in self?.receiveFiles(urls, at: position) }
+        controller.onFileDragEntered = { [weak self] in self?.panelSelection.holdShelfForDrag() }
+        screenshots.onScreenshot = { [weak self] url in self?.receiveScreenshot(url) }
         settings.onChange = { [weak self] in self?.applySettings() }
         applySettings()
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
                                                  calendar: calendar, selection: panelSelection,
-                                                 settings: settings,
+                                                 settings: settings, shelf: shelf,
                                                  openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }))
     }
 
@@ -84,22 +87,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
                                          musicTabChosen: panelSelection.tab == .music)
         controller.setOngoing(shown)
-        let lastingTab: PanelTab? = shown == nil ? nil : shown == musicActivity ? .music : .timer
-        panelSelection.openingTab = calendarHeadsUpShowing ? .calendar : lastingTab
+        panelSelection.openingTab = shown == nil ? nil : shown == musicActivity ? .music : .timer
     }
 
-    /// Shows the heads-up over whatever the wings show, and opens the panel on the Calendar
-    /// tab until it goes.
+    /// Shows the heads-up over whatever the wings show; the panel opens on the Calendar tab
+    /// if it opens before the heads-up goes.
     private func showCalendarHeadsUp(_ activity: LiveActivity) {
         controller.show(activity)
-        calendarHeadsUpShowing = true
-        showLastingActivity()
+        panelSelection.alertTab = .calendar
         calendarHeadsUpEnd?.cancel()
         calendarHeadsUpEnd = Task { [weak self] in
             try? await Task.sleep(for: .seconds(activity.duration ?? 0))
-            guard !Task.isCancelled, let self else { return }
-            calendarHeadsUpShowing = false
-            showLastingActivity()
+            guard !Task.isCancelled, let self, panelSelection.alertTab == .calendar else { return }
+            panelSelection.alertTab = nil
         }
     }
 }

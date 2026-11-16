@@ -47,3 +47,23 @@ struct DelayRow: View {
         .settingsItem(item)
     }
 }
+
+/// A cooldown slider (1–20 s, whole seconds), the item's name on the left.
+struct CooldownRow: View {
+    let item: SettingsItem
+    @Binding var seconds: TimeInterval
+
+    var body: some View {
+        LabeledContent(item.title) {
+            HStack(spacing: 8) {
+                Slider(value: $seconds, in: AppSettings.cooldownRange, step: 1)
+                    .frame(width: 160)
+                Text("\(Int(seconds)) s")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, alignment: .trailing)
+            }
+        }
+        .settingsItem(item)
+    }
+}

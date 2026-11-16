@@ -46,6 +46,19 @@ final class PillController {
             refreshDisplay()
         }
     }
+    /// Whether files dragged onto the pill open it (a feature that takes files is on).
+    @ObservationIgnored var acceptsFileDrags = false
+    /// While files are dragged over the open panel: where across its width, 0…1, so its
+    /// content can show where they will land; nil otherwise.
+    private(set) var fileDragPosition: CGFloat?
+    @ObservationIgnored private var isDropPending = false
+    /// A file drag is over the pill: from its arrival until it leaves or is dropped. SwiftUI
+    /// sends one more update about 0.3 s after a drop; outside a drag, updates are ignored.
+    @ObservationIgnored private var isFileDragActive = false
+    /// Called with the files dropped on the open panel and where across its width, 0…1.
+    @ObservationIgnored var onFileDrop: (([URL], CGFloat) -> Void)?
+    /// Called when files are dragged onto the pill, before it opens for them.
+    @ObservationIgnored var onFileDragEntered: (() -> Void)?
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
     /// Called when the user has seen an activity that ends when seen: they hovered over or
@@ -149,6 +162,38 @@ final class PillController {
     /// The user clicked or dragged the level strip's bar to `fill`.
     func levelDragged(to fill: Double) {
         onLevelChange?(fill)
+    }
+
+    func fileDragEntered() {
+        isFileDragActive = true
+        onFileDragEntered?()
+        send(.fileDragEntered)
+    }
+
+    func fileDragMoved(to position: CGFloat) {
+        guard isFileDragActive else { return }
+        fileDragPosition = position
+    }
+
+    func fileDragExited() {
+        isFileDragActive = false
+        // A drop being delivered keeps its position, so the drop targets stay up until then.
+        if !isDropPending { fileDragPosition = nil }
+        send(.fileDragExited)
+    }
+
+    /// Files were released on the panel; their URLs are still loading. Keeps the panel open.
+    func fileDropped() {
+        isFileDragActive = false
+        isDropPending = true
+        send(.fileDropped)
+    }
+
+    /// The dropped files' URLs have loaded: hands them on and takes the drop targets down.
+    func deliverDroppedFiles(_ urls: [URL], at position: CGFloat) {
+        isDropPending = false
+        fileDragPosition = nil
+        onFileDrop?(urls, position)
     }
 
     private func startLevelTimeout() {

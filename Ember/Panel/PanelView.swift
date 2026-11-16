@@ -10,21 +10,32 @@ struct PanelView: View {
     let calendar: CalendarModel
     let selection: PanelSelection
     let settings: AppSettings
+    let shelf: ShelfModel
     /// Opens the Settings window on a page: General from the gear, Music from the all-off message.
     let openSettings: (SettingsPage) -> Void
     @Environment(\.notchHeight) private var notchHeight
+    @Environment(\.notchWidth) private var notchWidth
 
     var body: some View {
+        // Shelf while it is held: during a file drag (until the panel closes) and for a few
+        // seconds after a drop or a screenshot.
         let shownTab = selection.visibleTab(among: settings.shownTabs)
+        let tabSpace = PanelTabSize.space(panelWidth: settings.panelLayout.size.width, notchWidth: notchWidth)
+        let tabLayout = PanelTabLayout.fitting(tabCount: settings.shownTabs.count, in: tabSpace)
         VStack(spacing: 0) {
             HStack {
                 PanelTabRow(tabs: settings.shownTabs,
-                            selection: Binding(get: { shownTab ?? .music }, set: { selection.tab = $0 }))
+                            selection: Binding(get: { shownTab ?? .music }, set: { selection.choose($0) }),
+                            layout: tabLayout)
+                    // Closer to the panel's edge (`PanelTabSize.rowInset`), so all four tabs
+                    // fit left of the notch in the compact panel; still clear of the top
+                    // corner's curve.
+                    .padding(.leading, -6)
                 Spacer()
                 if settings.batteryInPanelOn, let reading = battery.reading {
                     BatteryStatusView(reading: reading)
                 }
-                PanelSettingsButton { openSettings(.general) }
+                PanelSettingsButton(size: tabLayout.size) { openSettings(.general) }
             }
             .frame(height: notchHeight)
 
@@ -34,6 +45,7 @@ struct PanelView: View {
                                                  showsRepeat: settings.showsRepeat)
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
+                case .shelf: ShelfPanelView(model: shelf)
                 case nil: AllFeaturesOffView { openSettings(.music) }
                 }
             }
@@ -46,5 +58,6 @@ struct PanelView: View {
         .preference(key: PanelGlowColorKey.self, value: shownTab?.glowColor(songGlow: nowPlaying.glow))
         // The panel's content appears each time it opens.
         .onAppear { selection.panelOpened() }
+        .onDisappear { selection.panelClosed(showing: shownTab) }
     }
 }

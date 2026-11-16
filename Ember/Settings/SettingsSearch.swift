@@ -7,6 +7,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case opensOnHover
     case openDelay
     case closeDelay
+    case opensOnTab
+    case tabCooldown
     case panelLayout
     case alwaysOnGlow
     case music
@@ -16,6 +18,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case calendar
     case calendarEvents
     case reminders
+    case shelf
+    case screenshotsToShelf
+    case shelfCooldown
     case batteryAlerts
     case batteryInPanel
     case levels
@@ -23,11 +28,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
 
     var page: SettingsPage {
         switch self {
-        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .panelLayout: return .general
+        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .opensOnTab, .tabCooldown, .panelLayout:
+            return .general
         case .alwaysOnGlow: return .glow
         case .music, .showsShuffle, .showsRepeat: return .music
         case .timer: return .timer
         case .calendar, .calendarEvents, .reminders: return .calendar
+        case .shelf, .screenshotsToShelf, .shelfCooldown: return .shelf
         case .batteryAlerts, .batteryInPanel: return .battery
         case .levels: return .levels
         case .shareFeedback: return .feedback
@@ -40,6 +47,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return "Open the panel on hover"
         case .openDelay: return "Open delay"
         case .closeDelay: return "Close delay"
+        case .opensOnTab: return "Open the panel on"
+        case .tabCooldown: return "Stay on the last tab for"
         case .panelLayout: return "Panel layout"
         case .alwaysOnGlow: return "Always-on glow"
         case .music: return "Music"
@@ -49,6 +58,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .calendar: return "Calendar"
         case .calendarEvents: return CalendarLook.switchTitle(.events)
         case .reminders: return CalendarLook.switchTitle(.reminders)
+        case .shelf: return "Shelf"
+        case .screenshotsToShelf: return "Add screenshots to the shelf"
+        case .shelfCooldown: return "Stay on the Shelf tab for"
         case .batteryAlerts: return "Battery alerts"
         case .batteryInPanel: return "Battery in the panel"
         case .levels: return LevelLook.switchTitle
@@ -62,6 +74,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return ["hover", "click", "pointer"]
         case .openDelay: return ["hover", "wait", "speed"]
         case .closeDelay: return ["wait", "speed"]
+        case .opensOnTab: return ["default tab", "last tab", "start"]
+        case .tabCooldown: return ["cooldown", "seconds", "return"]
         case .panelLayout: return ["compact", "wide", "size", "panel"]
         case .alwaysOnGlow: return ["light", "rest", "notch"]
         case .music: return ["Apple Music", "Spotify", "now playing", "song"]
@@ -71,6 +85,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .calendar: return ["heads-up", "month", "date"]
         case .calendarEvents: return ["permission", "privacy"]
         case .reminders: return ["to-do", "permission", "privacy"]
+        case .shelf: return ["files", "drop", "drag", "AirDrop"]
+        case .screenshotsToShelf: return ["screen capture"]
+        case .shelfCooldown: return ["cooldown", "seconds"]
         case .batteryAlerts: return ["charging", "low battery", "plug"]
         case .batteryInPanel: return ["percentage", "charge"]
         case .levels: return ["volume", "brightness", "sound", "mute", "Accessibility"]

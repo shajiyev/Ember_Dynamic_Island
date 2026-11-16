@@ -25,6 +25,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     case music
     case timer
     case calendar
+    case shelf
     case battery
     case levels
     case feedback
@@ -36,6 +37,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .music: return "Music"
         case .timer: return "Timer"
         case .calendar: return "Calendar"
+        case .shelf: return "Shelf"
         case .battery: return "Battery"
         case .levels: return "Volume & Brightness"
         case .feedback: return "Feedback"
@@ -49,6 +51,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .music: return "music.note"
         case .timer: return "timer"
         case .calendar: return "calendar"
+        case .shelf: return "tray.full"
         case .battery: return "battery.100.bolt"
         case .levels: return "speaker.wave.2.fill"
         case .feedback: return "bubble.left.fill"
@@ -63,6 +66,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .music: return .green
         case .timer: return TimerLook.color
         case .calendar: return .cyan
+        case .shelf: return .brown
         case .battery: return Color(red: 0.202, green: 0.783, blue: 0.348)
         case .levels: return .indigo
         case .feedback: return .gray
@@ -73,7 +77,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         switch self {
         case .general, .glow: return .main
         case .music: return .media
-        case .timer, .calendar: return .productivity
+        case .timer, .calendar, .shelf: return .productivity
         case .battery, .levels: return .system
         case .feedback: return .help
         }

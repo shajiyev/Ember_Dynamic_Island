@@ -28,12 +28,16 @@
     feature clears it (the brief one shows over the ongoing one), and holds the open
     panel's content it is given at start. `onActivitySeen` tells the app when the user
     has seen an activity that ends when seen. `showLevel(_:)` keeps a `LevelReadout` for its
-    duration, apart from the activities.
+    duration, apart from the activities. File drags (only while `acceptsFileDrags`): a drag
+    over the pill opens it at once and holds it open; over the open panel, `fileDragPosition`
+    (0…1 across its width) tells the content where the files are; a drop goes to
+    `onFileDrop` with that position. The pill never refers to the shelf.
   - `PillWindow.swift`: the transparent always-on-top panel.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
     `PillController.alwaysOnGlow` (from Settings) switches the resting glow (#29) on or off.
     `PillView` also draws a live activity in the wings and shows the panel content when
-    open, passing it the notch height (`notchHeight` environment value). The panel content
+    open, passing it the notch's height and width (`notchHeight`, `notchWidth` environment
+    values). The panel content
     can ask for the open panel's glow colour (`PanelGlowColorKey`); the Music tab asks for
     its song's. It can also close the panel (`closePanel` environment action), as the Music
     and Calendar tabs do after sending the user to another app.
@@ -130,15 +134,30 @@
 - `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 200, the default) and
   Wide (620 × 200), each one's name, the month grid's width, and where the compact
   buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
-- `Ember/Panel/PanelTabs.swift` — the Music | Timer | Calendar tabs (icons only), and `PanelSelection`: the tab,
-  remembered between openings, and the tab of what the wings show, which the panel opens
-  on.
+- `Ember/Panel/PanelTabs.swift` — the Music | Shelf | Timer | Calendar tabs (icons only), and
+  `PanelSelection`: the tab, remembered between openings, and which tab the panel opens
+  on: a fresh alert's (`alertTab`), else the default tab chosen in Settings
+  (`defaultTab`), else the tab of what the wings show (`openingTab`) unless the panel closed
+  within the last-tab cooldown. Holds on the Shelf tab (during a file drag; for a while
+  after a drop or a screenshot) outrank all of these; choosing a tab ends every hold. `PanelTabLayout` sizes the tab row to the room left of the notch: large icons with
+  the spare room spread between them, or the regular size where the notch is wider.
 - `Ember/Panel/AllFeaturesOffView.swift` — the panel's body with Music, Timer and Calendar
   all off, with an Open Settings button. `PanelSettingsButton.swift` — the gear at the
   far right of the top row, which opens Settings on General.
+- `Ember/Shelf/` — the file shelf (#15). It lives only while Ember runs.
+  - `ShelfItems.swift`: the pure rules: `ShelfItem`, `ShelfList` (adding newest first without
+    duplicates, removing, the selection, what a drag takes) and `ShelfDropTarget` (AirDrop
+    or the shelf, from the drop position).
+  - `ShelfBookmarks.swift`: the only file-system code: bookmarks for dropped files, and
+    finding them again (moved, renamed, missing).
+  - `ShelfModel.swift`: items, selection, locations and thumbnails; open, Show in Finder,
+    AirDrop (`NSSharingService`). `ShelfThumbnails.swift`: Quick Look thumbnails.
+  - `ShelfPanelView.swift`, `ShelfDropFrame.swift`: the Shelf tab (AirDrop area and shelf).
+    `ShelfItemInteraction.swift`: an item's AppKit side (clicks, menu, hover, drag source).
+  - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.
 - `Ember/Settings/` — the Settings window (#0, #26a).
-  - `AppSettings.swift`: hover, the two delays, the glow, and a switch per feature, saved
-    in UserDefaults; `onChange` after every change.
+  - `AppSettings.swift`: hover, the two delays, the opening tab and the two tab cooldowns,
+    the glow, and a switch per feature, saved in UserDefaults; `onChange` after every change.
   - `SettingsPage.swift`, `SettingsSearch.swift`: the pure rules: the pages and their
     sidebar groups, every setting once with its extra search words, and which pages and
     settings match a search.
@@ -147,13 +166,14 @@
   - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
-    the pages, the search tint and the delay row. `LayoutCards.swift`: the clickable panel
+    the pages, the search tint, and the delay and cooldown rows. `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
   bar icon and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
-  `applySettings()`.
+  `applySettings()`. `AppDelegate+Shelf.swift`: dropped files and screenshots to the shelf
+  or AirDrop.
 
 ## Data flow
 Pointer and click events go from `PillView` to `PillController.send`. The controller
@@ -191,16 +211,27 @@ day's events, due reminders and done reminders for the switches that are on, aga
 `EKEventStoreChanged`. With events on, the model reads the coming events, asks
 `HeadsUpSchedule` for the next heads-up and sets one timer; it works this out again after a
 store change, a wake, a clock or time zone change and midnight. The heads-up goes to the
-app delegate, which shows it with `PillController.show` and sets the panel's opening tab to
-Calendar while it shows.
+app delegate, which shows it with `PillController.show` and sets the panel's alert tab to
+Calendar while it shows, so the next opening shows Calendar.
 
 Settings: a change in the Settings window sets `AppSettings`, which saves it and calls
 `onChange`; the app delegate's `applySettings()` sets the pill's timing, hover, glow and
 open size (`PillController.openSize`, from the chosen layout; `NotchGeometry` uses it),
-starts or stops Now Playing, Calendar and Battery (`stop()` ends their observers and
-timers), and cancels the timer when it is turned off. `PanelView` reads
+starts or stops Now Playing, Calendar, Battery and the screenshot watcher (`stop()` ends
+their observers and timers), lets the pill take file drags while the shelf is on, gives
+`PanelSelection` the default tab and the last-tab cooldown, and cancels the timer when it
+is turned off. `PanelView` reads
 `AppSettings.shownTabs`, `batteryInPanelOn`, the layout (passed down as `panelLayout`)
 and the shuffle and repeat switches directly.
+
+Shelf: files dragged over the pill make `PillController` open it (`onFileDragEntered` holds
+the Shelf tab) and publish `fileDragPosition`, which `ShelfPanelView` reads from the
+environment to light the area under the files. A drop reaches the app delegate
+(`receiveFiles`), which asks `ShelfDropTarget`: AirDrop closes the panel and opens macOS's
+AirDrop window; the shelf adds the files to `ShelfModel` and holds the Shelf tab for the
+Shelf cooldown. `ScreenshotWatcher` hands each new screenshot to the same path. Dragging an
+item out starts an AppKit drag session in `ShelfItemInteraction`; Finder or the receiving
+app decides what happens, and the shelf finds the file again afterwards.
 
 Volume and brightness: a media key reaches `MediaKeyTap`, which asks the app delegate's
 handler. With a notch display, that asks `LevelModel.handle`, which either lets the key go

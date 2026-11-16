@@ -18,6 +18,11 @@ nonisolated enum PillEvent: Equatable {
     case activityChanged(Bool)
     /// The panel's content asked to close, e.g. after sending the user to another app.
     case closeRequested
+    /// Files are dragged onto the pill; they open it at once, whatever the hover setting.
+    case fileDragEntered
+    case fileDragExited
+    /// The dragged files were dropped on the open panel, where the pointer now is.
+    case fileDropped
 }
 
 /// What the owner of a `PillModel` must do after an event.
@@ -36,6 +41,7 @@ nonisolated struct PillModel {
     private var isPointerInside = false
     /// With hover off (Settings → General), only a click opens the panel.
     var opensOnHover = true
+    private var isFileDragInside = false
 
     var state: PillState {
         if isOpen { return .open }
@@ -65,7 +71,7 @@ nonisolated struct PillModel {
             return nil
 
         case .closeDelayElapsed:
-            if !isPointerInside { isOpen = false }
+            if !isPointerInside && !isFileDragInside { isOpen = false }
             return nil
 
         case .activityChanged(let isActive):
@@ -76,6 +82,20 @@ nonisolated struct PillModel {
             // The pointer still rests where the panel was; it must enter again to reopen.
             isOpen = false
             isPointerInside = false
+            return .cancelDelay
+
+        case .fileDragEntered:
+            isFileDragInside = true
+            isOpen = true   // a drag to the notch is intent enough, whatever the hover setting
+            return .cancelDelay
+
+        case .fileDragExited:
+            isFileDragInside = false
+            return isOpen && !isPointerInside ? .startCloseDelay : nil
+
+        case .fileDropped:
+            isFileDragInside = false
+            isPointerInside = true
             return .cancelDelay
         }
     }

@@ -8,6 +8,10 @@ extension AppDelegate {
         controller.opensOnHover = settings.opensOnHover
         controller.alwaysOnGlow = settings.alwaysOnGlow
         controller.openSize = settings.panelLayout.size
+        controller.acceptsFileDrags = settings.shelfOn
+        panelSelection.defaultTab = settings.opensOnTab
+        panelSelection.returnCooldown = settings.tabCooldown
+        if settings.shelfOn && settings.screenshotsToShelf { screenshots.start() } else { screenshots.stop() }
         if settings.musicOn { nowPlaying.start() } else { nowPlaying.stop() }
         if settings.calendarOn { calendar.start() } else { calendar.stop() }
         if settings.batteryAlertsOn || settings.batteryInPanelOn { battery.start() } else { battery.stop() }

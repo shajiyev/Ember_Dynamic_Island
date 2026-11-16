@@ -28,10 +28,21 @@ struct GeneralPage: View {
                 DelayRow(item: .openDelay, seconds: $settings.openDelay)
                     .disabled(!settings.opensOnHover)
                 DelayRow(item: .closeDelay, seconds: $settings.closeDelay)
+                Picker(SettingsItem.opensOnTab.title, selection: $settings.opensOnTab) {
+                    Text("Last tab (Recommended)").tag(PanelTab?.none)
+                    Divider()
+                    ForEach(PanelTab.allCases, id: \.self) { tab in
+                        Text(tab.title).tag(PanelTab?.some(tab))
+                    }
+                }
+                .settingsItem(.opensOnTab)
+                if settings.opensOnTab == nil {
+                    CooldownRow(item: .tabCooldown, seconds: $settings.tabCooldown)
+                }
             } header: {
                 Text("Opening the panel")
             } footer: {
-                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel.")
+                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
             }
             Section {
                 LayoutCards(selection: $settings.panelLayout)

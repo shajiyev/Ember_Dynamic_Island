@@ -142,4 +142,46 @@ struct PillModelTests {
         model.handle(.closeDelayElapsed)
         #expect(model.state == .rest)
     }
+
+    @Test func aFileDragOpensThePillAtOnceEvenWithHoverOff() {
+        var model = PillModel()
+        model.opensOnHover = false
+        #expect(model.handle(.fileDragEntered) == .cancelDelay)
+        #expect(model.state == .open)
+    }
+
+    @Test func thePanelStaysOpenWhileTheDragIsOverIt() {
+        var model = PillModel()
+        model.handle(.fileDragEntered)
+        model.handle(.closeDelayElapsed)   // a delay started before the drag arrived
+        #expect(model.state == .open)
+    }
+
+    @Test func theDragLeavingStartsTheCloseDelay() {
+        var model = PillModel()
+        model.handle(.fileDragEntered)
+        #expect(model.handle(.fileDragExited) == .startCloseDelay)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .rest)
+    }
+
+    @Test func aDragExitReportedAfterADropDoesNotCloseThePanel() {
+        var model = PillModel()
+        model.handle(.fileDragEntered)
+        model.handle(.fileDropped)
+        #expect(model.handle(.fileDragExited) == nil)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .open)
+    }
+
+    @Test func afterADropThePanelStaysUntilThePointerLeaves() {
+        var model = PillModel()
+        model.handle(.fileDragEntered)
+        #expect(model.handle(.fileDropped) == .cancelDelay)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .open)
+        #expect(model.handle(.pointerExited) == .startCloseDelay)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .rest)
+    }
 }

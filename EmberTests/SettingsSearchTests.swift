@@ -46,9 +46,23 @@ struct SettingsSearchTests {
         }
     }
 
+    @Test func theShelfIsFoundByItsNameAndByAirDrop() {
+        #expect(SettingsSearch.matches("shelf") == [.shelf, .screenshotsToShelf, .shelfCooldown])
+        #expect(SettingsSearch.pages(for: "airdrop") == [.shelf])
+    }
+
     @Test func eachGroupsPagesSitTogether() {
         let groups = SettingsPage.allCases.map(\.group)
         let order = SettingsGroup.allCases
         #expect(groups == groups.sorted { order.firstIndex(of: $0)! < order.firstIndex(of: $1)! })
+    }
+
+    @Test func theScreenshotSwitchAndTheTabCooldownAreFound() {
+        #expect(SettingsSearch.matches("screenshot") == [.screenshotsToShelf])
+        #expect(SettingsSearch.matches("cooldown") == [.tabCooldown, .shelfCooldown])
+    }
+
+    @Test func theDefaultTabIsFound() {
+        #expect(SettingsSearch.matches("default tab") == [.opensOnTab])
     }
 }

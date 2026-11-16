@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-15)
+## Current status (2026-11-16)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -100,18 +100,26 @@
   on macOS 26.6.2 with the checklist in docs/specs/panel-layouts.md.
 - **Done:** the open and close delays now default to 0.1 s and 0.2 s (were 0.2 s and
   0.3 s), so the panel feels quicker. Tests pass on macOS 26.6.2.
+- **Done:** larger tab icons (13 pt, were 11 pt), spread into the room left of the notch
+  and always clear of it; the regular size stays where the notch is wider (More Space).
+  Tests pass on macOS 26.6.2; checked on screen by the user.
+- **Noted for later:** a lock screen player and timer (#22, brought back from dropped).
+- **Done:** the file shelf (#15): a Shelf tab with an AirDrop drop area, files dropped on
+  the notch kept as links while Ember runs, dragged out to Finder, apps or AirDrop, and new
+  screenshots added by themselves. With it, the opening tab in Settings (#39: Last tab or a
+  fixed tab) and separate times for the last tab and the Shelf tab. Tests pass on macOS
+  26.6.2; checked on screen by the user. Spec docs/specs/file-shelf.md.
 - **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
-  more layout settings (#38: the calendar in the Music tab), and the tab the panel opens
-  on (#39: the last one, or one the user picks). See docs/features.md.
-- **Next:** choose and design milestone 2's next feature (by the v1 list's order: the file
-  shelf, #15).
+  more layout settings (#38: the calendar in the Music tab). See docs/features.md.
+- **Next:** the rest of the v1 list: onboarding and permission requests (#0), then
+  auto-updates (Sparkle), then "Ship it" (milestone 3).
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything
   Ember does" (docs/specs/landing-page.md, "Redesign after v1"; decided 2026-11-16). Until
-  then the page is left as it is, although it is out of date: Calendar still says
-  "Planned", volume and brightness has no card, the permissions card leaves out
+  then the page is left as it is, although it is out of date: Calendar and the file shelf
+  still say "Planned", volume and brightness has no card, the permissions card leaves out
   Accessibility, and the demo shows the old Wide panel and Timer layout.
   Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
   how it looks and performs; not announced). Still to do: the user's check in Safari on

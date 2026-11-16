@@ -901,3 +901,50 @@ from a stacked music player seen in another notch app (only the idea is borrowed
   0.2 s and 0.3 s). Both are still set in Settings → General (0–1 s); a value the user
   already chose is kept.
 - **Why:** the user wanted the panel to open and close faster out of the box.
+
+## 2026-11-16 — Lock screen player and timer brought back for later (#22)
+- **Decision:** #22 moves from dropped to later, narrowed from "Lock-screen widgets" to the
+  playing song (with its controls) and a running countdown on the lock screen.
+- **Why:** the user wants them. The reason it was dropped still stands (drawing over the
+  lock screen needs private window APIs that break across macOS releases), so whether a
+  supported way exists on macOS 15 and 26, or the risk is accepted, is settled at design
+  time.
+
+## 2026-11-16 — Larger tab icons, sized to the room left of the notch
+- **Decision:** the tab row uses 13 pt icons (were 11 pt) when all of them fit left of the
+  notch with at least 2 pt between tabs; the spare room widens the gaps (up to 6 pt), and
+  the row starts 26 pt in from the panel's edge (was 24). The row always ends at least
+  4 pt before the notch. Where the notch is wider in points (the display set to More
+  Space), the four tabs keep the 11 pt size.
+- **Why:** the user wanted larger icons without any going behind the notch. The notch's
+  width in points depends on the Mac and its display scaling (185 pt on a 14" MacBook Pro
+  by default, about 220 pt with More Space), so the size is worked out from the real
+  notch rather than fixed. The gear on the right keeps its 11 pt size.
+
+## 2026-11-16 — File shelf (#15) and the opening tab (#39)
+- **Decision:** a Shelf tab (second in the row) that keeps **links** to files (bookmarks,
+  which follow moved files), never copies; files and folders only. One view: an AirDrop
+  drop area on the left fifth (AirDrop blue) beside the shelf; the area under dragged
+  files lights up. Dragging files to the notch opens the panel on Shelf even with hover
+  off. Dragging an item out lets Finder or the receiving app decide (move, copy, attach);
+  letting it go anywhere but back on the shelf closes the panel. New screenshots go onto
+  the shelf (a switch, on by default). After a drop or a screenshot the panel opens on
+  Shelf for a while (Settings → Shelf, 1–20 s, default 5). On by default.
+- **Decision:** the shelf is **not saved**: it starts empty at each launch (first built to
+  last across restarts, changed after the checks).
+- **Why:** the user wants a place for the work at hand, not a second file store. Links cost
+  no disk space and keep large files instant. Finder already knows what a drop should do.
+  The first design's two big targets replacing the shelf during a drag was swapped for one
+  view during the checks, so the shelf never jumps away under the pointer.
+- **Decision (#39):** Settings → General → **Open the panel on**: Last tab (Recommended,
+  the default; with "Stay on the last tab for", 1–20 s, default 5, shown only for it) or a
+  fixed tab. Alerts (Time's up, a calendar heads-up) open their tab once whatever the
+  choice; a fresh drop or screenshot shows Shelf.
+- **Why:** the user wanted the choice the idea #39 described, with the last tab kept as the
+  recommended default, and the shelf's time set apart from the last tab's.
+- **Results:** no Files & Folders prompt appeared on macOS 26.6.2, so no new permission.
+  macOS's "Drag windows to top of screen to enter Mission Control" can get in the way of
+  dropping on the notch; Settings → Shelf and the README explain how to turn it off. Two
+  fixes found in the checks: SwiftUI sends one more drag update about 0.3 s after a drop
+  (the pill ignores updates outside a drag), and a tap gesture around the items emptied a
+  ⌘-click selection (it now sits behind them).

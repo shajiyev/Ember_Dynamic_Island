@@ -84,6 +84,30 @@ struct PillControllerTests {
         try await Task.sleep(for: .milliseconds(200))
     }
 
+    @Test func aLateDragUpdateAfterADropDoesNotBringTheTargetsBack() {
+        // SwiftUI sends one more update about 0.3 s after the drop (seen on macOS 26.6.2).
+        let controller = PillController(timing: fast)
+        controller.acceptsFileDrags = true
+        controller.fileDragEntered()
+        controller.fileDragMoved(to: 0.6)
+        #expect(controller.fileDragPosition == 0.6)
+        controller.fileDropped()
+        controller.deliverDroppedFiles([], at: 0.6)
+        controller.fileDragMoved(to: 0.6)
+        #expect(controller.fileDragPosition == nil)
+    }
+
+    @Test func aNewDragAfterADropShowsTheTargetsAgain() {
+        let controller = PillController(timing: fast)
+        controller.acceptsFileDrags = true
+        controller.fileDragEntered()
+        controller.fileDropped()
+        controller.deliverDroppedFiles([], at: 0.6)
+        controller.fileDragEntered()
+        controller.fileDragMoved(to: 0.2)
+        #expect(controller.fileDragPosition == 0.2)
+    }
+
     @Test func defaultTimingMatchesTheSpec() {
         #expect(PillTiming().openDelay == 0.1)
         #expect(PillTiming().closeDelay == 0.2)

@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Draws the pill for the controller's current state and reports hover and clicks.
 /// It fills the whole pill window; the shape hangs from the top centre.
@@ -26,6 +27,7 @@ struct PillView: View {
         // The state's own height: the wings and the panel stay in it, the strip goes below.
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0
         let notchHeight = controller.geometry?.notchRect.height ?? 0
+        let notchWidth = controller.geometry?.notchRect.width ?? 0
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
         // The active state takes its glow from the activity, which may have none; the open
@@ -71,7 +73,9 @@ struct PillView: View {
                         if state == .open {
                             panelContent
                                 .environment(\.notchHeight, notchHeight)
+                                .environment(\.notchWidth, notchWidth)
                                 .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
+                                .environment(\.fileDragPosition, controller.fileDragPosition)
                                 .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
                                 .transition(PillStyle.contentTransition)
                         }
@@ -104,6 +108,7 @@ struct PillView: View {
                 guard Self.pointerOpensPanel(atY: location.y, state: state, stateHeight: stateHeight) else { return }
                 controller.send(.clicked)
             }
+            .onDrop(of: [.fileURL], delegate: FileDropDelegate(controller: controller, width: size.width))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
             .animation(PillStyle.animation(to: state), value: state)
@@ -181,6 +186,71 @@ struct ClosePanelAction {
 extension EnvironmentValues {
     /// The height of the notch, so panel content can line up a row beside it.
     @Entry var notchHeight: CGFloat = 0
+    /// The width of the notch, so panel content can stay clear of it.
+    @Entry var notchWidth: CGFloat = 0
     /// Closes the open panel; does nothing outside it.
     @Entry var closePanel = ClosePanelAction {}
+    /// While files are dragged over the open panel: where across its width, 0…1; nil
+    /// otherwise. The pill does not know what the content does with it.
+    @Entry var fileDragPosition: CGFloat? = nil
+}
+
+/// Files dragged onto the pill: opens it, tells the content where they are, and hands the
+/// dropped files to the controller. Only file URLs, and only while the controller takes them.
+
+private struct FileDropDelegate: DropDelegate {
+    let controller: PillController
+    let width: CGFloat
+
+    func validateDrop(info: DropInfo) -> Bool {
+        controller.acceptsFileDrags && info.hasItemsConforming(to: [.fileURL])
+    }
+
+    func dropEntered(info: DropInfo) {
+        guard validateDrop(info: info) else { return }
+        controller.fileDragEntered()
+        controller.fileDragMoved(to: position(of: info))
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        guard validateDrop(info: info) else { return nil }
+        controller.fileDragMoved(to: position(of: info))
+        return DropProposal(operation: .copy)
+    }
+
+    func dropExited(info: DropInfo) {
+        guard validateDrop(info: info) else { return }
+        controller.fileDragExited()
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard validateDrop(info: info) else { return false }
+        let position = position(of: info)
+        let providers = info.itemProviders(for: [.fileURL])
+        controller.fileDropped()
+        Task {
+            var urls: [URL] = []
+            for provider in providers {
+                if let url = await provider.fileURL() { urls.append(url) }
+            }
+            controller.deliverDroppedFiles(urls, at: position)
+        }
+        return true
+    }
+
+    private func position(of info: DropInfo) -> CGFloat {
+        guard width > 0 else { return 0.5 }
+        return min(max(info.location.x / width, 0), 1)
+    }
+}
+
+private extension NSItemProvider {
+    /// The file a dragged item stands for, or nil if it is not one.
+    func fileURL() async -> URL? {
+        await withCheckedContinuation { continuation in
+            _ = loadObject(ofClass: URL.self) { url, _ in
+                continuation.resume(returning: url)
+            }
+        }
+    }
 }

@@ -48,6 +48,13 @@ The full list, including what comes later, is in [docs/features.md](docs/feature
   it, the keys work as usual. You can change it in System Settings → Privacy & Security →
   Accessibility.
 
+## Tips
+
+- **Dropping files on the notch opens Mission Control?** macOS opens Mission Control when
+  something is held against the top of the screen. To use the file shelf without it, turn
+  off System Settings → Desktop & Dock → Mission Control → "Drag windows to top of screen
+  to enter Mission Control". Ember's Settings → Shelf has a button that opens that page.
+
 ## Install
 
 Not released yet. Ember will be a free download from GitHub Releases. It will not be

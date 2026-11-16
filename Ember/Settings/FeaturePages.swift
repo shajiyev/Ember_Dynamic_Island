@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// Settings → Music.
@@ -69,6 +70,41 @@ struct CalendarPage: View {
                 Text("Each asks for its own permission the first time. Off, Ember never reads them.")
             }
             .disabled(!settings.calendarOn)
+        }
+    }
+}
+
+/// Settings → Shelf.
+struct ShelfPage: View {
+    @Bindable var settings: AppSettings
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle(SettingsItem.shelf.title, isOn: $settings.shelfOn)
+                    .settingsItem(.shelf)
+            } footer: {
+                Text("Drop files on the notch to keep them here, or send them with AirDrop. The shelf keeps links, not copies.")
+            }
+            Section {
+                Toggle(SettingsItem.screenshotsToShelf.title, isOn: $settings.screenshotsToShelf)
+                    .settingsItem(.screenshotsToShelf)
+                CooldownRow(item: .shelfCooldown, seconds: $settings.shelfCooldown)
+            } footer: {
+                Text("A new screenshot goes first on the shelf. After a screenshot or a drop on the shelf, the panel opens on the Shelf tab for the time above, so the file is right there to drag out.")
+            }
+            .disabled(!settings.shelfOn)
+            Section {
+                LabeledContent("Dragging to the top opens Mission Control?") {
+                    Button("Open Desktop & Dock") {
+                        if let url = URL(string: "x-apple.systempreferences:com.apple.Desktop-Settings.extension") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    }
+                }
+            } footer: {
+                Text("macOS can open Mission Control when something is dragged to the top of the screen, where the notch is. To drop files on the notch without it, turn off \"Drag windows to top of screen to enter Mission Control\" in Desktop & Dock → Mission Control.")
+            }
         }
     }
 }
