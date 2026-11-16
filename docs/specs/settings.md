@@ -61,7 +61,7 @@ extra words; adding a setting to a page means adding one line there.
 
 | Page | Contents (default) |
 |---|---|
-| **General** | *System:* Launch at login (off). *Opening the panel:* Open the panel on hover (on) · Open delay, a 0–1 s slider in 0.1 s steps with its value shown (0.2 s; greyed out while hover is off) · Close delay, 0–1 s in 0.1 s steps (0.3 s) |
+| **General** | *System:* Launch at login (off). *Opening the panel:* Open the panel on hover (on) · Open delay, a 0–1 s slider in 0.1 s steps with its value shown (0.1 s; greyed out while hover is off) · Close delay, 0–1 s in 0.1 s steps (0.2 s) |
 | **Glow** | Always-on glow (on) |
 | **Music** | Music (on): "The Music tab and the song in the wings. Works with Apple Music and Spotify." |
 | **Timer** | Timer (on) |

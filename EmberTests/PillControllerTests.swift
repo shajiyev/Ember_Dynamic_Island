@@ -85,8 +85,8 @@ struct PillControllerTests {
     }
 
     @Test func defaultTimingMatchesTheSpec() {
-        #expect(PillTiming().openDelay == 0.2)
-        #expect(PillTiming().closeDelay == 0.3)
+        #expect(PillTiming().openDelay == 0.1)
+        #expect(PillTiming().closeDelay == 0.2)
     }
 
     @Test func aNewTimingAppliesFromTheNextHover() async throws {

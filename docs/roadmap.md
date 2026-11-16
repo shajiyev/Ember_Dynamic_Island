@@ -98,6 +98,8 @@
   default) and Wide (today's look), chosen in Settings → General; a compact Music tab with
   a clickable length/time-left; a compact Timer whose ring slides to the centre. Verified
   on macOS 26.6.2 with the checklist in docs/specs/panel-layouts.md.
+- **Done:** the open and close delays now default to 0.1 s and 0.2 s (were 0.2 s and
+  0.3 s), so the panel feels quicker. Tests pass on macOS 26.6.2.
 - **In progress:** nothing in the app.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab), and the tab the panel opens

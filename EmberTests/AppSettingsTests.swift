@@ -14,8 +14,8 @@ struct AppSettingsTests {
     @Test func defaultsMatchTheSpec() {
         let settings = AppSettings(defaults: freshDefaults())
         #expect(settings.opensOnHover)
-        #expect(settings.openDelay == 0.2)
-        #expect(settings.closeDelay == 0.3)
+        #expect(settings.openDelay == 0.1)
+        #expect(settings.closeDelay == 0.2)
         #expect(settings.alwaysOnGlow)
         #expect(settings.musicOn && settings.timerOn && settings.calendarOn)
         #expect(settings.batteryAlertsOn && settings.batteryInPanelOn)

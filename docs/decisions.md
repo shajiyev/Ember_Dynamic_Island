@@ -895,3 +895,9 @@ from a stacked music player seen in another notch app (only the idea is borrowed
 - **Why:** the hero must say what Ember is at once, and the current demo's animations are
   not true enough to the app; rebuilding once the app's look is settled avoids redoing
   them for every change before v1.
+
+## 2026-11-16 — Quicker default open and close delays
+- **Decision:** the open delay now defaults to 0.1 s and the close delay to 0.2 s (were
+  0.2 s and 0.3 s). Both are still set in Settings → General (0–1 s); a value the user
+  already chose is kept.
+- **Why:** the user wanted the panel to open and close faster out of the box.

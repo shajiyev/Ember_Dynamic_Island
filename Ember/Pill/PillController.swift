@@ -5,9 +5,9 @@ import SwiftUI
 /// How long the pill waits before opening and closing (Settings → General).
 nonisolated struct PillTiming: Equatable {
     /// How long the pointer must rest on the pill before it opens.
-    var openDelay: TimeInterval = 0.2
+    var openDelay: TimeInterval = 0.1
     /// How long after the pointer leaves the open panel before it closes.
-    var closeDelay: TimeInterval = 0.3
+    var closeDelay: TimeInterval = 0.2
 }
 
 /// Owns the pill's state and runs the delays that `PillModel` asks for.
