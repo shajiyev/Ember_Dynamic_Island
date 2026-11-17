@@ -1,46 +1,69 @@
-# Milestone 2, feature 6 design: the Settings window (#0) with the basics (#26a)
+# Settings
 
-Date: 2026-11-15. Status: built 2026-11-15 (plan: docs/plans/settings.md).
+The one spec for Ember's Settings: the window and every setting in it. It follows the
+Settings window's own order, so each page has its section here. Whenever a setting is
+added, changed or removed, it is recorded here, in its page's section; the plan is
+docs/plans/settings.md, with the same sections.
 
-## Goal
+A feature's own spec says what the feature does; this spec says what its settings are and
+what each one changes.
 
-One Settings window holds every option v1 needs: launch at login, how the pill opens
-(#26a), the always-on glow (#29), an on/off switch per feature, and the switches that live
-in the menu bar menu today. The menu shrinks to Settings…, Share Feedback and Quit.
+**Contents:** [The window](#the-window) · [General](#general) · [Glow](#glow) ·
+[Music](#music) · [Timer](#timer) · [Calendar](#calendar) · [Shelf](#shelf) ·
+[Battery](#battery) · [Volume & Brightness](#volume--brightness) ·
+[Feedback](#feedback) · [How it is built](#how-it-is-built) · [Testing](#testing) ·
+[Code reused from Atoll](#code-reused-from-atoll) · [Not in Settings yet](#not-in-settings-yet)
 
-When this is done, a user can open Settings from the menu, turn Music off, and see the
-Music tab disappear from the panel at once; Ember then sends no Apple Events and listens to
-no player until Music is turned back on. Every choice survives quitting and reopening
-Ember.
+## Status by page
 
-## What the user sees
+| Page | Status |
+|---|---|
+| The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a) |
+| General | Built: System and Opening the panel 2026-11-15; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Planned: a keyboard shortcut to open the panel |
+| Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. Planned: the glow colour |
+| Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
+| Timer | Built 2026-11-15 |
+| Calendar | Built 2026-11-15 |
+| Shelf | Built 2026-11-16 (#15) |
+| Battery | Built 2026-11-15 |
+| Volume & Brightness | Built 2026-11-15 |
+| Feedback | Built 2026-11-15; the destination is not chosen yet |
+
+---
+
+## The window
+
+### Goal
+
+One Settings window holds every option. The menu bar menu holds only Settings…, Share
+Feedback and Quit. Every choice applies at once, with no Save button and no restart, and
+survives quitting and reopening Ember. A feature that is off does no work at all: no
+observers, no timers, no Apple Events.
 
 ### The window
 
-- A window 700 pt wide and about 500 tall, with a sidebar on the left, like System
-  Settings. Its title sits in a unified toolbar and is the selected page's name.
+- 700 pt wide and about 500 tall, with a sidebar on the left, like System Settings. Its
+  title sits in a unified toolbar and is the selected page's name.
 - It opens on **General**.
 - There is only ever one: choosing Settings… again brings it to the front. ⌘W closes it.
 - While it is open, Ember shows its icon in the Dock and in ⌘-Tab, so the window can be
-  found again when it is behind another app. Closing it removes the icon.
-- Each switch works at once; there is no Save button.
+  found again behind another app. Closing it removes the icon.
 
 ### The look (Atoll's settings style)
 
-Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember; mocked up while
-designing (`.superpowers/brainstorm/`, not committed).
+Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember.
 - **Sidebar:** a search field at the top, a divider, then the pages in groups with small
   grey headers: General and Glow (no header), **Media** (Music), **Productivity** (Timer,
-  Calendar), **System** (Battery, Volume & Brightness), then Feedback (no header). Rows
-  about 36–44 pt tall, about 210 pt wide.
+  Calendar, Shelf), **System** (Battery, Volume & Brightness), then Feedback (no header).
+  Rows about 36–44 pt tall, about 210 pt wide.
 - **Icons:** a 26 pt rounded square (corner 8) filled with a gradient from the page's
   colour to 70% of it, a thin white edge, a soft shadow in the same colour, and a white SF
   Symbol at 13 pt semibold.
 - **Colours:** General blue, Glow Ember rose (`PillStyle.glowColor`), Music green, Timer
-  Ember's timer orange (`TimerLook.color`), Calendar cyan, Battery green, Volume &
-  Brightness indigo, Feedback grey.
-- **Pages:** a grouped `Form` (`.formStyle(.grouped)`). Each section has a header and, where
-  it helps, a short grey footer saying what its switches do.
+  Ember's timer orange (`TimerLook.color`), Calendar cyan, Shelf brown, Battery green,
+  Volume & Brightness indigo, Feedback grey.
+- **Pages:** a grouped `Form` (`.formStyle(.grouped)`). Each section has a header and,
+  where it helps, a short grey footer saying what its settings do.
 - **Background:** glass on macOS 26 (`glassEffect`, inside `if #available(macOS 26, *)`);
   the window's own background with a thin material on macOS 15.
 
@@ -54,72 +77,236 @@ finds Launch at login, "hover" finds the open delay).
 - Clearing the field shows every page again; the selected page stays.
 - No match: the sidebar shows "No Results".
 
-Every setting is listed once in a search index next to the pages, with its page, name and
-extra words; adding a setting to a page means adding one line there.
-
-### The pages
-
-| Page | Contents (default) |
-|---|---|
-| **General** | *System:* Launch at login (off). *Opening the panel:* Open the panel on hover (on) · Open delay, a 0–1 s slider in 0.1 s steps with its value shown (0.1 s; greyed out while hover is off) · Close delay, 0–1 s in 0.1 s steps (0.2 s) |
-| **Glow** | Always-on glow (on) |
-| **Music** | Music (on): "The Music tab and the song in the wings. Works with Apple Music and Spotify." |
-| **Timer** | Timer (on) |
-| **Calendar** | Calendar (on) · *In the Calendar tab:* Show Calendar Events (off) · Show Reminders (off). The last two are today's menu switches, with the same permission requests; they are greyed out while Calendar is off |
-| **Battery** | Battery alerts (on) · Battery in the panel (on) |
-| **Volume & Brightness** | Show Volume & Brightness in the Pill (off), with "Needs Accessibility" under it; it behaves exactly as today's menu switch (docs/specs/volume-brightness.md, "The switch") |
-| **Feedback** | A Share Feedback button, greyed out, and the line "Coming soon" |
-
-Launch at login is off by default: the onboarding feature (#0, later) asks on first
-launch, so nothing changes on the user's Mac without their choice.
+Every setting is listed once in the search index (`SettingsItem`), with its page, name and
+extra words; adding a setting to a page means adding one case there.
 
 ### The menu bar menu
 
 Settings… (⌘,) · Share Feedback (greyed out until a destination is chosen) · Quit Ember.
-The "No display with a notch found" note and the Debug-only items stay as they are. The
-three switches leave the menu; existing choices are kept.
+The "No display with a notch found" note and the Debug-only items stay.
 
-### What each switch does
+### Settings from the panel
 
-Every change applies at once, with no restart.
-
-- **Music off:** Ember stops listening to Music and Spotify (no change notices, no Apple
-  Events); the song leaves the wings; the Music tab goes. On again: Ember reads the players
-  once and shows whatever is playing.
-- **Timer off:** a running, paused or ringing timer is cancelled and its sound stops; its
-  wings and the Timer tab go. There is no confirmation.
-- **Calendar off:** the heads-up timer and the calendar's change watching stop; the tab
-  goes. Show Calendar Events and Show Reminders keep their saved state (greyed out) and
-  come back with Calendar. Permissions are not touched.
-- **Battery alerts off:** no plug, unplug or low-battery alerts in the wings.
-- **Battery in the panel off:** the percentage leaves the panel's top row. With both
-  battery switches off, Ember stops listening to the battery.
-- **Hover off:** hovering does nothing; a click opens the panel. Leaving the open panel
-  still closes it after the close delay.
-- **Delays:** a new value applies from the next hover.
-- **Always-on glow off:** the resting pill is invisible, as before #29. Activities still
-  glow.
-- **Launch at login:** uses macOS's login-item service. The switch shows the real state,
-  read again each time the page appears (the user can remove Ember in System Settings →
-  General → Login Items). If macOS needs the user's approval, a line under the switch says
-  so, with a button that opens that page.
-
-### The panel's tabs
-
-- The tab row shows only the tabs that are on, in the usual order (Music, Timer, Calendar).
-- If the panel was closed on a tab that is now off, it opens on the first tab that is on.
-- With all three off, the tab row is empty and the body shows one quiet line, "Turn on a
-  feature in Settings", and an **Open Settings** button that closes the panel and opens
-  Settings on the Music page. The top row's battery stays if its switch is on.
 - A **Settings button** (a gear, drawn like the tab icons, "Settings" on hover) always sits
-  at the far right of the top row, after the battery. It closes the panel and opens
-  Settings on General. Added 2026-11-15 after the checks (plan part 2).
+  at the far right of the panel's top row, after the battery. It closes the panel and opens
+  Settings on General.
+- With every tab feature off, the panel's body shows one quiet line, "Turn on a feature in
+  Settings", and an **Open Settings** button that closes the panel and opens Settings on
+  the Music page. The top row's battery stays if its switch is on.
+- The tab row shows only the tabs whose feature is on, in the usual order. If the panel was
+  closed on a tab that is now off, it opens on the first tab that is on.
 
-### Share Feedback
+---
 
-Where feedback goes is not decided yet. Until it is, both Share Feedback buttons (menu and
-Feedback page) are shown greyed out, and the page says "Coming soon". Choosing the
-destination later means filling in one value (`Feedback.swift`); nothing else changes.
+## General
+
+### System
+
+| Setting | Default | What it does |
+|---|---|---|
+| Launch at login | off | Uses macOS's login-item service. The switch shows the real state, read again each time the page appears (the user can remove Ember in System Settings → General → Login Items). If macOS needs the user's approval, a line under the switch says so, with a button that opens Login Items. |
+
+Off by default: onboarding (#0, later) asks on first launch, so nothing changes on the
+user's Mac without their choice.
+
+### Opening the panel
+
+| Setting | Default | What it does |
+|---|---|---|
+| Open the panel on hover | on | Off: hovering does nothing; a click opens the panel. Leaving the open panel still closes it after the close delay. |
+| Open delay | 0.1 s | How long the pointer rests on the pill before the panel opens. A 0–1 s slider in 0.1 s steps, its value shown. Greyed out while hover is off. Applies from the next hover. |
+| Close delay | 0.2 s | How long after the pointer leaves the panel it closes. 0–1 s in 0.1 s steps. |
+| Open the panel on | Last tab (Recommended) | **Last tab:** the tab of what the wings show (such as Music while a song plays), but reopened within the time below it comes back to the tab it was on. **A fixed tab** (Music, Shelf, Timer, Calendar) always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way. Details: docs/specs/file-shelf.md. |
+| Stay on the last tab for | 5 s | 1–20 s, whole seconds. Shown only with Last tab. |
+
+The delays were 0.2 s and 0.3 s until 2026-11-16.
+
+### Panel layout
+
+| Setting | Default | What it does |
+|---|---|---|
+| Panel layout | Compact | One clickable card per layout, each with a small drawing of its Music tab, its name and size; the chosen card has an Ember rose outline. **Compact** (460 pt) or **Wide** (the original look). Every tab uses it; a change shows the next time the panel opens. Details: docs/specs/panel-layouts.md. |
+
+### Planned: a keyboard shortcut to open the panel
+
+Asked for 2026-11-16; to be designed next after Glow. A shortcut the user records to open
+the panel, refusing combinations that clash with macOS's own shortcuts.
+
+---
+
+## Glow
+
+Built 2026-11-17 (plan part 3): a switch per glow, and a strength, a spread and a fade for
+each of the three glows; every glow centred. Before, the page had only the always-on glow
+(#29, built 2026-11-15).
+
+**Goal.** Every glow Ember shows can be turned off on its own, and each of the three (rest,
+live activity, open panel) can be made softer or stronger, reach less or further, and fade
+out more or less gradually up the sides. Each glow is even all around the pill.
+
+**The page:**
+
+```
+[x] Resting glow
+      Strength  ─────o───       10%…100%
+      Spread    ───o─────       4…30 pt
+      Fade      ─────o───       0%…100%
+[x] Live activity glow
+      Strength  ─────o───
+      Spread    ────o────
+      Fade      ────────o
+      [x] Music
+      [x] Timer
+      [x] Battery
+      [x] Calendar
+[x] Open panel glow
+      Strength  ─────o───
+      Spread    ─────o───
+      Fade      ────────o
+```
+
+| Setting | Default | What it does |
+|---|---|---|
+| Resting glow | on | The always-on glow (#29): a soft Ember rose glow around the notch while nothing is happening. Off, the resting pill is invisible and the notch lights up only for activity. Saved under `alwaysOnGlow` (its first name), so a user who turned it off keeps it off. |
+| Strength | 75% | How bright the glow is: its opacity, 10–100%, in 5% steps. |
+| Spread | 6 pt | How far the glow reaches from the pill: its radius, 4–30 pt, in 1 pt steps. |
+| Fade | 20% | How far down the sides the light takes to reach full strength, fading in from the top of the screen: 0–100% of the pill's height, in 5% steps. 0% lights the sides right up to the top; higher fades them out more gradually. |
+| Live activity glow | on | Off: no activity glows; the wings still show. On: each feature's switch decides for its own activities. |
+| Strength · Spread · Fade | 80% · 10 pt · 10% | As for the resting glow. |
+| Music, Timer, Battery, Calendar | on | Each feature's activities glow or not (Timer includes Time's up). |
+| Open panel glow | on | Off: the open panel has no glow, on any tab (the Music tab's song colour included). |
+| Strength · Spread · Fade | 80% · 10 pt · 15% | As for the resting glow. |
+
+Each glow's sliders (and the feature switches) are greyed out while its switch is off.
+
+- **No preview on the page:** every switch and slider changes the real pill at once, which
+  shows the change better. A preview of three small pills was built and then removed the
+  same day (2026-11-17), at the user's request.
+- **Strength** is the glow's opacity; the thin edge line follows it. **Spread** is the
+  glow's radius; the edge line does not change. Neither has a 0: the switch is for off.
+- **Fade** applies to all the light on the sides together, the soft glow and the thin
+  bright line: both are clear at the top of the shape and full strength at the chosen
+  point down, and stay full below it (the bottom edge is always fully lit).
+- **Every glow is centred** on the pill, not pushed down, so it is even on both sides,
+  along the bottom and around the corners. (Until 2026-11-17 the live activity glow was
+  pushed down 5 pt, then 2, and the open panel's 8 pt: the bottom edge got most of the
+  light, the sides and top corners little.)
+- **Spread stops at 30 pt** because the pill's window leaves 40 pt around the open panel
+  (`PillMetrics.glowMargin`); the rest and live activity pills, smaller, have more room.
+- **A glow that is off** takes its edge line with it.
+- Every switch and slider can be found with the search ("intensity" finds the strengths;
+  "distance", "reach" and "size" the spreads; "fade" and "sides" the fades; "resting",
+  "live activity" and "open panel" each glow's rows).
+
+**The defaults, chosen by the user by eye on 2026-11-17** with these sliders, on a 14"
+MacBook Pro, macOS 26.6.2, compared with the first look:
+
+| | Rest | Live activity | Open panel |
+|---|---|---|---|
+| Strength (opacity) | 75% (was 60%) | 80% (was 85%) | 80% (was 55%) |
+| Spread (radius) | 6 pt (was 8) | 10 pt (unchanged) | 10 pt (was 16) |
+| Pushed down | 0 pt (unchanged) | 0 pt (was 5) | 0 pt (was 8) |
+| Fade | 20% (was 60%, the line only) | 10% (the line was faded from halfway down; the glow not at all) | 15% (as live activity) |
+
+**How it works:**
+- **`LiveActivity.feature`**: which feature made it (music, timer, battery, calendar), set
+  by each feature's `…Look`. The pill still knows nothing else about the feature.
+- **`GlowSettings`** (`Ember/Pill/GlowSettings.swift`): the switches, and each glow's
+  strength, spread and fade. `AppSettings` saves each in UserDefaults and hands a
+  `GlowSettings` to `PillController.glow`.
+- **One decision function**, `GlowSettings.glow(for:activity:panelColor:)`, returns the glow
+  to draw (colour, opacity, radius and fade) or none; `PillView` draws it.
+- **How the fade is drawn:** `PillView` draws the light (a copy of the shape with its edge
+  line and glow) behind the black shape, masked by one vertical gradient: clear at the
+  shape's top, full at the fade point. The black shape on top is never masked.
+- `PillStyle.style(for:)` holds each state's shape and default glow (opacity, radius,
+  fade); the settings override them.
+
+### Planned: the glow colour
+
+Asked for 2026-11-16, to be designed with onboarding (#0): the user picks Ember's glow
+colour (default Ember rose) during onboarding and sees the notch change as they pick; a
+matching setting here changes it later. Related: glow colour presets (#30).
+
+---
+
+## Music
+
+| Setting | Default | What it does |
+|---|---|---|
+| Music | on | The Music tab and the song in the wings; Apple Music and Spotify. Off: Ember stops listening to both players (no change notices, no Apple Events), the song leaves the wings, the Music tab goes. On again: Ember reads the players once and shows whatever is playing. |
+| Show shuffle | off | *In the Music tab.* A shuffle button at the left end of the controls; it switches the player's own setting. Greyed out while Music is off. |
+| Show repeat | off | *In the Music tab.* A repeat button at the right end; repeat plays the whole list again. Greyed out while Music is off. |
+
+Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
+
+---
+
+## Timer
+
+| Setting | Default | What it does |
+|---|---|---|
+| Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
+
+Details: docs/specs/timers.md.
+
+---
+
+## Calendar
+
+| Setting | Default | What it does |
+|---|---|---|
+| Calendar | on | The Calendar tab and the heads-up before each event. Off: the heads-up timer and the calendar's change watching stop; the tab goes. Permissions are not touched. |
+| Show Calendar Events | off | *In the Calendar tab.* The day's events. Asks for the Calendar permission the first time. Off, Ember never reads them. Greyed out while Calendar is off; keeps its state. Saved under `showsCalendarEvents` in `CalendarModel`. |
+| Show Reminders | off | *In the Calendar tab.* The day's reminders, with the same rules and its own permission. Saved under `showsReminders`. |
+
+Later: a setting for how long before an event the heads-up comes (now 5 minutes).
+Details: docs/specs/calendar.md.
+
+---
+
+## Shelf
+
+| Setting | Default | What it does |
+|---|---|---|
+| Shelf | on | The Shelf tab: files dropped on the notch are kept there as links, and can be sent with AirDrop. |
+| Add screenshots to the shelf | on | A new screenshot goes first on the shelf. Greyed out while Shelf is off. |
+| Stay on the Shelf tab for | 5 s | After a screenshot or a drop, the panel opens on the Shelf tab for this long, whatever "Open the panel on" says. 1–20 s, whole seconds. Greyed out while Shelf is off. |
+
+A last section explains that macOS can open Mission Control when something is dragged to
+the top of the screen, with an **Open Desktop & Dock** button. Details:
+docs/specs/file-shelf.md.
+
+---
+
+## Battery
+
+| Setting | Default | What it does |
+|---|---|---|
+| Battery alerts | on | Alerts in the wings when the charger is plugged in or out, and at 20% and 10%. |
+| Battery in the panel | on | The percentage at the top right of the open panel. |
+
+With both off, Ember stops listening to the battery. Details: docs/specs/battery.md.
+
+---
+
+## Volume & Brightness
+
+| Setting | Default | What it does |
+|---|---|---|
+| Show Volume & Brightness in the Pill | off | The volume and the built-in screen's brightness in the pill instead of macOS's own indicator. Needs Accessibility, which Ember asks for when it is turned on. Saved under `showsLevelsInPill` in `LevelModel`. |
+
+Details: docs/specs/volume-brightness.md ("The switch").
+
+---
+
+## Feedback
+
+A Share Feedback button, greyed out, and the line "Coming soon". Where feedback goes is
+not decided yet; choosing it later means filling in one value (`Feedback.swift`), which
+also enables the menu's Share Feedback.
+
+---
 
 ## How it is built
 
@@ -127,76 +314,69 @@ destination later means filling in one value (`Feedback.swift`); nothing else ch
 
 The window is an AppKit `NSWindow` holding the SwiftUI sidebar view, created when it opens
 and discarded when it closes. Considered SwiftUI's `Settings` scene and a `Window` scene.
-**Why:** it costs nothing while closed (SwiftUI scenes keep their state for the life of
-the app), and it gives full control over the two things menu bar apps get wrong: the
-window opening behind the frontmost app, and showing the Dock icon only while it is open
-(activation policy `.regular` while open, `.accessory` after). It matches the pill, which
-is also an AppKit window around SwiftUI.
+**Why:** it costs nothing while closed (SwiftUI scenes keep their state for the life of the
+app), and it gives full control over the two things menu bar apps get wrong: the window
+opening behind the frontmost app, and showing the Dock icon only while it is open
+(activation policy `.regular` while open, `.accessory` after). It matches the pill, which is
+also an AppKit window around SwiftUI.
 
-### Files
+### Data flow
 
-New folder `Ember/Settings/`:
+A change in the window sets `AppSettings` (`@Observable`), which saves it in UserDefaults
+and calls `onChange`; the app delegate's `applySettings()` (`AppDelegate+Settings.swift`)
+brings the pill and every feature in line. The pill module never refers to the Settings
+module. The Calendar lists and Volume & Brightness keep their switches in their own models,
+with their permission flows; the pages bind to those models.
+
+### Files (`Ember/Settings/`)
 
 | File | Job |
 |---|---|
-| `AppSettings.swift` | `AppSettings` (`@Observable`): hover, open and close delays (held between 0 and 1 s), always-on glow, the Music, Timer and Calendar switches, the two battery switches. Each saved in UserDefaults under its own key, with the defaults above. No UI, no system code. |
-| `LaunchAtLogin.swift` | The only `SMAppService` code: read the status (on, off, needs approval), turn it on or off, open Login Items. |
-| `SettingsWindow.swift` | Creates the window on open, brings Ember to the front, sets the activation policy; discards the window and goes back to `.accessory` on close. Can open on a given page. |
-| `SettingsPage.swift` | `SettingsPage` and its group: each page's title, symbol, colour and sidebar group. |
-| `SettingsSearch.swift` | The search index (every setting's page, name and extra words) and the pure matching rule: which pages and which settings match a text. |
+| `AppSettings.swift` | Every option no feature model owns, its default and limits, saving, `onChange`. No UI, no system code. |
+| `LaunchAtLogin.swift` | The only `SMAppService` code: read the status, turn it on or off, open Login Items. |
+| `SettingsWindow.swift` | Creates the window on open, brings Ember to the front, sets the activation policy; discards the window on close. Can open on a given page. |
+| `SettingsPage.swift` | `SettingsPage` and `SettingsGroup`: each page's title, symbol, colour and sidebar group. |
+| `SettingsSearch.swift` | The search index (`SettingsItem`) and the pure matching rule. |
 | `SettingsView.swift` | The sidebar (search field, grouped pages, the icon square) and the selected page. |
-| `SettingsRow.swift` | What the pages share: the tint a search match gets, and the delay slider row. |
+| `SettingsRow.swift` | What the pages share: the search tint, the delay and cooldown slider rows. |
 | `GeneralPage.swift` | General and Glow. |
-| `FeaturePages.swift` | Music, Timer, Calendar, Battery, Volume & Brightness. |
-| `FeedbackPage.swift` | The Feedback page. |
-| `Feedback.swift` | The feedback destination: `nil` for now, which greys out both buttons. |
+| `LayoutCards.swift` | General's panel layout cards. |
+| `FeaturePages.swift` | Music, Timer, Calendar, Shelf, Battery, Volume & Brightness. |
+| `FeedbackPage.swift`, `Feedback.swift` | The Feedback page; the feedback destination (`nil` for now). |
 
-Changed:
-- `PillState.swift`: `PillModel` gets a hover rule: with hover off, the pointer entering
-  starts no open delay; clicks open as before.
-- `PillController.swift`: `PillTiming` and the hover flag can change while Ember runs.
-- `PillStyle.swift` / `PillView.swift`: `alwaysOnGlow` stops being a constant; the view is
-  given the setting.
-- `PanelTabs.swift`: `PanelSelection` knows the tabs that are on and falls back to the
-  first one; `PanelTabRow` shows only those.
-- `PanelView.swift`: the battery item follows its switch; the all-off message and button
-  (`AllFeaturesOffView.swift`, new, in `Ember/Panel/`); the gear at the top right
-  (`PanelSettingsButton.swift`, new, in `Ember/Panel/`).
-- `NowPlayingModel.swift`, `CalendarModel.swift`, `BatteryMonitor.swift`: a `stop()` that
-  ends their observers, timers and Apple Events. `BatteryMonitor` sends alerts only while
-  alerts are on.
-- `EmberApp.swift`: the menu (Settings…, Share Feedback, Quit). The app delegate's wiring
-  of settings to features goes in a small extension file, `AppDelegate+Settings.swift`.
+In `Ember/Panel/`: `PanelSettingsButton.swift` (the gear) and `AllFeaturesOffView.swift`.
 
-The Calendar events/reminders switches stay in `CalendarModel` and the Volume & Brightness
-switch in `LevelModel`, with their existing UserDefaults keys and permission flows; the
-Settings pages bind to them as the menu does today.
+---
 
 ## Testing
 
-Unit tests, written first:
-- `AppSettingsTests`: every default; values survive a new `AppSettings` on the same
-  UserDefaults suite; delays outside 0–1 s are held to the range.
-- `PillModelTests`: with hover off, the pointer entering does not open; a click does.
-- `PanelTabsTests`: only the tabs that are on show; the fallback when the remembered tab is
-  off; no tabs when all are off.
-- `SettingsSearchTests`: empty text matches every page; a name and an extra word each find
-  their setting, ignoring case; pages keep sidebar order; no match gives no pages; every
-  page has at least one entry in the index.
+Unit tests, written first, per part:
+- **The window:** `SettingsSearchTests`: empty text matches every page; a name and an extra
+  word each find their setting, ignoring case; pages keep sidebar order; no match gives no
+  pages; every page has at least one entry in the index; each new setting is found.
+- **Every page:** `AppSettingsTests`: every default; values survive a new `AppSettings` on
+  the same UserDefaults suite; values outside their range are held to it.
+- **General:** `PillModelTests` (hover off: entering does not open, a click does);
+  `PanelTabsTests` (only the tabs that are on show; the fallback; none when all are off;
+  the opening tab).
+- **Glow:** `GlowSettingsTests`, the decision function: each switch off, one feature's
+  glow off while the others glow, the main live activity switch overriding the feature
+  switches, strength and spread applied, an activity with no colour still has no glow;
+  `PillStyleTests` for the softer live activity values; `AppSettingsTests` for the
+  defaults, saving and the limits of the strengths and spreads.
 
-Manual checklist (in the plan), on macOS 26:
+Manual checks on macOS 26 (the plan has the full lists):
 1. Settings… opens the window in front of the frontmost app, on General; the Dock icon
-   appears; closing removes it; choosing Settings… twice gives one window.
-2. Each switch changes the pill or panel at once, as listed above.
-3. Hover off: hovering does nothing, clicking opens. Delays at 0 and 1 s feel right.
-4. Launch at login: on, log out and in, Ember starts; removing it in Login Items shows off.
-5. Quit and reopen: every choice is kept, including the old menu switches.
-6. All three tab features off: the message and Open Settings work.
-7. The look matches the mockup on macOS 26 (glass) and reads well in light and dark mode;
-   search filters the sidebar and tints the matching settings; "No Results" shows.
-8. **Performance:** with Music, Calendar and both battery switches off, Activity Monitor
-   shows Ember idle (no CPU, no wake-ups from those features); with the window closed,
-   Ember's memory returns to what it was before opening it.
+   appears; closing removes it; one window only.
+2. Each setting changes the pill or panel at once, as its page's section says.
+3. Quit and reopen: every choice is kept.
+4. The look reads well in light and dark mode; search filters the sidebar and tints the
+   matches; "No Results" shows.
+5. **Performance:** with Music, Calendar and both battery switches off, Activity Monitor
+   shows Ember idle; with the window closed, memory returns to what it was before opening it.
+6. **Glow:** the sliders change the real pill at once; each switch hides its glow.
+
+---
 
 ## Code reused from Atoll
 
@@ -206,7 +386,7 @@ activation-policy steps from its `SettingsWindowController.swift`. Written into 
 files with Ember's names; covered by the README credit. None of Atoll's identifiers,
 Sparkle wiring, search highlight coordinator or settings keys come along.
 
-## Not in this feature
+## Not in Settings yet
 
-Onboarding (#0, separate), auto-updates and "Check for Updates…" (#27), the feedback
-destination, the later options for each page (#30, #33–#39), and an About page.
+Onboarding (#0, separate feature), auto-updates and "Check for Updates…" (#27), the
+feedback destination, themes (#37), glow colour presets (#30), an About page.

@@ -22,7 +22,7 @@ struct PillView: View {
     var body: some View {
         let state = controller.state
         let level = controller.level
-        let style = PillStyle.style(for: state, alwaysOnGlow: controller.alwaysOnGlow)
+        let style = PillStyle.style(for: state)
         let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
         // The state's own height: the wings and the panel stay in it, the strip goes below.
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0
@@ -30,36 +30,34 @@ struct PillView: View {
         let notchWidth = controller.geometry?.notchRect.width ?? 0
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
-        // The active state takes its glow from the activity, which may have none; the open
-        // panel from its content, or Ember rose; rest is always Ember rose.
+        // The glow for this moment, as set in Settings → Glow: the activity's colour (an
+        // activity may have none), the panel content's colour or Ember rose, or none.
         let activityGlow = controller.currentActivity?.glowColor
-        let hasGlow = state != .active || activityGlow != nil
-        let glowColor = switch state {
-        case .active: activityGlow ?? PillStyle.glowColor
-        case .open: panelGlow ?? PillStyle.glowColor
-        case .rest: PillStyle.glowColor
-        }
-        let glowOpacity = hasGlow ? style.glowOpacity : 0
+        let glow = controller.glow.glow(for: state, activity: controller.currentActivity, panelColor: panelGlow)
+        // No glow keeps Ember rose at no strength, so a glow that comes back fades in.
+        let glowColor = glow?.color ?? PillStyle.glowColor
+        let glowOpacity = glow?.opacity ?? 0
 
         shape
             .fill(.black)
             .frame(width: size.width, height: size.height)
-            .overlay {
-                // A thin bright line that fades in towards the bottom edge, just outside the
-                // shape (`PillStyle.edgeOutset`). The mask reaches past the line's outline so
-                // its outer half still shows.
+            .background {
+                // The light: a copy of the shape with a thin bright line just outside its edge
+                // (`PillStyle.edgeOutset`) and the glow. Behind the black shape, so only the
+                // light is faded on the sides, never the black. It belongs to the shape only:
+                // the wings' and the panel's content cast no glow of their own.
                 let outset = style.edgeOutset
                 shape
-                    .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity), lineWidth: style.edgeLineWidth)
-                    .padding(EdgeInsets(top: 0, leading: -outset, bottom: -outset, trailing: -outset))
-                    .mask(LinearGradient(colors: [.clear, .black],
-                                         startPoint: style.edgeFadeStart, endPoint: style.edgeFadeEnd)
-                        .padding(-style.edgeLineWidth))
+                    .fill(.black)
+                    .overlay {
+                        shape
+                            .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity),
+                                    lineWidth: style.edgeLineWidth)
+                            .padding(EdgeInsets(top: 0, leading: -outset, bottom: -outset, trailing: -outset))
+                    }
+                    .shadow(color: glowColor.opacity(glowOpacity), radius: glow?.radius ?? style.glowRadius)
+                    .mask(SideFade(fade: glow?.fade ?? style.glowFade, height: size.height))
             }
-            // The glow belongs to the shape only: applied before the content, so the wings'
-            // and the panel's content (artwork, icons, text) cast no glow of their own.
-            .shadow(color: glowColor.opacity(glowOpacity),
-                    radius: style.glowRadius, y: style.glowOffset)
             .overlay {
                 // This container always exists and is clipped to the shape, so its clip
                 // grows and shrinks with the shape. Content that appears is uncovered by
@@ -114,7 +112,25 @@ struct PillView: View {
             .animation(PillStyle.animation(to: state), value: state)
             .animation(PillStyle.animation, value: activityGlow)
             .animation(PillStyle.animation, value: panelGlow)
+            .animation(PillStyle.animation, value: controller.glow)
             .animation(PillStyle.animation, value: level != nil)
+    }
+}
+
+/// The mask that fades the light on the pill's sides: clear at the top of the shape, full
+/// strength `fade` of its height down, and full below. It reaches `PillMetrics.glowMargin`
+/// past the shape on every side, so the glow around it is masked too.
+private struct SideFade: View {
+    let fade: Double
+    let height: CGFloat
+
+    var body: some View {
+        let margin = PillMetrics.glowMargin
+        let total = height + 2 * margin
+        LinearGradient(stops: [.init(color: .clear, location: margin / total),
+                               .init(color: .black, location: (margin + fade * height) / total)],
+                       startPoint: .top, endPoint: .bottom)
+            .padding(-margin)
     }
 }
 

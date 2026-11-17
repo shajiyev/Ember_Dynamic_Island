@@ -19,19 +19,19 @@ struct TimerLookTests {
     @Test func runningShowsTheTimerSymbolAndTimeLeft() {
         #expect(TimerLook.running(secondsLeft: 299) == LiveActivity(
             symbolName: "timer", symbolColor: TimerLook.color, text: "4:59",
-            glowColor: TimerLook.runningGlowColor))
+            glowColor: TimerLook.runningGlowColor, feature: .timer))
     }
 
     @Test func pausedShowsThePauseSymbolAndTimeLeft() {
         #expect(TimerLook.paused(secondsLeft: 299) == LiveActivity(
             symbolName: "pause.fill", symbolColor: TimerLook.color, text: "4:59",
-            glowColor: TimerLook.runningGlowColor))
+            glowColor: TimerLook.runningGlowColor, feature: .timer))
     }
 
     @Test func timesUpGlowsAndEndsWhenSeen() {
         #expect(TimerLook.timesUp == LiveActivity(
             symbolName: "bell.fill", symbolColor: TimerLook.timesUpColor, text: "0:00",
-            glowColor: TimerLook.timesUpColor, endsWhenSeen: true))
+            glowColor: TimerLook.timesUpColor, endsWhenSeen: true, feature: .timer))
     }
 
     @Test func theTimerIsOrangeLikeApplesTimerNotEmberRose() {

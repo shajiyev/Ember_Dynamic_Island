@@ -24,6 +24,7 @@ struct CalendarLookTests {
         #expect(activity.glowColor == .green)
         #expect(activity.text == "5 min")
         #expect(activity.duration == CalendarLook.headsUpDuration)
+        #expect(activity.feature == .calendar)
     }
 
     @Test func weekNumbersAreISOWeeks() {

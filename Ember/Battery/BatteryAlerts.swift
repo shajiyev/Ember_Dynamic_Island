@@ -33,7 +33,7 @@ nonisolated enum BatteryAlert: Equatable {
 
     func liveActivity(for reading: BatteryReading) -> LiveActivity {
         LiveActivity(symbolName: reading.symbolName, symbolColor: color,
-                     text: "\(reading.percentage)%", glowColor: color, duration: duration)
+                     text: "\(reading.percentage)%", glowColor: color, duration: duration, feature: .battery)
     }
 }
 

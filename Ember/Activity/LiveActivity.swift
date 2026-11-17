@@ -25,4 +25,6 @@ nonisolated struct LiveActivity: Equatable {
     var artwork: NSImage?
     /// Shows a small animated equalizer in the symbol's colour instead of the text.
     var showsEqualizer = false
+    /// The feature that made it, so its glow can be turned off on its own (Settings → Glow).
+    var feature: GlowFeature?
 }

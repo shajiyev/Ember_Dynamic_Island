@@ -995,3 +995,32 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - Open, to settle at design time: how the lid-closed case works. macOS sleeps on lid close
   unless a display, power and keyboard are attached; only `pmset disablesleep` (admin)
   stops that, and it stays on after a crash until switched back.
+
+## 2026-11-17 — Settings is one feature; the glow settings
+- **Decision:** Settings is one feature with one spec (docs/specs/settings.md) and one plan
+  (docs/plans/settings.md), both laid out like the Settings window: the window, then one
+  section per page in sidebar order. Every setting, existing or new, is recorded there;
+  a change to a setting updates its page's section. Earlier feature specs keep their
+  history but are no longer where settings are kept. The plan's finished parts 1 and 2
+  stay as they were; a map at the top finds each page's work, and new parts are named
+  after their page. **Why:** the user wants to grow Settings section by section without
+  hunting through feature specs.
+- **Decision:** Settings → Glow has a switch per glow (resting; live activity, with one per
+  feature; open panel) and, for each of the three glows, Strength (opacity, 10–100%),
+  Spread (radius, 4–30 pt) and Fade (how far down the sides the light reaches full
+  strength, 0–100%). **Why:** the user asked to turn each glow off and to tune each one.
+  Spread stops at 30 pt so the open panel's glow fits in the window's 40 pt margin.
+- **Decision:** every glow is centred on the pill; nothing pushes it down any more
+  (`PillStyle.glowOffset` removed). **Why:** pushed down (live activity 5 pt, open panel
+  8 pt), the bottom edge got most of the light and the sides and top corners little; the
+  user saw the open panel's glow uneven.
+- **Decision:** Fade masks the whole light on the sides, the glow and the edge line
+  together; the light is drawn behind the black shape so the black is never faded.
+  **Why:** the user means the soft fade at the top of the sides; before, only the line
+  faded and the glow looked faded only because it was pushed down.
+- **Decision:** no preview on the Glow page. A preview of three small pills was built,
+  then removed the same day. **Why:** the real notch shows every change at once.
+- **Values chosen by the user by eye** with the new sliders, 14" MacBook Pro, macOS 26.6.2:
+  rest 75% / 6 pt / 20% (was 60% / 8 pt, line faded to 60%); live activity 80% / 10 pt /
+  10% (was 85% / 10 pt, pushed down 5); open panel 80% / 10 pt / 15% (was 55% / 16 pt,
+  pushed down 8). Users who moved a slider keep their own value.

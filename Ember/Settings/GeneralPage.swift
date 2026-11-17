@@ -57,7 +57,7 @@ struct GeneralPage: View {
     }
 }
 
-/// Settings → Glow.
+/// Settings → Glow: a switch per glow, and each glow's strength, spread and fade.
 struct GlowPage: View {
     @Bindable var settings: AppSettings
 
@@ -66,8 +66,46 @@ struct GlowPage: View {
             Section {
                 Toggle(SettingsItem.alwaysOnGlow.title, isOn: $settings.alwaysOnGlow)
                     .settingsItem(.alwaysOnGlow)
+                Group {
+                    StrengthRow(item: .restGlowStrength, strength: $settings.restGlowStrength)
+                    SpreadRow(item: .restGlowSpread, spread: $settings.restGlowSpread)
+                    FadeRow(item: .restGlowFade, fade: $settings.restGlowFade)
+                }
+                .disabled(!settings.alwaysOnGlow)
             } footer: {
-                Text("A soft glow around the notch even when nothing is happening. Off, the notch lights up only for activity.")
+                Text("A soft glow around the notch even when nothing is happening. Off, the notch lights up only for activity. Strength is how bright a glow is, Spread how far it reaches, and Fade how far down the sides it takes to reach full strength (at 0% the sides are lit right up to the top).")
+            }
+            Section {
+                Toggle(SettingsItem.activityGlow.title, isOn: $settings.activityGlowOn)
+                    .settingsItem(.activityGlow)
+                Group {
+                    StrengthRow(item: .activityGlowStrength, strength: $settings.activityGlowStrength)
+                    SpreadRow(item: .activityGlowSpread, spread: $settings.activityGlowSpread)
+                    FadeRow(item: .activityGlowFade, fade: $settings.activityGlowFade)
+                    Toggle(SettingsItem.musicGlow.title, isOn: $settings.musicGlowOn)
+                        .settingsItem(.musicGlow)
+                    Toggle(SettingsItem.timerGlow.title, isOn: $settings.timerGlowOn)
+                        .settingsItem(.timerGlow)
+                    Toggle(SettingsItem.batteryGlow.title, isOn: $settings.batteryGlowOn)
+                        .settingsItem(.batteryGlow)
+                    Toggle(SettingsItem.calendarGlow.title, isOn: $settings.calendarGlowOn)
+                        .settingsItem(.calendarGlow)
+                }
+                .disabled(!settings.activityGlowOn)
+            } footer: {
+                Text("The glow around the wings while something happens: a song, a timer, a battery alert or a calendar heads-up. Each feature's glow can be turned off on its own; the wings still show.")
+            }
+            Section {
+                Toggle(SettingsItem.panelGlow.title, isOn: $settings.panelGlowOn)
+                    .settingsItem(.panelGlow)
+                Group {
+                    StrengthRow(item: .panelGlowStrength, strength: $settings.panelGlowStrength)
+                    SpreadRow(item: .panelGlowSpread, spread: $settings.panelGlowSpread)
+                    FadeRow(item: .panelGlowFade, fade: $settings.panelGlowFade)
+                }
+                .disabled(!settings.panelGlowOn)
+            } footer: {
+                Text("The glow around the open panel: Ember rose, or the song's colour in the Music tab.")
             }
         }
     }

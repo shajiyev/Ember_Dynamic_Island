@@ -36,8 +36,8 @@ final class PillController {
         get { model.opensOnHover }
         set { model.opensOnHover = newValue }
     }
-    /// The soft glow around the notch at rest (#29).
-    var alwaysOnGlow = true
+    /// Which glows are on and how strong (Settings → Glow).
+    var glow = GlowSettings()
     /// The open panel's size (the layout chosen in Settings), compact until the app hands
     /// over the chosen layout's size. A change after `start` moves and resizes the window at once.
     @ObservationIgnored var openSize = CGSize(width: 460, height: 200) {

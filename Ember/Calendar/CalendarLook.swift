@@ -27,7 +27,7 @@ nonisolated enum CalendarLook {
     static func headsUp(for event: DayEvent, now: Date) -> LiveActivity {
         LiveActivity(symbolName: symbolName, symbolColor: event.color,
                      text: minutesLeftText(until: event.start, now: now),
-                     glowColor: event.color, duration: headsUpDuration)
+                     glowColor: event.color, duration: headsUpDuration, feature: .calendar)
     }
 
     /// The ISO week number, as in "week 46".

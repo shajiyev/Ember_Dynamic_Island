@@ -29,17 +29,18 @@ nonisolated enum TimerLook {
 
     static func running(secondsLeft: Int) -> LiveActivity {
         LiveActivity(symbolName: "timer", symbolColor: color,
-                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor)
+                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor, feature: .timer)
     }
 
     static func paused(secondsLeft: Int) -> LiveActivity {
         LiveActivity(symbolName: "pause.fill", symbolColor: color,
-                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor)
+                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor, feature: .timer)
     }
 
     /// "Time's up": glows, and stays until the user hovers over or clicks the pill.
     static let timesUp = LiveActivity(symbolName: "bell.fill", symbolColor: timesUpColor,
-                                      text: "0:00", glowColor: timesUpColor, endsWhenSeen: true)
+                                      text: "0:00", glowColor: timesUpColor, endsWhenSeen: true,
+                                      feature: .timer)
 
     /// Short enough for a 42-point wing: "24:59" under an hour, "1h25" from an hour up.
     static func wingText(secondsLeft: Int) -> String {

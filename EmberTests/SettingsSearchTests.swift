@@ -65,4 +65,14 @@ struct SettingsSearchTests {
     @Test func theDefaultTabIsFound() {
         #expect(SettingsSearch.matches("default tab") == [.opensOnTab])
     }
+
+    @Test func everyGlowSwitchAndStrengthIsFound() {
+        #expect(SettingsSearch.matches("resting") == [.alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade])
+        #expect(SettingsSearch.matches("live activity") == [.activityGlow, .activityGlowStrength, .activityGlowSpread,
+                                                               .activityGlowFade])
+        #expect(SettingsSearch.matches("intensity") == [.restGlowStrength, .activityGlowStrength, .panelGlowStrength])
+        #expect(SettingsSearch.pages(for: "panel glow") == [.glow])
+        #expect(SettingsSearch.matches("distance") == [.restGlowSpread, .activityGlowSpread, .panelGlowSpread])
+        #expect(SettingsSearch.matches("fade") == [.restGlowFade, .activityGlowFade, .panelGlowFade])
+    }
 }

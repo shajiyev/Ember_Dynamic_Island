@@ -1,4 +1,23 @@
-# Settings Window Implementation Plan
+# Settings Implementation Plan
+
+The one plan for Settings, with the same pages as its spec. Each round of work is added at
+the end as the next part, named after its page ("Part 3: Glow — …"). Parts 1 and 2 built
+the window and all its first pages at once; settings added by other features were planned
+in those features' plans. The map below finds every page's work.
+
+| Page | Where it was planned |
+|---|---|
+| The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear) |
+| General | Part 1 (Tasks 1, 2, 6); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
+| Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, two strengths, the preview) |
+| Music | Part 1 (Tasks 4, 6); Show shuffle, Show repeat: docs/plans/panel-layouts.md |
+| Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6) |
+| Shelf | docs/plans/file-shelf.md |
+| Feedback | Part 1 (Tasks 6, 7) |
+
+---
+
+# Part 1: The Settings window
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -1795,3 +1814,425 @@ docs/specs/settings.md). Built inline by the controller. Same Global Constraints
 - [ ] The user checks on screen: the gear sits at the far right of the top row, after the
   battery, on every tab and with every tab off; clicking it closes the panel and opens
   Settings on General.
+
+---
+
+# Part 3: Glow — a switch per glow, two strengths, the preview
+
+Added 2026-11-17. Spec: "Glow" in docs/specs/settings.md. Built inline, test-first, in one
+sitting; one commit after the user's check on screen (Task 14), as in Part 2. Same Global
+Constraints as Part 1, except: build and test with `-derivedDataPath` in a scratch folder
+(another session may be building), and run CLEAN before TEST after scripted edits.
+
+**Goal:** every glow can be turned off on its own; the live activity and open panel glows
+each get a strength and a spread slider; the live activity glow is
+softer by default (60%, pushed down 2 pt).
+
+**Architecture:** `GlowSettings` (pure, in `Ember/Pill/`) holds the switches and strengths
+and decides the glow for a state (`glow(for:activity:panelColor:) -> PillGlow?`).
+`LiveActivity.feature` says which feature made an activity. `AppSettings` saves the
+choices and builds a `GlowSettings`; `applySettings()` hands it to `PillController.glow`.
+`GlowingNotchShape` draws the black shape with its glow for both `PillView` and the
+Settings preview, so the two cannot drift.
+
+**Files:**
+
+| File | Change |
+|---|---|
+| `Ember/Pill/GlowSettings.swift` | New: `GlowFeature`, `PillGlow`, `GlowSettings` |
+| `Ember/Pill/GlowingNotchShape.swift` | New: the black shape, its edge line and glow |
+| `Ember/Pill/PillStyle.swift` | `style(for:)` loses `alwaysOnGlow`; active opacity 0.6, offset 2 |
+| `Ember/Pill/PillController.swift` | `glow: GlowSettings` replaces `alwaysOnGlow` |
+| `Ember/Pill/PillView.swift` | Asks `controller.glow`; draws with `GlowingNotchShape` |
+| `Ember/Activity/LiveActivity.swift` | `feature: GlowFeature?` |
+| `NowPlayingLook`, `TimerLook`, `CalendarLook`, `BatteryAlerts` | Set `feature` |
+| `Ember/Settings/AppSettings.swift` | Seven new values and `glow` |
+| `Ember/AppDelegate+Settings.swift` | `controller.glow = settings.glow` |
+| `Ember/Settings/SettingsSearch.swift` | Eight new items; "Resting glow" |
+| `Ember/Settings/SettingsRow.swift` | `StrengthRow` |
+| `Ember/Settings/GlowPreview.swift` | New: the three small pills |
+| `Ember/Settings/GeneralPage.swift` | The new Glow page |
+| Tests | `GlowSettingsTests` (new); `PillStyleTests`, `AppSettingsTests`, `SettingsSearchTests`, `TimerLookTests`, `BatteryAlertsTests`, `NowPlayingLookTests`, `CalendarLookTests` |
+
+### Task 10: GlowSettings decides each glow
+
+**Interfaces produced:**
+- `nonisolated enum GlowFeature: CaseIterable, Hashable { case music, timer, battery, calendar }`
+- `nonisolated struct PillGlow: Equatable { var color: Color; var opacity: Double }`
+- `nonisolated struct GlowSettings: Equatable` with `static let strengthRange: ClosedRange<Double> = 0.1...1`,
+  `resting = true`, `activities = true`, `activityStrength = 0.6`, `featuresOff: Set<GlowFeature> = []`,
+  `panel = true`, `panelStrength = 0.55`, and `func glow(for state: PillState, activity: LiveActivity?, panelColor: Color?) -> PillGlow?`
+- `LiveActivity.feature: GlowFeature?` (last property, nil by default)
+- `PillStyle.style(for:)` with no `alwaysOnGlow`
+
+- [x] **Step 1: Write the failing tests.** New `EmberTests/GlowSettingsTests.swift`:
+
+```swift
+import SwiftUI
+import Testing
+@testable import Ember
+
+struct GlowSettingsTests {
+    private let timer = LiveActivity(symbolName: "timer", symbolColor: .orange, text: "4:59",
+                                     glowColor: .orange, feature: .timer)
+    private let music = LiveActivity(symbolName: "music.note", symbolColor: .blue, text: "",
+                                     glowColor: .blue, feature: .music)
+
+    @Test func byDefaultEveryGlowIsOnWithTheSofterLiveActivityGlow() {
+        let glow = GlowSettings()
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.6))
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == PillGlow(color: .orange, opacity: 0.6))
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.55))
+    }
+
+    @Test func theOpenPanelTakesTheColourItsContentAsksFor() {
+        #expect(GlowSettings().glow(for: .open, activity: nil, panelColor: .blue)?.color == .blue)
+    }
+
+    @Test func withoutTheRestingGlowRestHasNone() {
+        var glow = GlowSettings()
+        glow.resting = false
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == nil)
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) != nil)
+    }
+
+    @Test func eachStrengthSetsOnlyItsOwnGlow() {
+        var glow = GlowSettings()
+        glow.activityStrength = 0.3
+        glow.panelStrength = 0.9
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil)?.opacity == 0.3)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil)?.opacity == 0.9)
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil)?.opacity == 0.6)
+    }
+
+    @Test func aFeatureTurnedOffLosesItsGlowWhileTheOthersKeepTheirs() {
+        var glow = GlowSettings()
+        glow.featuresOff = [.timer]
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == nil)
+        #expect(glow.glow(for: .active, activity: music, panelColor: nil)?.color == .blue)
+    }
+
+    @Test func turningLiveActivityGlowsOffOverridesEveryFeature() {
+        var glow = GlowSettings()
+        glow.activities = false
+        var unnamed = timer
+        unnamed.feature = nil
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == nil)
+        #expect(glow.glow(for: .active, activity: unnamed, panelColor: nil) == nil)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil) != nil)
+    }
+
+    @Test func turningThePanelGlowOffRemovesItOnEveryTab() {
+        var glow = GlowSettings()
+        glow.panel = false
+        #expect(glow.glow(for: .open, activity: nil, panelColor: .blue) == nil)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil) == nil)
+    }
+
+    @Test func anActivityWithoutAColourStillHasNoGlow() {
+        var plain = timer
+        plain.glowColor = nil
+        #expect(GlowSettings().glow(for: .active, activity: plain, panelColor: nil) == nil)
+        #expect(GlowSettings().glow(for: .active, activity: nil, panelColor: nil) == nil)
+    }
+
+    @Test func strengthsGoFromTenPercentToFull() {
+        #expect(GlowSettings.strengthRange == 0.1...1)
+    }
+}
+```
+
+In `EmberTests/PillStyleTests.swift`: replace `restGlowsSofterThanActiveWhileTheAlwaysOnGlowIsOn`
+with `restGlowSpreadsLessThanActive` (rest opacity > 0, radius > 0, radius < active's);
+delete `withoutTheAlwaysOnGlowRestIsInvisible` (now in `GlowSettingsTests`); replace
+`activeAndOpenGlowsAreStillPushedDownByHalfTheirRadius` with:
+
+```swift
+    @Test func theLiveActivityGlowIsSofterAndSitsLessUnderThePill() {
+        let active = PillStyle.style(for: .active)
+        #expect(active.glowOpacity == 0.6)
+        #expect(active.glowOffset == 2)
+        #expect(active.glowRadius == 10)
+    }
+
+    @Test func theOpenGlowIsStillPushedDownByHalfItsRadius() {
+        let open = PillStyle.style(for: .open)
+        #expect(open.glowOffset == open.glowRadius / 2)
+    }
+```
+
+- [x] **Step 2: Run TEST.** Expected: compile errors (`GlowSettings`, `PillGlow`, `feature` unknown).
+
+- [x] **Step 3: Implement.**
+  - `LiveActivity.swift`: after `showsEqualizer`, add
+    `/// The feature that made it, so its glow can be turned off on its own (Settings → Glow).`
+    `var feature: GlowFeature?`
+  - `PillStyle.swift`: `static func style(for state: PillState) -> PillStyle`; rest always
+    returns today's glowing rest style (Settings decides whether it shows); active becomes
+    `glowOpacity: 0.6, glowRadius: 10, glowOffset: 2`. Its `glowOpacity` is now each
+    state's default strength.
+  - New `Ember/Pill/GlowSettings.swift`:
+
+```swift
+import SwiftUI
+
+/// The features whose live activities can have their glow turned off one by one.
+nonisolated enum GlowFeature: CaseIterable, Hashable {
+    case music, timer, battery, calendar
+}
+
+/// A glow to draw around the pill: its colour and its strength (the opacity).
+nonisolated struct PillGlow: Equatable {
+    var color: Color
+    var opacity: Double
+}
+
+/// Which glows are on and how strong (Settings → Glow), and the glow each moment gets. The
+/// pill and the Settings preview both ask it, so the preview matches the pill.
+nonisolated struct GlowSettings: Equatable {
+    /// The strengths stay within this range. There is no 0: a switch turns a glow off.
+    static let strengthRange: ClosedRange<Double> = 0.1...1
+
+    /// The always-on glow around the notch at rest (#29).
+    var resting = true
+    var activities = true
+    var activityStrength = PillStyle.style(for: .active).glowOpacity
+    /// Features whose activities do not glow, while `activities` is on.
+    var featuresOff: Set<GlowFeature> = []
+    var panel = true
+    var panelStrength = PillStyle.style(for: .open).glowOpacity
+
+    /// The glow for a state, or nil for none. Active: the activity's colour, unless it has
+    /// none or its glow is off. Open: the colour the panel's content asks for, or Ember rose.
+    func glow(for state: PillState, activity: LiveActivity?, panelColor: Color?) -> PillGlow? {
+        switch state {
+        case .rest:
+            guard resting else { return nil }
+            return PillGlow(color: PillStyle.glowColor, opacity: PillStyle.style(for: .rest).glowOpacity)
+        case .active:
+            guard activities, let activity, let color = activity.glowColor else { return nil }
+            if let feature = activity.feature, featuresOff.contains(feature) { return nil }
+            return PillGlow(color: color, opacity: activityStrength)
+        case .open:
+            guard panel else { return nil }
+            return PillGlow(color: panelColor ?? PillStyle.glowColor, opacity: panelStrength)
+        }
+    }
+}
+```
+
+  - `PillView` (until Task 12 replaces it): `let style = PillStyle.style(for: state)`, and
+    `let hasGlow = (state != .active || activityGlow != nil) && (state != .rest || controller.alwaysOnGlow)`,
+    so the app builds and behaves as before at the end of this task.
+
+- [x] **Step 4: CLEAN, TEST.** Expected: all pass, 9 new tests (+1 net in `PillStyleTests`).
+
+### Task 11: Each feature names itself on its activities
+
+- [x] **Step 1: Failing tests.** Add `feature:` as the last argument to every expected
+  `LiveActivity` in `TimerLookTests` (`.timer`, three places) and `BatteryAlertsTests`
+  (`.battery`, four places) and in `NowPlayingLookTests` line 25 (`.music`); in
+  `CalendarLookTests` after line 26 add `#expect(activity.feature == .calendar)`.
+- [x] **Step 2: TEST.** Expected: those four tests fail.
+- [x] **Step 3: Implement.** Append `feature: .music` in `NowPlayingLook.activity(for:glow:)`,
+  `feature: .timer` in `TimerLook.running`, `.paused`, `.timesUp`, `feature: .calendar` in
+  `CalendarLook.headsUp`, `feature: .battery` in `BatteryAlert.liveActivity(for:)`.
+- [x] **Step 4: TEST.** Expected: all pass.
+
+### Task 12: The choices are saved and the pill follows them
+
+**Interfaces:** `AppSettings.activityGlowOn`, `activityGlowStrength`, `musicGlowOn`,
+`timerGlowOn`, `batteryGlowOn`, `calendarGlowOn`, `panelGlowOn`, `panelGlowStrength`
+(keys of the same names), `var glow: GlowSettings`; `PillController.glow: GlowSettings`;
+`GlowingNotchShape(style: PillStyle, glow: PillGlow?, size: CGSize)`.
+
+- [x] **Step 1: Failing tests** in `AppSettingsTests`:
+
+```swift
+    @Test func everyGlowIsOnByDefaultWithTheSpecsStrengths() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.activityGlowOn && settings.panelGlowOn)
+        #expect(settings.musicGlowOn && settings.timerGlowOn && settings.batteryGlowOn && settings.calendarGlowOn)
+        #expect(settings.activityGlowStrength == 0.6)
+        #expect(settings.panelGlowStrength == 0.55)
+        #expect(settings.glow == GlowSettings())
+    }
+
+    @Test func glowChoicesSurviveARelaunchAndReachThePill() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.alwaysOnGlow = false
+        settings.activityGlowOn = false
+        settings.activityGlowStrength = 0.3
+        settings.musicGlowOn = false
+        settings.calendarGlowOn = false
+        settings.panelGlowOn = false
+        settings.panelGlowStrength = 0.8
+
+        let glow = AppSettings(defaults: defaults).glow
+        #expect(glow == GlowSettings(resting: false, activities: false, activityStrength: 0.3,
+                                     featuresOff: [.music, .calendar], panel: false, panelStrength: 0.8))
+    }
+
+    @Test func strengthsStayBetweenTenPercentAndFull() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.activityGlowStrength = 0
+        settings.panelGlowStrength = 2
+        #expect(settings.activityGlowStrength == 0.1)
+        #expect(settings.panelGlowStrength == 1)
+        #expect(AppSettings(defaults: defaults).panelGlowStrength == 1)
+    }
+```
+
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.**
+  - `AppSettings`: the eight values, saved like the others; the two strengths clamped like
+    the delays (`clampedStrength` to `GlowSettings.strengthRange`), defaulting to
+    `GlowSettings()`'s; `glow` builds a `GlowSettings` (`featuresOff` from the four
+    feature switches that are off).
+  - New `Ember/Pill/GlowingNotchShape.swift`: the black `NotchShape` at `size`, its edge
+    line overlay and its shadow, moved from `PillView` unchanged except that colour and
+    opacity come from `glow` (none: Ember rose at 0, so a glow that returns fades in).
+  - `PillController`: `var glow = GlowSettings()` replaces `alwaysOnGlow`.
+  - `PillView`: `let glow = controller.glow.glow(for: state, activity: controller.currentActivity, panelColor: panelGlow)`;
+    `GlowingNotchShape(style: style, glow: glow, size: size)` replaces the shape, edge and
+    shadow; add `.animation(PillStyle.animation, value: controller.glow)`.
+  - `AppDelegate+Settings.swift`: `controller.glow = settings.glow`.
+- [x] **Step 4: TEST and BUILD.** Expected: all pass; both configurations build with no warnings.
+
+### Task 13: The Glow page
+
+- [x] **Step 1: Failing test** in `SettingsSearchTests`:
+
+```swift
+    @Test func everyGlowSwitchAndStrengthIsFound() {
+        #expect(SettingsSearch.matches("resting") == [.alwaysOnGlow])
+        #expect(SettingsSearch.matches("live activity") == [.activityGlow, .activityGlowStrength])
+        #expect(SettingsSearch.matches("intensity") == [.activityGlowStrength, .panelGlowStrength])
+        #expect(SettingsSearch.pages(for: "panel glow") == [.glow])
+    }
+```
+
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.**
+  - `SettingsSearch.swift`: `alwaysOnGlow`'s title becomes "Resting glow" (keywords
+    "always-on", "light", "rest", "notch"). New items, all on `.glow`, after it:
+    `activityGlow` "Live activity glow" ["wings", "alert"]; `activityGlowStrength`
+    "Strength" ["intensity", "opacity", "live activity"]; `musicGlow` "Music",
+    `timerGlow` "Timer", `batteryGlow` "Battery", `calendarGlow` "Calendar" (no extra
+    words); `panelGlow` "Open panel glow" []; `panelGlowStrength` "Strength"
+    ["intensity", "opacity", "open panel"].
+  - `SettingsRow.swift`: `StrengthRow(item:strength:)`, like `DelayRow`: a slider over
+    `GlowSettings.strengthRange` in 0.05 steps, its value as a whole percentage.
+  - New `Ember/Settings/GlowPreview.swift`: three moments side by side (Rest, Live
+    activity, Open panel), each a `GlowingNotchShape` hanging from the top of a dark
+    rounded strip, drawn at real size (notch 185 × 32, the active pill two wings wider,
+    the compact panel) and scaled down; the live activity is `TimerLook.running(secondsLeft: 299)`;
+    each glow comes from `glow.glow(for:activity:panelColor: nil)`; a caption under each.
+  - `GeneralPage.swift`, `GlowPage`: sections Preview; Resting glow (today's footer);
+    Live activity glow with its Strength and the four feature switches, greyed out while
+    it is off; Open panel glow with its Strength, greyed out while it is off. Footers say
+    what each glow is.
+- [x] **Step 4: TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 13b: Spread, how far each bright glow reaches
+
+Added 2026-11-17 after the user's first check on screen ("all work"): a Spread slider next
+to each Strength (spec: Glow).
+
+**Interfaces:** `PillGlow.radius: CGFloat`; `GlowSettings.spreadRange: ClosedRange<Double> = 4...30`,
+`activitySpread = 10`, `panelSpread = 16` (each state's `PillStyle.glowRadius`);
+`AppSettings.activityGlowSpread`, `panelGlowSpread` (keys of the same names);
+`SettingsItem.activityGlowSpread`, `.panelGlowSpread` ("Spread"); `SpreadRow(item:spread:)`.
+
+- [x] **Step 1: Failing tests.**
+  - `GlowSettingsTests`: every expected `PillGlow` gains `radius:` (rest 8, active 10,
+    open 16); new test `eachSpreadSetsOnlyItsOwnGlow` (activitySpread 20 → active radius
+    20, open still 16; panelSpread 30 → open 30; rest still 8) and
+    `spreadsGoFromFourToThirtyPoints` (`spreadRange == 4...30`, and `30 + open offset <= PillMetrics.glowMargin`).
+  - `AppSettingsTests`: defaults 10 and 16; saved and reloaded into `glow`; 0 → 4, 50 → 30.
+  - `SettingsSearchTests`: `matches("distance") == [.activityGlowSpread, .panelGlowSpread]`;
+    "live activity" now also finds `.activityGlowSpread`.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** `GlowSettings.glow` returns `radius` (rest: the rest style's;
+  active: `activitySpread`; open: `panelSpread`); `GlowingNotchShape` uses
+  `glow?.radius ?? style.glowRadius`; `AppSettings` saves and clamps the two spreads like the
+  strengths; `SpreadRow` like `StrengthRow` (1 pt steps, "10 pt"); `GlowPage` puts each
+  Spread under its Strength.
+- [x] **Step 4: CLEAN, TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 13c: Remove the preview
+
+Added 2026-11-17 at the user's request: the real notch shows every change at once, so the
+preview is not needed. Delete `Ember/Settings/GlowPreview.swift` and its section in
+`GlowPage`; with no second user, `GlowingNotchShape` goes too and its drawing returns to
+`PillView` (now with `glow?.radius`). TEST and BUILD: all pass, no warnings.
+
+### Task 13d: Fade, and the open panel's glow centred
+
+Added 2026-11-17 after the user saw the open panel's glow uneven (pushed down 8 pt, the line
+only on the lower half of the sides) and asked to choose how gradually the sides fade at the
+top, per glow (spec: Glow, "Fade").
+
+**Interfaces:** `PillStyle.glowFade: Double` (rest 0.6, active 1, open 1) replaces
+`edgeFadeStart`/`edgeFadeEnd`; open `glowOffset` 0. `PillGlow.fade: Double`;
+`GlowSettings.fadeRange: ClosedRange<Double> = 0...1`, `restFade`, `activityFade`,
+`panelFade` (each state's `glowFade`). `AppSettings.restGlowFade`, `activityGlowFade`,
+`panelGlowFade` (keys of the same names). `SettingsItem.restGlowFade`, `.activityGlowFade`,
+`.panelGlowFade` ("Fade"); `FadeRow(item:fade:)`.
+
+- [x] **Step 1: Failing tests.**
+  - `PillStyleTests`: rest `glowFade == 0.6`, active and open `glowFade == 1`; open
+    `glowOffset == 0` (replaces "pushed down by half its radius"); the edge-fade tests go.
+  - `GlowSettingsTests`: every expected `PillGlow` gains `fade:` (rest 0.6, active 1, open 1);
+    `eachFadeSetsOnlyItsOwnGlow`; `fadesGoFromNoneToTheWholeHeight` (`fadeRange == 0...1`).
+  - `AppSettingsTests`: defaults 0.6, 1, 1; saved and reloaded into `glow`; −1 → 0, 2 → 1.
+  - `SettingsSearchTests`: `matches("fade") == [.restGlowFade, .activityGlowFade, .panelGlowFade]`;
+    "live activity" also finds `.activityGlowFade`.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** `GlowSettings.glow` returns `fade`; `AppSettings` saves and
+  clamps the three fades; `PillView` draws the light (shape copy + edge line + shadow)
+  as a background masked by a vertical gradient (clear at the shape's top, full at `fade`,
+  extended by `PillMetrics.glowMargin` above and below), with the black shape unmasked on
+  top; `FadeRow` like `StrengthRow` (0–100%, 5% steps); `GlowPage` puts a Fade under
+  Resting glow and after each Spread.
+- [x] **Step 4: CLEAN, TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 13e: Strength and spread for rest; every glow centred
+
+Added 2026-11-17: the user asked to check every state for unevenness and to give the
+resting glow a strength and a spread too. The live activity glow was still pushed down
+2 pt; with it at 0, no state pushes its glow down, so `PillStyle.glowOffset` goes.
+
+**Interfaces:** `GlowSettings.restStrength` (0.6), `restSpread` (8);
+`AppSettings.restGlowStrength`, `restGlowSpread` (keys of the same names);
+`SettingsItem.restGlowStrength` ("Strength"), `.restGlowSpread` ("Spread").
+
+- [x] **Step 1: Failing tests.** `PillStyleTests`: every state's glow is centred (no
+  `glowOffset`; the live activity test drops its offset line). `GlowSettingsTests`: a rest
+  strength and spread change only rest. `AppSettingsTests`: defaults 0.6 and 8, saved into
+  `glow`, clamped. `SettingsSearchTests`: "resting" finds the switch and its three
+  sliders; "intensity" and "distance" find three each.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** Remove `glowOffset` from `PillStyle` and the shadow's `y`;
+  `GlowSettings.glow(.rest)` uses `restStrength` and `restSpread`; `AppSettings` saves and
+  clamps them; `GlowPage` gives Resting glow a Strength and a Spread above its Fade.
+- [x] **Step 4: CLEAN, TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 14: Checks on screen and checkpoint
+
+The user checks on macOS 26:
+1. Settings → Glow: every switch and slider changes the real pill at once.
+2. Resting glow off: the notch is dark at rest.
+3. Live activity glow: play a song, start a timer: the glow is softer and sits less under
+   the pill than before; the Strength slider changes it live; Music off keeps the timer's
+   glow and drops the song's; the main switch off drops both; the wings stay.
+4. Open panel glow: Strength changes it; off, no glow on any tab (Music included).
+5. Quit and reopen: every choice is kept; a resting glow turned off before this change is still off.
+6. Search: "intensity", "resting", "live activity" find their rows.
+
+Then the user names the final default strengths (or keeps 60% and 55%); update
+`GlowSettings`/`PillStyle` and the spec if they change. Checkpoint per the global protocol:
+the spec's Glow section and status table say built; roadmap, features (#26b row),
+decisions; one commit.

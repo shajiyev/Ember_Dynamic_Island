@@ -62,15 +62,15 @@ struct BatteryAlertsTests {
     @Test func eachAlertBecomesItsLiveActivity() {
         #expect(BatteryAlert.pluggedIn.liveActivity(for: pluggedIn(73)) == LiveActivity(
             symbolName: "battery.100percent.bolt", symbolColor: BatteryAlert.green, text: "73%",
-            glowColor: BatteryAlert.green, duration: 3))
+            glowColor: BatteryAlert.green, duration: 3, feature: .battery))
         #expect(BatteryAlert.unplugged.liveActivity(for: onBattery(73)) == LiveActivity(
             symbolName: "battery.75percent", symbolColor: BatteryAlert.yellow, text: "73%",
-            glowColor: BatteryAlert.yellow, duration: 3))
+            glowColor: BatteryAlert.yellow, duration: 3, feature: .battery))
         #expect(BatteryAlert.low.liveActivity(for: onBattery(20)) == LiveActivity(
             symbolName: "battery.25percent", symbolColor: BatteryAlert.red, text: "20%",
-            glowColor: BatteryAlert.red, duration: 5))
+            glowColor: BatteryAlert.red, duration: 5, feature: .battery))
         #expect(BatteryAlert.veryLow.liveActivity(for: onBattery(10)) == LiveActivity(
             symbolName: "battery.0percent", symbolColor: BatteryAlert.red, text: "10%",
-            glowColor: BatteryAlert.red, duration: 5))
+            glowColor: BatteryAlert.red, duration: 5, feature: .battery))
     }
 }

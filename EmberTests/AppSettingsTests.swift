@@ -43,6 +43,78 @@ struct AppSettingsTests {
         #expect(!relaunched.batteryAlertsOn && !relaunched.batteryInPanelOn)
     }
 
+    @Test func everyGlowIsOnByDefaultWithTheSpecsStrengths() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.activityGlowOn && settings.panelGlowOn)
+        #expect(settings.musicGlowOn && settings.timerGlowOn && settings.batteryGlowOn && settings.calendarGlowOn)
+        #expect(settings.activityGlowStrength == 0.8)
+        #expect(settings.panelGlowStrength == 0.8)
+        #expect(settings.activityGlowSpread == 10)
+        #expect(settings.panelGlowSpread == 10)
+        #expect(settings.restGlowFade == 0.2)
+        #expect(settings.restGlowStrength == 0.75 && settings.restGlowSpread == 6)
+        #expect(settings.activityGlowFade == 0.1 && settings.panelGlowFade == 0.15)
+        #expect(settings.glow == GlowSettings())
+    }
+
+    @Test func glowChoicesSurviveARelaunchAndReachThePill() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.alwaysOnGlow = false
+        settings.activityGlowOn = false
+        settings.activityGlowStrength = 0.3
+        settings.musicGlowOn = false
+        settings.calendarGlowOn = false
+        settings.panelGlowOn = false
+        settings.panelGlowStrength = 0.8
+        settings.activityGlowSpread = 20
+        settings.panelGlowSpread = 6
+        settings.restGlowFade = 0.2
+        settings.restGlowStrength = 0.9
+        settings.restGlowSpread = 12
+        settings.activityGlowFade = 0.4
+        settings.panelGlowFade = 0.7
+
+        let glow = AppSettings(defaults: defaults).glow
+        #expect(glow == GlowSettings(resting: false, restStrength: 0.9, restSpread: 12, restFade: 0.2, activities: false, activityStrength: 0.3,
+                                     activitySpread: 20, activityFade: 0.4, featuresOff: [.music, .calendar],
+                                     panel: false, panelStrength: 0.8, panelSpread: 6, panelFade: 0.7))
+    }
+
+    @Test func strengthsStayBetweenTenPercentAndFull() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.activityGlowStrength = 0
+        settings.panelGlowStrength = 2
+        settings.restGlowStrength = 0
+        #expect(settings.restGlowStrength == 0.1)
+        #expect(settings.activityGlowStrength == 0.1)
+        #expect(settings.panelGlowStrength == 1)
+        #expect(AppSettings(defaults: defaults).panelGlowStrength == 1)
+    }
+
+    @Test func spreadsStayBetweenFourAndThirtyPoints() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.activityGlowSpread = 0
+        settings.panelGlowSpread = 50
+        settings.restGlowSpread = 50
+        #expect(settings.restGlowSpread == 30)
+        #expect(settings.activityGlowSpread == 4)
+        #expect(settings.panelGlowSpread == 30)
+        #expect(AppSettings(defaults: defaults).activityGlowSpread == 4)
+    }
+
+    @Test func fadesStayBetweenNoneAndTheWholeHeight() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.restGlowFade = -1
+        settings.panelGlowFade = 2
+        #expect(settings.restGlowFade == 0)
+        #expect(settings.panelGlowFade == 1)
+        #expect(AppSettings(defaults: defaults).restGlowFade == 0)
+    }
+
     @Test func delaysStayBetweenZeroAndOneSecond() {
         let defaults = freshDefaults()
         let settings = AppSettings(defaults: defaults)

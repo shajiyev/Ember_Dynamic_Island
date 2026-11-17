@@ -23,7 +23,8 @@ struct NowPlayingLookTests {
 
     @Test func aPlayingSongShowsTheEqualizerInItsCoverColour() {
         #expect(NowPlayingLook.activity(for: track, glow: .blue) == LiveActivity(
-            symbolName: "music.note", symbolColor: .blue, text: "", glowColor: .blue, showsEqualizer: true))
+            symbolName: "music.note", symbolColor: .blue, text: "", glowColor: .blue, showsEqualizer: true,
+            feature: .music))
     }
 
     @Test func withoutACoverColourItGlowsEmberRose() {

@@ -33,8 +33,12 @@
     (0…1 across its width) tells the content where the files are; a drop goes to
     `onFileDrop` with that position. The pill never refers to the shelf.
   - `PillWindow.swift`: the transparent always-on-top panel.
-  - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look.
-    `PillController.alwaysOnGlow` (from Settings) switches the resting glow (#29) on or off.
+  - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look
+    (each state's shape and default glow). `PillView` draws the glow behind the black
+    shape, masked so the light on the sides fades in from the top.
+  - `GlowSettings.swift`: `GlowSettings` (from Settings → Glow, in
+    `PillController.glow`): which glows are on, and each glow's strength, spread and fade.
+    Its pure `glow(for:activity:panelColor:)` gives the glow for a state, or none.
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch's height and width (`notchHeight`, `notchWidth` environment
     values). The panel content
@@ -45,7 +49,8 @@
   - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
     shared by the Music tab's scrubber and the volume and brightness strip.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
-  pill (wing symbol, wing text, optional glow colour). A brief one has a duration and goes
+  pill (wing symbol, wing text, optional glow colour, and the `GlowFeature` that made it,
+  so its glow can be turned off on its own). A brief one has a duration and goes
   by itself; an ongoing one stays until its feature clears it, or until seen if it ends
   when seen.
 - `Ember/Activity/LevelReadout.swift` — `LevelReadout`: what the pill shows in the strip
@@ -160,7 +165,8 @@
   - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.
 - `Ember/Settings/` — the Settings window (#0, #26a).
   - `AppSettings.swift`: hover, the two delays, the opening tab and the two tab cooldowns,
-    the glow, and a switch per feature, saved in UserDefaults; `onChange` after every change.
+    the glows (switches, strengths, spreads, fades; `glow` builds the pill's
+    `GlowSettings`), and a switch per feature, saved in UserDefaults; `onChange` after every change.
   - `SettingsPage.swift`, `SettingsSearch.swift`: the pure rules: the pages and their
     sidebar groups, every setting once with its extra search words, and which pages and
     settings match a search.
@@ -169,7 +175,7 @@
   - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
-    the pages, the search tint, and the delay and cooldown rows. `LayoutCards.swift`: the clickable panel
+    the pages, the search tint, and the delay, cooldown, strength, spread and fade rows. `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).

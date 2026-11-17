@@ -121,7 +121,20 @@
   tests pass. See docs/decisions.md.
 - **Fixed:** the level strip's symbol and percentage are centred on the bar's line, not on
   the line and its step dots. Tests pass on macOS 26.6.2.
+- **Done:** Settings is now one feature with one spec and one plan, laid out like the
+  Settings window, page by page (docs/specs/settings.md, docs/plans/settings.md); every
+  existing setting is listed there with its default.
+- **Done:** Settings → Glow: a switch per glow (resting; live activity, with one per
+  feature: Music, Timer, Battery, Calendar; open panel), and a Strength, Spread and Fade
+  slider for each of the three glows. Every glow is now centred (the live activity and
+  open panel glows were pushed down, so the panel's looked uneven). New defaults chosen
+  by the user by eye: rest 75% / 6 pt / 20%, live activity 80% / 10 pt / 10%, open
+  panel 80% / 10 pt / 15%. Tests pass; checked on screen by the user on macOS 26.6.2.
+  Plan docs/plans/settings.md, part 3.
 - **In progress:** nothing in the app.
+- **Next in Settings (asked 2026-11-16):** the glow colour (a "Glow colour" setting now,
+  then picking it during onboarding with the notch changing live), and a keyboard shortcut
+  to open the panel that refuses combinations macOS already uses.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** the rest of the v1 list: onboarding and permission requests (#0), then

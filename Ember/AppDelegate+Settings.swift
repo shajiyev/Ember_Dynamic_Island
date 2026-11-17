@@ -6,7 +6,7 @@ extension AppDelegate {
     func applySettings() {
         controller.timing = settings.pillTiming
         controller.opensOnHover = settings.opensOnHover
-        controller.alwaysOnGlow = settings.alwaysOnGlow
+        controller.glow = settings.glow
         controller.openSize = settings.panelLayout.size
         controller.acceptsFileDrags = settings.shelfOn
         panelSelection.defaultTab = settings.opensOnTab

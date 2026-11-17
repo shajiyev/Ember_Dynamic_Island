@@ -67,3 +67,64 @@ struct CooldownRow: View {
         .settingsItem(item)
     }
 }
+
+/// A glow's strength: a 10–100% slider in 5% steps, the item's name on the left.
+struct StrengthRow: View {
+    let item: SettingsItem
+    @Binding var strength: Double
+
+    var body: some View {
+        LabeledContent(item.title) {
+            HStack(spacing: 8) {
+                Slider(value: $strength, in: GlowSettings.strengthRange, step: 0.05)
+                    .frame(width: 160)
+                Text("\(Int((strength * 100).rounded()))%")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, alignment: .trailing)
+            }
+        }
+        .settingsItem(item)
+    }
+}
+
+/// A glow's spread: a 4–30 pt slider in 1 pt steps, the item's name on the left.
+struct SpreadRow: View {
+    let item: SettingsItem
+    @Binding var spread: Double
+
+    var body: some View {
+        LabeledContent(item.title) {
+            HStack(spacing: 8) {
+                Slider(value: $spread, in: GlowSettings.spreadRange, step: 1)
+                    .frame(width: 160)
+                Text("\(Int(spread.rounded())) pt")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, alignment: .trailing)
+            }
+        }
+        .settingsItem(item)
+    }
+}
+
+/// How far down the sides a glow fades in: a 0–100% slider in 5% steps, the item's name on
+/// the left.
+struct FadeRow: View {
+    let item: SettingsItem
+    @Binding var fade: Double
+
+    var body: some View {
+        LabeledContent(item.title) {
+            HStack(spacing: 8) {
+                Slider(value: $fade, in: GlowSettings.fadeRange, step: 0.05)
+                    .frame(width: 160)
+                Text("\(Int((fade * 100).rounded()))%")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36, alignment: .trailing)
+            }
+        }
+        .settingsItem(item)
+    }
+}

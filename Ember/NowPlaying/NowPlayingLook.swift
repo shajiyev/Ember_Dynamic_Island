@@ -25,6 +25,6 @@ nonisolated enum NowPlayingLook {
     static func activity(for track: Track, glow: Color?) -> LiveActivity {
         let color = glow ?? PillStyle.glowColor
         return LiveActivity(symbolName: "music.note", symbolColor: color, text: "", glowColor: color,
-                            artwork: track.artwork, showsEqualizer: true)
+                            artwork: track.artwork, showsEqualizer: true, feature: .music)
     }
 }

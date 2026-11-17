@@ -4,28 +4,21 @@ import Testing
 @testable import Ember
 
 struct PillStyleTests {
-    @Test func restGlowsSofterThanActiveWhileTheAlwaysOnGlowIsOn() {
+    @Test func restGlowSpreadsLessThanActive() {
         let rest = PillStyle.style(for: .rest)
         let active = PillStyle.style(for: .active)
         #expect(rest.glowOpacity > 0 && rest.glowRadius > 0)
-        #expect(rest.glowOpacity < active.glowOpacity)
         #expect(rest.glowRadius < active.glowRadius)
     }
 
-    @Test func withoutTheAlwaysOnGlowRestIsInvisible() {
-        #expect(PillStyle.style(for: .rest, alwaysOnGlow: false).glowOpacity == 0)
-        #expect(PillStyle.style(for: .active, alwaysOnGlow: false) == PillStyle.style(for: .active))
-        #expect(PillStyle.style(for: .open, alwaysOnGlow: false) == PillStyle.style(for: .open))
+    @Test func restEdgeLineIsTwoPointsThick() {
+        #expect(PillStyle.style(for: .rest).edgeLineWidth == 2)
     }
 
-    @Test func restGlowIsCentredSoItReachesTheSidesOfTheNotch() {
-        #expect(PillStyle.style(for: .rest).glowOffset == 0)
-    }
-
-    @Test func restEdgeLineTracesTheSidesUpToTheTopOfTheScreen() {
-        let rest = PillStyle.style(for: .rest)
-        #expect(rest.edgeFadeStart == .top)
-        #expect(rest.edgeLineWidth == 2)
+    @Test func theSidesReachFullLightAt60PercentAtRestAndAtTheBottomOtherwise() {
+        #expect(PillStyle.style(for: .rest).glowFade == 0.2)
+        #expect(PillStyle.style(for: .active).glowFade == 0.1)
+        #expect(PillStyle.style(for: .open).glowFade == 0.15)
     }
 
     @Test func restHasNoFlareSoItsBlackIsExactlyTheNotch() {
@@ -42,11 +35,9 @@ struct PillStyleTests {
         }
     }
 
-    @Test func activeAndOpenEdgeLinesStayOnTheLowerHalf() {
+    @Test func activeAndOpenEdgeLinesAreOnePointThick() {
         for state in [PillState.active, .open] {
-            let style = PillStyle.style(for: state)
-            #expect(style.edgeFadeStart == .center && style.edgeFadeEnd == .bottom, "\(state)")
-            #expect(style.edgeLineWidth == 1, "\(state)")
+            #expect(PillStyle.style(for: state).edgeLineWidth == 1, "\(state)")
         }
     }
 
@@ -58,11 +49,16 @@ struct PillStyleTests {
         #expect(open.topCornerRadius + open.levelStripMargin == 48)
     }
 
-    @Test func activeAndOpenGlowsAreStillPushedDownByHalfTheirRadius() {
-        for state in [PillState.active, .open] {
-            let style = PillStyle.style(for: state)
-            #expect(style.glowOffset == style.glowRadius / 2, "\(state)")
-        }
+    @Test func theLiveActivityGlowIsSofterThanAtFirst() {
+        let active = PillStyle.style(for: .active)
+        #expect(active.glowOpacity == 0.8)
+        #expect(active.glowRadius == 10)
+    }
+
+    @Test func theRestingGlowDefaultsAreTheChosenLook() {
+        let rest = PillStyle.style(for: .rest)
+        #expect(rest.glowOpacity == 0.75)
+        #expect(rest.glowRadius == 6)
     }
 
     @Test func shrinkingSettlesWithoutBouncingAndOpeningKeepsItsSpring() {
