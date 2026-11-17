@@ -28,20 +28,31 @@ nonisolated struct PillStyle: Equatable {
     static func edgeColor(for glowColor: Color) -> Color {
         glowColor.mix(with: .white, by: 0.45)
     }
+    /// The springs' response at the first speed, in seconds.
+    private static let response = 0.38
     /// Settles without overshooting, so shrinking back to the notch or the wings never dips
     /// into the notch first. Also used for glow changes.
-    static let animation = Animation.spring(response: 0.38, dampingFraction: 1)
-    /// Growing into the panel keeps a slight overshoot, below the notch, which reads as life.
-    static let openAnimation = Animation.spring(response: 0.38, dampingFraction: 0.8)
+    static let animation = Animation.spring(response: response, dampingFraction: 1)
 
-    static func animation(to state: PillState) -> Animation {
-        state == .open ? openAnimation : animation
+    /// Opening and closing the panel follow the user's speeds; growing into the panel keeps
+    /// a slight overshoot, below the notch, which reads as life. Everything else (the wings
+    /// coming and going) uses `animation`.
+    static func animation(from old: PillState, to new: PillState, timing: PillTiming) -> Animation {
+        if new == .open { return .spring(response: response / timing.openSpeed, dampingFraction: 0.8) }
+        if old == .open { return .spring(response: response / timing.closeSpeed, dampingFraction: 1) }
+        return animation
     }
     /// How the wings and the panel content appear: they sharpen out of a blur just after
     /// the shape starts to grow, and leave quickly when it shrinks.
     @MainActor static var contentTransition: AnyTransition {
         .asymmetric(insertion: AnyTransition(.blurReplace).animation(.smooth(duration: 0.3).delay(0.1)),
                     removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
+    }
+    /// The panel's content appears and leaves like `contentTransition`, at the user's speeds.
+    @MainActor static func panelTransition(timing: PillTiming) -> AnyTransition {
+        let open = timing.openSpeed, close = timing.closeSpeed
+        return .asymmetric(insertion: AnyTransition(.blurReplace).animation(.smooth(duration: 0.3 / open).delay(0.1 / open)),
+                           removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15 / close)))
     }
 
     /// The look for a state. Its glow opacity, radius and fade are the defaults of Settings →

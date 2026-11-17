@@ -10,8 +10,13 @@ import SwiftUI
 final class NowPlayingModel {
     /// The chosen player's track, or nil when neither has one.
     private(set) var current: Track?
-    /// The chosen song's glow from its cover, or nil without a cover (Ember rose).
+    /// The chosen song's glow from its cover, or nil without a cover (`defaultGlow`).
     private(set) var glow: Color?
+    /// The colour of a song without a cover: Ember's glow colour (Settings → Glow). A change
+    /// sends the playing song's activity again, so the wings follow at once.
+    @ObservationIgnored var defaultGlow = PillStyle.glowColor {
+        didSet { if defaultGlow != oldValue { publish() } }
+    }
     /// The players installed on this Mac, for the Open buttons.
     let installed = Player.allCases.filter { $0.appURL != nil }
     @ObservationIgnored var onActivity: ((LiveActivity?) -> Void)?
@@ -156,7 +161,7 @@ final class NowPlayingModel {
         }
         current = chosen
         if let chosen, chosen.isPlaying {
-            onActivity?(NowPlayingLook.activity(for: chosen, glow: glow))
+            onActivity?(NowPlayingLook.activity(for: chosen, glow: glow, defaultGlow: defaultGlow))
         } else {
             onActivity?(nil)
         }

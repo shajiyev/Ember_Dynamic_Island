@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import SwiftUI
 
 /// The options in the Settings window that no feature model owns already: how the pill
 /// opens, the glows, and an on/off switch per feature. Each is saved in
@@ -25,6 +26,24 @@ final class AppSettings {
             let clamped = Self.clamped(closeDelay)
             guard clamped == closeDelay else { closeDelay = clamped; return }
             save(closeDelay, Key.closeDelay)
+        }
+    }
+    /// Every glow at once (Settings → Glow → Glow).
+    var glowOn: Bool { didSet { save(glowOn, Key.glowOn) } }
+    /// Ember's glow colour, saved as its hex code.
+    var glowColor: Color { didSet { save(GlowColors.hex(of: glowColor), Key.glowColor) } }
+    var openSpeed: Double {
+        didSet {
+            let clamped = Self.clampedSpeed(openSpeed)
+            guard clamped == openSpeed else { openSpeed = clamped; return }
+            save(openSpeed, Key.openSpeed)
+        }
+    }
+    var closeSpeed: Double {
+        didSet {
+            let clamped = Self.clampedSpeed(closeSpeed)
+            guard clamped == closeSpeed else { closeSpeed = clamped; return }
+            save(closeSpeed, Key.closeSpeed)
         }
     }
     /// The resting glow (#29); its key keeps the feature's first name.
@@ -136,6 +155,10 @@ final class AppSettings {
         static let opensOnHover = "opensPanelOnHover"
         static let openDelay = "openDelay"
         static let closeDelay = "closeDelay"
+        static let openSpeed = "openSpeed"
+        static let closeSpeed = "closeSpeed"
+        static let glowOn = "glowOn"
+        static let glowColor = "glowColor"
         static let alwaysOnGlow = "alwaysOnGlow"
         static let activityGlowOn = "activityGlowOn"
         static let activityGlowStrength = "activityGlowStrength"
@@ -176,6 +199,10 @@ final class AppSettings {
         opensOnHover = bool(Key.opensOnHover)
         openDelay = delay(Key.openDelay, PillTiming().openDelay)
         closeDelay = delay(Key.closeDelay, PillTiming().closeDelay)
+        openSpeed = Self.clampedSpeed(defaults.object(forKey: Key.openSpeed) as? Double ?? PillTiming().openSpeed)
+        closeSpeed = Self.clampedSpeed(defaults.object(forKey: Key.closeSpeed) as? Double ?? PillTiming().closeSpeed)
+        glowOn = bool(Key.glowOn)
+        glowColor = defaults.string(forKey: Key.glowColor).flatMap(GlowColors.color(hex:)) ?? PillStyle.glowColor
         alwaysOnGlow = bool(Key.alwaysOnGlow)
         func strength(_ key: String, _ fallback: Double) -> Double {
             Self.clampedStrength(defaults.object(forKey: key) as? Double ?? fallback)
@@ -216,7 +243,9 @@ final class AppSettings {
         showsRepeat = defaults.object(forKey: Key.showsRepeat) as? Bool ?? false
     }
 
-    var pillTiming: PillTiming { PillTiming(openDelay: openDelay, closeDelay: closeDelay) }
+    var pillTiming: PillTiming {
+        PillTiming(openDelay: openDelay, closeDelay: closeDelay, openSpeed: openSpeed, closeSpeed: closeSpeed)
+    }
 
     func isOn(_ tab: PanelTab) -> Bool {
         switch tab {
@@ -227,11 +256,11 @@ final class AppSettings {
         }
     }
 
-    /// The glow switches, strengths, spreads and fades, for the pill.
+    /// The glow switches, colour, strengths, spreads and fades, for the pill.
     var glow: GlowSettings {
         let featureSwitches: [GlowFeature: Bool] = [.music: musicGlowOn, .timer: timerGlowOn,
                                                     .battery: batteryGlowOn, .calendar: calendarGlowOn]
-        return GlowSettings(resting: alwaysOnGlow, restStrength: restGlowStrength, restSpread: restGlowSpread,
+        return GlowSettings(isOn: glowOn, color: glowColor, resting: alwaysOnGlow, restStrength: restGlowStrength, restSpread: restGlowSpread,
                             restFade: restGlowFade,
                             activities: activityGlowOn, activityStrength: activityGlowStrength,
                             activitySpread: activityGlowSpread, activityFade: activityGlowFade,
@@ -245,6 +274,10 @@ final class AppSettings {
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {
         min(max(delay, delayRange.lowerBound), delayRange.upperBound)
+    }
+
+    private static func clampedSpeed(_ speed: Double) -> Double {
+        min(max(speed, PillTiming.speedRange.lowerBound), PillTiming.speedRange.upperBound)
     }
 
     private static func clampedStrength(_ strength: Double) -> Double {

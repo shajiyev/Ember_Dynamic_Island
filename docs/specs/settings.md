@@ -19,8 +19,8 @@ what each one changes.
 | Page | Status |
 |---|---|
 | The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a) |
-| General | Built: System and Opening the panel 2026-11-15; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Planned: a keyboard shortcut to open the panel |
-| Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. Planned: the glow colour |
+| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Planned: a keyboard shortcut to open the panel; a custom panel size |
+| Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17 |
 | Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
 | Timer | Built 2026-11-15 |
 | Calendar | Built 2026-11-15 |
@@ -116,16 +116,24 @@ user's Mac without their choice.
 | Open the panel on hover | on | Off: hovering does nothing; a click opens the panel. Leaving the open panel still closes it after the close delay. |
 | Open delay | 0.1 s | How long the pointer rests on the pill before the panel opens. A 0–1 s slider in 0.1 s steps, its value shown. Greyed out while hover is off. Applies from the next hover. |
 | Close delay | 0.2 s | How long after the pointer leaves the panel it closes. 0–1 s in 0.1 s steps. |
+| Open speed | the middle | How fast the panel grows out of the notch, its content appearing with it. A Slow–Fast slider with no numbers: the middle is the first speed (a 0.38 s spring), Fast twice as quick, Slow half as quick, in 9 steps. Applies from the next opening. |
+| Close speed | the middle | How fast the panel shrinks back to the notch or the wings, its content leaving with it. As above. Growing into the wings and glow changes keep their own speed. |
 | Open the panel on | Last tab (Recommended) | **Last tab:** the tab of what the wings show (such as Music while a song plays), but reopened within the time below it comes back to the tab it was on. **A fixed tab** (Music, Shelf, Timer, Calendar) always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way. Details: docs/specs/file-shelf.md. |
 | Stay on the last tab for | 5 s | 1–20 s, whole seconds. Shown only with Last tab. |
 
-The delays were 0.2 s and 0.3 s until 2026-11-16.
+The delays were 0.2 s and 0.3 s until 2026-11-16. The speeds were added 2026-11-17: a
+speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpeed`); the
+slider moves in powers of two, so the middle is 1. A number in seconds would read
+backwards (smaller is faster), so the slider shows only Slow and Fast.
 
 ### Panel layout
 
 | Setting | Default | What it does |
 |---|---|---|
 | Panel layout | Compact | One clickable card per layout, each with a small drawing of its Music tab, its name and size; the chosen card has an Ember rose outline. **Compact** (460 pt) or **Wide** (the original look). Every tab uses it; a change shows the next time the panel opens. Details: docs/specs/panel-layouts.md. |
+
+**Planned (asked 2026-11-17, not designed):** a custom panel size the user sets, because
+the two layouts are not a good enough choice.
 
 ### Planned: a keyboard shortcut to open the panel
 
@@ -142,11 +150,15 @@ each of the three glows; every glow centred. Before, the page had only the alway
 
 **Goal.** Every glow Ember shows can be turned off on its own, and each of the three (rest,
 live activity, open panel) can be made softer or stronger, reach less or further, and fade
-out more or less gradually up the sides. Each glow is even all around the pill.
+out more or less gradually up the sides. Each glow is even all around the pill. One switch
+turns every glow off, and the user picks Ember's glow colour (built 2026-11-17).
 
 **The page:**
 
 ```
+[x] Glow
+Glow colour   ◉ ○ ○ ○ ○ ○   (○ Custom)
+──────────────────────────────────────────
 [x] Resting glow
       Strength  ─────o───       10%…100%
       Spread    ───o─────       4…30 pt
@@ -167,6 +179,8 @@ out more or less gradually up the sides. Each glow is even all around the pill.
 
 | Setting | Default | What it does |
 |---|---|---|
+| Glow | on | Every glow at once. Off: no glow at all, at rest, around live activities or around the open panel; every glow setting below is greyed out and keeps its value, so turning Glow back on brings each glow back as it was. |
+| Glow colour | Ember rose | Six circles (Ember rose, amber, mint, blue, lilac, white) and **Custom**, a button that opens a small colour popup (below). The chosen circle has a ring; a colour from the popup shows in the button's own circle, ringed. It colours the resting glow, the open panel's glow (except where a tab asks for its own: a song's cover on Music, the timer's orange on Timer), and a song without a cover (its glow and wing colour). Timer, battery and calendar alerts keep their own colours; songs with a cover glow in the cover's colour; the app's accents (Calendar's today circle, reminders, the shelf's drop frame, Settings highlights) stay Ember rose. Greyed out while Glow is off. |
 | Resting glow | on | The always-on glow (#29): a soft Ember rose glow around the notch while nothing is happening. Off, the resting pill is invisible and the notch lights up only for activity. Saved under `alwaysOnGlow` (its first name), so a user who turned it off keeps it off. |
 | Strength | 75% | How bright the glow is: its opacity, 10–100%, in 5% steps. |
 | Spread | 6 pt | How far the glow reaches from the pill: its radius, 4–30 pt, in 1 pt steps. |
@@ -178,6 +192,28 @@ out more or less gradually up the sides. Each glow is even all around the pill.
 | Strength · Spread · Fade | 80% · 10 pt · 15% | As for the resting glow. |
 
 Each glow's sliders (and the feature switches) are greyed out while its switch is off.
+
+**The colours** (sRGB; tuned by eye once seen on the notch): Ember rose `#D9776B` (the
+logo's), amber `#E8A33D`, mint `#5CCFA0`, blue `#5AA9F0`, lilac `#A58BF0`, white `#F2F2F2`.
+The chosen colour is saved as its hex code (`glowColor`); a missing or unreadable value
+means Ember rose.
+
+**The Custom popup** (2026-11-17; replaced macOS's colour well, whose click did
+nothing in the Settings window): opens under the button, and closes on a click elsewhere.
+
+```
+┌───────────────────────────┐
+│ ┌───────────────────────┐ │
+│ │  colour square    ○   │ │  drag: across for how vivid, up and down for how bright
+│ └───────────────────────┘ │
+│ ═══════════o═════════════ │  the rainbow slider: the hue
+│ #  D9776B                 │  a hex code, typed (with or without #, any case)
+└───────────────────────────┘
+```
+
+It starts at the current colour; every drag changes the notch at once; a typed code applies
+on Return and an unreadable one is put back. No transparency (each glow has its Strength),
+no saved colours (the six circles), no eyedropper. Onboarding's glow step can reuse it.
 
 - **No preview on the page:** every switch and slider changes the real pill at once, which
   shows the change better. A preview of three small pills was built and then removed the
@@ -211,8 +247,8 @@ MacBook Pro, macOS 26.6.2, compared with the first look:
 **How it works:**
 - **`LiveActivity.feature`**: which feature made it (music, timer, battery, calendar), set
   by each feature's `…Look`. The pill still knows nothing else about the feature.
-- **`GlowSettings`** (`Ember/Pill/GlowSettings.swift`): the switches, and each glow's
-  strength, spread and fade. `AppSettings` saves each in UserDefaults and hands a
+- **`GlowSettings`** (`Ember/Pill/GlowSettings.swift`): the master switch, the colour, the
+  switches, and each glow's strength, spread and fade. `AppSettings` saves each in UserDefaults and hands a
   `GlowSettings` to `PillController.glow`.
 - **One decision function**, `GlowSettings.glow(for:activity:panelColor:)`, returns the glow
   to draw (colour, opacity, radius and fade) or none; `PillView` draws it.
@@ -221,12 +257,19 @@ MacBook Pro, macOS 26.6.2, compared with the first look:
   shape's top, full at the fade point. The black shape on top is never masked.
 - `PillStyle.style(for:)` holds each state's shape and default glow (opacity, radius,
   fade); the settings override them.
+- **`GlowColors`** (`Ember/Pill/GlowColors.swift`): the six colours, turning a colour into
+  its hex code and back (also from what the user types), and into hue, saturation and
+  brightness. `GlowColorRow` and `ColorPopup` (`Ember/Settings/`) draw the row and the popup.
+- **Songs without a cover:** `NowPlayingModel.defaultGlow` (set by `applySettings()`) is
+  the colour their activity uses; a change sends the playing song's activity again, so the
+  wings change at once.
 
-### Planned: the glow colour
+### For onboarding (#0, not built)
 
-Asked for 2026-11-16, to be designed with onboarding (#0): the user picks Ember's glow
-colour (default Ember rose) during onboarding and sees the notch change as they pick; a
-matching setting here changes it later. Related: glow colour presets (#30).
+Asked for 2026-11-16 and 2026-11-17: onboarding has a Glow step. It asks whether the user
+wants a glow (yes or no, the **Glow** switch above) and, with yes, shows the same colour
+circles and Custom (**Glow colour** above), with the real notch glowing in each colour
+as it is picked. Its answers are these two settings; Settings → Glow changes them later.
 
 ---
 

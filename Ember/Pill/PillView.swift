@@ -75,7 +75,7 @@ struct PillView: View {
                                 .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
                                 .environment(\.fileDragPosition, controller.fileDragPosition)
                                 .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
-                                .transition(PillStyle.contentTransition)
+                                .transition(PillStyle.panelTransition(timing: controller.timing))
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -109,7 +109,8 @@ struct PillView: View {
             .onDrop(of: [.fileURL], delegate: FileDropDelegate(controller: controller, width: size.width))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
-            .animation(PillStyle.animation(to: state), value: state)
+            .animation(PillStyle.animation(from: controller.previousState, to: state, timing: controller.timing),
+                       value: state)
             .animation(PillStyle.animation, value: activityGlow)
             .animation(PillStyle.animation, value: panelGlow)
             .animation(PillStyle.animation, value: controller.glow)

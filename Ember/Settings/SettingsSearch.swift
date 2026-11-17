@@ -7,9 +7,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case opensOnHover
     case openDelay
     case closeDelay
+    case openSpeed
+    case closeSpeed
     case opensOnTab
     case tabCooldown
     case panelLayout
+    case glowOn
+    case glowColor
     case alwaysOnGlow
     case restGlowStrength
     case restGlowSpread
@@ -43,9 +47,10 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
 
     var page: SettingsPage {
         switch self {
-        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .opensOnTab, .tabCooldown, .panelLayout:
+        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .opensOnTab, .tabCooldown,
+             .panelLayout:
             return .general
-        case .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
+        case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow,
              .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
@@ -65,9 +70,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return "Open the panel on hover"
         case .openDelay: return "Open delay"
         case .closeDelay: return "Close delay"
+        case .openSpeed: return "Open speed"
+        case .closeSpeed: return "Close speed"
         case .opensOnTab: return "Open the panel on"
         case .tabCooldown: return "Stay on the last tab for"
         case .panelLayout: return "Panel layout"
+        case .glowOn: return "Glow"
+        case .glowColor: return "Glow colour"
         case .alwaysOnGlow: return "Resting glow"
         case .activityGlow: return "Live activity glow"
         case .restGlowStrength, .activityGlowStrength, .panelGlowStrength: return "Strength"
@@ -101,9 +110,12 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .opensOnHover: return ["hover", "click", "pointer"]
         case .openDelay: return ["hover", "wait", "speed"]
         case .closeDelay: return ["wait", "speed"]
+        case .openSpeed, .closeSpeed: return ["animation", "fast", "slow", "quick"]
         case .opensOnTab: return ["default tab", "last tab", "start"]
         case .tabCooldown: return ["cooldown", "seconds", "return"]
         case .panelLayout: return ["compact", "wide", "size", "panel"]
+        case .glowOn: return ["no glow", "all glows", "off"]
+        case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white"]
         case .alwaysOnGlow: return ["always-on", "light", "rest", "notch"]
         case .activityGlow: return ["wings", "alert"]
         case .restGlowStrength: return ["intensity", "opacity", "resting"]

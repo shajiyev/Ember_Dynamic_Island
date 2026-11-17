@@ -28,6 +28,8 @@ struct GeneralPage: View {
                 DelayRow(item: .openDelay, seconds: $settings.openDelay)
                     .disabled(!settings.opensOnHover)
                 DelayRow(item: .closeDelay, seconds: $settings.closeDelay)
+                SpeedRow(item: .openSpeed, speed: $settings.openSpeed)
+                SpeedRow(item: .closeSpeed, speed: $settings.closeSpeed)
                 Picker(SettingsItem.opensOnTab.title, selection: $settings.opensOnTab) {
                     Text("Last tab (Recommended)").tag(PanelTab?.none)
                     Divider()
@@ -42,7 +44,7 @@ struct GeneralPage: View {
             } header: {
                 Text("Opening the panel")
             } footer: {
-                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
+                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. The speeds are how fast the panel grows and shrinks. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
             }
             Section {
                 LayoutCards(selection: $settings.panelLayout)
@@ -64,49 +66,61 @@ struct GlowPage: View {
     var body: some View {
         Form {
             Section {
-                Toggle(SettingsItem.alwaysOnGlow.title, isOn: $settings.alwaysOnGlow)
-                    .settingsItem(.alwaysOnGlow)
-                Group {
-                    StrengthRow(item: .restGlowStrength, strength: $settings.restGlowStrength)
-                    SpreadRow(item: .restGlowSpread, spread: $settings.restGlowSpread)
-                    FadeRow(item: .restGlowFade, fade: $settings.restGlowFade)
-                }
-                .disabled(!settings.alwaysOnGlow)
+                Toggle(SettingsItem.glowOn.title, isOn: $settings.glowOn)
+                    .settingsItem(.glowOn)
+                GlowColorRow(color: $settings.glowColor)
+                    .disabled(!settings.glowOn)
             } footer: {
-                Text("A soft glow around the notch even when nothing is happening. Off, the notch lights up only for activity. Strength is how bright a glow is, Spread how far it reaches, and Fade how far down the sides it takes to reach full strength (at 0% the sides are lit right up to the top).")
+                Text("Off, nothing glows: not at rest, not around live activities, not around the open panel. The colour is for the resting glow, the open panel and songs without a cover; timer, battery and calendar alerts, and songs with a cover, keep their own colours.")
             }
-            Section {
-                Toggle(SettingsItem.activityGlow.title, isOn: $settings.activityGlowOn)
-                    .settingsItem(.activityGlow)
-                Group {
-                    StrengthRow(item: .activityGlowStrength, strength: $settings.activityGlowStrength)
-                    SpreadRow(item: .activityGlowSpread, spread: $settings.activityGlowSpread)
-                    FadeRow(item: .activityGlowFade, fade: $settings.activityGlowFade)
-                    Toggle(SettingsItem.musicGlow.title, isOn: $settings.musicGlowOn)
-                        .settingsItem(.musicGlow)
-                    Toggle(SettingsItem.timerGlow.title, isOn: $settings.timerGlowOn)
-                        .settingsItem(.timerGlow)
-                    Toggle(SettingsItem.batteryGlow.title, isOn: $settings.batteryGlowOn)
-                        .settingsItem(.batteryGlow)
-                    Toggle(SettingsItem.calendarGlow.title, isOn: $settings.calendarGlowOn)
-                        .settingsItem(.calendarGlow)
+            // Every glow's own settings, greyed out while Glow is off.
+            Group {
+                Section {
+                    Toggle(SettingsItem.alwaysOnGlow.title, isOn: $settings.alwaysOnGlow)
+                        .settingsItem(.alwaysOnGlow)
+                    Group {
+                        StrengthRow(item: .restGlowStrength, strength: $settings.restGlowStrength)
+                        SpreadRow(item: .restGlowSpread, spread: $settings.restGlowSpread)
+                        FadeRow(item: .restGlowFade, fade: $settings.restGlowFade)
+                    }
+                    .disabled(!settings.alwaysOnGlow)
+                } footer: {
+                    Text("A soft glow around the notch even when nothing is happening. Off, the notch lights up only for activity. Strength is how bright a glow is, Spread how far it reaches, and Fade how far down the sides it takes to reach full strength (at 0% the sides are lit right up to the top).")
                 }
-                .disabled(!settings.activityGlowOn)
-            } footer: {
-                Text("The glow around the wings while something happens: a song, a timer, a battery alert or a calendar heads-up. Each feature's glow can be turned off on its own; the wings still show.")
-            }
-            Section {
-                Toggle(SettingsItem.panelGlow.title, isOn: $settings.panelGlowOn)
-                    .settingsItem(.panelGlow)
-                Group {
-                    StrengthRow(item: .panelGlowStrength, strength: $settings.panelGlowStrength)
-                    SpreadRow(item: .panelGlowSpread, spread: $settings.panelGlowSpread)
-                    FadeRow(item: .panelGlowFade, fade: $settings.panelGlowFade)
+                Section {
+                    Toggle(SettingsItem.activityGlow.title, isOn: $settings.activityGlowOn)
+                        .settingsItem(.activityGlow)
+                    Group {
+                        StrengthRow(item: .activityGlowStrength, strength: $settings.activityGlowStrength)
+                        SpreadRow(item: .activityGlowSpread, spread: $settings.activityGlowSpread)
+                        FadeRow(item: .activityGlowFade, fade: $settings.activityGlowFade)
+                        Toggle(SettingsItem.musicGlow.title, isOn: $settings.musicGlowOn)
+                            .settingsItem(.musicGlow)
+                        Toggle(SettingsItem.timerGlow.title, isOn: $settings.timerGlowOn)
+                            .settingsItem(.timerGlow)
+                        Toggle(SettingsItem.batteryGlow.title, isOn: $settings.batteryGlowOn)
+                            .settingsItem(.batteryGlow)
+                        Toggle(SettingsItem.calendarGlow.title, isOn: $settings.calendarGlowOn)
+                            .settingsItem(.calendarGlow)
+                    }
+                    .disabled(!settings.activityGlowOn)
+                } footer: {
+                    Text("The glow around the wings while something happens: a song, a timer, a battery alert or a calendar heads-up. Each feature's glow can be turned off on its own; the wings still show.")
                 }
-                .disabled(!settings.panelGlowOn)
-            } footer: {
-                Text("The glow around the open panel: Ember rose, or the song's colour in the Music tab.")
+                Section {
+                    Toggle(SettingsItem.panelGlow.title, isOn: $settings.panelGlowOn)
+                        .settingsItem(.panelGlow)
+                    Group {
+                        StrengthRow(item: .panelGlowStrength, strength: $settings.panelGlowStrength)
+                        SpreadRow(item: .panelGlowSpread, spread: $settings.panelGlowSpread)
+                        FadeRow(item: .panelGlowFade, fade: $settings.panelGlowFade)
+                    }
+                    .disabled(!settings.panelGlowOn)
+                } footer: {
+                    Text("The glow around the open panel: the glow colour, or the song's colour in the Music tab.")
+                }
             }
+            .disabled(!settings.glowOn)
         }
     }
 }

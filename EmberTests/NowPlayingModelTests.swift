@@ -104,4 +104,19 @@ import Testing
         let position = try #require(model.current).position(at: .now)
         #expect(position >= 100)
     }
+
+    @Test func aSongWithoutACoverTakesANewGlowColourAtOnce() async throws {
+        let standIn = StandIn(songs: ["Song"])   // stand-in songs have no cover
+        let model = NowPlayingModel(source: standIn.source)
+        var activity: LiveActivity?
+        model.onActivity = { activity = $0 }
+        model.start()
+        defer { model.stop() }
+
+        try await Task.sleep(for: .seconds(0.5))   // read
+        #expect(activity?.glowColor == PillStyle.glowColor)
+        model.defaultGlow = .green
+        #expect(activity?.glowColor == .green)
+        #expect(activity?.symbolColor == .green)
+    }
 }

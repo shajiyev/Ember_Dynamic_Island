@@ -75,4 +75,14 @@ struct SettingsSearchTests {
         #expect(SettingsSearch.matches("distance") == [.restGlowSpread, .activityGlowSpread, .panelGlowSpread])
         #expect(SettingsSearch.matches("fade") == [.restGlowFade, .activityGlowFade, .panelGlowFade])
     }
+
+    @Test func theGlowSwitchAndColourAreFound() {
+        #expect(SettingsSearch.matches("colour") == [.glowColor])
+        #expect(SettingsSearch.matches("color") == [.glowColor])
+        #expect(SettingsSearch.matches("no glow") == [.glowOn])
+    }
+
+    @Test func theSpeedsAreFound() {
+        #expect(SettingsSearch.matches("animation") == [.openSpeed, .closeSpeed])
+    }
 }

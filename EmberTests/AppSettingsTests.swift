@@ -219,4 +219,39 @@ struct AppSettingsTests {
         settings.shelfOn = false
         #expect(!AppSettings(defaults: defaults).shelfOn)
     }
+
+    @Test func theGlowSwitchAndColourAreOnAndEmberRoseByDefault() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.glowOn)
+        #expect(settings.glowColor == PillStyle.glowColor)
+    }
+
+    @Test func theGlowSwitchAndColourSurviveARelaunchAndReachThePill() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.glowOn = false
+        settings.glowColor = GlowColors.presets[3].color
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(!relaunched.glowOn && !relaunched.glow.isOn)
+        #expect(GlowColors.hex(of: relaunched.glowColor) == GlowColors.hex(of: GlowColors.presets[3].color))
+        #expect(relaunched.glow.color == relaunched.glowColor)
+    }
+
+    @Test func anUnreadableSavedColourGivesEmberRose() {
+        let defaults = freshDefaults()
+        defaults.set("not a colour", forKey: "glowColor")
+        #expect(AppSettings(defaults: defaults).glowColor == PillStyle.glowColor)
+    }
+
+    @Test func theSpeedsStartInTheMiddleAreSavedAndHeldToTheirRange() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.openSpeed == 1 && settings.closeSpeed == 1)
+        settings.openSpeed = 2
+        settings.closeSpeed = 0.1
+        #expect(settings.closeSpeed == 0.5)
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.pillTiming == PillTiming(openDelay: 0.1, closeDelay: 0.2, openSpeed: 2, closeSpeed: 0.5))
+    }
 }

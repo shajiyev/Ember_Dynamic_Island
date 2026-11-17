@@ -7,6 +7,7 @@ extension AppDelegate {
         controller.timing = settings.pillTiming
         controller.opensOnHover = settings.opensOnHover
         controller.glow = settings.glow
+        nowPlaying.defaultGlow = settings.glowColor
         controller.openSize = settings.panelLayout.size
         controller.acceptsFileDrags = settings.shelfOn
         panelSelection.defaultTab = settings.opensOnTab

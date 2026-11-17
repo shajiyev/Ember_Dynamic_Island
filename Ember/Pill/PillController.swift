@@ -2,18 +2,27 @@ import AppKit
 import Observation
 import SwiftUI
 
-/// How long the pill waits before opening and closing (Settings → General).
+/// How long the pill waits before opening and closing, and how fast it opens and closes
+/// (Settings → General).
 nonisolated struct PillTiming: Equatable {
     /// How long the pointer must rest on the pill before it opens.
     var openDelay: TimeInterval = 0.1
     /// How long after the pointer leaves the open panel before it closes.
     var closeDelay: TimeInterval = 0.2
+    /// How fast the panel opens and closes, as multiples of the first speed.
+    var openSpeed: Double = 1
+    var closeSpeed: Double = 1
+
+    /// The speeds stay within this range: half as quick to twice as quick.
+    static let speedRange: ClosedRange<Double> = 0.5...2
 }
 
 /// Owns the pill's state and runs the delays that `PillModel` asks for.
 @Observable
 final class PillController {
     private(set) var state: PillState = .rest
+    /// The state before the last change, so the animation knows whether the panel is closing.
+    @ObservationIgnored private(set) var previousState: PillState = .rest
     /// A brief activity, shown until its duration runs out (`show(_:)`).
     private(set) var briefActivity: LiveActivity?
     /// An ongoing activity, shown until its feature replaces or clears it (`setOngoing(_:)`).
@@ -98,6 +107,7 @@ final class PillController {
         case nil:
             break
         }
+        if model.state != state { previousState = state }
         state = model.state
         // A seen activity stays until the panel opens, so the pill goes straight from the
         // wings into the panel; if the pointer leaves first, it goes then.

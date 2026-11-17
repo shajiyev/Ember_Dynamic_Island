@@ -108,4 +108,21 @@ struct GlowSettingsTests {
     @Test func fadesGoFromNoneToTheWholeHeight() {
         #expect(GlowSettings.fadeRange == 0...1)
     }
+
+    @Test func withTheGlowSwitchOffNothingGlows() {
+        var glow = GlowSettings()
+        glow.isOn = false
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == nil)
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == nil)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: .blue) == nil)
+    }
+
+    @Test func theChosenColourColoursRestAndThePanelButNotActivitiesOrTabColours() {
+        var glow = GlowSettings()
+        glow.color = .green
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil)?.color == .green)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil)?.color == .green)
+        #expect(glow.glow(for: .open, activity: nil, panelColor: .blue)?.color == .blue)
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil)?.color == .orange)
+    }
 }

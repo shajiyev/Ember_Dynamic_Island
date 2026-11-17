@@ -21,9 +21,9 @@ nonisolated enum NowPlayingLook {
     }
 
     /// The wings while a song plays: its cover (a note without one) and the equalizer, in
-    /// the cover's colour, or Ember rose when the song has no cover.
-    static func activity(for track: Track, glow: Color?) -> LiveActivity {
-        let color = glow ?? PillStyle.glowColor
+    /// the cover's colour, or `defaultGlow` (Ember's glow colour) when the song has no cover.
+    static func activity(for track: Track, glow: Color?, defaultGlow: Color) -> LiveActivity {
+        let color = glow ?? defaultGlow
         return LiveActivity(symbolName: "music.note", symbolColor: color, text: "", glowColor: color,
                             artwork: track.artwork, showsEqualizer: true, feature: .music)
     }

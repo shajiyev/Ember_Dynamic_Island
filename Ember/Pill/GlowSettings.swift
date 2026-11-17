@@ -26,6 +26,11 @@ nonisolated struct GlowSettings: Equatable {
     /// right up to the top.
     static let fadeRange: ClosedRange<Double> = 0...1
 
+    /// Every glow at once: off, nothing glows, whatever the switches below say.
+    var isOn = true
+    /// Ember's glow colour: the resting glow, and the open panel's unless its content asks for
+    /// its own.
+    var color = PillStyle.glowColor
     /// The always-on glow around the notch at rest (#29).
     var resting = true
     var restStrength = PillStyle.style(for: .rest).glowOpacity
@@ -43,12 +48,13 @@ nonisolated struct GlowSettings: Equatable {
     var panelFade = PillStyle.style(for: .open).glowFade
 
     /// The glow for a state, or nil for none. Active: the activity's colour, unless it has
-    /// none or its glow is off. Open: the colour the panel's content asks for, or Ember rose.
+    /// none or its glow is off. Open: the colour the panel's content asks for, or `color`.
     func glow(for state: PillState, activity: LiveActivity?, panelColor: Color?) -> PillGlow? {
+        guard isOn else { return nil }
         switch state {
         case .rest:
             guard resting else { return nil }
-            return PillGlow(color: PillStyle.glowColor, opacity: restStrength, radius: restSpread, fade: restFade)
+            return PillGlow(color: color, opacity: restStrength, radius: restSpread, fade: restFade)
         case .active:
             guard activities, let activity, let color = activity.glowColor else { return nil }
             if let feature = activity.feature, featuresOff.contains(feature) { return nil }
@@ -56,7 +62,7 @@ nonisolated struct GlowSettings: Equatable {
                             fade: activityFade)
         case .open:
             guard panel else { return nil }
-            return PillGlow(color: panelColor ?? PillStyle.glowColor, opacity: panelStrength, radius: panelSpread,
+            return PillGlow(color: panelColor ?? color, opacity: panelStrength, radius: panelSpread,
                             fade: panelFade)
         }
     }

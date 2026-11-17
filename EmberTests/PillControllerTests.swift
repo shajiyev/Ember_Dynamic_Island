@@ -359,4 +359,12 @@ struct PillControllerTests {
         #expect(!PillView.pointerOpensPanel(atY: 50, state: .active, stateHeight: 33))
         #expect(PillView.pointerOpensPanel(atY: 215, state: .open, stateHeight: 200))
     }
+
+    @Test func thePillRemembersTheStateItLeftSoClosingKnowsItsSpeed() {
+        let controller = PillController(timing: fast)
+        controller.send(.clicked)
+        #expect(controller.state == .open && controller.previousState == .rest)
+        controller.send(.closeRequested)
+        #expect(controller.state == .rest && controller.previousState == .open)
+    }
 }

@@ -37,8 +37,13 @@
     (each state's shape and default glow). `PillView` draws the glow behind the black
     shape, masked so the light on the sides fades in from the top.
   - `GlowSettings.swift`: `GlowSettings` (from Settings → Glow, in
-    `PillController.glow`): which glows are on, and each glow's strength, spread and fade.
-    Its pure `glow(for:activity:panelColor:)` gives the glow for a state, or none.
+    `PillController.glow`): the Glow switch, the glow colour, which glows are on, and each
+    glow's strength, spread and fade. Its pure `glow(for:activity:panelColor:)` gives the
+    glow for a state, or none. `GlowColors.swift`: the six offered colours and the hex,
+    typed-code and hue/saturation/brightness conversions.
+    `PillTiming` (in `PillController.swift`) holds the open and close delays and speeds;
+    `PillStyle.animation(from:to:timing:)` and `panelTransition(timing:)` apply the speeds
+    to opening and closing the panel (`PillController.previousState` tells a close apart).
     `PillView` also draws a live activity in the wings and shows the panel content when
     open, passing it the notch's height and width (`notchHeight`, `notchWidth` environment
     values). The panel content
@@ -100,7 +105,8 @@
     notices settle, publishes the chosen track and sends commands. A seek shows its new
     position at once (`Track.seeked`), and shuffle and repeat their new state, before the
     player's own reading confirms it. A newer read or a command cancels a read under way,
-    so a stale answer is never shown. `recheck()` reads the players that have no read
+    so a stale answer is never shown. `defaultGlow` (Ember's glow colour, from Settings)
+    colours a song without a cover; a change re-sends the playing song's activity. `recheck()` reads the players that have no read
     under way; the open Music tab calls it every `recheckInterval` (2 s).
   - `NowPlayingPanelView.swift`: the Music tab; draws `CompactMusicView` or its own wide
     layout from the panel's layout, or "Nothing playing". Clicking the cover, title, artist
@@ -175,7 +181,9 @@
   - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
-    the pages, the search tint, and the delay, cooldown, strength, spread and fade rows. `LayoutCards.swift`: the clickable panel
+    the pages, the search tint, and the delay, speed, cooldown, strength, spread and fade
+    rows. `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
+    Custom popup (colour square, hue bar, hex field). `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).

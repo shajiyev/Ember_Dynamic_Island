@@ -128,3 +128,24 @@ struct FadeRow: View {
         .settingsItem(item)
     }
 }
+
+/// How fast the panel opens or closes: a Slow–Fast slider with the first speed in the
+/// middle. It moves in powers of two, so each step changes the speed by the same share.
+struct SpeedRow: View {
+    let item: SettingsItem
+    @Binding var speed: Double
+
+    var body: some View {
+        LabeledContent(item.title) {
+            Slider(value: Binding(get: { log2(speed) }, set: { speed = pow(2, $0) }), in: -1...1, step: 0.25) {
+                EmptyView()
+            } minimumValueLabel: {
+                Text("Slow").foregroundStyle(.secondary)
+            } maximumValueLabel: {
+                Text("Fast").foregroundStyle(.secondary)
+            }
+            .frame(width: 204)
+        }
+        .settingsItem(item)
+    }
+}

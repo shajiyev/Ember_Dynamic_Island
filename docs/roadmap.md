@@ -131,10 +131,17 @@
   by the user by eye: rest 75% / 6 pt / 20%, live activity 80% / 10 pt / 10%, open
   panel 80% / 10 pt / 15%. Tests pass; checked on screen by the user on macOS 26.6.2.
   Plan docs/plans/settings.md, part 3.
+- **Done:** Settings → Glow: a Glow switch that turns every glow off, and the glow colour:
+  six circles (Ember rose by default, amber, mint, blue, lilac, white) and Custom, a small
+  popup with a colour square, a hue bar and a hex field. The colour is for the resting
+  glow, the open panel's own glow and songs without a cover. Settings → General: Open
+  speed and Close speed, Slow–Fast sliders for how fast the panel grows and shrinks.
+  Tests pass; checked on screen by the user on macOS 26.6.2. Plan docs/plans/settings.md,
+  part 4.
 - **In progress:** nothing in the app.
-- **Next in Settings (asked 2026-11-16):** the glow colour (a "Glow colour" setting now,
-  then picking it during onboarding with the notch changing live), and a keyboard shortcut
-  to open the panel that refuses combinations macOS already uses.
+- **Next in Settings:** a keyboard shortcut to open the panel that refuses combinations
+  macOS already uses (asked 2026-11-16); a custom panel size (asked 2026-11-17). Onboarding
+  (#0) must include a Glow step: glow or not, and its colour, with the notch changing live.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** the rest of the v1 list: onboarding and permission requests (#0), then

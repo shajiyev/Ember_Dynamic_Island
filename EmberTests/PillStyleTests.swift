@@ -62,9 +62,18 @@ struct PillStyleTests {
     }
 
     @Test func shrinkingSettlesWithoutBouncingAndOpeningKeepsItsSpring() {
-        #expect(PillStyle.animation(to: .rest) == .spring(response: 0.38, dampingFraction: 1))
-        #expect(PillStyle.animation(to: .active) == .spring(response: 0.38, dampingFraction: 1))
-        #expect(PillStyle.animation(to: .open) == .spring(response: 0.38, dampingFraction: 0.8))
+        let timing = PillTiming()
+        #expect(PillStyle.animation(from: .open, to: .rest, timing: timing) == .spring(response: 0.38, dampingFraction: 1))
+        #expect(PillStyle.animation(from: .rest, to: .active, timing: timing) == .spring(response: 0.38, dampingFraction: 1))
+        #expect(PillStyle.animation(from: .active, to: .open, timing: timing) == .spring(response: 0.38, dampingFraction: 0.8))
+    }
+
+    @Test func theSpeedsChangeOnlyOpeningAndClosingThePanel() {
+        let timing = PillTiming(openSpeed: 2, closeSpeed: 0.5)
+        #expect(PillStyle.animation(from: .rest, to: .open, timing: timing) == .spring(response: 0.19, dampingFraction: 0.8))
+        #expect(PillStyle.animation(from: .open, to: .active, timing: timing) == .spring(response: 0.76, dampingFraction: 1))
+        #expect(PillStyle.animation(from: .rest, to: .active, timing: timing) == .spring(response: 0.38, dampingFraction: 1))
+        #expect(PillStyle.animation(from: .active, to: .rest, timing: timing) == .spring(response: 0.38, dampingFraction: 1))
     }
 
     @Test func theGlowIsEmberRoseLikeTheLogo() {

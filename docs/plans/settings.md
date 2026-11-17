@@ -8,8 +8,8 @@ in those features' plans. The map below finds every page's work.
 | Page | Where it was planned |
 |---|---|
 | The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear) |
-| General | Part 1 (Tasks 1, 2, 6); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
-| Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, two strengths, the preview) |
+| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
+| Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, strength, spread and fade); Part 4 (the Glow switch, the glow colour) |
 | Music | Part 1 (Tasks 4, 6); Show shuffle, Show repeat: docs/plans/panel-layouts.md |
 | Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6) |
 | Shelf | docs/plans/file-shelf.md |
@@ -2236,3 +2236,129 @@ Then the user names the final default strengths (or keeps 60% and 55%); update
 `GlowSettings`/`PillStyle` and the spec if they change. Checkpoint per the global protocol:
 the spec's Glow section and status table say built; roadmap, features (#26b row),
 decisions; one commit.
+
+---
+
+# Part 4: Glow — the Glow switch and the glow colour
+
+Added 2026-11-17. Spec: "Glow" in docs/specs/settings.md (Glow, Glow colour). Built inline,
+test-first; one commit after the user's check on screen. Same constraints as Part 3
+(scratch DerivedData; CLEAN before TEST after scripted edits).
+
+**Goal:** one switch turns every glow off; the user picks Ember's glow colour from six
+circles or any colour, and the resting glow, the open panel's own glow and songs without a
+cover follow it at once.
+
+**Architecture:** `GlowSettings` gains `isOn` and `color`; `glow(for:…)` returns nil for
+everything while off and uses `color` where it used Ember rose. `GlowColors` holds the six
+colours and the hex conversion. `AppSettings` saves `glowOn` and `glowColor` (hex).
+`NowPlayingModel.defaultGlow` gives songs without a cover the chosen colour.
+
+| File | Change |
+|---|---|
+| `Ember/Pill/GlowColors.swift` | New: `GlowColors.presets`, `hex(of:)`, `color(hex:)` |
+| `Ember/Pill/GlowSettings.swift` | `isOn`, `color` |
+| `Ember/NowPlaying/NowPlayingLook.swift`, `NowPlayingModel.swift` | `defaultGlow` |
+| `Ember/Settings/AppSettings.swift` | `glowOn`, `glowColor` |
+| `Ember/AppDelegate+Settings.swift` | `nowPlaying.defaultGlow = settings.glowColor` |
+| `Ember/Settings/SettingsSearch.swift` | `glowOn` "Glow", `glowColor` "Glow colour" |
+| `Ember/Settings/GlowColorRow.swift` | New: the circles and Custom |
+| `Ember/Settings/GeneralPage.swift` | The Glow switch and colour at the top; the rest greyed out while off |
+| Tests | `GlowColorsTests` (new); `GlowSettingsTests`, `AppSettingsTests`, `NowPlayingLookTests`, `NowPlayingModelTests`, `SettingsSearchTests` |
+
+### Task 15: GlowColors and GlowSettings
+
+**Interfaces:** `nonisolated enum GlowColors { static let presets: [(name: String, color: Color)]; static func hex(of: Color) -> String; static func color(hex: String) -> Color? }`;
+`GlowSettings.isOn = true`, `GlowSettings.color = PillStyle.glowColor`.
+
+- [x] **Step 1: Failing tests.** `GlowColorsTests`: Ember rose is first and is
+  `PillStyle.glowColor`; six presets with the spec's names; `hex(of: PillStyle.glowColor) == "#D9776B"`;
+  `color(hex: "#D9776B") == PillStyle.glowColor`; every preset survives `hex` → `color`;
+  `color(hex: "nonsense") == nil`, `color(hex: "#12345") == nil`.
+  `GlowSettingsTests`: with `isOn` false every state has no glow; the chosen `color`
+  colours rest and the open panel without a tab colour, but not an activity or a tab
+  colour.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** `hex(of:)` reads the colour's sRGB components through
+  `NSColor(color).usingColorSpace(.sRGB)`, rounds each to 0…255, formats `#RRGGBB`;
+  `color(hex:)` accepts exactly `#` and six hex digits. In `glow(for:…)`: `guard isOn`
+  first; rest and open use `color` instead of `PillStyle.glowColor`.
+- [x] **Step 4: TEST.**
+
+### Task 16: Saving, songs without a cover, and the page
+
+- [x] **Step 1: Failing tests.** `AppSettingsTests`: `glowOn` true and `glowColor` Ember
+  rose by default; both survive a relaunch and reach `glow`; an unreadable saved colour
+  gives Ember rose. `NowPlayingLookTests`: without a cover, the activity's glow and symbol
+  take the given default colour. `NowPlayingModelTests`: setting `defaultGlow` re-sends the
+  playing song's activity in the new colour. `SettingsSearchTests`: "colour" and "color"
+  find `.glowColor`; "no glow" finds `.glowOn`.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** `NowPlayingLook.activity(for:glow:defaultGlow:)`;
+  `NowPlayingModel.defaultGlow` (`didSet` publishes when it changes); `AppSettings.glowOn`,
+  `glowColor` (saved as `GlowColors.hex`); `applySettings()` sets `defaultGlow`;
+  `GlowColorRow`: a circle per preset (18 pt, a ring around the chosen one, matched by hex,
+  name as tooltip and VoiceOver label), then a `ColorPicker("Custom", supportsOpacity: false)`;
+  `GlowPage`: a first section with the Glow switch and the colour row (the row greyed out
+  while off), and every other section greyed out while Glow is off.
+- [x] **Step 4: CLEAN, TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 16b: The Custom popup
+
+Added 2026-11-17: macOS's colour well did nothing when clicked in the Settings window; the
+user chose a small popup instead (spec: Glow, "The Custom popup").
+
+**Interfaces:** `GlowColors.hsb(of: Color) -> (hue: Double, saturation: Double, brightness: Double)`;
+`GlowColors.color(typed: String) -> Color?`; `ColorPopup(color: Binding<Color>)`.
+
+- [x] **Step 1: Failing tests** (`GlowColorsTests`): every preset survives `hsb(of:)` →
+  `Color(hue:saturation:brightness:)` (same hex); `color(typed:)` reads "#D9776B",
+  "d9776b" and " D9776B " as Ember rose and gives nil for "zz" and "#D9776".
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** `hsb(of:)` through `NSColor.usingColorSpace(.sRGB)`;
+  `color(typed:)` trims spaces, adds a missing "#", upper-cases, then `color(hex:)`.
+  `ColorPopup`: hue, saturation and brightness as state, read from the colour when it
+  appears; a 200 × 140 square (white → the hue across, clear → black down) and a hue bar,
+  each with a drag gesture and a ring for the current point; a hex field that applies on
+  Return. Every change sets the colour. `GlowColorRow`: the colour well becomes a button
+  (a circle in the current colour, ringed when it is none of the six, and "Custom")
+  with a `.popover` holding `ColorPopup`.
+- [x] **Step 4: CLEAN, TEST and BUILD.** Expected: all pass, no warnings.
+
+### Task 16c: General — open and close speeds
+
+Added 2026-11-17 (spec: General, Opening the panel).
+
+**Interfaces:** `PillTiming.openSpeed`, `closeSpeed` (multiples, default 1),
+`PillTiming.speedRange = 0.5...2`; `PillController.previousState`;
+`PillStyle.animation(from:to:timing:)` replaces `animation(to:)`;
+`PillStyle.panelTransition(timing:)` for the panel content; `AppSettings.openSpeed`,
+`closeSpeed`; `SettingsItem.openSpeed`, `.closeSpeed`; `SpeedRow`.
+
+- [x] **Step 1: Failing tests.** `PillStyleTests`: by default opening is
+  `.spring(response: 0.38, dampingFraction: 0.8)`, closing and rest↔active
+  `.spring(response: 0.38, dampingFraction: 1)`; open speed 2 halves the opening response,
+  close speed 0.5 doubles the closing response; rest → active ignores both.
+  `PillControllerTests`: after a click and a close request, `previousState` is the state
+  left. `AppSettingsTests`: speeds default 1, saved, held to 0.5…2, in `pillTiming`.
+  `SettingsSearchTests`: "animation" finds both speeds.
+- [x] **Step 2: TEST.** Expected: compile errors.
+- [x] **Step 3: Implement.** The response is 0.38 divided by the speed; the panel
+  content's blur-in (0.3 s after 0.1 s) and blur-out (0.15 s) are divided by the same
+  speeds; the wings keep `contentTransition`. `SpeedRow`: a slider over log2 of the speed,
+  −1…1 in 0.25 steps, labelled Slow and Fast.
+- [x] **Step 4: CLEAN, TEST and BUILD.**
+
+### Task 17: Checks on screen and checkpoint
+
+1. Glow off: no glow at rest, with a song or timer, or with the panel open; every row below
+   greyed out; on again, each glow is back as it was.
+2. Each circle changes the resting glow and the open panel's glow at once (Calendar and
+   Shelf tabs), and a song without a cover; the timer keeps orange; a song with a cover
+   keeps its colour.
+3. Custom opens the popup under it; dragging in the square and the hue bar, and typing a
+   code, change the notch at once; the button's circle is ringed and no preset is.
+4. Quit and reopen: the colour and the switch are kept.
+5. General: Open speed and Close speed at Fast and Slow change how fast the panel opens
+   and closes; the wings appearing are unchanged.
+Then the user tunes the six colours if they want; checkpoint and one commit.

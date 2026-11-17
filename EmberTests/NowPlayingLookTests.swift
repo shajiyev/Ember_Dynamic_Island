@@ -22,12 +22,14 @@ struct NowPlayingLookTests {
                               length: 200, position: 0, readAt: Date(), isPlaying: true)
 
     @Test func aPlayingSongShowsTheEqualizerInItsCoverColour() {
-        #expect(NowPlayingLook.activity(for: track, glow: .blue) == LiveActivity(
+        #expect(NowPlayingLook.activity(for: track, glow: .blue, defaultGlow: .green) == LiveActivity(
             symbolName: "music.note", symbolColor: .blue, text: "", glowColor: .blue, showsEqualizer: true,
             feature: .music))
     }
 
-    @Test func withoutACoverColourItGlowsEmberRose() {
-        #expect(NowPlayingLook.activity(for: track, glow: nil).glowColor == PillStyle.glowColor)
+    @Test func withoutACoverItGlowsTheChosenGlowColour() {
+        let activity = NowPlayingLook.activity(for: track, glow: nil, defaultGlow: .green)
+        #expect(activity.glowColor == .green)
+        #expect(activity.symbolColor == .green)
     }
 }

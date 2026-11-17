@@ -1024,3 +1024,26 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   rest 75% / 6 pt / 20% (was 60% / 8 pt, line faded to 60%); live activity 80% / 10 pt /
   10% (was 85% / 10 pt, pushed down 5); open panel 80% / 10 pt / 15% (was 55% / 16 pt,
   pushed down 8). Users who moved a slider keep their own value.
+
+## 2026-11-17 — The Glow switch, the glow colour and the panel's speeds
+- **Decision:** a **Glow** switch at the top of Settings → Glow turns every glow off; the
+  glows' own settings stay as they were and come back with it. **Why:** the user wants a
+  way to have no glow at all, and onboarding will ask the same yes/no question.
+- **Decision:** one **glow colour**, Ember rose by default: six circles (Ember rose, amber,
+  mint, blue, lilac, white) and **Custom**. It colours the resting glow, the open panel's
+  own glow and songs without a cover. Timer, battery and calendar alerts, songs with a
+  cover, and the app's accents keep their colours. **Why:** the user chose "glows only";
+  a whole-app colour belongs to themes (#37). Saved as a hex code, so an unreadable value
+  falls back to Ember rose.
+- **Decision:** Custom opens Ember's own small popup (colour square, hue bar, hex field),
+  not macOS's colour window. **Why:** SwiftUI's colour well did nothing when clicked in the
+  Settings window (not investigated further once replaced), and the user preferred a popup
+  that stays with the page. No transparency, saved colours or eyedropper: each glow has
+  its Strength, and the six circles are the saved colours.
+- **Decision:** Settings → General gets **Open speed** and **Close speed**, Slow–Fast
+  sliders with today's speed (a 0.38 s spring) in the middle, half to twice as quick,
+  saved as multiples. They change only opening and closing the panel (the spring and the
+  content's fade), not the wings or glow changes. **Why:** asked by the user; numbers in
+  seconds would read backwards (smaller is faster).
+- **Noted for later:** a custom panel size (the two layouts are not a good enough choice),
+  and onboarding's Glow step (glow or not, and its colour, with the notch changing live).
