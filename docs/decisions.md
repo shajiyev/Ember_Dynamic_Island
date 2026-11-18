@@ -1091,3 +1091,23 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   values as Settings. This reverses part of 2026-11-15, when the menu kept only Settings…,
   Share Feedback and Quit. **Why:** the user wants the switches at hand; display options
   stay in Settings only.
+
+## 2026-11-18 — The keyboard shortcut
+- **Decision:** ⌃⌥N opens and closes the panel by default (N for notch). **Why:** neither
+  macOS nor Rectangle and Magnet use it, and without ⌘ it takes nothing from apps.
+  Avoided: ⌥Space (ChatGPT, Raycast, Alfred), ⌃⌥Space (next keyboard language), ⌘Space,
+  ⌃⌘Space, ⌃⌥E (Rectangle).
+- **Decision:** three kinds of shortcut. Not recommended (saved, with a caution sign and
+  why): any with ⌘, ones popular apps use, and one macOS refuses to Ember because another
+  app holds it. Refused (not saved; the box shakes): no ⌘, ⌃ or ⌥, everyday shortcuts
+  (⌘C, ⌘Q, ⌘Tab…), and macOS's own as switched on on this Mac. **Why:** the user asked to
+  refuse what clashes with the system and to warn about what is not recommended.
+- **Decision:** macOS's shortcuts are its defaults, kept in Ember, corrected by
+  `com.apple.symbolichotkeys`, which lists only the ones the user changed. **Why:** the
+  file alone misses Spotlight, screenshots and the rest until someone edits them.
+- **Decision:** Carbon's `RegisterEventHotKey`, not an event tap. **Why:** it needs no
+  permission and says when another app holds the shortcut. Opened by the shortcut, the
+  panel closes on Esc (a hot key held only while it is open) or a click elsewhere (a
+  global mouse monitor, which needs no permission either).
+- **Known limit:** apps' own shortcuts are unknown unless macOS refuses Ember the
+  shortcut; the ⌘ caution covers the most likely clashes.

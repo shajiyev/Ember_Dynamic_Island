@@ -162,10 +162,16 @@
 - **Done:** the menu bar menu has a Features section: Music, Timer, Calendar, Shelf, Battery
   alerts and Volume & Brightness, each ticked when on and switched like in Settings.
   Checked on screen by the user on macOS 26.6.2. Plan docs/plans/settings.md, part 9.
+- **Done:** a keyboard shortcut opens and closes the panel from anywhere: ⌃⌥N by default,
+  recorded or cleared in Settings → General. Shortcuts with ⌘ or used by popular apps are
+  saved with a caution; keys alone, everyday shortcuts and macOS's own (read from the
+  Mac's keyboard settings) are refused. Opened this way, Esc or a click elsewhere closes
+  it. No permission needed. Tests pass; checked on screen by the user on macOS 26.6.2.
+  Plan docs/plans/settings.md, part 10.
 - **In progress:** nothing in the app.
-- **Next in Settings:** a keyboard shortcut to open the panel that refuses
-  combinations macOS already uses (asked 2026-11-16). Onboarding (#0) must include a Glow
-  step: glow or not, and its colour, with the notch changing live.
+- **Next:** Settings' list is done. The rest of the v1 list: Keep awake (#18, in the menu
+  bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
+  colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** the rest of the v1 list: onboarding and permission requests (#0), then

@@ -310,4 +310,17 @@ struct AppSettingsTests {
         #expect(relaunched.compactWidth == 420 && relaunched.wideWidth == 760)
         #expect(relaunched.panelSize == CGSize(width: 760, height: PanelLayout.height))
     }
+
+    @Test func theShortcutIsControlOptionNByDefaultAndCanBeClearedOrChanged() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelShortcut == .standard)
+        settings.panelShortcut = nil
+        #expect(AppSettings(defaults: defaults).panelShortcut == nil)
+        let custom = KeyShortcut(keyCode: 40, modifiers: [.control, .option], label: "k")
+        settings.panelShortcut = custom
+        let read = AppSettings(defaults: defaults).panelShortcut
+        #expect(read == custom)
+        #expect(read?.text == "⌃⌥K")
+    }
 }

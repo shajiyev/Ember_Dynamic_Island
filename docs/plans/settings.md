@@ -7,8 +7,8 @@ in those features' plans. The map below finds every page's work.
 
 | Page | Where it was planned |
 |---|---|
-| The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear) |
-| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Part 5 (Tabs, the width rule); Part 7 (Live activities); Part 8 (Width); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
+| The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear); Part 9 (the menu's Features) |
+| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Part 5 (Tabs, the width rule); Part 7 (Live activities); Part 8 (Width); Part 10 (the keyboard shortcut); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
 | Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, strength, spread and fade); Part 4 (the Glow switch, the glow colour) |
 | Music | Part 1 (Tasks 4, 6); Show shuffle, Show repeat: docs/plans/panel-layouts.md |
 | Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6); Part 6 (the countdown in the notch, Show an example) |
@@ -2547,3 +2547,54 @@ Added 2026-11-18. Spec: The window, "The menu bar menu". Built inline.
   alerts, Volume & Brightness), bound to the same values as the Settings switches
   (`LevelModel.turn(on:)` for Volume & Brightness). Only view wiring, no new rule, so no
   unit test; BUILD, and the user checks each item against Settings on screen.
+
+---
+
+# Part 10: General — the keyboard shortcut
+
+Added 2026-11-18. Spec: General, "The keyboard shortcut". Built inline, test-first; one
+commit after the user's check on screen.
+
+**Files:** new `Ember/Shortcut/` — `KeyShortcut.swift`, `ShortcutCheck.swift`,
+`SystemShortcuts.swift`, `GlobalHotKey.swift`; `Ember/Settings/ShortcutRecorder.swift`.
+Changed: `PillState.swift` (`.shortcutPressed`), `PillController.swift` (opened by the
+shortcut: Esc and a click outside close it), `AppSettings.swift` (`panelShortcut`),
+`AppDelegate+Settings.swift` (registering it), `GeneralPage.swift`, `SettingsSearch.swift`,
+`SettingsWindow.swift`/`SettingsView.swift` (the hot key's state for the caution).
+
+### Task 27: KeyShortcut, ShortcutCheck, SystemShortcuts (pure)
+
+**Interfaces:** `nonisolated struct KeyShortcut: Hashable { keyCode: UInt16; modifiers: Set<Modifier> }`
+with `enum Modifier { control, option, shift, command }`, `static let standard` (⌃⌥N, key
+code 45), `var text` ("⌃⌥N", modifiers in macOS's order ⌃⌥⇧⌘), `var saved: String`
+("45:control,option") and `init?(saved:)`; `ShortcutCheck.verdict(_:systemShortcuts:) ->
+Verdict` (`.fine`, `.notRecommended(String)`, `.refused(String)`);
+`SystemShortcuts.parse(_ hotKeys: [String: Any]) -> Set<KeyShortcut>` (enabled ones only;
+modifier masks shift 0x20000, control 0x40000, option 0x80000, command 0x100000).
+
+- [x] Tests first (`KeyShortcutTests`, `ShortcutCheckTests`, `SystemShortcutsTests`), TEST
+  (compile errors), implement, TEST.
+
+### Task 28: The pill opens and closes on the shortcut
+
+- [x] Tests first (`PillModelTests`): `.shortcutPressed` opens from rest or active with the
+  pointer elsewhere and stays open (no close delay starts); pressed again, closes; a close
+  request closes it. Implement the event; `PillController.shortcutPressed()` sends it and,
+  when it opened the panel, closes it on Esc (a temporary `GlobalHotKey`) or a click
+  outside (a global mouse-down monitor), both removed when the panel closes.
+
+### Task 29: Saving, registering and the recorder
+
+- [x] Tests first: `AppSettingsTests` (⌃⌥N by default, a cleared shortcut stays cleared, a
+  recorded one is saved), `SettingsSearchTests` ("hotkey"). Implement `panelShortcut`;
+  `applySettings()` registers it with `GlobalHotKey` (none when cleared, paused while
+  recording); `ShortcutRecorder` with the caution sign and line, the refusal's shake and
+  message, ⓧ. CLEAN, TEST and BUILD.
+
+### Task 30: Checks on screen and checkpoint
+
+1. ⌃⌥N opens the panel anywhere, again closes it; Esc and a click outside close it;
+   moving onto the panel and away closes it as usual.
+2. Recording ⌃⌥K: saved, no sign. ⌘⇧K: saved with the ⌘ caution. ⌥Space: the popular-apps
+   caution. N alone, ⌘C, ⌘⇧4: refused with their reasons; the old shortcut stays.
+3. ⓧ: no shortcut; ⌃⌥N does nothing. Quit and reopen: the choice is kept.

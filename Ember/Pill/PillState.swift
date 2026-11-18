@@ -23,6 +23,8 @@ nonisolated enum PillEvent: Equatable {
     case fileDragExited
     /// The dragged files were dropped on the open panel, where the pointer now is.
     case fileDropped
+    /// The keyboard shortcut (Settings → General): opens the panel, or closes it if open.
+    case shortcutPressed
 }
 
 /// What the owner of a `PillModel` must do after an event.
@@ -96,6 +98,15 @@ nonisolated struct PillModel {
         case .fileDropped:
             isFileDragInside = false
             isPointerInside = true
+            return .cancelDelay
+
+        case .shortcutPressed:
+            // Opened from the keyboard, the pointer is elsewhere: no close delay starts, so
+            // it stays open until the shortcut, Esc, a click outside (the controller sends a
+            // close request) or the pointer coming and going. Closed, the pointer must enter
+            // again to reopen, as after a close request.
+            isOpen.toggle()
+            if !isOpen { isPointerInside = false }
             return .cancelDelay
         }
     }

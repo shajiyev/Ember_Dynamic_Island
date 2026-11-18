@@ -28,7 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let settings = AppSettings()
     let shelf = ShelfModel()
     let screenshots = ScreenshotWatcher()
-    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels,
+    /// The keyboard shortcut that opens and closes the panel (Settings → General).
+    lazy var panelHotKey = GlobalHotKey { [weak self] in self?.controller.shortcutPressed() }
+    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, hotKey: panelHotKey,
                                              notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
                                              showBatteryAlert: { [weak self] in self?.controller.show($0.exampleActivity) })
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).

@@ -3,6 +3,7 @@ import SwiftUI
 /// Settings → General: launch at login and how the panel opens.
 struct GeneralPage: View {
     @Bindable var settings: AppSettings
+    let hotKey: GlobalHotKey
     let notchWidth: CGFloat
     /// Read again each time the page appears: the user can change it in System Settings.
     @State private var loginStatus = LaunchAtLogin.status
@@ -31,6 +32,7 @@ struct GeneralPage: View {
                 DelayRow(item: .closeDelay, seconds: $settings.closeDelay)
                 SpeedRow(item: .openSpeed, speed: $settings.openSpeed)
                 SpeedRow(item: .closeSpeed, speed: $settings.closeSpeed)
+                ShortcutRecorder(settings: settings, hotKey: hotKey)
                 Picker(SettingsItem.opensOnTab.title, selection: $settings.opensOnTab) {
                     Text("Last tab (Recommended)").tag(PanelTab?.none)
                     Divider()
@@ -45,7 +47,7 @@ struct GeneralPage: View {
             } header: {
                 Text("Opening the panel")
             } footer: {
-                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. The speeds are how fast the panel grows and shrinks. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
+                Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. The speeds are how fast the panel grows and shrinks. The keyboard shortcut opens and closes it from anywhere; Esc or a click elsewhere also closes it. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
             }
             Section {
                 Picker(SettingsItem.lastingPriority.title, selection: $settings.lastingPriority) {

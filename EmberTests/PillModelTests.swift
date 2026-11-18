@@ -184,4 +184,36 @@ struct PillModelTests {
         model.handle(.closeDelayElapsed)
         #expect(model.state == .rest)
     }
+
+    @Test func theShortcutOpensThePanelWithThePointerElsewhereAndItStaysOpen() {
+        var model = PillModel()
+        model.handle(.activityChanged(true))
+        // Any pending delay is cancelled and no close delay starts, so nothing closes it.
+        #expect(model.handle(.shortcutPressed) == .cancelDelay)
+        #expect(model.state == .open)
+    }
+
+    @Test func theShortcutPressedAgainClosesThePanel() {
+        var model = PillModel()
+        model.handle(.shortcutPressed)
+        #expect(model.handle(.shortcutPressed) == .cancelDelay)
+        #expect(model.state == .rest)
+    }
+
+    @Test func thePanelOpenedByTheShortcutClosesAsUsualOnceThePointerComesAndGoes() {
+        var model = PillModel()
+        model.handle(.shortcutPressed)
+        model.handle(.pointerEntered)
+        #expect(model.handle(.pointerExited) == .startCloseDelay)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .rest)
+    }
+
+    @Test func theShortcutClosesAPanelOpenedByHoverToo() {
+        var model = PillModel()
+        model.handle(.pointerEntered)
+        model.handle(.openDelayElapsed)
+        model.handle(.shortcutPressed)
+        #expect(model.state == .rest)
+    }
 }

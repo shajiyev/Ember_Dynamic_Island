@@ -181,6 +181,13 @@
   - `ShelfPanelView.swift`, `ShelfDropFrame.swift`: the Shelf tab (AirDrop area and shelf).
     `ShelfItemInteraction.swift`: an item's AppKit side (clicks, menu, hover, drag source).
   - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.
+- `Ember/Shortcut/` — the keyboard shortcut that opens the panel. `KeyShortcut` (the key
+  and modifiers, the text shown, saving), `ShortcutCheck` (fine, not recommended or
+  refused, and why), `SystemShortcuts` (macOS's default shortcuts corrected by the Mac's
+  `com.apple.symbolichotkeys`), all pure; `GlobalHotKey`, the only Carbon
+  `RegisterEventHotKey` code (no permission needed). `PillController.shortcutPressed()`
+  opens or closes the panel; opened this way, Esc (a temporary hot key) and a click outside
+  (a global mouse monitor) close it.
 - `Ember/Settings/` — the Settings window (#0, #26a). (The menu bar menu, `PillMenu` in
   `EmberApp.swift`, has a Features section with the same switches.)
   - `AppSettings.swift`: hover, the two delays, the opening tab and the two tab cooldowns,
@@ -195,7 +202,8 @@
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
     the pages, the search tint, and the delay, speed, cooldown, strength, spread and fade
-    rows. `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
+    rows. `ShortcutRecorder.swift`: the keyboard shortcut's box, ⓧ, caution and refusal.
+    `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
     Custom popup (colour square, hue bar, hex field). `TabsPreview.swift`: the drawing of
     the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.

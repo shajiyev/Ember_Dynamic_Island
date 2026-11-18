@@ -8,6 +8,8 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let settings: AppSettings
     private let calendar: CalendarModel
     private let levels: LevelModel
+    /// The panel's keyboard shortcut, for the recorder (paused while recording; taken or not).
+    private let hotKey: GlobalHotKey
     /// The notch's width on the pill's display, read each time the window opens.
     private let notchWidth: () -> CGFloat?
     /// Plays a battery alert in the notch (Battery → Show an example).
@@ -15,11 +17,12 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let navigation = SettingsNavigation()
     private var window: NSWindow?
 
-    init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel, notchWidth: @escaping () -> CGFloat?,
+    init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel, hotKey: GlobalHotKey, notchWidth: @escaping () -> CGFloat?,
          showBatteryAlert: @escaping (BatteryAlert) -> Void) {
         self.settings = settings
         self.calendar = calendar
         self.levels = levels
+        self.hotKey = hotKey
         self.notchWidth = notchWidth
         self.showBatteryAlert = showBatteryAlert
         super.init()
@@ -39,7 +42,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         navigation.page = .general
         // Without a notched display, a 14" MacBook Pro's notch (185 pt) for the drawings.
         let hosting = NSHostingController(rootView: SettingsView(navigation: navigation, settings: settings,
-                                                                 calendar: calendar, levels: levels,
+                                                                 calendar: calendar, levels: levels, hotKey: hotKey,
                                                                  notchWidth: notchWidth() ?? 185,
                                                                  showBatteryAlert: showBatteryAlert))
         hosting.sceneBridgingOptions = [.title, .toolbars]

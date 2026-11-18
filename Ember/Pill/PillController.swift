@@ -78,6 +78,9 @@ final class PillController {
     @ObservationIgnored var onFileDragEntered: (() -> Void)?
     @ObservationIgnored private var model = PillModel()
     @ObservationIgnored private var pendingDelay: Task<Void, Never>?
+    /// While the shortcut has opened the panel: Esc and clicks outside close it.
+    @ObservationIgnored private lazy var escapeKey = GlobalHotKey { [weak self] in self?.send(.closeRequested) }
+    @ObservationIgnored private var clickOutside: Any?
     /// Called when the user has seen an activity that ends when seen: they hovered over or
     /// clicked the pill, or the panel was already open when it arrived.
     @ObservationIgnored var onActivitySeen: (() -> Void)?
@@ -117,11 +120,35 @@ final class PillController {
         }
         if model.state != state { previousState = state }
         state = model.state
+        if state != .open { stopWatchingForClose() }
         // A seen activity stays until the panel opens, so the pill goes straight from the
         // wings into the panel; if the pointer leaves first, it goes then.
         if state == .open || event == .pointerExited {
             clearSeenActivity()
         }
+    }
+
+    /// The keyboard shortcut was pressed: opens the panel, or closes it. Opened this way, the
+    /// pointer is elsewhere, so Esc and a click outside close it too, until it closes.
+    func shortcutPressed() {
+        let wasOpen = state == .open
+        send(.shortcutPressed)
+        if !wasOpen && state == .open { watchForClose() }
+    }
+
+    private func watchForClose() {
+        escapeKey.register(KeyShortcut(keyCode: 53, modifiers: []))   // Esc, taken only while open
+        // A global monitor sees clicks in other apps only, never on the panel itself.
+        clickOutside = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            MainActor.assumeIsolated { self?.send(.closeRequested) }
+        }
+    }
+
+    private func stopWatchingForClose() {
+        guard let clickOutside else { return }   // not opened by the shortcut
+        escapeKey.unregister()
+        NSEvent.removeMonitor(clickOutside)
+        self.clickOutside = nil
     }
 
     /// Shows a brief activity for its duration, over any ongoing one. A newer brief

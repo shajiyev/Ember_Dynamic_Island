@@ -19,7 +19,7 @@ what each one changes.
 | Page | Status |
 |---|---|
 | The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a); the menu's Features section 2026-11-18 |
-| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Width 2026-11-18. Planned: a keyboard shortcut to open the panel |
+| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Width 2026-11-18; the keyboard shortcut 2026-11-18 |
 | Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17 |
 | Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
 | Timer | Built 2026-11-15; Show the countdown in the notch 2026-11-18 |
@@ -230,10 +230,53 @@ top row's **minimum**, whichever is larger.
 - **Why not one "size" (scale) control:** the top row must line up with the real notch,
   which does not scale, and text would drop below macOS's normal sizes.
 
-### Planned: a keyboard shortcut to open the panel
+### Built 2026-11-18: the keyboard shortcut
 
-Asked for 2026-11-16; to be designed next after Glow. A shortcut the user records to open
-the panel, refusing combinations that clash with macOS's own shortcuts.
+```
+Keyboard shortcut     [ ⌃⌥N ]  ⓧ  ⚠️
+⚠️ <the reason, when the shortcut is not recommended>
+```
+
+| Setting | Default | What it does |
+|---|---|---|
+| Keyboard shortcut | ⌃⌥N | Pressed anywhere, opens the panel; pressed again, closes it. Clicking the box starts recording ("Type a shortcut…"); the keys pressed are checked and saved; Esc cancels. ⓧ clears it: no shortcut until one is recorded again. In the Opening the panel section. |
+
+**N for notch:** macOS does not use ⌃⌥N, nor do Rectangle or Magnet (⌃⌥E, "E for
+Ember", is Rectangle's); no ⌘, so it takes nothing from apps. Avoided: ⌥Space (ChatGPT,
+Raycast, Alfred), ⌃⌥Space (macOS: next keyboard language), ⌘Space and ⌃⌘Space.
+
+**Three kinds of shortcut:**
+1. **Fine:** saved, nothing shown.
+2. **Not recommended:** saved, with a caution sign beside the box and one line why:
+   - any shortcut with ⌘: "Shortcuts with ⌘ are used inside apps; this one stops working
+     in them while Ember has it.";
+   - one popular apps use (⌥Space, ⌥⌘Space…): "Apps such as Raycast, Alfred and ChatGPT
+     often use this shortcut.";
+   - one another app already holds (macOS refuses it to Ember): "Another app is using this
+     shortcut, so it does not open the panel."
+3. **Refused:** not saved; the box shakes, the reason shows for a few seconds, the old
+   shortcut stays:
+   - no ⌘, ⌃ or ⌥ (a key alone, or with ⇧ only): "Add ⌘, ⌃ or ⌥: keys alone are for
+     typing.";
+   - one everyone relies on (⌘C, ⌘V, ⌘X, ⌘Z, ⌘A, ⌘S, ⌘Q, ⌘W, ⌘N, ⌘T, ⌘O, ⌘P, ⌘F, ⌘H, ⌘M,
+     ⌘Tab, ⌘`, ⌘,, ⌘Space): "Apps everywhere use this shortcut.";
+   - one macOS has switched on on this Mac (Spotlight, screenshots, keyboard languages,
+     Mission Control, …), read from the Mac's own keyboard shortcuts
+     (`com.apple.symbolichotkeys`), so a shortcut the user changed there is known:
+     "macOS uses this shortcut."
+
+**After the shortcut opens the panel** (the pointer is elsewhere, so the usual closing
+cannot happen): it stays open until the shortcut is pressed again, Esc is pressed, a click
+lands outside it, or the pointer comes onto the panel and leaves (then as usual). It opens
+on the same tab as on hover. Esc is taken from other apps only while the panel is open this
+way.
+
+**How it works:** `KeyShortcut` (pure: the key and modifiers, the text shown, saving);
+`ShortcutCheck` (pure: fine, not recommended or refused, and why); `SystemShortcuts` (reads
+the Mac's enabled shortcuts; the reading is pure and tested); `GlobalHotKey` (the only
+Carbon `RegisterEventHotKey` code; says whether macOS gave the shortcut to Ember). No
+permission is needed: neither the shortcut nor the click outside needs Accessibility.
+Found by the search ("shortcut", "keyboard", "hotkey").
 
 ---
 

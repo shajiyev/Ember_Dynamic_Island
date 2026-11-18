@@ -9,6 +9,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case closeDelay
     case openSpeed
     case closeSpeed
+    case panelShortcut
     case opensOnTab
     case tabCooldown
     case lastingPriority
@@ -52,7 +53,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
 
     var page: SettingsPage {
         switch self {
-        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .opensOnTab, .tabCooldown,
+        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
              .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
@@ -77,6 +78,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .closeDelay: return "Close delay"
         case .openSpeed: return "Open speed"
         case .closeSpeed: return "Close speed"
+        case .panelShortcut: return "Keyboard shortcut"
         case .opensOnTab: return "Open the panel on"
         case .tabCooldown: return "Stay on the last tab for"
         case .lastingPriority: return "In the notch, show first"
@@ -121,6 +123,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .openDelay: return ["hover", "wait", "speed"]
         case .closeDelay: return ["wait", "speed"]
         case .openSpeed, .closeSpeed: return ["animation", "fast", "slow", "quick"]
+        case .panelShortcut: return ["hotkey", "key", "keys"]
         case .opensOnTab: return ["default tab", "last tab", "start"]
         case .tabCooldown: return ["cooldown", "seconds", "return"]
         case .lastingPriority: return ["priority", "song", "both"]

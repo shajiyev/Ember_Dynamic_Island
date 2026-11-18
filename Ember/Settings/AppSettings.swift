@@ -32,6 +32,8 @@ final class AppSettings {
     var glowOn: Bool { didSet { save(glowOn, Key.glowOn) } }
     /// Ember's glow colour, saved as its hex code.
     var glowColor: Color { didSet { save(GlowColors.hex(of: glowColor), Key.glowColor) } }
+    /// The keyboard shortcut that opens and closes the panel; nil when the user cleared it.
+    var panelShortcut: KeyShortcut? { didSet { save(panelShortcut?.saved ?? "", Key.panelShortcut) } }
     var openSpeed: Double {
         didSet {
             let clamped = Self.clampedSpeed(openSpeed)
@@ -182,6 +184,7 @@ final class AppSettings {
         static let openDelay = "openDelay"
         static let closeDelay = "closeDelay"
         static let openSpeed = "openSpeed"
+        static let panelShortcut = "panelShortcut"
         static let closeSpeed = "closeSpeed"
         static let glowOn = "glowOn"
         static let glowColor = "glowColor"
@@ -231,6 +234,9 @@ final class AppSettings {
         opensOnHover = bool(Key.opensOnHover)
         openDelay = delay(Key.openDelay, PillTiming().openDelay)
         closeDelay = delay(Key.closeDelay, PillTiming().closeDelay)
+        // Never saved: ⌃⌥N. Saved empty: cleared by the user.
+        panelShortcut = defaults.string(forKey: Key.panelShortcut).map { $0.isEmpty ? nil : KeyShortcut(saved: $0) ?? .standard }
+            ?? .standard
         openSpeed = Self.clampedSpeed(defaults.object(forKey: Key.openSpeed) as? Double ?? PillTiming().openSpeed)
         closeSpeed = Self.clampedSpeed(defaults.object(forKey: Key.closeSpeed) as? Double ?? PillTiming().closeSpeed)
         glowOn = bool(Key.glowOn)

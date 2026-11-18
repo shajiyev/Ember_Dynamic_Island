@@ -105,4 +105,8 @@ struct SettingsSearchTests {
     @Test func theWidthIsFound() {
         #expect(SettingsSearch.matches("wider") == [.panelWidth])
     }
+
+    @Test func theKeyboardShortcutIsFound() {
+        #expect(SettingsSearch.matches("hotkey") == [.panelShortcut])
+    }
 }
