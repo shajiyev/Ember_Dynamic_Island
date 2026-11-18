@@ -8,7 +8,7 @@ in those features' plans. The map below finds every page's work.
 | Page | Where it was planned |
 |---|---|
 | The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear) |
-| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Part 5 (Tabs, the width rule); Part 7 (Live activities); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
+| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Part 5 (Tabs, the width rule); Part 7 (Live activities); Part 8 (Width); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
 | Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, strength, spread and fade); Part 4 (the Glow switch, the glow colour) |
 | Music | Part 1 (Tasks 4, 6); Show shuffle, Show repeat: docs/plans/panel-layouts.md |
 | Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6); Part 6 (the countdown in the notch, Show an example) |
@@ -2508,3 +2508,28 @@ Added 2026-11-18. Spec: General, "Live activities". Built inline.
   titles; `LastingChoice.choose(…, priority:)`; `AppSettings.lastingPriority`;
   `showLastingActivity()` passes it; a Live activities section in General with a radio
   group. CLEAN, TEST and BUILD.
+
+---
+
+# Part 8: General — the Width slider
+
+Added 2026-11-18. Spec: General, "The panel's width". Built inline, test-first; the user
+checks every tab at the narrowest and widest widths.
+
+**Interfaces:** `PanelLayout.widthRange` (Compact 420…560, Wide 560…760);
+`PanelLayout.lowestWidth(sideRoom:notchWidth:)` = max(range's lower bound, notch + 2 × room);
+`AppSettings.compactWidth`, `wideWidth` (saved, held to each layout's range),
+`panelWidth` (the chosen layout's), `panelSize` (that width × `PanelLayout.height`);
+`SettingsItem.panelWidth` ("Width"); `WidthRow`.
+
+- [x] **Tests first.** `PanelLayoutTests`: the ranges, each holding the layout's own
+  width; `lowestWidth` is the range's lower bound for today's tabs and the row's minimum
+  when that is larger. `AppSettingsTests`: widths 460 and 620 by default, each layout keeps
+  its own, held to its range, saved; `panelSize` follows the chosen layout.
+  `SettingsSearchTests`: "wider" finds Width.
+- [x] **Implement.** `applySettings()` hands `panelSize` to the pill; `TabsPreview` uses
+  `panelWidth`; `WidthRow` under the layout cards: a slider from `lowestWidth` to the
+  range's top in 10 pt steps, and the real width (`max(chosen, row minimum)`) beside it;
+  the cards' lines lose their sizes ("Stacked", "Cover beside").
+- [x] **CLEAN, TEST and BUILD**; the user checks Music, Timer, Calendar and Shelf at both
+  ends of both ranges.

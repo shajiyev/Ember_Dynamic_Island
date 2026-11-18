@@ -292,4 +292,22 @@ struct AppSettingsTests {
         settings.lastingPriority = .music
         #expect(AppSettings(defaults: defaults).lastingPriority == .music)
     }
+
+    @Test func eachLayoutKeepsItsOwnWidthHeldToItsRange() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.compactWidth == 460 && settings.wideWidth == 620)
+        #expect(settings.panelSize == CGSize(width: 460, height: PanelLayout.height))
+        settings.panelWidth = 520
+        settings.panelLayout = .wide
+        #expect(settings.panelWidth == 620)
+        settings.panelWidth = 900
+        #expect(settings.wideWidth == 760)
+        settings.compactWidth = 100
+        #expect(settings.compactWidth == 420)
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.compactWidth == 420 && relaunched.wideWidth == 760)
+        #expect(relaunched.panelSize == CGSize(width: 760, height: PanelLayout.height))
+    }
 }

@@ -8,7 +8,7 @@ extension AppDelegate {
         controller.opensOnHover = settings.opensOnHover
         controller.glow = settings.glow
         nowPlaying.defaultGlow = settings.glowColor
-        controller.openSize = settings.panelLayout.size
+        controller.openSize = settings.panelSize
         controller.openSideRoom = settings.openSideRoom
         controller.acceptsFileDrags = settings.shelfOn
         panelSelection.defaultTab = settings.opensOnTab

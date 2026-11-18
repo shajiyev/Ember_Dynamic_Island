@@ -148,6 +148,21 @@ final class AppSettings {
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
     var panelLayout: PanelLayout { didSet { save(panelLayout.rawValue, Key.panelLayout) } }
+    /// Each layout's own width (Settings → General → Width), held to its range.
+    var compactWidth: Double {
+        didSet {
+            let clamped = Self.clamped(compactWidth, to: PanelLayout.compact)
+            guard clamped == compactWidth else { compactWidth = clamped; return }
+            save(compactWidth, Key.compactWidth)
+        }
+    }
+    var wideWidth: Double {
+        didSet {
+            let clamped = Self.clamped(wideWidth, to: PanelLayout.wide)
+            guard clamped == wideWidth else { wideWidth = clamped; return }
+            save(wideWidth, Key.wideWidth)
+        }
+    }
     /// Where each tab sits in the panel's top row (Settings → General → Tabs).
     var tabArrangement: TabArrangement {
         didSet {
@@ -200,6 +215,8 @@ final class AppSettings {
         static let batteryInPanelOn = "batteryInPanelOn"
         static let panelLayout = "panelLayout"
         static let tabsLeft = "tabsLeft"
+        static let compactWidth = "compactWidth"
+        static let wideWidth = "wideWidth"
         static let tabsRight = "tabsRight"
         static let showsShuffle = "showsShuffle"
         static let showsRepeat = "showsRepeat"
@@ -256,6 +273,10 @@ final class AppSettings {
         batteryAlertsOn = bool(Key.batteryAlertsOn)
         batteryInPanelOn = bool(Key.batteryInPanelOn)
         panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
+        compactWidth = Self.clamped(defaults.object(forKey: Key.compactWidth) as? Double ?? PanelLayout.compact.size.width,
+                                    to: .compact)
+        wideWidth = Self.clamped(defaults.object(forKey: Key.wideWidth) as? Double ?? PanelLayout.wide.size.width,
+                                 to: .wide)
         tabArrangement = TabArrangement(left: defaults.stringArray(forKey: Key.tabsLeft) ?? [],
                                         right: defaults.stringArray(forKey: Key.tabsRight) ?? [])
         showsShuffle = defaults.object(forKey: Key.showsShuffle) as? Bool ?? false
@@ -288,6 +309,15 @@ final class AppSettings {
                             panelFade: panelGlowFade)
     }
 
+    /// The chosen layout's width.
+    var panelWidth: Double {
+        get { panelLayout == .compact ? compactWidth : wideWidth }
+        set { if panelLayout == .compact { compactWidth = newValue } else { wideWidth = newValue } }
+    }
+
+    /// The open panel's size before the width rule: the chosen layout's width, Ember's height.
+    var panelSize: CGSize { CGSize(width: panelWidth, height: PanelLayout.height) }
+
     /// The panel's tabs that are on, left side then right side.
     var shownTabs: [PanelTab] { tabArrangement.all.filter(isOn) }
 
@@ -304,6 +334,10 @@ final class AppSettings {
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {
         min(max(delay, delayRange.lowerBound), delayRange.upperBound)
+    }
+
+    private static func clamped(_ width: Double, to layout: PanelLayout) -> Double {
+        min(max(width, layout.widthRange.lowerBound), layout.widthRange.upperBound)
     }
 
     private static func clampedSpeed(_ speed: Double) -> Double {

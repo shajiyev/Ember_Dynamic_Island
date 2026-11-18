@@ -13,6 +13,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case tabCooldown
     case lastingPriority
     case panelLayout
+    case panelWidth
     case tabArrangement
     case glowOn
     case glowColor
@@ -52,7 +53,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var page: SettingsPage {
         switch self {
         case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .opensOnTab, .tabCooldown,
-             .lastingPriority, .panelLayout, .tabArrangement:
+             .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow,
@@ -80,6 +81,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .tabCooldown: return "Stay on the last tab for"
         case .lastingPriority: return "In the notch, show first"
         case .panelLayout: return "Panel layout"
+        case .panelWidth: return "Width"
         case .tabArrangement: return "Tabs"
         case .glowOn: return "Glow"
         case .glowColor: return "Glow colour"
@@ -123,6 +125,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .tabCooldown: return ["cooldown", "seconds", "return"]
         case .lastingPriority: return ["priority", "song", "both"]
         case .panelLayout: return ["compact", "wide", "size", "panel"]
+        case .panelWidth: return ["wider", "narrower", "size"]
         case .tabArrangement: return ["arrange", "drag", "top row", "side"]
         case .glowOn: return ["no glow", "all glows", "off"]
         case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white"]

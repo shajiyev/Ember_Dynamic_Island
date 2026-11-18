@@ -41,7 +41,7 @@ Mocked up while designing (`.superpowers/brainstorm/`, not committed).
 
 - **Settings → General → Panel layout:** one clickable preview card per layout, side by
   side: a small drawing of the layout (drawn in the app, not a picture), its name, and one
-  line under it ("460 pt, stacked" / "620 pt, cover beside"). Clicking a card chooses it;
+  line under it ("Stacked" / "Cover beside"; until 2026-11-18 "460 pt, stacked" / "620 pt, cover beside", before the Width slider). Clicking a card chooses it;
   the chosen card has an Ember rose outline. Found by the search ("layout", "compact",
   "wide", "size").
 - **Settings → Music:** two new switches under Music, **Show shuffle** and **Show repeat**,

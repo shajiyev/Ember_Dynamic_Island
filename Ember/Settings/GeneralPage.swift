@@ -71,10 +71,11 @@ struct GeneralPage: View {
             Section {
                 LayoutCards(selection: $settings.panelLayout)
                     .settingsItem(.panelLayout)
+                WidthRow(settings: settings, notchWidth: notchWidth)
             } header: {
                 Text(SettingsItem.panelLayout.title)
             } footer: {
-                Text("Every tab uses the chosen layout. A change shows the next time the panel opens.")
+                Text("Every tab uses the chosen layout and width; each layout keeps its own width. The panel never gets narrower than its tabs need: with more tabs on, the slider starts higher. A change shows the next time the panel opens.")
             }
         }
         .onAppear { loginStatus = LaunchAtLogin.status }
@@ -144,5 +145,32 @@ struct GlowPage: View {
             }
             .disabled(!settings.glowOn)
         }
+    }
+}
+
+/// General → Width: the chosen layout's width, from as narrow as the layout and the tabs
+/// allow up to the layout's widest, in 10 pt steps, with the panel's real width beside it.
+private struct WidthRow: View {
+    @Bindable var settings: AppSettings
+    let notchWidth: CGFloat
+
+    var body: some View {
+        let lowest = settings.panelLayout.lowestWidth(sideRoom: settings.openSideRoom, notchWidth: notchWidth)
+        let widest = settings.panelLayout.widthRange.upperBound
+        let shown = max(settings.panelWidth, lowest)
+        LabeledContent(SettingsItem.panelWidth.title) {
+            HStack(spacing: 8) {
+                if lowest < widest {
+                    Slider(value: Binding(get: { shown }, set: { settings.panelWidth = ($0 / 10).rounded() * 10 }),
+                           in: lowest...widest)
+                        .frame(width: 160)
+                }
+                Text("\(Int(shown)) pt")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+                    .frame(width: 48, alignment: .trailing)
+            }
+        }
+        .settingsItem(.panelWidth)
     }
 }

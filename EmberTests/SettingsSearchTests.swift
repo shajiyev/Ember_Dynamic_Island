@@ -101,4 +101,8 @@ struct SettingsSearchTests {
     @Test func theLiveActivityPriorityIsFound() {
         #expect(SettingsSearch.matches("priority") == [.lastingPriority])
     }
+
+    @Test func theWidthIsFound() {
+        #expect(SettingsSearch.matches("wider") == [.panelWidth])
+    }
 }

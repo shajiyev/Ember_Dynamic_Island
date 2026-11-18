@@ -152,9 +152,15 @@
   a timer and a song are both going (the timer, the song, or the last tab used).
   Tests pass; all checked on screen by the user on macOS 26.6.2. Plan
   docs/plans/settings.md, parts 5–7; docs/plans/panel-layouts.md, part 2.
+- **Done:** Settings → General → Width: a slider under the layout cards (Compact 420–560 pt,
+  Wide 560–760 pt; each layout keeps its own width), never narrower than the tabs need.
+  Tests pass; every tab checked at both ends by the user on macOS 26.6.2. Plan
+  docs/plans/settings.md, part 8.
+- **Watching:** once, the shelf items showed their Show in Finder and remove buttons
+  without the pointer on them; it went away and could not be reproduced (2026-11-18). If
+  it comes back: which items, and what happened just before.
 - **In progress:** nothing in the app.
-- **Next in Settings:** the Width slider (designed: docs/specs/settings.md, General); then a
-  Features section in the menu bar menu; a keyboard shortcut to open the panel that refuses
+- **Next in Settings:** a Features section in the menu bar menu; a keyboard shortcut to open the panel that refuses
   combinations macOS already uses (asked 2026-11-16). Onboarding (#0) must include a Glow
   step: glow or not, and its colour, with the notch changing live.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and

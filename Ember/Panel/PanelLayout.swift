@@ -26,8 +26,8 @@ nonisolated enum PanelLayout: String, CaseIterable {
     /// The line under the layout's card in Settings.
     var summary: String {
         switch self {
-        case .compact: return "460 pt, stacked"
-        case .wide: return "620 pt, cover beside"
+        case .compact: return "Stacked"
+        case .wide: return "Cover beside"
         }
     }
 
@@ -37,6 +37,21 @@ nonisolated enum PanelLayout: String, CaseIterable {
         case .compact: return 176
         case .wide: return 190
         }
+    }
+
+    /// The widths the user can choose for this layout (Settings → General → Width); `size`'s
+    /// width is the default. Tuned by eye.
+    var widthRange: ClosedRange<CGFloat> {
+        switch self {
+        case .compact: return 420...560
+        case .wide: return 560...760
+        }
+    }
+
+    /// The Width slider's lowest point: the range's, or what the top row needs beside a
+    /// notch `notchWidth` wide (`TopRowLayout.sideRoom`), whichever is larger.
+    func lowestWidth(sideRoom: CGFloat, notchWidth: CGFloat) -> CGFloat {
+        max(widthRange.lowerBound, notchWidth + 2 * sideRoom)
     }
 
     /// The open panel's height in both layouts: the lowest that does not feel pressed,

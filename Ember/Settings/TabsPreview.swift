@@ -20,7 +20,7 @@ struct TabsPreview: View {
         let arrangement = settings.tabArrangement
         let room = TopRowLayout.sideRoom(left: arrangement.left.count, right: arrangement.right.count,
                                          showsBattery: settings.batteryInPanelOn)
-        let width = max(settings.panelLayout.size.width, notchWidth + 2 * room)
+        let width = max(settings.panelSize.width, notchWidth + 2 * room)
         let row = TopRowLayout.fitting(left: arrangement.left.count, right: arrangement.right.count,
                                        showsBattery: settings.batteryInPanelOn,
                                        panelWidth: width, notchWidth: notchWidth)

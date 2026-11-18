@@ -153,7 +153,8 @@
   (light grey, white under the pointer, all one width), shared by the Music and Timer
   tabs so they always look alike and sit in the same place.
 - `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 184, the default) and
-  Wide (620 × 184), each one's name, the month grid's width, and where the compact
+  Wide (620 × 184), each one's width range for Settings → General → Width (the width itself
+  is `AppSettings.compactWidth` / `wideWidth`), each one's name, the month grid's width, and where the compact
   buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
 - `Ember/Panel/TabArrangement.swift` — `TabArrangement`: which side of the notch each tab
   sits on and in which order (Settings → General → Tabs), read from saved names and moved

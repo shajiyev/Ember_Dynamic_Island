@@ -1076,3 +1076,11 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   the song, or the last tab used (the default, the behaviour before). Alerts always come
   first. **Why:** asked by the user; a list ordered by dragging can replace the choice if
   more lasting activities come.
+
+## 2026-11-18 — The Width slider
+- **Decision:** Settings → General → Width, a slider under the layout cards: Compact
+  420–560 pt, Wide 560–760 pt, in 10 pt steps, each layout keeping its own width (saved
+  as `compactWidth`, `wideWidth`). Its lowest point is the layout's or the top row's
+  minimum, whichever is larger; the real width shows beside it. The cards' lines lose
+  their sizes ("Stacked", "Cover beside"). **Why:** the two fixed sizes were not enough;
+  the ranges keep every tab's content intact (checked by the user at both ends).
