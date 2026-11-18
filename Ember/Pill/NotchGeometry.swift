@@ -20,7 +20,8 @@ nonisolated enum PillMetrics {
 /// Rectangles use AppKit screen coordinates: origin at the bottom left, y pointing up.
 nonisolated struct NotchGeometry: Equatable {
     let notchRect: CGRect
-    /// The open panel's size: the layout chosen in Settings, handed over by the app.
+    /// The open panel's size: the size handed over by the app, made wider when its content
+    /// needs more room beside the notch (`openSideRoom`).
     let openSize: CGSize
 
     /// - Parameters:
@@ -28,8 +29,11 @@ nonisolated struct NotchGeometry: Equatable {
     ///   - topLeftArea: the usable strip left of the notch (`NSScreen.auxiliaryTopLeftArea`).
     ///   - topRightArea: the usable strip right of the notch (`NSScreen.auxiliaryTopRightArea`).
     ///   - openSize: the open panel's size.
+    ///   - openSideRoom: the room the open panel's content needs on each side of the notch,
+    ///     from the panel's edge; the panel is at least the notch plus twice this wide.
     /// Returns nil for a screen without a notch.
-    init?(screenFrame: CGRect, topLeftArea: CGRect?, topRightArea: CGRect?, openSize: CGSize) {
+    init?(screenFrame: CGRect, topLeftArea: CGRect?, topRightArea: CGRect?, openSize: CGSize,
+          openSideRoom: CGFloat = 0) {
         guard let topLeftArea, let topRightArea else { return nil }
         let width = screenFrame.width - topLeftArea.width - topRightArea.width
         let height = topLeftArea.height
@@ -42,7 +46,7 @@ nonisolated struct NotchGeometry: Equatable {
             width: width,
             height: height
         )
-        self.openSize = openSize
+        self.openSize = CGSize(width: max(openSize.width, width + 2 * openSideRoom), height: openSize.height)
     }
 
     /// The frame of the pill's shape in the given state, with the level strip below it

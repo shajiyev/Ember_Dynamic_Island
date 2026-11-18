@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The gear at the far right of the panel's top row. It closes the panel and opens Settings
-/// on General. Drawn like the tab icons on the left, so the row stays balanced.
+/// on General. Drawn like the tab icons, so the row stays balanced.
 struct PanelSettingsButton: View {
     /// The tab icons' size, so the gear matches them.
     let size: PanelTabSize
@@ -17,7 +17,7 @@ struct PanelSettingsButton: View {
             Image(systemName: "gearshape.fill")
                 .font(.system(size: size.symbolSize, weight: .semibold))
                 .frame(width: size.iconFrame, height: size.iconFrame)
-                .padding(.horizontal, 7)
+                .padding(.horizontal, 3)
                 .padding(.vertical, 3)
                 .foregroundStyle(.white.opacity(isHovered ? 1 : 0.55))
                 .contentShape(Capsule())

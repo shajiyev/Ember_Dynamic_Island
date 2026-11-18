@@ -254,4 +254,42 @@ struct AppSettingsTests {
         let relaunched = AppSettings(defaults: defaults)
         #expect(relaunched.pillTiming == PillTiming(openDelay: 0.1, closeDelay: 0.2, openSpeed: 2, closeSpeed: 0.5))
     }
+
+    @Test func theTabArrangementIsSavedAndListsTheTabsThatAreOn() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.tabArrangement == .standard)
+        settings.tabArrangement = settings.tabArrangement.moving(.music, to: .right, before: nil)
+        settings.timerOn = false
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.tabArrangement.right == [.music])
+        #expect(relaunched.shownTabs == [.shelf, .calendar, .music])
+        #expect(relaunched.shownTabs(on: .left) == [.shelf, .calendar])
+        #expect(relaunched.shownTabs(on: .right) == [.music])
+    }
+
+    @Test func theRoomBesideTheNotchFollowsTheTabsThatAreOnAndTheBattery() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 4, right: 0, showsBattery: true))
+        settings.musicOn = false
+        settings.batteryInPanelOn = false
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 3, right: 0, showsBattery: false))
+    }
+
+    @Test func theCountdownShowsInTheNotchByDefaultAndTheChoiceIsSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.timerInWings)
+        settings.timerInWings = false
+        #expect(!AppSettings(defaults: defaults).timerInWings)
+    }
+
+    @Test func theLastTabUsedComesFirstByDefaultAndTheChoiceIsSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.lastingPriority == .lastTab)
+        settings.lastingPriority = .music
+        #expect(AppSettings(defaults: defaults).lastingPriority == .music)
+    }
 }

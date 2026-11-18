@@ -11,7 +11,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case closeSpeed
     case opensOnTab
     case tabCooldown
+    case lastingPriority
     case panelLayout
+    case tabArrangement
     case glowOn
     case glowColor
     case alwaysOnGlow
@@ -34,6 +36,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case showsShuffle
     case showsRepeat
     case timer
+    case timerInWings
     case calendar
     case calendarEvents
     case reminders
@@ -42,23 +45,24 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case shelfCooldown
     case batteryAlerts
     case batteryInPanel
+    case batteryExample
     case levels
     case shareFeedback
 
     var page: SettingsPage {
         switch self {
         case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .opensOnTab, .tabCooldown,
-             .panelLayout:
+             .lastingPriority, .panelLayout, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow,
              .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
         case .music, .showsShuffle, .showsRepeat: return .music
-        case .timer: return .timer
+        case .timer, .timerInWings: return .timer
         case .calendar, .calendarEvents, .reminders: return .calendar
         case .shelf, .screenshotsToShelf, .shelfCooldown: return .shelf
-        case .batteryAlerts, .batteryInPanel: return .battery
+        case .batteryAlerts, .batteryInPanel, .batteryExample: return .battery
         case .levels: return .levels
         case .shareFeedback: return .feedback
         }
@@ -74,7 +78,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .closeSpeed: return "Close speed"
         case .opensOnTab: return "Open the panel on"
         case .tabCooldown: return "Stay on the last tab for"
+        case .lastingPriority: return "In the notch, show first"
         case .panelLayout: return "Panel layout"
+        case .tabArrangement: return "Tabs"
         case .glowOn: return "Glow"
         case .glowColor: return "Glow colour"
         case .alwaysOnGlow: return "Resting glow"
@@ -91,6 +97,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .showsShuffle: return "Show shuffle"
         case .showsRepeat: return "Show repeat"
         case .timer: return "Timer"
+        case .timerInWings: return "Show the countdown in the notch"
         case .calendar: return "Calendar"
         case .calendarEvents: return CalendarLook.switchTitle(.events)
         case .reminders: return CalendarLook.switchTitle(.reminders)
@@ -99,6 +106,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .shelfCooldown: return "Stay on the Shelf tab for"
         case .batteryAlerts: return "Battery alerts"
         case .batteryInPanel: return "Battery in the panel"
+        case .batteryExample: return "Show an example"
         case .levels: return LevelLook.switchTitle
         case .shareFeedback: return "Share Feedback"
         }
@@ -113,7 +121,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .openSpeed, .closeSpeed: return ["animation", "fast", "slow", "quick"]
         case .opensOnTab: return ["default tab", "last tab", "start"]
         case .tabCooldown: return ["cooldown", "seconds", "return"]
+        case .lastingPriority: return ["priority", "song", "both"]
         case .panelLayout: return ["compact", "wide", "size", "panel"]
+        case .tabArrangement: return ["arrange", "drag", "top row", "side"]
         case .glowOn: return ["no glow", "all glows", "off"]
         case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white"]
         case .alwaysOnGlow: return ["always-on", "light", "rest", "notch"]
@@ -132,6 +142,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .showsShuffle: return ["random", "order"]
         case .showsRepeat: return ["loop", "again"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
+        case .timerInWings: return ["wings", "hide", "running"]
         case .calendar: return ["heads-up", "month", "date"]
         case .calendarEvents: return ["permission", "privacy"]
         case .reminders: return ["to-do", "permission", "privacy"]
@@ -140,6 +151,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .shelfCooldown: return ["cooldown", "seconds"]
         case .batteryAlerts: return ["charging", "low battery", "plug"]
         case .batteryInPanel: return ["percentage", "charge"]
+        case .batteryExample: return ["demo", "try", "preview"]
         case .levels: return ["volume", "brightness", "sound", "mute", "Accessibility"]
         case .shareFeedback: return ["bug", "report", "idea", "contact"]
         }

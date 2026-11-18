@@ -1359,3 +1359,23 @@ The controller dispatches the whole-feature review (all of Tasks 1–7 against t
 - `docs/roadmap.md`: Done line for the panel layouts; Next stays the file shelf (#15), plus the website note: the pill demo still shows the Wide panel.
 
 - [ ] **Step 4: Checkpoint** — secrets check (`git diff | grep -i -E "users/|api[_-]?key|token|secret"`), then the controller gives the user one commit command.
+
+---
+
+# Part 2: A lower height
+
+Added 2026-11-17 (spec: "Two layouts", Height). Built inline.
+
+### Task 10: Tune the height by eye, then fix it
+
+- [x] **Step 1: A temporary slider (development builds only).** `AppSettings.tuningPanelHeight`
+  (`#if DEBUG`, not saved, 200 to start) and a "Panel height (tuning)" slider, 120–240 pt in
+  2 pt steps with its value, in a last section of Settings → General; `applySettings()`
+  uses it for `controller.openSize`'s height. BUILD.
+- [x] **Step 2: The user lowers it,** opening the panel on every tab (Music playing and
+  not, Timer stopped and running, Calendar with lists, Shelf with files), and names the
+  height.
+- [x] **Step 3: Fix it.** A failing test in `PanelLayoutTests` (or a new one) for both
+  layouts' new height; set it in `PanelLayout.size`; remove the slider and
+  `tuningPanelHeight`. Adjust any tab that no longer fits (each fix noted in the spec).
+  CLEAN, TEST and BUILD; the user checks every tab again.

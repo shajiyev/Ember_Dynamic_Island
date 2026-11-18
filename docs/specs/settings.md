@@ -19,13 +19,13 @@ what each one changes.
 | Page | Status |
 |---|---|
 | The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a) |
-| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Planned: a keyboard shortcut to open the panel; a custom panel size |
+| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Designed: the Width slider. Planned: a keyboard shortcut to open the panel |
 | Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17 |
 | Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
-| Timer | Built 2026-11-15 |
+| Timer | Built 2026-11-15; Show the countdown in the notch 2026-11-18 |
 | Calendar | Built 2026-11-15 |
 | Shelf | Built 2026-11-16 (#15) |
-| Battery | Built 2026-11-15 |
+| Battery | Built 2026-11-15; Show an example 2026-11-18 |
 | Volume & Brightness | Built 2026-11-15 |
 | Feedback | Built 2026-11-15; the destination is not chosen yet |
 
@@ -85,6 +85,11 @@ extra words; adding a setting to a page means adding one case there.
 Settings… (⌘,) · Share Feedback (greyed out until a destination is chosen) · Quit Ember.
 The "No display with a notch found" note and the Debug-only items stay.
 
+**Planned (2026-11-17, after the Width slider):** a **Features** section at the top of the
+menu, one item per feature with a tick when it is on; choosing one turns it on or off,
+like its switch in Settings. Keep awake (#18) and Stats (#21) will live in the menu bar
+too, each designed with its feature.
+
 ### Settings from the panel
 
 - A **Settings button** (a gear, drawn like the tab icons, "Settings" on hover) always sits
@@ -126,14 +131,91 @@ speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpe
 slider moves in powers of two, so the middle is 1. A number in seconds would read
 backwards (smaller is faster), so the slider shows only Slow and Fast.
 
+### Live activities
+
+Added 2026-11-18. Which lasting activity the notch shows when a timer and a song are both
+going.
+
+| Setting | Default | What it does |
+|---|---|---|
+| In the notch, show first | The last tab you used | **The timer:** the countdown while it runs; the song only in the Music tab. **The song:** the song while it plays; the countdown only in the Timer tab. **The last tab you used:** the song if the panel was last closed on the Music tab, otherwise the countdown (the behaviour before this setting). Radio buttons. |
+
+- **Alerts always come first,** whatever is chosen: Time's up, battery alerts and the
+  calendar heads-up show over either.
+- With **Timer → Show the countdown in the notch** off, the countdown never shows, so this
+  choice does not matter.
+- If more lasting activities come, this can become a list ordered by dragging, like the
+  tabs; with two, a choice is clearer.
+
 ### Panel layout
 
 | Setting | Default | What it does |
 |---|---|---|
 | Panel layout | Compact | One clickable card per layout, each with a small drawing of its Music tab, its name and size; the chosen card has an Ember rose outline. **Compact** (460 pt) or **Wide** (the original look). Every tab uses it; a change shows the next time the panel opens. Details: docs/specs/panel-layouts.md. |
 
-**Planned (asked 2026-11-17, not designed):** a custom panel size the user sets, because
-the two layouts are not a good enough choice.
+### Built 2026-11-17: Tabs
+
+Where each tab sits in the panel's top row, on either side of the notch, arranged by
+dragging. Designed with the tabs to come in mind: the panel will hold **8 tabs** (Music,
+Shelf, Timer, Calendar; later Clipboard history #16, Color picker #17, Webcam mirror #19,
+Claude Code usage #24). Keep awake (#18) and Stats (#21) go to the menu bar instead.
+
+```
+ ┌───────────────────────────────────────────────────────────┐
+ │  ♪  ⬚  ⏱  📅    ▐▀▀▀▀▀▀▀ notch ▀▀▀▀▀▀▀▌            [73] ⚙  │
+ └───────────────────────────────────────────────────────────┘
+   drag a tab to reorder it, or across the notch to the other side
+```
+
+| Setting | Default | What it does |
+|---|---|---|
+| Tabs | Music, Shelf, Timer, Calendar on the left; nothing on the right | A drawing of the top of the open panel, at its real proportions (this Mac's notch, the panel's width, the same icon sizes and gaps as the panel, the real battery and the gear) and scaled down, so every tab sits exactly where it will in the panel: left tabs from the left edge, right tabs against the battery and gear. Dragging a tab onto another puts it just before that one; dropping it in the empty part of a side puts it at that side's inner end, by the notch. A tab whose feature is off is drawn faded and keeps its place (its room is drawn too). The battery and the gear do not move. The panel follows at once. |
+
+- **New tabs** (a feature built later, or one missing from what was saved) start at the
+  end of the side with more room.
+- Saved as two lists of tab names (`tabsLeft`, `tabsRight`); names Ember no longer knows,
+  and repeats, are dropped.
+- The tab order everywhere else (the opening tab's menu, the first tab when the remembered
+  one is off) is left side then right side.
+
+**The top row** (2026-11-17):
+- **Smaller tabs:** each tab is its icon plus 3 pt on each side (was 4), so 20 pt with the
+  regular 14 pt icon and 22 pt with the large 16 pt one; 2 pt between tabs. The gear is
+  drawn the same way. The row starts 24 pt in from the panel's edge (was 26), 4 pt clear
+  of the notch.
+- **Five tabs fit on a side** at 460 pt on a 185 pt notch (5 × 20 + 4 × 2 = 108 of
+  109.5 pt).
+- **Large or regular icons:** large when every side fits them at the panel's width,
+  regular otherwise.
+- **The battery** shows its percentage inside a battery shape, like the iPhone's (about
+  34 pt; was the number beside the icon, about 54 pt), filled to its level, with a bolt
+  while charging.
+- **The right side** holds its tabs, then the battery, then the gear, 4 pt apart.
+
+### Designed 2026-11-17, not built: the panel's width
+
+| Setting | Default | What it does |
+|---|---|---|
+| Width | the layout's own width (460 or 620 pt) | A slider under the layout cards: how wide the open panel is. Its lowest point is the top row's minimum (below), its highest the layout's limit (roughly Compact 560 pt, Wide 760 pt, to tune by eye). The cards still decide the arrangement (stacked, or cover beside); the slider only its width. The bar, the text and the gaps stretch or shrink; the cover, the ring, the buttons and the month grid keep their size. Each layout keeps its own width. |
+
+**The width rule** (decided and built 2026-11-17 with Tabs, before the slider): the
+panel is as wide as the user's width (until the slider exists, the layout's width) or the
+top row's **minimum**, whichever is larger.
+- **The minimum** is what the top row needs on this Mac's real notch: for each side, its
+  tabs that are on (regular size), and on the right also the battery (when on) and the
+  gear; the fuller side decides. `minimum = notch + 2 × (24 + 4 + fuller side)`.
+- Turning features on can make the panel grow, equally on both sides of the notch;
+  turning them off brings it back to the user's width, which is never overwritten.
+  Nothing is blocked or hidden for lack of room.
+- Examples on a 185 pt notch: today's four tabs and the battery need 413 pt (the panel
+  stays 460); five on the left, 457 pt; five on the left and three on the right with the
+  battery, 493 pt. The worst case, eight tabs and the battery with More Space (a notch of
+  about 220 pt), is about 530 pt, well inside any screen.
+- **Why only the width:** the height is fixed by Ember at 184 pt
+  (docs/specs/panel-layouts.md, "Two layouts"), so every tab is sure to fit; a user-set
+  height would need every tab to work at any height.
+- **Why not one "size" (scale) control:** the top row must line up with the real notch,
+  which does not scale, and text would drop below macOS's normal sizes.
 
 ### Planned: a keyboard shortcut to open the panel
 
@@ -290,6 +372,7 @@ Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 | Setting | Default | What it does |
 |---|---|---|
 | Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
+| Show the countdown in the notch | on | (2026-11-18) Off: a running or paused timer stays out of the wings and is seen only in the Timer tab; a playing song keeps the wings instead. "Time's up" still shows in the wings, with its sound: it is the alert that the timer finished. Greyed out while Timer is off. |
 
 Details: docs/specs/timers.md.
 
@@ -328,6 +411,12 @@ docs/specs/file-shelf.md.
 |---|---|---|
 | Battery alerts | on | Alerts in the wings when the charger is plugged in or out, and at 20% and 10%. |
 | Battery in the panel | on | The percentage at the top right of the open panel. |
+
+**Show an example** (2026-11-18): a menu button right under Battery alerts with the four
+alerts, Plugged in, Unplugged, Low (20%) and Very low (10%); choosing one plays that alert
+in the notch, as it really looks, so the user sees what the alerts are. It works while
+Battery alerts is off too; it changes nothing. (The same four were a development-only menu
+item.)
 
 With both off, Ember stops listening to the battery. Details: docs/specs/battery.md.
 

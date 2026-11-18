@@ -27,7 +27,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let settings = AppSettings()
     let shelf = ShelfModel()
     let screenshots = ScreenshotWatcher()
-    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels)
+    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels,
+                                             notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
+                                             showBatteryAlert: { [weak self] in self?.controller.show($0.exampleActivity) })
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
@@ -85,7 +87,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func showLastingActivity() {
         let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
-                                         musicTabChosen: panelSelection.tab == .music)
+                                         musicTabChosen: panelSelection.tab == .music,
+                                         timerInWings: settings.timerInWings,
+                                         priority: settings.lastingPriority)
         controller.setOngoing(shown)
         panelSelection.openingTab = shown == nil ? nil : shown == musicActivity ? .music : .timer
     }
@@ -121,10 +125,9 @@ struct PillMenu: View {
         Divider()
         #if DEBUG
         Menu("Simulate Battery Alert") {
-            Button("Plugged In") { simulate(.pluggedIn, at: 73) }
-            Button("Unplugged") { simulate(.unplugged, at: 73) }
-            Button("Low") { simulate(.low, at: 20) }
-            Button("Very Low") { simulate(.veryLow, at: 10) }
+            ForEach(BatteryAlert.allCases, id: \.self) { alert in
+                Button(alert.title) { controller.show(alert.exampleActivity) }
+            }
         }
         Button("Simulate Volume Change") {
             controller.showLevel(LevelLook.readout(volume: VolumeState(level: 0.62, isMuted: false)))
@@ -135,12 +138,4 @@ struct PillMenu: View {
             NSApplication.shared.terminate(nil)
         }
     }
-
-    #if DEBUG
-    /// Development aid: shows a battery alert without plugging or draining anything.
-    private func simulate(_ alert: BatteryAlert, at percentage: Int) {
-        let reading = BatteryReading(percentage: percentage, isPluggedIn: alert == .pluggedIn)
-        controller.show(alert.liveActivity(for: reading))
-    }
-    #endif
 }

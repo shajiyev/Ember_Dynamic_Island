@@ -76,4 +76,15 @@ struct NotchGeometryTests {
     @Test func levelAddsAStripBelowTheOpenPanel() throws {
         #expect(try geometry().rect(for: .open, showsLevel: true) == CGRect(x: 446, y: 750, width: 620, height: 232))
     }
+
+    @Test func theOpenPanelIsAtLeastWideEnoughForTheTopRowAndStaysCentred() throws {
+        let geometry = try #require(NotchGeometry(screenFrame: builtIn, topLeftArea: left, topRightArea: right,
+                                                  openSize: CGSize(width: 460, height: 184), openSideRoom: 154))
+        let open = geometry.rect(for: .open)
+        #expect(open.width == 493)
+        #expect(open.midX == geometry.notchRect.midX)
+        let roomy = try #require(NotchGeometry(screenFrame: builtIn, topLeftArea: left, topRightArea: right,
+                                               openSize: CGSize(width: 620, height: 184), openSideRoom: 154))
+        #expect(roomy.rect(for: .open).width == 620)
+    }
 }

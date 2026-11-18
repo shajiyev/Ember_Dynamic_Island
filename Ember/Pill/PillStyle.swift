@@ -48,6 +48,17 @@ nonisolated struct PillStyle: Equatable {
         .asymmetric(insertion: AnyTransition(.blurReplace).animation(.smooth(duration: 0.3).delay(0.1)),
                     removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
     }
+    /// The wings when the panel closes onto them: they start `spread` further out on each
+    /// side, at the open panel's edges, and come in with the shrinking shape (the same
+    /// spring), fading in as they come. They leave like `contentTransition`.
+    @MainActor static func wingsFromPanel(spread: CGFloat, timing: PillTiming) -> AnyTransition {
+        let closing = animation(from: .open, to: .active, timing: timing)
+        let comingIn = AnyTransition.modifier(active: WingsSpread(spread: spread), identity: WingsSpread(spread: 0))
+            .combined(with: .opacity)
+            .animation(closing)
+        return .asymmetric(insertion: comingIn,
+                           removal: AnyTransition(.blurReplace).animation(.smooth(duration: 0.15)))
+    }
     /// The panel's content appears and leaves like `contentTransition`, at the user's speeds.
     @MainActor static func panelTransition(timing: PillTiming) -> AnyTransition {
         let open = timing.openSpeed, close = timing.closeSpeed
@@ -73,5 +84,19 @@ nonisolated struct PillStyle: Equatable {
             return PillStyle(topCornerRadius: 19, bottomCornerRadius: 24, glowOpacity: 0.8, glowRadius: 10,
                              glowFade: 0.15, levelStripMargin: 29)
         }
+    }
+}
+
+/// Moves the two wings `spread` further apart, one each way (`PillStyle.wingsFromPanel`).
+nonisolated private struct WingsSpread: ViewModifier, Animatable {
+    var spread: CGFloat
+
+    var animatableData: CGFloat {
+        get { spread }
+        set { spread = newValue }
+    }
+
+    func body(content: Content) -> some View {
+        content.padding(.horizontal, -spread)
     }
 }

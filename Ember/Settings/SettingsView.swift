@@ -15,6 +15,9 @@ struct SettingsView: View {
     let settings: AppSettings
     let calendar: CalendarModel
     let levels: LevelModel
+    /// The notch's width, for drawings of the panel.
+    let notchWidth: CGFloat
+    let showBatteryAlert: (BatteryAlert) -> Void
     @State private var searchText = ""
 
     var body: some View {
@@ -63,13 +66,13 @@ struct SettingsView: View {
     @ViewBuilder
     private func detail(for page: SettingsPage) -> some View {
         switch page {
-        case .general: GeneralPage(settings: settings)
+        case .general: GeneralPage(settings: settings, notchWidth: notchWidth)
         case .glow: GlowPage(settings: settings)
         case .music: MusicPage(settings: settings)
         case .timer: TimerPage(settings: settings)
         case .calendar: CalendarPage(settings: settings, calendar: calendar)
         case .shelf: ShelfPage(settings: settings)
-        case .battery: BatteryPage(settings: settings)
+        case .battery: BatteryPage(settings: settings, showAlert: showBatteryAlert)
         case .levels: LevelsPage(levels: levels)
         case .feedback: FeedbackPage()
         }

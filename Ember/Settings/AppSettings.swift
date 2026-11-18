@@ -119,6 +119,10 @@ final class AppSettings {
     }
     var musicOn: Bool { didSet { save(musicOn, Key.musicOn) } }
     var timerOn: Bool { didSet { save(timerOn, Key.timerOn) } }
+    /// A running or paused timer shows in the wings ("Time's up" always does).
+    var timerInWings: Bool { didSet { save(timerInWings, Key.timerInWings) } }
+    /// Which lasting activity the notch shows first when a timer and a song are both going.
+    var lastingPriority: LastingPriority { didSet { save(lastingPriority.rawValue, Key.lastingPriority) } }
     var calendarOn: Bool { didSet { save(calendarOn, Key.calendarOn) } }
     var shelfOn: Bool { didSet { save(shelfOn, Key.shelfOn) } }
     /// The tab the panel always opens on; nil opens it on the last tab (the tab of what the
@@ -144,6 +148,13 @@ final class AppSettings {
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
     var panelLayout: PanelLayout { didSet { save(panelLayout.rawValue, Key.panelLayout) } }
+    /// Where each tab sits in the panel's top row (Settings → General → Tabs).
+    var tabArrangement: TabArrangement {
+        didSet {
+            defaults.set(tabArrangement.left.map(\.rawValue), forKey: Key.tabsLeft)
+            save(tabArrangement.right.map(\.rawValue), Key.tabsRight)
+        }
+    }
     var showsShuffle: Bool { didSet { save(showsShuffle, Key.showsShuffle) } }
     var showsRepeat: Bool { didSet { save(showsRepeat, Key.showsRepeat) } }
 
@@ -177,6 +188,8 @@ final class AppSettings {
         static let panelGlowSpread = "panelGlowSpread"
         static let musicOn = "musicOn"
         static let timerOn = "timerOn"
+        static let timerInWings = "timerInWings"
+        static let lastingPriority = "lastingPriority"
         static let calendarOn = "calendarOn"
         static let shelfOn = "shelfOn"
         static let opensOnTab = "opensOnTab"
@@ -186,6 +199,8 @@ final class AppSettings {
         static let batteryAlertsOn = "batteryAlertsOn"
         static let batteryInPanelOn = "batteryInPanelOn"
         static let panelLayout = "panelLayout"
+        static let tabsLeft = "tabsLeft"
+        static let tabsRight = "tabsRight"
         static let showsShuffle = "showsShuffle"
         static let showsRepeat = "showsRepeat"
     }
@@ -230,6 +245,8 @@ final class AppSettings {
         panelGlowFade = fade(Key.panelGlowFade, GlowSettings().panelFade)
         musicOn = bool(Key.musicOn)
         timerOn = bool(Key.timerOn)
+        timerInWings = bool(Key.timerInWings)
+        lastingPriority = defaults.string(forKey: Key.lastingPriority).flatMap(LastingPriority.init(rawValue:)) ?? .lastTab
         calendarOn = bool(Key.calendarOn)
         shelfOn = bool(Key.shelfOn)
         opensOnTab = defaults.string(forKey: Key.opensOnTab).flatMap(PanelTab.init(rawValue:))
@@ -239,6 +256,8 @@ final class AppSettings {
         batteryAlertsOn = bool(Key.batteryAlertsOn)
         batteryInPanelOn = bool(Key.batteryInPanelOn)
         panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
+        tabArrangement = TabArrangement(left: defaults.stringArray(forKey: Key.tabsLeft) ?? [],
+                                        right: defaults.stringArray(forKey: Key.tabsRight) ?? [])
         showsShuffle = defaults.object(forKey: Key.showsShuffle) as? Bool ?? false
         showsRepeat = defaults.object(forKey: Key.showsRepeat) as? Bool ?? false
     }
@@ -269,8 +288,19 @@ final class AppSettings {
                             panelFade: panelGlowFade)
     }
 
-    /// The panel's tabs that are on, in the tab row's order.
-    var shownTabs: [PanelTab] { PanelTab.allCases.filter(isOn) }
+    /// The panel's tabs that are on, left side then right side.
+    var shownTabs: [PanelTab] { tabArrangement.all.filter(isOn) }
+
+    /// The tabs that are on, on one side of the notch, in order.
+    func shownTabs(on side: TabSide) -> [PanelTab] {
+        (side == .left ? tabArrangement.left : tabArrangement.right).filter(isOn)
+    }
+
+    /// The room the top row needs on each side of the notch, for the pill (the width rule).
+    var openSideRoom: CGFloat {
+        TopRowLayout.sideRoom(left: shownTabs(on: .left).count, right: shownTabs(on: .right).count,
+                              showsBattery: batteryInPanelOn)
+    }
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {
         min(max(delay, delayRange.lowerBound), delayRange.upperBound)

@@ -15,28 +15,31 @@ struct PanelView: View {
     let openSettings: (SettingsPage) -> Void
     @Environment(\.notchHeight) private var notchHeight
     @Environment(\.notchWidth) private var notchWidth
+    @Environment(\.panelWidth) private var panelWidth
 
     var body: some View {
         // Shelf while it is held: during a file drag (until the panel closes) and for a few
         // seconds after a drop or a screenshot.
         let shownTab = selection.visibleTab(among: settings.shownTabs)
-        let tabSpace = PanelTabSize.space(panelWidth: settings.panelLayout.size.width, notchWidth: notchWidth)
-        let tabLayout = PanelTabLayout.fitting(tabCount: settings.shownTabs.count, in: tabSpace)
+        let leftTabs = settings.shownTabs(on: .left)
+        let rightTabs = settings.shownTabs(on: .right)
+        let row = TopRowLayout.fitting(left: leftTabs.count, right: rightTabs.count,
+                                       showsBattery: settings.batteryInPanelOn,
+                                       panelWidth: panelWidth, notchWidth: notchWidth)
+        let tabSelection = Binding(get: { shownTab ?? .music }, set: { selection.choose($0) })
         VStack(spacing: 0) {
-            HStack {
-                PanelTabRow(tabs: settings.shownTabs,
-                            selection: Binding(get: { shownTab ?? .music }, set: { selection.choose($0) }),
-                            layout: tabLayout)
-                    // Closer to the panel's edge (`PanelTabSize.rowInset`), so all four tabs
-                    // fit left of the notch in the compact panel; still clear of the top
-                    // corner's curve.
-                    .padding(.leading, -6)
-                Spacer()
+            HStack(spacing: TopRowLayout.groupGap) {
+                PanelTabRow(tabs: leftTabs, selection: tabSelection, size: row.size, spacing: row.leftSpacing)
+                Spacer(minLength: 0)
+                PanelTabRow(tabs: rightTabs, selection: tabSelection, size: row.size, spacing: row.rightSpacing)
                 if settings.batteryInPanelOn, let reading = battery.reading {
                     BatteryStatusView(reading: reading)
                 }
-                PanelSettingsButton(size: tabLayout.size) { openSettings(.general) }
+                PanelSettingsButton(size: row.size) { openSettings(.general) }
             }
+            // Closer to the panel's edges than the content (`TopRowLayout.rowInset`), still
+            // clear of the top corners' curve.
+            .padding(.horizontal, TopRowLayout.rowInset - 32)
             .frame(height: notchHeight)
 
             Group {

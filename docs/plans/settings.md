@@ -8,10 +8,10 @@ in those features' plans. The map below finds every page's work.
 | Page | Where it was planned |
 |---|---|
 | The window, search, menu | Part 1 (Tasks 1, 5, 7, 8); Part 2 (the panel's gear) |
-| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
+| General | Part 1 (Tasks 1, 2, 6); Part 4, Task 16c (open and close speeds); Part 5 (Tabs, the width rule); Part 7 (Live activities); Panel layout: docs/plans/panel-layouts.md; Open the panel on, Stay on the last tab: docs/plans/file-shelf.md |
 | Glow | Part 1 (Tasks 1, 2, 6); Part 3 (a switch per glow, strength, spread and fade); Part 4 (the Glow switch, the glow colour) |
 | Music | Part 1 (Tasks 4, 6); Show shuffle, Show repeat: docs/plans/panel-layouts.md |
-| Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6) |
+| Timer, Calendar, Battery, Volume & Brightness | Part 1 (Tasks 3, 4, 6); Part 6 (the countdown in the notch, Show an example) |
 | Shelf | docs/plans/file-shelf.md |
 | Feedback | Part 1 (Tasks 6, 7) |
 
@@ -2362,3 +2362,149 @@ Added 2026-11-17 (spec: General, Opening the panel).
 5. General: Open speed and Close speed at Fast and Slow change how fast the panel opens
    and closes; the wings appearing are unchanged.
 Then the user tunes the six colours if they want; checkpoint and one commit.
+
+---
+
+# Part 5: General — Tabs and the width rule
+
+Added 2026-11-17. Spec: General, "Tabs" and "The panel's width" (the width rule) in
+docs/specs/settings.md. Built inline, test-first; one commit after the user's check on
+screen. Same constraints as Part 3.
+
+**Goal:** the top row's tabs sit on either side of the notch, in the order the user drags
+them to in Settings; the tabs are smaller (five fit on a side); the battery shows its
+percentage inside its icon; the panel grows by itself when the row needs more room.
+
+**Architecture:** `TabArrangement` (pure) holds the two sides and moves a tab. `TopRowLayout`
+(pure) measures the row: the room it needs beside the notch, and the icon size and gaps at
+a given width. The app hands the pill that room (`PillController.openSideRoom`);
+`NotchGeometry` makes the open panel at least `notch + 2 × room` wide, so the pill still
+knows nothing of tabs. `PillView` passes the panel's real width to its content
+(`\.panelWidth`).
+
+| File | Change |
+|---|---|
+| `Ember/Panel/TabArrangement.swift` | New: `TabSide`, `TabArrangement` (sides, `standard`, normalising, `moving`) |
+| `Ember/Panel/PanelTabs.swift` | `TopRowLayout` replaces `PanelTabLayout`; tabs and gear icon + 6; inset 24 |
+| `Ember/Pill/NotchGeometry.swift`, `PillController.swift`, `PillView.swift` | `openSideRoom`; `\.panelWidth` |
+| `Ember/Panel/PanelView.swift`, `PanelSettingsButton.swift` | Two sides; the right side's tabs before the battery and gear |
+| `Ember/Battery/BatteryStatusView.swift` | The percentage inside a battery shape |
+| `Ember/Settings/AppSettings.swift`, `AppDelegate+Settings.swift` | `tabArrangement` saved; `shownTabs(on:)`; `openSideRoom` |
+| `Ember/Settings/TabsPreview.swift`, `GeneralPage.swift`, `SettingsSearch.swift` | The Tabs drawing with dragging; a Tabs item |
+| Tests | `TabArrangementTests` (new); `PanelTabsTests` (`TopRowLayoutTests`), `NotchGeometryTests`, `AppSettingsTests`, `SettingsSearchTests` |
+
+### Task 18: TabArrangement
+
+**Interfaces:** `nonisolated enum TabSide { case left, right }`;
+`nonisolated struct TabArrangement: Equatable { left: [PanelTab]; right: [PanelTab]; static let standard; init(left: [String], right: [String]); var all: [PanelTab]; func side(of: PanelTab) -> TabSide; func moving(_ tab: PanelTab, to side: TabSide, before: PanelTab?) -> TabArrangement }`.
+
+- [x] Tests first: `standard` is Music, Shelf, Timer, Calendar on the left; moving within a
+  side, across the notch, before a tab and to a side's end; moving a tab before itself
+  changes nothing; reading names drops unknown names and repeats, and a missing tab goes to
+  the end of the side with more room (the right side counts the battery and gear's room).
+  TEST (compile errors), implement, TEST.
+
+### Task 19: TopRowLayout and the width rule
+
+**Interfaces:** `PanelTabSize.tabWidth = iconFrame + 6`; `TopRowLayout.rowInset = 24`,
+`notchClearance = 4`, `batteryWidth = 34`, `groupGap = 4`;
+`static func sideRoom(left: Int, right: Int, showsBattery: Bool) -> CGFloat` (inset +
+clearance + the fuller side at the regular size and 2 pt gaps);
+`static func fitting(left: Int, right: Int, showsBattery: Bool, panelWidth: CGFloat, notchWidth: CGFloat) -> TopRowLayout`
+(`size`, `leftSpacing`, `rightSpacing`); `NotchGeometry(…, openSideRoom: CGFloat = 0)`;
+`PillController.openSideRoom`; `AppSettings.openSideRoom`.
+
+- [x] Tests first. `TopRowLayoutTests` (replacing `PanelTabLayoutTests`): on a 185 pt notch
+  the minimum (`notch + 2 × sideRoom`) is 413 pt for four tabs and the battery, 457 pt for
+  five on the left, 493 pt for five left and three right with the battery; four large tabs
+  fit at 460 pt, More Space (220 pt) gives regular; fewer tabs can be large where four
+  cannot; gaps between 2 and 6 pt; at any width from the minimum up, neither side reaches
+  the notch (170–225 pt notches, 1–5 tabs a side, battery on and off).
+  `NotchGeometryTests`: the open panel is `max(openSize.width, notch + 2 × room)` wide and
+  stays centred. `AppSettingsTests`: `openSideRoom` follows the tabs that are on and the
+  battery switch. TEST, implement, TEST.
+
+### Task 20: The top row in the panel
+
+- [x] `PanelView` lays out: left tabs · Spacer · right tabs · battery · gear, from 24 pt in
+  at each side, with `TopRowLayout.fitting` at the real width (`\.panelWidth`). The tab row
+  draws a given list of tabs. `BatteryStatusView`: a 30 × 14 pt rounded shape (white at 45%)
+  filled to the level (white; green while charging; red at 20% and below), a small nub, the
+  number inside in black, 10 pt bold, with a bolt before it while charging; VoiceOver
+  "Battery 73%" (", charging"). `applySettings()` sets `controller.openSideRoom`.
+  CLEAN, TEST and BUILD.
+
+### Task 21: The Tabs drawing in Settings
+
+- [x] Test first (`SettingsSearchTests`): "tabs" and "arrange" find the Tabs item. Then
+  `TabsPreview`: a dark strip with the notch in the middle, each side's tabs (faded when
+  off), the battery and gear drawn fixed; each tab `.draggable` by name; dropping on a tab
+  moves the dragged one before it, on a side's empty part to its end
+  (`TabArrangement.moving`). A Tabs section in General. CLEAN, TEST and BUILD.
+
+### Task 21b: A realistic drawing, and the wings closing with the panel
+
+Added 2026-11-17 after the user's first check: the drawing put right-side tabs by the
+notch where the panel puts them against the battery; the user asked for a more realistic
+drawing. Also asked: the wings should come in with the closing panel instead of appearing
+in place (docs/specs/pill.md, Opening and closing).
+
+- [x] `TabsPreview` draws the panel's top at real size with `TopRowLayout` and scales it to
+  400 pt; empty parts of a side take a dropped tab to its inner end. The Settings window
+  gets the notch's width when it opens (185 pt without a notched display).
+- [x] `PillStyle.wingsFromPanel(spread:timing:)`: closing onto an activity, the wings start
+  half the open and active widths' difference further out and come in on the closing
+  spring, fading in. Visual only; checked on screen. CLEAN, TEST and BUILD.
+
+### Task 22: Checks on screen and checkpoint
+
+1. The panel's top row: four smaller tabs on the left, the battery with its number inside,
+   the gear; all clickable as before.
+2. Settings → General → Tabs: dragging a tab reorders it; across the notch moves it to the
+   right, before the battery; the panel follows at once.
+3. Moving tabs so one side is fuller than fits: the panel grows equally on both sides;
+   moving them back, it returns to 460 pt.
+4. Turning a feature off fades its tab in the drawing and removes it from the panel; on
+   again, it is back in its place.
+5. Charging, and at 20% or below: the battery's colours.
+
+---
+
+# Part 6: Timer and Battery — the countdown in the notch, and an example alert
+
+Added 2026-11-18. Spec: Timer and Battery in docs/specs/settings.md. Built inline.
+
+### Task 23: Show the countdown in the notch
+
+- [x] Tests first. `LastingChoiceTests`: with `timerInWings` false, a running timer gives
+  way to music, or to nothing; "Time's up" still wins. `AppSettingsTests`: `timerInWings`
+  on by default, saved. `SettingsSearchTests`: "countdown" finds it, with Timer.
+- [x] `LastingChoice.choose(timer:music:musicTabChosen:timerInWings:)`;
+  `AppSettings.timerInWings`; `showLastingActivity()` passes it and `applySettings()`
+  calls it; the switch on the Timer page, greyed out while Timer is off.
+
+### Task 24: Show an example (Battery)
+
+- [x] Test first: `BatteryAlert.exampleReading` gives each alert's reading (73% plugged in,
+  73% on battery, 20%, 10%); `exampleActivity` is the alert with it. Then a `Menu("Show an example")` on the
+  Battery page; the Settings window gets a `showBatteryAlert` closure from the app, which
+  calls `controller.show`. The development menu's four items use the same examples.
+- [x] CLEAN, TEST and BUILD; the user checks both on screen.
+
+---
+
+# Part 7: General — Live activities priority
+
+Added 2026-11-18. Spec: General, "Live activities". Built inline.
+
+### Task 25: In the notch, show first
+
+- [x] Tests first. `LastingChoiceTests`: with priority `.timer` the timer wins even on the
+  Music tab; `.music` the song wins, and the timer shows when no song plays; `.lastTab`
+  behaves as before; Time's up wins over every priority. `AppSettingsTests`:
+  `lastingPriority` is `.lastTab` by default and saved. `SettingsSearchTests`: "priority"
+  finds it.
+- [x] `nonisolated enum LastingPriority: String, CaseIterable { timer, music, lastTab }` with
+  titles; `LastingChoice.choose(…, priority:)`; `AppSettings.lastingPriority`;
+  `showLastingActivity()` passes it; a Live activities section in General with a radio
+  group. CLEAN, TEST and BUILD.

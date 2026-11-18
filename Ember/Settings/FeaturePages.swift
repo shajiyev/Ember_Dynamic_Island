@@ -40,6 +40,13 @@ struct TimerPage: View {
             } footer: {
                 Text("The Timer tab and the countdown in the wings. Turning it off cancels a running timer.")
             }
+            Section {
+                Toggle(SettingsItem.timerInWings.title, isOn: $settings.timerInWings)
+                    .settingsItem(.timerInWings)
+            } footer: {
+                Text("Off, a running timer is seen only in the Timer tab, and a playing song keeps the notch. \"Time's up\" still shows there when the timer finishes.")
+            }
+            .disabled(!settings.timerOn)
         }
     }
 }
@@ -112,12 +119,23 @@ struct ShelfPage: View {
 /// Settings → Battery.
 struct BatteryPage: View {
     @Bindable var settings: AppSettings
+    /// Plays an alert in the notch, as an example.
+    let showAlert: (BatteryAlert) -> Void
 
     var body: some View {
         Form {
             Section {
                 Toggle(SettingsItem.batteryAlerts.title, isOn: $settings.batteryAlertsOn)
                     .settingsItem(.batteryAlerts)
+                LabeledContent("See what each alert looks like in the notch.") {
+                    Menu(SettingsItem.batteryExample.title) {
+                        ForEach(BatteryAlert.allCases, id: \.self) { alert in
+                            Button(alert.title) { showAlert(alert) }
+                        }
+                    }
+                    .fixedSize()
+                }
+                .settingsItem(.batteryExample)
                 Toggle(SettingsItem.batteryInPanel.title, isOn: $settings.batteryInPanelOn)
                     .settingsItem(.batteryInPanel)
             } footer: {

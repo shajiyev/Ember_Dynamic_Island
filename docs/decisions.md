@@ -1047,3 +1047,32 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   seconds would read backwards (smaller is faster).
 - **Noted for later:** a custom panel size (the two layouts are not a good enough choice),
   and onboarding's Glow step (glow or not, and its colour, with the notch changing live).
+
+## 2026-11-17/18 — The panel's height, the tabs on both sides, and three small settings
+- **Decision:** the open panel is 184 pt tall in both layouts (was 200), chosen by the user
+  by eye with a temporary slider; users do not set the height. **Why:** lower felt
+  pressed; a user-set height would need every tab to work at any height.
+- **Decision:** the panel will hold 8 tabs (Music, Shelf, Timer, Calendar; later Clipboard,
+  Color picker, Webcam mirror, Claude Code usage). Keep awake and Stats go to the menu bar.
+  **Why:** the top row beside the notch is the real limit on the panel's size.
+- **Decision:** tabs sit on both sides of the notch, arranged by dragging in a drawing of
+  the panel's top in Settings → General → Tabs; the drawing uses the panel's own layout
+  rules, so a tab sits where it will in the panel. Tabs are smaller (icon + 3 pt each
+  side, so five fit on a side at 460 pt), and the battery's percentage sits inside its
+  icon (about 34 pt instead of 54).
+- **Decision (the width rule):** the panel is at least as wide as the top row needs on the
+  real notch (the fuller side decides) and grows equally on both sides when tabs are
+  turned on; turning them off brings back the user's width. Nothing is blocked or hidden
+  for lack of room. **Why:** the user's idea; simpler than blocking switches or hiding the
+  battery, which were considered. The worst case (8 tabs, the battery, More Space) is
+  about 530 pt. The pill knows only the room needed beside the notch
+  (`PillController.openSideRoom`), not the tabs.
+- **Decision:** closing onto a live activity, the wings come in with the shrinking panel
+  (same spring, fading in) instead of appearing in place. **Why:** asked by the user.
+- **Decision:** Settings → Timer → Show the countdown in the notch (on): off, a running
+  timer is seen only in its tab; Time's up still shows, as the alert. Settings → Battery →
+  Show an example plays each of the four alerts. Settings → General → Live activities:
+  which lasting activity comes first when a timer and a song are both going — the timer,
+  the song, or the last tab used (the default, the behaviour before). Alerts always come
+  first. **Why:** asked by the user; a list ordered by dragging can replace the choice if
+  more lasting activities come.

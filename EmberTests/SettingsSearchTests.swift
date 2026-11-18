@@ -18,10 +18,12 @@ struct SettingsSearchTests {
     }
 
     @Test func pagesKeepTheirSidebarOrder() {
-        // "Show shuffle", "Show repeat", "Show Calendar Events", "Show Reminders",
-        // "Show Volume & Brightness in the Pill".
-        #expect(SettingsSearch.matches("show") == [.showsShuffle, .showsRepeat, .calendarEvents, .reminders, .levels])
-        #expect(SettingsSearch.pages(for: "show") == [.music, .calendar, .levels])
+        // "In the notch, show first", "Show shuffle", "Show repeat", "Show the countdown in
+        // the notch", "Show Calendar Events", "Show Reminders", "Show an example", "Show
+        // Volume & Brightness in the Pill".
+        #expect(SettingsSearch.matches("show") == [.lastingPriority, .showsShuffle, .showsRepeat, .timerInWings,
+                                                   .calendarEvents, .reminders, .batteryExample, .levels])
+        #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels])
     }
 
     @Test func theLayoutAndThePlayerButtonsAreFound() {
@@ -84,5 +86,19 @@ struct SettingsSearchTests {
 
     @Test func theSpeedsAreFound() {
         #expect(SettingsSearch.matches("animation") == [.openSpeed, .closeSpeed])
+    }
+
+    @Test func theTabsArrangementIsFound() {
+        #expect(SettingsSearch.matches("tabs") == [.tabArrangement])
+        #expect(SettingsSearch.matches("arrange") == [.tabArrangement])
+    }
+
+    @Test func theCountdownSwitchAndTheBatteryExampleAreFound() {
+        #expect(SettingsSearch.matches("countdown") == [.timer, .timerInWings])
+        #expect(SettingsSearch.matches("demo") == [.batteryExample])
+    }
+
+    @Test func theLiveActivityPriorityIsFound() {
+        #expect(SettingsSearch.matches("priority") == [.lastingPriority])
     }
 }

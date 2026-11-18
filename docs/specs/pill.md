@@ -53,6 +53,10 @@ place so they are easy to tune.
 - The pointer leaves the open panel: it closes 0.3 seconds later. Coming back within that
   time keeps it open.
 - After closing, the pill returns to active if there is still activity, otherwise to rest.
+  Closing onto an activity (2026-11-17), the wings start at the open panel's edges and come
+  in with the shrinking shape, on the same spring, fading in as they come; before, they
+  appeared in place while the panel shrank onto them. An activity that starts at rest still
+  appears in place.
 - State changes animate with a spring.
 
 The two delays are fixed at 0.2 and 0.3 seconds in this milestone. They will become user

@@ -24,10 +24,14 @@ Mocked up while designing (`.superpowers/brainstorm/`, not committed).
 
 | Layout | Panel size | Look |
 |---|---|---|
-| **Compact** (default) | 460 × 200 pt | Rows stacked: picture and text, then a full-width bar, then the controls |
-| **Wide** | 620 × 200 pt | Today's look, unchanged: a large picture beside the text, bar and controls |
+| **Compact** (default) | 460 × 184 pt | Rows stacked: picture and text, then a full-width bar, then the controls |
+| **Wide** | 620 × 184 pt | Today's look, unchanged: a large picture beside the text, bar and controls |
 
 - All tabs share the chosen size, so switching tabs never changes the panel's shape.
+- **Height: 184 pt** (2026-11-17; was 200), the same for both layouts: the lowest that
+  does not feel pressed, chosen by the user by eye with a temporary slider in a development
+  build (removed afterwards); users do not change it. Every tab fits as it is. Settings → General gets a Width slider instead (docs/specs/settings.md, "The panel's
+  width").
 - The top row is the same in both: tab icons on the left, the notch, then the battery and
   the Settings gear on the right.
 - A new choice applies the next time the panel opens.

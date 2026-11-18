@@ -73,4 +73,13 @@ struct BatteryAlertsTests {
             symbolName: "battery.0percent", symbolColor: BatteryAlert.red, text: "10%",
             glowColor: BatteryAlert.red, duration: 5, feature: .battery))
     }
+
+    @Test func eachAlertHasAnExampleToShowInSettings() {
+        #expect(BatteryAlert.allCases == [.pluggedIn, .unplugged, .low, .veryLow])
+        #expect(BatteryAlert.pluggedIn.exampleReading == BatteryReading(percentage: 73, isPluggedIn: true))
+        #expect(BatteryAlert.unplugged.exampleReading == BatteryReading(percentage: 73, isPluggedIn: false))
+        #expect(BatteryAlert.low.exampleReading == BatteryReading(percentage: 20, isPluggedIn: false))
+        #expect(BatteryAlert.veryLow.exampleReading == BatteryReading(percentage: 10, isPluggedIn: false))
+        #expect(BatteryAlert.allCases.map(\.title) == ["Plugged in", "Unplugged", "Low (20%)", "Very low (10%)"])
+    }
 }

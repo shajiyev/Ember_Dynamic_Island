@@ -124,70 +124,95 @@ final class PanelSelection {
     }
 }
 
-/// The tab row's two icon sizes.
+/// The tab icons' two sizes.
 nonisolated enum PanelTabSize: Equatable {
     case regular
     case large
 
-    /// Where the row starts, in from the panel's edge (`PanelView`'s padding, less 6).
-    static let rowInset: CGFloat = 26
-    /// The gap kept between the row and the notch.
-    static let notchClearance: CGFloat = 4
-
     var symbolSize: CGFloat { self == .large ? 13 : 11 }
     var iconFrame: CGFloat { self == .large ? 16 : 14 }
-    /// One tab: the icon with 4 pt on each side.
-    var tabWidth: CGFloat { iconFrame + 8 }
-
-    /// The room for the row in a panel `panelWidth` wide, centred on a notch `notchWidth` wide.
-    static func space(panelWidth: CGFloat, notchWidth: CGFloat) -> CGFloat {
-        (panelWidth - notchWidth) / 2 - rowInset - notchClearance
-    }
+    /// One tab, or the gear: the icon with 3 pt on each side.
+    var tabWidth: CGFloat { iconFrame + 6 }
 }
 
-/// How the tab row is drawn left of the notch: large icons when they fit with at least
-/// `minSpacing` between them, regular ones otherwise (a wider notch in points, as with the
-/// display set to More Space). The room left over widens the gaps, up to `maxSpacing`.
-nonisolated struct PanelTabLayout: Equatable {
+/// How the panel's top row is laid out: tabs on both sides of the notch, and on the right
+/// also the battery and the gear (Settings → General → Tabs). Large icons when every side
+/// fits them, regular ones otherwise; the room left over widens the gaps between tabs, from
+/// `minSpacing` to `maxSpacing`. The panel is never narrower than the row needs (`sideRoom`).
+nonisolated struct TopRowLayout: Equatable {
     let size: PanelTabSize
-    let spacing: CGFloat
+    let leftSpacing: CGFloat
+    let rightSpacing: CGFloat
 
+    /// Where each side starts, in from the panel's edge: clear of the top corners' curve.
+    static let rowInset: CGFloat = 24
+    /// The gap kept between each side and the notch.
+    static let notchClearance: CGFloat = 4
+    /// The battery with its number inside (`BatteryStatusView`).
+    static let batteryWidth: CGFloat = 34
+    /// Between the right side's tabs, the battery and the gear.
+    static let groupGap: CGFloat = 4
     static let minSpacing: CGFloat = 2
     static let maxSpacing: CGFloat = 6
 
-    func rowWidth(tabCount: Int) -> CGFloat {
-        CGFloat(tabCount) * size.tabWidth + CGFloat(max(tabCount - 1, 0)) * spacing
+    /// The room the row needs beside the notch on each side, from the panel's edge: the
+    /// fuller side at the regular size and the smallest gaps.
+    static func sideRoom(left: Int, right: Int, showsBattery: Bool) -> CGFloat {
+        let row = TopRowLayout(size: .regular, leftSpacing: minSpacing, rightSpacing: minSpacing)
+        let leftNeed = row.rowWidth(left, spacing: minSpacing)
+        let rightNeed = row.rowWidth(right, spacing: minSpacing)
+            + row.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+        return rowInset + notchClearance + max(leftNeed, rightNeed)
     }
 
-    static func fitting(tabCount: Int, in space: CGFloat) -> PanelTabLayout {
-        let large = spread(.large, tabCount: tabCount, in: space)
-        if large.spacing >= minSpacing || tabCount < 2, large.rowWidth(tabCount: tabCount) <= space {
-            return large
+    /// The row in a panel `panelWidth` wide, centred on a notch `notchWidth` wide.
+    static func fitting(left: Int, right: Int, showsBattery: Bool, panelWidth: CGFloat, notchWidth: CGFloat) -> TopRowLayout {
+        let space = (panelWidth - notchWidth) / 2 - rowInset - notchClearance
+        func row(_ size: PanelTabSize) -> TopRowLayout {
+            let sized = TopRowLayout(size: size, leftSpacing: 0, rightSpacing: 0)
+            let rightSpace = space - sized.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+            return TopRowLayout(size: size, leftSpacing: spread(size, left, in: space),
+                                rightSpacing: spread(size, right, in: rightSpace))
         }
-        return spread(.regular, tabCount: tabCount, in: space)
+        let large = row(.large)
+        let fits = large.rowWidth(left, spacing: minSpacing) <= space
+            && large.rowWidth(right, spacing: minSpacing)
+                <= space - large.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+        return fits ? large : row(.regular)
     }
 
-    /// `size` with the room left spread evenly between the tabs, from none to `maxSpacing`.
-    private static func spread(_ size: PanelTabSize, tabCount: Int, in space: CGFloat) -> PanelTabLayout {
-        guard tabCount > 1 else { return PanelTabLayout(size: size, spacing: 0) }
-        let room = (space - CGFloat(tabCount) * size.tabWidth) / CGFloat(tabCount - 1)
-        return PanelTabLayout(size: size, spacing: min(max(room, 0), maxSpacing))
+    /// `count` tabs with `spacing` between them.
+    func rowWidth(_ count: Int, spacing: CGFloat) -> CGFloat {
+        CGFloat(count) * size.tabWidth + CGFloat(max(count - 1, 0)) * spacing
+    }
+
+    /// What the right side holds besides its tabs: the battery when shown and the gear, with
+    /// a gap before each that follows something.
+    func fixedRightWidth(hasTabs: Bool, showsBattery: Bool) -> CGFloat {
+        let battery = showsBattery ? Self.batteryWidth + Self.groupGap : 0
+        return (hasTabs ? Self.groupGap : 0) + battery + size.tabWidth
+    }
+
+    /// The room left in `space` spread evenly between `count` tabs, from none to `maxSpacing`.
+    private static func spread(_ size: PanelTabSize, _ count: Int, in space: CGFloat) -> CGFloat {
+        guard count > 1 else { return 0 }
+        let room = (space - CGFloat(count) * size.tabWidth) / CGFloat(count - 1)
+        return min(max(room, 0), maxSpacing)
     }
 }
 
-/// The tab row on the left of the panel's top row, with the tabs that are on: icons only,
-/// as large and as spread out as fits left of the notch (`PanelTabLayout`). The name shows
-/// as a tooltip on hover and is what VoiceOver reads. An unselected tab brightens on hover,
-/// a little less than the gear does.
+/// One side of the panel's top row, with its tabs that are on: icons only, as large and as
+/// spread out as fits (`TopRowLayout`). The name shows as a tooltip on hover and is what
+/// VoiceOver reads. An unselected tab brightens on hover, a little less than the gear does.
 struct PanelTabRow: View {
     let tabs: [PanelTab]
     @Binding var selection: PanelTab
-    let layout: PanelTabLayout
+    let size: PanelTabSize
+    let spacing: CGFloat
     @State private var hoveredTab: PanelTab?
 
     var body: some View {
-        let size = layout.size
-        HStack(spacing: layout.spacing) {
+        HStack(spacing: spacing) {
             ForEach(tabs, id: \.self) { tab in
                 Button {
                     selection = tab
@@ -195,7 +220,7 @@ struct PanelTabRow: View {
                     Image(systemName: tab.symbolName)
                         .font(.system(size: size.symbolSize, weight: .semibold))
                         .frame(width: size.iconFrame, height: size.iconFrame)
-                        .padding(.horizontal, 4)
+                        .padding(.horizontal, 3)
                         .padding(.vertical, 3)
                         .background(Capsule().fill(.white.opacity(selection == tab ? 0.15 : 0)))
                         .foregroundStyle(.white.opacity(selection == tab ? 1 : hoveredTab == tab ? 0.85 : 0.55))

@@ -3,6 +3,7 @@ import SwiftUI
 /// Settings → General: launch at login and how the panel opens.
 struct GeneralPage: View {
     @Bindable var settings: AppSettings
+    let notchWidth: CGFloat
     /// Read again each time the page appears: the user can change it in System Settings.
     @State private var loginStatus = LaunchAtLogin.status
 
@@ -33,7 +34,7 @@ struct GeneralPage: View {
                 Picker(SettingsItem.opensOnTab.title, selection: $settings.opensOnTab) {
                     Text("Last tab (Recommended)").tag(PanelTab?.none)
                     Divider()
-                    ForEach(PanelTab.allCases, id: \.self) { tab in
+                    ForEach(settings.tabArrangement.all, id: \.self) { tab in
                         Text(tab.title).tag(PanelTab?.some(tab))
                     }
                 }
@@ -45,6 +46,27 @@ struct GeneralPage: View {
                 Text("Opening the panel")
             } footer: {
                 Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. The speeds are how fast the panel grows and shrinks. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
+            }
+            Section {
+                Picker(SettingsItem.lastingPriority.title, selection: $settings.lastingPriority) {
+                    ForEach(LastingPriority.allCases, id: \.self) { priority in
+                        Text(priority.title).tag(priority)
+                    }
+                }
+                .pickerStyle(.radioGroup)
+                .settingsItem(.lastingPriority)
+            } header: {
+                Text("Live activities")
+            } footer: {
+                Text("When a timer and a song are both going. The last tab you used: the song if you last closed the panel on Music, otherwise the timer. Alerts, such as Time's up or a low battery, always show first.")
+            }
+            Section {
+                TabsPreview(settings: settings, notchWidth: notchWidth)
+                    .settingsItem(.tabArrangement)
+            } header: {
+                Text(SettingsItem.tabArrangement.title)
+            } footer: {
+                Text("Drag a tab to reorder it, or across the notch to the other side. A faded tab is turned off; it keeps its place. If a side needs more room, the panel grows on both sides; it goes back when tabs are turned off.")
             }
             Section {
                 LayoutCards(selection: $settings.panelLayout)

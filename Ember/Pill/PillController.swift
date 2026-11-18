@@ -49,9 +49,17 @@ final class PillController {
     var glow = GlowSettings()
     /// The open panel's size (the layout chosen in Settings), compact until the app hands
     /// over the chosen layout's size. A change after `start` moves and resizes the window at once.
-    @ObservationIgnored var openSize = CGSize(width: 460, height: 200) {
+    @ObservationIgnored var openSize = CGSize(width: 460, height: 184) {
         didSet {
             guard openSize != oldValue, screenObserver != nil else { return }
+            refreshDisplay()
+        }
+    }
+    /// The room the open panel's content needs on each side of the notch (its top row); the
+    /// panel grows, equally on both sides, when `openSize` is too narrow for it.
+    @ObservationIgnored var openSideRoom: CGFloat = 0 {
+        didSet {
+            guard openSideRoom != oldValue, screenObserver != nil else { return }
             refreshDisplay()
         }
     }
@@ -235,7 +243,8 @@ final class PillController {
             NotchGeometry(screenFrame: screen.frame,
                           topLeftArea: screen.auxiliaryTopLeftArea,
                           topRightArea: screen.auxiliaryTopRightArea,
-                          openSize: self.openSize)
+                          openSize: self.openSize,
+                          openSideRoom: self.openSideRoom)
         }.first
 
         guard let geometry else {

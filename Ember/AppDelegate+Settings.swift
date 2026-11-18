@@ -9,6 +9,7 @@ extension AppDelegate {
         controller.glow = settings.glow
         nowPlaying.defaultGlow = settings.glowColor
         controller.openSize = settings.panelLayout.size
+        controller.openSideRoom = settings.openSideRoom
         controller.acceptsFileDrags = settings.shelfOn
         panelSelection.defaultTab = settings.opensOnTab
         panelSelection.returnCooldown = settings.tabCooldown
@@ -17,6 +18,7 @@ extension AppDelegate {
         if settings.calendarOn { calendar.start() } else { calendar.stop() }
         if settings.batteryAlertsOn || settings.batteryInPanelOn { battery.start() } else { battery.stop() }
         if !settings.timerOn { turnTimerOff() }
+        showLastingActivity()   // the countdown in or out of the notch
     }
 
     /// Cancels the timer and silences "Time's up", so nothing of it stays in the wings.

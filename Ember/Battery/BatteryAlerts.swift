@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The four battery alerts and how each looks on the pill. All alert colours and
 /// durations are defined here.
-nonisolated enum BatteryAlert: Equatable {
+nonisolated enum BatteryAlert: Equatable, CaseIterable {
     case pluggedIn
     case unplugged
     case low
@@ -22,6 +22,29 @@ nonisolated enum BatteryAlert: Equatable {
         case .low, .veryLow: return Self.red
         }
     }
+
+    /// The alert's name in Settings → Battery → Show an example.
+    var title: String {
+        switch self {
+        case .pluggedIn: return "Plugged in"
+        case .unplugged: return "Unplugged"
+        case .low: return "Low (\(BatteryAlertRules.lowThreshold)%)"
+        case .veryLow: return "Very low (\(BatteryAlertRules.veryLowThreshold)%)"
+        }
+    }
+
+    /// The reading the alert is shown with as an example.
+    var exampleReading: BatteryReading {
+        switch self {
+        case .pluggedIn: return BatteryReading(percentage: 73, isPluggedIn: true)
+        case .unplugged: return BatteryReading(percentage: 73, isPluggedIn: false)
+        case .low: return BatteryReading(percentage: BatteryAlertRules.lowThreshold, isPluggedIn: false)
+        case .veryLow: return BatteryReading(percentage: BatteryAlertRules.veryLowThreshold, isPluggedIn: false)
+        }
+    }
+
+    /// The alert as it shows with `exampleReading`, without plugging or draining anything.
+    var exampleActivity: LiveActivity { liveActivity(for: exampleReading) }
 
     /// Seconds on the pill. Low-battery alerts stay a little longer.
     var duration: TimeInterval {

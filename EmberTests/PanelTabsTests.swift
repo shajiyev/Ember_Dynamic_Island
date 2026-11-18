@@ -201,55 +201,80 @@ struct PanelTabsTests {
     }
 }
 
-struct PanelTabLayoutTests {
+struct TopRowLayoutTests {
     /// The notch on a 14" or 16" MacBook Pro at the default scaling.
     let defaultNotch: CGFloat = 185
     /// The same notch with the display set to More Space: wider in points.
     let moreSpaceNotch: CGFloat = 220
 
-    func layout(tabs: Int, panel: PanelLayout, notch: CGFloat) -> PanelTabLayout {
-        let space = PanelTabSize.space(panelWidth: panel.size.width, notchWidth: notch)
-        return PanelTabLayout.fitting(tabCount: tabs, in: space)
+    func minimumWidth(left: Int, right: Int = 0, battery: Bool = true, notch: CGFloat = 185) -> CGFloat {
+        notch + 2 * TopRowLayout.sideRoom(left: left, right: right, showsBattery: battery)
+    }
+
+    func layout(left: Int, right: Int = 0, battery: Bool = true, width: CGFloat = 460, notch: CGFloat) -> TopRowLayout {
+        TopRowLayout.fitting(left: left, right: right, showsBattery: battery, panelWidth: width, notchWidth: notch)
+    }
+
+    @Test func theMinimumFollowsTheFullerSide() {
+        #expect(minimumWidth(left: 4) == 413)
+        #expect(minimumWidth(left: 5) == 457)
+        #expect(minimumWidth(left: 5, right: 3) == 493)
+        #expect(minimumWidth(left: 0, right: 0, battery: false) < 460)
+    }
+
+    @Test func fiveTabsFitOnASideOfTheCompactPanel() {
+        #expect(minimumWidth(left: 5) <= PanelLayout.compact.size.width)
     }
 
     @Test func fourLargeTabsFitLeftOfTheNotchInTheCompactPanel() {
-        #expect(layout(tabs: 4, panel: .compact, notch: defaultNotch).size == .large)
+        #expect(layout(left: 4, notch: defaultNotch).size == .large)
     }
 
     @Test func theRoomLeftWidensTheGapsBetweenTabs() {
-        let spacing = layout(tabs: 4, panel: .compact, notch: defaultNotch).spacing
-        #expect(spacing > PanelTabLayout.minSpacing)
-        #expect(spacing <= PanelTabLayout.maxSpacing)
+        let spacing = layout(left: 4, notch: defaultNotch).leftSpacing
+        #expect(spacing > TopRowLayout.minSpacing)
+        #expect(spacing <= TopRowLayout.maxSpacing)
     }
 
     @Test func theGapsStopGrowingWhereThereIsPlentyOfRoom() {
-        let wide = layout(tabs: 4, panel: .wide, notch: moreSpaceNotch)
+        let wide = layout(left: 4, width: 620, notch: moreSpaceNotch)
         #expect(wide.size == .large)
-        #expect(wide.spacing == PanelTabLayout.maxSpacing)
+        #expect(wide.leftSpacing == TopRowLayout.maxSpacing)
     }
 
     @Test func withAWiderNotchTheCompactPanelKeepsTheRegularSize() {
-        #expect(layout(tabs: 4, panel: .compact, notch: moreSpaceNotch).size == .regular)
+        #expect(layout(left: 4, notch: moreSpaceNotch).size == .regular)
     }
 
     @Test func fewerTabsCanBeLargeWhereFourCannot() {
-        #expect(layout(tabs: 3, panel: .compact, notch: moreSpaceNotch).size == .large)
+        #expect(layout(left: 3, notch: moreSpaceNotch).size == .large)
     }
 
-    @Test func theRowNeverReachesTheNotch() {
-        for panel in PanelLayout.allCases {
-            // From the narrowest notch in points to the widest (More Space on any notched Mac).
-            for notch in stride(from: CGFloat(170), through: 225, by: 1) {
-                let notchStart = (panel.size.width - notch) / 2
-                for tabs in 1...4 {
-                    let rowEnd = PanelTabSize.rowInset + layout(tabs: tabs, panel: panel, notch: notch).rowWidth(tabCount: tabs)
-                    #expect(rowEnd <= notchStart, "\(panel), notch \(notch), \(tabs) tabs")
+    @Test func neitherSideReachesTheNotchAtAnyWidthFromTheMinimumUp() {
+        for notch in stride(from: CGFloat(170), through: 225, by: 5) {
+            for left in 0...5 {
+                for right in 0...3 {
+                    for battery in [true, false] {
+                        let minimum = minimumWidth(left: left, right: right, battery: battery, notch: notch)
+                        for width in [minimum, max(minimum, 460), max(minimum, 620)] {
+                            let row = layout(left: left, right: right, battery: battery, width: width, notch: notch)
+                            let side = (width - notch) / 2 - TopRowLayout.notchClearance
+                            let leftEnd = TopRowLayout.rowInset + row.rowWidth(left, spacing: row.leftSpacing)
+                            let rightEnd = TopRowLayout.rowInset + row.rowWidth(right, spacing: row.rightSpacing)
+                                + row.fixedRightWidth(hasTabs: right > 0, showsBattery: battery)
+                            let label = "notch \(notch), \(left)+\(right), battery \(battery), width \(width)"
+                            #expect(leftEnd <= side + 0.001, "\(label)")
+                            #expect(rightEnd <= side + 0.001, "\(label)")
+                        }
+                    }
                 }
             }
         }
     }
 
-    @Test func theLargeIconsAreBigger() {
+    @Test func aTabIsItsIconAndThreePointsEachSide() {
+        #expect(PanelTabSize.regular.tabWidth == 20)
+        #expect(PanelTabSize.large.tabWidth == 22)
         #expect(PanelTabSize.large.symbolSize > PanelTabSize.regular.symbolSize)
     }
 }

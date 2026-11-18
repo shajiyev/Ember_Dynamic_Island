@@ -8,13 +8,20 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let settings: AppSettings
     private let calendar: CalendarModel
     private let levels: LevelModel
+    /// The notch's width on the pill's display, read each time the window opens.
+    private let notchWidth: () -> CGFloat?
+    /// Plays a battery alert in the notch (Battery → Show an example).
+    private let showBatteryAlert: (BatteryAlert) -> Void
     private let navigation = SettingsNavigation()
     private var window: NSWindow?
 
-    init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel) {
+    init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel, notchWidth: @escaping () -> CGFloat?,
+         showBatteryAlert: @escaping (BatteryAlert) -> Void) {
         self.settings = settings
         self.calendar = calendar
         self.levels = levels
+        self.notchWidth = notchWidth
+        self.showBatteryAlert = showBatteryAlert
         super.init()
     }
 
@@ -30,8 +37,11 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
 
     private func makeWindow() -> NSWindow {
         navigation.page = .general
+        // Without a notched display, a 14" MacBook Pro's notch (185 pt) for the drawings.
         let hosting = NSHostingController(rootView: SettingsView(navigation: navigation, settings: settings,
-                                                                 calendar: calendar, levels: levels))
+                                                                 calendar: calendar, levels: levels,
+                                                                 notchWidth: notchWidth() ?? 185,
+                                                                 showBatteryAlert: showBatteryAlert))
         hosting.sceneBridgingOptions = [.title, .toolbars]
         let window = NSWindow(contentViewController: hosting)
         window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]

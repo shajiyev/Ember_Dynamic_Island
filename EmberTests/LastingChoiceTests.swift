@@ -31,4 +31,33 @@ struct LastingChoiceTests {
     @Test func nothingWhenNeither() {
         #expect(LastingChoice.choose(timer: nil, music: nil, musicTabChosen: true) == nil)
     }
+
+    @Test func withTheCountdownKeptOutOfTheNotchMusicOrNothingShows() {
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false, timerInWings: false) == music)
+        #expect(LastingChoice.choose(timer: timer, music: nil, musicTabChosen: false, timerInWings: false) == nil)
+    }
+
+    @Test func timesUpShowsEvenWithTheCountdownKeptOutOfTheNotch() {
+        #expect(LastingChoice.choose(timer: timesUp, music: music, musicTabChosen: true, timerInWings: false) == timesUp)
+    }
+
+    @Test func withTheTimerFirstItWinsEvenOnTheMusicTab() {
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: true, priority: .timer) == timer)
+    }
+
+    @Test func withTheSongFirstItWinsAndTheTimerShowsWhenNothingPlays() {
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false, priority: .music) == music)
+        #expect(LastingChoice.choose(timer: timer, music: nil, musicTabChosen: false, priority: .music) == timer)
+    }
+
+    @Test func theLastTabUsedBehavesAsBefore() {
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false, priority: .lastTab) == timer)
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: true, priority: .lastTab) == music)
+    }
+
+    @Test func timesUpWinsWhateverComesFirst() {
+        for priority in LastingPriority.allCases {
+            #expect(LastingChoice.choose(timer: timesUp, music: music, musicTabChosen: true, priority: priority) == timesUp)
+        }
+    }
 }

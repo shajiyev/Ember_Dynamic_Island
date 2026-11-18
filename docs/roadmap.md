@@ -138,10 +138,25 @@
   speed and Close speed, Slow–Fast sliders for how fast the panel grows and shrinks.
   Tests pass; checked on screen by the user on macOS 26.6.2. Plan docs/plans/settings.md,
   part 4.
+- **Done:** the open panel is 184 pt tall in both layouts (was 200), the lowest that does
+  not feel pressed, chosen by the user by eye.
+- **Done:** Settings → General → Tabs: the top row has tabs on both sides of the notch,
+  arranged by dragging in a realistic drawing of the panel's top; smaller tabs (five fit on
+  a side); the battery's percentage inside its icon. The panel grows equally on both sides
+  when the row needs more room, and goes back when tabs are turned off (the width rule).
+  Designed for 8 tabs: Clipboard, Color picker, Webcam mirror and Claude Code usage will
+  join; Keep awake and Stats go to the menu bar.
+- **Done:** closing onto a live activity, the wings come in with the shrinking panel.
+- **Done:** Settings → Timer → Show the countdown in the notch; Settings → Battery → Show an
+  example (plays each alert); Settings → General → Live activities: which comes first when
+  a timer and a song are both going (the timer, the song, or the last tab used).
+  Tests pass; all checked on screen by the user on macOS 26.6.2. Plan
+  docs/plans/settings.md, parts 5–7; docs/plans/panel-layouts.md, part 2.
 - **In progress:** nothing in the app.
-- **Next in Settings:** a keyboard shortcut to open the panel that refuses combinations
-  macOS already uses (asked 2026-11-16); a custom panel size (asked 2026-11-17). Onboarding
-  (#0) must include a Glow step: glow or not, and its colour, with the notch changing live.
+- **Next in Settings:** the Width slider (designed: docs/specs/settings.md, General); then a
+  Features section in the menu bar menu; a keyboard shortcut to open the panel that refuses
+  combinations macOS already uses (asked 2026-11-16). Onboarding (#0) must include a Glow
+  step: glow or not, and its colour, with the notch changing live.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** the rest of the v1 list: onboarding and permission requests (#0), then

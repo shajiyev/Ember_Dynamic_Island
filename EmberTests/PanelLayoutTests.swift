@@ -3,12 +3,12 @@ import Testing
 @testable import Ember
 
 struct PanelLayoutTests {
-    @Test func compactIs460By200() {
-        #expect(PanelLayout.compact.size == CGSize(width: 460, height: 200))
+    @Test func compactIs460By184() {
+        #expect(PanelLayout.compact.size == CGSize(width: 460, height: 184))
     }
 
-    @Test func wideIsTodaysPanel() {
-        #expect(PanelLayout.wide.size == CGSize(width: 620, height: 200))
+    @Test func wideIs620By184() {
+        #expect(PanelLayout.wide.size == CGSize(width: 620, height: 184))
     }
 
     @Test func compactComesFirstInSettings() {

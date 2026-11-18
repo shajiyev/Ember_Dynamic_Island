@@ -28,6 +28,9 @@ struct PillView: View {
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0
         let notchHeight = controller.geometry?.notchRect.height ?? 0
         let notchWidth = controller.geometry?.notchRect.width ?? 0
+        // How far each wing is from its place while the panel is open: closing, the wings
+        // start at the panel's edges and come in with it.
+        let wingsSpread = controller.geometry.map { ($0.rect(for: .open).width - $0.rect(for: .active).width) / 2 } ?? 0
         let shape = NotchShape(topCornerRadius: style.topCornerRadius,
                                bottomCornerRadius: style.bottomCornerRadius)
         // The glow for this moment, as set in Settings → Glow: the activity's colour (an
@@ -66,12 +69,15 @@ struct PillView: View {
                     ZStack {
                         if state == .active, let activity = controller.currentActivity {
                             ActivityWings(activity: activity, inset: style.topCornerRadius, height: notchHeight)
-                                .transition(PillStyle.contentTransition)
+                                .transition(controller.previousState == .open
+                                            ? PillStyle.wingsFromPanel(spread: wingsSpread, timing: controller.timing)
+                                            : PillStyle.contentTransition)
                         }
                         if state == .open {
                             panelContent
                                 .environment(\.notchHeight, notchHeight)
                                 .environment(\.notchWidth, notchWidth)
+                                .environment(\.panelWidth, size.width)
                                 .environment(\.closePanel, ClosePanelAction { controller.send(.closeRequested) })
                                 .environment(\.fileDragPosition, controller.fileDragPosition)
                                 .onPreferenceChange(PanelGlowColorKey.self) { panelGlow = $0 }
@@ -205,6 +211,9 @@ extension EnvironmentValues {
     @Entry var notchHeight: CGFloat = 0
     /// The width of the notch, so panel content can stay clear of it.
     @Entry var notchWidth: CGFloat = 0
+    /// The open panel's real width: the size handed to the pill, or wider when its content
+    /// needs more room beside the notch.
+    @Entry var panelWidth: CGFloat = 0
     /// Closes the open panel; does nothing outside it.
     @Entry var closePanel = ClosePanelAction {}
     /// While files are dragged over the open panel: where across its width, 0…1; nil

@@ -36,6 +36,11 @@
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look
     (each state's shape and default glow). `PillView` draws the glow behind the black
     shape, masked so the light on the sides fades in from the top.
+  - `NotchGeometry` takes `openSideRoom`, the room the panel's content needs beside the
+    notch (from `PillController.openSideRoom`), and makes the open panel at least
+    `notch + 2 × room` wide; `PillView` hands the real width to the content (`\.panelWidth`).
+    Closing onto an activity, the wings come in with the panel
+    (`PillStyle.wingsFromPanel`, using `PillController.previousState`).
   - `GlowSettings.swift`: `GlowSettings` (from Settings → Glow, in
     `PillController.glow`): the Glow switch, the glow colour, which glows are on, and each
     glow's strength, spread and fade. Its pure `glow(for:activity:panelColor:)` gives the
@@ -141,14 +146,20 @@
   - `LevelModel.swift`: the switch, and for each key whether Ember takes it; applies the
     step and hands a `LevelReadout` to the pill.
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
-  up" always; the song if the panel was closed on the Music tab; otherwise the timer.
+  up" always; the countdown only while Settings → Timer lets it in the notch; then the
+  `LastingPriority` chosen in Settings → General (the timer, the song, or the last tab
+  used: the song if the panel was closed on the Music tab, otherwise the timer).
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
   (light grey, white under the pointer, all one width), shared by the Music and Timer
   tabs so they always look alike and sit in the same place.
-- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 200, the default) and
-  Wide (620 × 200), each one's name, the month grid's width, and where the compact
+- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 184, the default) and
+  Wide (620 × 184), each one's name, the month grid's width, and where the compact
   buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
-- `Ember/Panel/PanelTabs.swift` — the Music | Shelf | Timer | Calendar tabs (icons only), and
+- `Ember/Panel/TabArrangement.swift` — `TabArrangement`: which side of the notch each tab
+  sits on and in which order (Settings → General → Tabs), read from saved names and moved
+  by dragging.
+- `Ember/Panel/PanelTabs.swift` — `TopRowLayout`: the top row's room beside the notch (the
+  width rule) and its icon size and gaps at a width; the Music | Shelf | Timer | Calendar tabs (icons only), and
   `PanelSelection`: the tab, remembered between openings, and which tab the panel opens
   on: a fresh alert's (`alertTab`), else the default tab chosen in Settings
   (`defaultTab`), else the tab of what the wings show (`openingTab`) unless the panel closed
@@ -183,7 +194,8 @@
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
     the pages, the search tint, and the delay, speed, cooldown, strength, spread and fade
     rows. `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
-    Custom popup (colour square, hue bar, hex field). `LayoutCards.swift`: the clickable panel
+    Custom popup (colour square, hue bar, hex field). `TabsPreview.swift`: the drawing of
+    the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).

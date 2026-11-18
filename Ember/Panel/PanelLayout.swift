@@ -11,8 +11,8 @@ nonisolated enum PanelLayout: String, CaseIterable {
 
     var size: CGSize {
         switch self {
-        case .compact: return CGSize(width: 460, height: 200)
-        case .wide: return CGSize(width: 620, height: 200)
+        case .compact: return CGSize(width: 460, height: Self.height)
+        case .wide: return CGSize(width: 620, height: Self.height)
         }
     }
 
@@ -38,6 +38,10 @@ nonisolated enum PanelLayout: String, CaseIterable {
         case .wide: return 190
         }
     }
+
+    /// The open panel's height in both layouts: the lowest that does not feel pressed,
+    /// chosen by eye on 2026-11-17 (was 200). Users do not change it.
+    static let height: CGFloat = 184
 
     /// In the compact layout, the Music and Timer buttons sit this far above the bottom of
     /// the panel's body, so they are in the same place on both tabs.
