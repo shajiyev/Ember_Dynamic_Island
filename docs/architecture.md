@@ -181,7 +181,8 @@
   - `ShelfPanelView.swift`, `ShelfDropFrame.swift`: the Shelf tab (AirDrop area and shelf).
     `ShelfItemInteraction.swift`: an item's AppKit side (clicks, menu, hover, drag source).
   - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.
-- `Ember/Settings/` — the Settings window (#0, #26a).
+- `Ember/Settings/` — the Settings window (#0, #26a). (The menu bar menu, `PillMenu` in
+  `EmberApp.swift`, has a Features section with the same switches.)
   - `AppSettings.swift`: hover, the two delays, the opening tab and the two tab cooldowns,
     the glows (switches, strengths, spreads, fades; `glow` builds the pill's
     `GlowSettings`), and a switch per feature, saved in UserDefaults; `onChange` after every change.

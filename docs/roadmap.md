@@ -159,8 +159,11 @@
 - **Watching:** once, the shelf items showed their Show in Finder and remove buttons
   without the pointer on them; it went away and could not be reproduced (2026-11-18). If
   it comes back: which items, and what happened just before.
+- **Done:** the menu bar menu has a Features section: Music, Timer, Calendar, Shelf, Battery
+  alerts and Volume & Brightness, each ticked when on and switched like in Settings.
+  Checked on screen by the user on macOS 26.6.2. Plan docs/plans/settings.md, part 9.
 - **In progress:** nothing in the app.
-- **Next in Settings:** a Features section in the menu bar menu; a keyboard shortcut to open the panel that refuses
+- **Next in Settings:** a keyboard shortcut to open the panel that refuses
   combinations macOS already uses (asked 2026-11-16). Onboarding (#0) must include a Glow
   step: glow or not, and its colour, with the notch changing live.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and

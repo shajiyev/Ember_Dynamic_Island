@@ -7,7 +7,8 @@ struct EmberApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            PillMenu(controller: appDelegate.controller, settingsWindow: appDelegate.settingsWindow)
+            PillMenu(controller: appDelegate.controller, settingsWindow: appDelegate.settingsWindow,
+                     settings: appDelegate.settings, levels: appDelegate.levels)
         } label: {
             Image("MenuBarIcon")
         }
@@ -108,16 +109,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-/// The menu behind the menu bar icon.
+/// The menu behind the menu bar icon: every feature's switch, then Settings and Quit.
 struct PillMenu: View {
     let controller: PillController
     let settingsWindow: SettingsWindow
+    @Bindable var settings: AppSettings
+    let levels: LevelModel
 
     var body: some View {
         if !controller.hasNotchDisplay {
             Text("No display with a notch found")
             Divider()
         }
+        // The same switches as each feature's page in Settings, in the sidebar's order.
+        Section("Features") {
+            Toggle(SettingsItem.music.title, isOn: $settings.musicOn)
+            Toggle(SettingsItem.timer.title, isOn: $settings.timerOn)
+            Toggle(SettingsItem.calendar.title, isOn: $settings.calendarOn)
+            Toggle(SettingsItem.shelf.title, isOn: $settings.shelfOn)
+            Toggle(SettingsItem.batteryAlerts.title, isOn: $settings.batteryAlertsOn)
+            Toggle(SettingsPage.levels.title, isOn: Binding(get: { levels.isOn }, set: { levels.turn(on: $0) }))
+        }
+        Divider()
         Button("Settings…") { settingsWindow.show() }
             .keyboardShortcut(",")
         Button(SettingsItem.shareFeedback.title) { Feedback.open() }

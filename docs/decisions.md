@@ -1084,3 +1084,10 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   minimum, whichever is larger; the real width shows beside it. The cards' lines lose
   their sizes ("Stacked", "Cover beside"). **Why:** the two fixed sizes were not enough;
   the ranges keep every tab's content intact (checked by the user at both ends).
+
+## 2026-11-18 — Feature switches back in the menu
+- **Decision:** the menu bar menu gets a Features section with each feature's on/off switch
+  (Music, Timer, Calendar, Shelf, Battery alerts, Volume & Brightness), bound to the same
+  values as Settings. This reverses part of 2026-11-15, when the menu kept only Settings…,
+  Share Feedback and Quit. **Why:** the user wants the switches at hand; display options
+  stay in Settings only.

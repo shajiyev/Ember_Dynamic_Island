@@ -2533,3 +2533,17 @@ checks every tab at the narrowest and widest widths.
   the cards' lines lose their sizes ("Stacked", "Cover beside").
 - [x] **CLEAN, TEST and BUILD**; the user checks Music, Timer, Calendar and Shelf at both
   ends of both ranges.
+
+---
+
+# Part 9: The menu — Features
+
+Added 2026-11-18. Spec: The window, "The menu bar menu". Built inline.
+
+### Task 26: The Features section
+
+- [x] `PillMenu` gets `settings` and `levels`; a `Section("Features")` at the top with a
+  `Toggle` per feature, titled from `SettingsItem` (Music, Timer, Calendar, Shelf, Battery
+  alerts, Volume & Brightness), bound to the same values as the Settings switches
+  (`LevelModel.turn(on:)` for Volume & Brightness). Only view wiring, no new rule, so no
+  unit test; BUILD, and the user checks each item against Settings on screen.

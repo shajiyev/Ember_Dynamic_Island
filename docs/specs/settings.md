@@ -18,7 +18,7 @@ what each one changes.
 
 | Page | Status |
 |---|---|
-| The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a) |
+| The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a); the menu's Features section 2026-11-18 |
 | General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Width 2026-11-18. Planned: a keyboard shortcut to open the panel |
 | Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17 |
 | Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
@@ -85,10 +85,23 @@ extra words; adding a setting to a page means adding one case there.
 Settings… (⌘,) · Share Feedback (greyed out until a destination is chosen) · Quit Ember.
 The "No display with a notch found" note and the Debug-only items stay.
 
-**Planned (2026-11-17, next):** a **Features** section at the top of the
-menu, one item per feature with a tick when it is on; choosing one turns it on or off,
-like its switch in Settings. Keep awake (#18) and Stats (#21) will live in the menu bar
-too, each designed with its feature.
+**Features** (2026-11-18): a section at the top of the menu, one item per feature that has
+its own on/off switch, in the sidebar's order: Music, Timer, Calendar, Shelf, Battery
+alerts, Volume & Brightness. A tick shows it is on; choosing one does exactly what its
+switch in Settings does (the tabs and the panel's width follow; Volume & Brightness asks
+for Accessibility the first time). Display options (Battery in the panel, Show Calendar
+Events, Show Reminders…) stay in Settings only. Keep awake (#18) and Stats (#21) will live
+in the menu bar too, each designed with its feature.
+
+```
+Features
+  ✓ Music · ✓ Timer · ✓ Calendar · ✓ Shelf · ✓ Battery alerts · Volume & Brightness
+Settings… (⌘,) · Share Feedback
+Quit Ember
+```
+
+This brings switches back into the menu, which were taken out on 2026-11-15 when the
+Settings window came: the user wants them at hand.
 
 ### Settings from the panel
 
