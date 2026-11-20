@@ -149,3 +149,26 @@ struct SpeedRow: View {
         .settingsItem(item)
     }
 }
+
+/// A page's last section: Reset to Defaults, after asking. Only that page's settings go
+/// back to their defaults (`AppSettings.reset`).
+struct ResetSection: View {
+    let page: SettingsPage
+    let settings: AppSettings
+    @State private var isAsking = false
+
+    var body: some View {
+        Section {
+            HStack {
+                Spacer()
+                Button("Reset to Defaults") { isAsking = true }
+            }
+        }
+        .confirmationDialog("Reset the \(page.title) settings to their defaults?", isPresented: $isAsking) {
+            Button("Reset", role: .destructive) { settings.reset(page) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Only this page's settings change.")
+        }
+    }
+}

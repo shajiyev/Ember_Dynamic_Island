@@ -1111,3 +1111,20 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   global mouse monitor, which needs no permission either).
 - **Known limit:** apps' own shortcuts are unknown unless macOS refuses Ember the
   shortcut; the ⌘ caution covers the most likely clashes.
+
+## 2026-11-18 — The website's domain is recorded
+- **Fact:** the site's own domain is **getember.online**; it forwards to
+  **https://www.getember.online**, which serves the site (checked 2026-11-18). The domain
+  was set up in Vercel earlier but never written into the docs, which still said "a custom
+  domain once bought". Settings → About links to it.
+
+## 2026-11-18 — From the settings review: presets, Reset, About, Permissions
+- **Decision:** after a review of every Settings page, the user picked six additions; four
+  are built: Timer presets (three, 1–180 minutes), Reset to Defaults per page (it leaves
+  out Launch at login and the permission-tied switches), an About page, and a Permissions
+  page. The other two (hiding in screenshots and in full-screen apps) follow on their own.
+- **Why a reset per page and not one for everything:** the Glow page alone has nine
+  sliders; resetting one page keeps the rest of someone's tuning.
+- **Why Permissions reads without asking:** the page must never trigger a macOS prompt;
+  Automation can only be read while the player is open, which the row says.
+- The other ideas from the review stay unrecorded until the user picks them.

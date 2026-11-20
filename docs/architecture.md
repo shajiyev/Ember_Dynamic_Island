@@ -202,7 +202,11 @@
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
     the pages, the search tint, and the delay, speed, cooldown, strength, spread and fade
-    rows. `ShortcutRecorder.swift`: the keyboard shortcut's box, ⓧ, caution and refusal.
+    rows, and `ResetSection` (each page's Reset to Defaults; `AppSettings.reset(_:)` forgets
+    that page's keys and reads their defaults). `ShortcutRecorder.swift`: the keyboard
+    shortcut's box, ⓧ, caution and refusal. `AboutPage.swift` (with `AboutInfo`: version
+    and links) and `PermissionsPage.swift` with `Permissions.swift` (`AppPermission`: what
+    uses each permission, its System Settings page, and its status read without asking).
     `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
     Custom popup (colour square, hue bar, hex field). `TabsPreview.swift`: the drawing of
     the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `LayoutCards.swift`: the clickable panel
@@ -327,8 +331,9 @@ tests are kept out of the deploy by `site/.vercelignore`.
 
 ### Deploying (Vercel)
 
-Live at **https://ember-sigma-two.vercel.app** (Vercel project `ember`, on the owner's
-Hobby account; first deployed 2026-11-14 through the Vercel MCP). Production deploys from
+Live at **https://www.getember.online** (the domain getember.online forwards to www; also
+https://ember-sigma-two.vercel.app; Vercel project `ember`, on the owner's Hobby account;
+first deployed 2026-11-14 through the Vercel MCP). Production deploys from
 `main`; each deployment's own preview address asks for a Vercel login (Vercel's standard
 protection), the production address is public.
 

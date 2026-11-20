@@ -11,7 +11,7 @@ what each one changes.
 **Contents:** [The window](#the-window) · [General](#general) · [Glow](#glow) ·
 [Music](#music) · [Timer](#timer) · [Calendar](#calendar) · [Shelf](#shelf) ·
 [Battery](#battery) · [Volume & Brightness](#volume--brightness) ·
-[Feedback](#feedback) · [How it is built](#how-it-is-built) · [Testing](#testing) ·
+[Permissions](#permissions) · [Feedback](#feedback) · [About](#about) · [How it is built](#how-it-is-built) · [Testing](#testing) ·
 [Code reused from Atoll](#code-reused-from-atoll) · [Not in Settings yet](#not-in-settings-yet)
 
 ## Status by page
@@ -27,7 +27,9 @@ what each one changes.
 | Shelf | Built 2026-11-16 (#15) |
 | Battery | Built 2026-11-15; Show an example 2026-11-18 |
 | Volume & Brightness | Built 2026-11-15 |
+| Permissions | Built 2026-11-18 |
 | Feedback | Built 2026-11-15; the destination is not chosen yet |
+| About | Built 2026-11-18 |
 
 ---
 
@@ -54,7 +56,8 @@ observers, no timers, no Apple Events.
 Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember.
 - **Sidebar:** a search field at the top, a divider, then the pages in groups with small
   grey headers: General and Glow (no header), **Media** (Music), **Productivity** (Timer,
-  Calendar, Shelf), **System** (Battery, Volume & Brightness), then Feedback (no header).
+  Calendar, Shelf), **System** (Battery, Volume & Brightness), then Permissions, Feedback
+  and About (no header; Permissions and About since 2026-11-18).
   Rows about 36–44 pt tall, about 210 pt wide.
 - **Icons:** a 26 pt rounded square (corner 8) filled with a gradient from the page's
   colour to 70% of it, a thin white edge, a soft shadow in the same colour, and a white SF
@@ -66,6 +69,14 @@ Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember.
   where it helps, a short grey footer saying what its settings do.
 - **Background:** glass on macOS 26 (`glassEffect`, inside `if #available(macOS 26, *)`);
   the window's own background with a thin material on macOS 15.
+
+### Reset to Defaults (built 2026-11-18)
+
+A **Reset to Defaults** button at the bottom of General, Glow, Music, Timer, Shelf and
+Battery. It asks first ("Reset the Glow settings to their defaults?", Reset / Cancel) and
+resets only that page's settings. It leaves alone what is tied to a permission or to
+macOS: Launch at login, Show Calendar Events, Show Reminders, Volume & Brightness. Each
+page's settings are listed once (`SettingsItem.page`), so the reset follows the page.
 
 ### Search
 
@@ -143,6 +154,22 @@ The delays were 0.2 s and 0.3 s until 2026-11-16. The speeds were added 2026-11-
 speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpeed`); the
 slider moves in powers of two, so the middle is 1. A number in seconds would read
 backwards (smaller is faster), so the slider shows only Slow and Fast.
+
+### Privacy and full screen (designed 2026-11-18, not built)
+
+| Setting | Default | What it does |
+|---|---|---|
+| Hide in screenshots and screen sharing | on | The pill and the panel are left out of screenshots, screen recordings and shared screens, so the song, events and file names stay private. Off, they can be captured (for example to show Ember to someone). |
+| Hide in full-screen apps | off | When the app in front fills the notch's screen (a film, a game, a presentation), the pill goes away; it comes back on leaving full screen. |
+| Still show alerts | on | With Hide in full-screen apps on: Time's up, battery alerts and the calendar heads-up still show for their moment. Greyed out while Hide in full-screen apps is off. |
+
+- **Screenshots:** the window asks macOS to keep it out of captures (`NSWindow.sharingType
+  = .none`). Recent macOS versions do not always respect this for every kind of capture,
+  so it is checked with a screenshot, QuickTime and screen sharing before it ships; if it
+  does not hold, the switch is not shipped.
+- **Full screen:** checked each time the app in front or the space changes: the front app
+  has a window covering the notch's whole screen. No permission is needed (window
+  positions, not their contents).
 
 ### Live activities
 
@@ -428,6 +455,7 @@ Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 | Setting | Default | What it does |
 |---|---|---|
 | Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
+| Presets | 5, 25, 45 min | (2026-11-18.) The Timer tab's three preset buttons: each a number box with arrows, 1–180 minutes. The buttons show "5m", "25m", or "1h30" from an hour up. |
 | Show the countdown in the notch | on | (2026-11-18) Off: a running or paused timer stays out of the wings and is seen only in the Timer tab; a playing song keeps the wings instead. "Time's up" still shows in the wings, with its sound: it is the alert that the timer finished. Greyed out while Timer is off. |
 
 Details: docs/specs/timers.md.
@@ -488,11 +516,51 @@ Details: docs/specs/volume-brightness.md ("The switch").
 
 ---
 
+## Permissions
+
+Built 2026-11-18. One list of what Ember may be asked to use, read fresh each
+time the page appears:
+
+| Permission | Used by | Status | Button |
+|---|---|---|---|
+| Calendar | Show Calendar Events | Allowed · Not asked yet · Not allowed | Open System Settings (Privacy & Security → Calendars) |
+| Reminders | Show Reminders | as above | (→ Reminders) |
+| Accessibility | Volume & Brightness | Allowed · Not allowed | (→ Accessibility) |
+| Automation | The Music tab (a row per installed player) | Allowed · Not asked yet · Not allowed · Open the player to check | (→ Automation) |
+
+A footer says Ember asks for each only when its feature is turned on. Onboarding (#0) will
+use the same checks (`Permissions`, one small type that reads each status and knows each
+System Settings page).
+
+---
+
 ## Feedback
 
 A Share Feedback button, greyed out, and the line "Coming soon". Where feedback goes is
 not decided yet; choosing it later means filling in one value (`Feedback.swift`), which
 also enables the menu's Share Feedback.
+
+---
+
+## About
+
+Built 2026-11-18.
+
+```
+   [Ember icon]
+   Ember
+   Version 1.0 (1)
+   A Dynamic Island for your MacBook's notch.
+   Website ↗   GitHub ↗   License: GPL-3.0 ↗
+   Small portions of code are adapted from Atoll and Boring Notch.
+```
+
+- Version from the app's bundle (`CFBundleShortVersionString` and `CFBundleVersion`).
+- Website https://www.getember.online, GitHub https://github.com/shajiyev/Ember_Dynamic_Island,
+  the licence's page on GitHub. Each opens in the browser.
+- The credit line matches the README; Atoll's and Boring Notch's names appear only there,
+  never as branding.
+- "Check for Updates…" joins it with auto-updates (#27).
 
 ---
 

@@ -121,6 +121,14 @@ final class AppSettings {
     }
     var musicOn: Bool { didSet { save(musicOn, Key.musicOn) } }
     var timerOn: Bool { didSet { save(timerOn, Key.timerOn) } }
+    /// The Timer tab's three preset buttons, in minutes, each held to `TimerLook.presetRange`.
+    var timerPresets: [Int] {
+        didSet {
+            let clamped = Self.clampedPresets(timerPresets)
+            guard clamped == timerPresets else { timerPresets = clamped; return }
+            save(timerPresets, Key.timerPresets)
+        }
+    }
     /// A running or paused timer shows in the wings ("Time's up" always does).
     var timerInWings: Bool { didSet { save(timerInWings, Key.timerInWings) } }
     /// Which lasting activity the notch shows first when a timer and a song are both going.
@@ -207,6 +215,7 @@ final class AppSettings {
         static let musicOn = "musicOn"
         static let timerOn = "timerOn"
         static let timerInWings = "timerInWings"
+        static let timerPresets = "timerPresets"
         static let lastingPriority = "lastingPriority"
         static let calendarOn = "calendarOn"
         static let shelfOn = "shelfOn"
@@ -269,6 +278,7 @@ final class AppSettings {
         musicOn = bool(Key.musicOn)
         timerOn = bool(Key.timerOn)
         timerInWings = bool(Key.timerInWings)
+        timerPresets = (defaults.array(forKey: Key.timerPresets) as? [Int]).map { Self.clampedPresets($0) } ?? TimerLook.presetMinutes
         lastingPriority = defaults.string(forKey: Key.lastingPriority).flatMap(LastingPriority.init(rawValue:)) ?? .lastTab
         calendarOn = bool(Key.calendarOn)
         shelfOn = bool(Key.shelfOn)
@@ -315,6 +325,88 @@ final class AppSettings {
                             panelFade: panelGlowFade)
     }
 
+    /// The pages with a Reset to Defaults button. Launch at login, Show Calendar Events, Show
+    /// Reminders and Volume & Brightness are not here: they are tied to macOS or a permission.
+    static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .shelf, .battery]
+
+    /// Puts a page's settings back to their defaults; every other page keeps its own.
+    func reset(_ page: SettingsPage) {
+        for key in Self.keys(on: page) { defaults.removeObject(forKey: key) }
+        let fresh = AppSettings(defaults: defaults)   // reads the defaults for the forgotten keys
+        switch page {
+        case .general:
+            opensOnHover = fresh.opensOnHover
+            openDelay = fresh.openDelay
+            closeDelay = fresh.closeDelay
+            openSpeed = fresh.openSpeed
+            closeSpeed = fresh.closeSpeed
+            panelShortcut = fresh.panelShortcut
+            opensOnTab = fresh.opensOnTab
+            tabCooldown = fresh.tabCooldown
+            lastingPriority = fresh.lastingPriority
+            tabArrangement = fresh.tabArrangement
+            panelLayout = fresh.panelLayout
+            compactWidth = fresh.compactWidth
+            wideWidth = fresh.wideWidth
+        case .glow:
+            glowOn = fresh.glowOn
+            glowColor = fresh.glowColor
+            alwaysOnGlow = fresh.alwaysOnGlow
+            restGlowStrength = fresh.restGlowStrength
+            restGlowSpread = fresh.restGlowSpread
+            restGlowFade = fresh.restGlowFade
+            activityGlowOn = fresh.activityGlowOn
+            activityGlowStrength = fresh.activityGlowStrength
+            activityGlowSpread = fresh.activityGlowSpread
+            activityGlowFade = fresh.activityGlowFade
+            musicGlowOn = fresh.musicGlowOn
+            timerGlowOn = fresh.timerGlowOn
+            batteryGlowOn = fresh.batteryGlowOn
+            calendarGlowOn = fresh.calendarGlowOn
+            panelGlowOn = fresh.panelGlowOn
+            panelGlowStrength = fresh.panelGlowStrength
+            panelGlowSpread = fresh.panelGlowSpread
+            panelGlowFade = fresh.panelGlowFade
+        case .music:
+            musicOn = fresh.musicOn
+            showsShuffle = fresh.showsShuffle
+            showsRepeat = fresh.showsRepeat
+        case .timer:
+            timerOn = fresh.timerOn
+            timerPresets = fresh.timerPresets
+            timerInWings = fresh.timerInWings
+        case .shelf:
+            shelfOn = fresh.shelfOn
+            screenshotsToShelf = fresh.screenshotsToShelf
+            shelfCooldown = fresh.shelfCooldown
+        case .battery:
+            batteryAlertsOn = fresh.batteryAlertsOn
+            batteryInPanelOn = fresh.batteryInPanelOn
+        case .calendar, .levels, .permissions, .feedback, .about:
+            break
+        }
+    }
+
+    /// The keys a page's Reset to Defaults forgets.
+    private static func keys(on page: SettingsPage) -> [String] {
+        switch page {
+        case .general:
+            return [Key.opensOnHover, Key.openDelay, Key.closeDelay, Key.openSpeed, Key.closeSpeed, Key.panelShortcut,
+                    Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight, Key.panelLayout,
+                    Key.compactWidth, Key.wideWidth]
+        case .glow:
+            return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
+                    Key.activityGlowOn, Key.activityGlowStrength, Key.activityGlowSpread, Key.activityGlowFade,
+                    Key.musicGlowOn, Key.timerGlowOn, Key.batteryGlowOn, Key.calendarGlowOn,
+                    Key.panelGlowOn, Key.panelGlowStrength, Key.panelGlowSpread, Key.panelGlowFade]
+        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat]
+        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings]
+        case .shelf: return [Key.shelfOn, Key.screenshotsToShelf, Key.shelfCooldown]
+        case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn]
+        case .calendar, .levels, .permissions, .feedback, .about: return []
+        }
+    }
+
     /// The chosen layout's width.
     var panelWidth: Double {
         get { panelLayout == .compact ? compactWidth : wideWidth }
@@ -344,6 +436,12 @@ final class AppSettings {
 
     private static func clamped(_ width: Double, to layout: PanelLayout) -> Double {
         min(max(width, layout.widthRange.lowerBound), layout.widthRange.upperBound)
+    }
+
+    /// Exactly three presets, each within range; anything else gives the default presets.
+    private static func clampedPresets(_ presets: [Int]) -> [Int] {
+        guard presets.count == TimerLook.presetMinutes.count else { return TimerLook.presetMinutes }
+        return presets.map { min(max($0, TimerLook.presetRange.lowerBound), TimerLook.presetRange.upperBound) }
     }
 
     private static func clampedSpeed(_ speed: Double) -> Double {

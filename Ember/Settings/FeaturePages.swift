@@ -24,6 +24,7 @@ struct MusicPage: View {
                 Text("Shuffle sits at the left end of the buttons, repeat at the right. Each switches the player's own setting; repeat plays the whole list again.")
             }
             .disabled(!settings.musicOn)
+            ResetSection(page: .music, settings: settings)
         }
     }
 }
@@ -41,13 +42,44 @@ struct TimerPage: View {
                 Text("The Timer tab and the countdown in the wings. Turning it off cancels a running timer.")
             }
             Section {
+                LabeledContent(SettingsItem.timerPresets.title) {
+                    HStack(spacing: 10) {
+                        ForEach(0..<settings.timerPresets.count, id: \.self) { index in
+                            PresetField(minutes: $settings.timerPresets[index])
+                        }
+                    }
+                }
+                .settingsItem(.timerPresets)
+            } footer: {
+                Text("The Timer tab's three buttons, in minutes, from 1 to 180.")
+            }
+            .disabled(!settings.timerOn)
+            Section {
                 Toggle(SettingsItem.timerInWings.title, isOn: $settings.timerInWings)
                     .settingsItem(.timerInWings)
             } footer: {
                 Text("Off, a running timer is seen only in the Timer tab, and a playing song keeps the notch. \"Time's up\" still shows there when the timer finishes.")
             }
             .disabled(!settings.timerOn)
+            ResetSection(page: .timer, settings: settings)
         }
+    }
+}
+
+/// A preset's minutes: a small number field with arrows.
+private struct PresetField: View {
+    @Binding var minutes: Int
+
+    var body: some View {
+        HStack(spacing: 2) {
+            TextField("", value: $minutes, format: .number)
+                .frame(width: 40)
+                .multilineTextAlignment(.trailing)
+            Stepper("", value: $minutes, in: TimerLook.presetRange)
+                .labelsHidden()
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Preset, \(minutes) minutes")
     }
 }
 
@@ -112,6 +144,7 @@ struct ShelfPage: View {
             } footer: {
                 Text("macOS can open Mission Control when something is dragged to the top of the screen, where the notch is. To drop files on the notch without it, turn off \"Drag windows to top of screen to enter Mission Control\" in Desktop & Dock → Mission Control.")
             }
+            ResetSection(page: .shelf, settings: settings)
         }
     }
 }
@@ -141,6 +174,7 @@ struct BatteryPage: View {
             } footer: {
                 Text("Alerts show in the notch when you plug in or unplug, and at 20% and 10%. The percentage sits at the top right of the open panel.")
             }
+            ResetSection(page: .battery, settings: settings)
         }
     }
 }

@@ -71,6 +71,15 @@ struct TimerLookTests {
         #expect(TimerLook.presetMinutes == [5, 25, 45])
     }
 
+    @Test func aPresetShowsMinutesOrHoursAndMinutes() {
+        #expect(TimerLook.presetText(minutes: 5) == "5m")
+        #expect(TimerLook.presetText(minutes: 45) == "45m")
+        #expect(TimerLook.presetText(minutes: 60) == "1h")
+        #expect(TimerLook.presetText(minutes: 65) == "1h05")
+        #expect(TimerLook.presetText(minutes: 90) == "1h30")
+        #expect(TimerLook.presetText(minutes: 180) == "3h")
+    }
+
     @Test func theLineUnderTheTimeSaysWhenItEndsOrThatItIsPaused() {
         let end = Date(timeIntervalSinceReferenceDate: 1_000)
         #expect(TimerLook.statusText(for: .running(endDate: end))

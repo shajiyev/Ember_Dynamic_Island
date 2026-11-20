@@ -66,4 +66,6 @@ nonisolated enum PanelLayout: String, CaseIterable {
 extension EnvironmentValues {
     /// The layout the open panel is drawn in; `PanelView` sets it from Settings.
     @Entry var panelLayout: PanelLayout = .compact
+    /// The Timer tab's preset buttons, in minutes; `PanelView` sets them from Settings.
+    @Entry var timerPresets: [Int] = TimerLook.presetMinutes
 }

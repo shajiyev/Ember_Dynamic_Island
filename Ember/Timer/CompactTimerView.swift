@@ -6,6 +6,7 @@ import SwiftUI
 /// stay where the Music tab's are throughout.
 struct CompactTimerView: View {
     let timer: TimerModel
+    @Environment(\.timerPresets) private var presets
 
     var body: some View {
         let countdown = timer.countdown
@@ -19,7 +20,7 @@ struct CompactTimerView: View {
                     TimerSetter(timer: timer)
                         .transition(.opacity)
                     VStack(spacing: 6) {
-                        ForEach(TimerLook.presetMinutes, id: \.self) { minutes in
+                        ForEach(Array(presets.enumerated()), id: \.offset) { _, minutes in
                             PresetChip(minutes: minutes, width: 48) { timer.choosePreset(minutes: minutes) }
                         }
                     }

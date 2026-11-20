@@ -38,6 +38,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case showsShuffle
     case showsRepeat
     case timer
+    case timerPresets
     case timerInWings
     case calendar
     case calendarEvents
@@ -49,7 +50,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case batteryInPanel
     case batteryExample
     case levels
+    case permissionsList
     case shareFeedback
+    case aboutEmber
 
     var page: SettingsPage {
         switch self {
@@ -61,12 +64,14 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
              .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
         case .music, .showsShuffle, .showsRepeat: return .music
-        case .timer, .timerInWings: return .timer
+        case .timer, .timerPresets, .timerInWings: return .timer
         case .calendar, .calendarEvents, .reminders: return .calendar
         case .shelf, .screenshotsToShelf, .shelfCooldown: return .shelf
         case .batteryAlerts, .batteryInPanel, .batteryExample: return .battery
         case .levels: return .levels
         case .shareFeedback: return .feedback
+        case .aboutEmber: return .about
+        case .permissionsList: return .permissions
         }
     }
 
@@ -101,6 +106,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .showsShuffle: return "Show shuffle"
         case .showsRepeat: return "Show repeat"
         case .timer: return "Timer"
+        case .timerPresets: return "Presets"
         case .timerInWings: return "Show the countdown in the notch"
         case .calendar: return "Calendar"
         case .calendarEvents: return CalendarLook.switchTitle(.events)
@@ -113,6 +119,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .batteryExample: return "Show an example"
         case .levels: return LevelLook.switchTitle
         case .shareFeedback: return "Share Feedback"
+        case .aboutEmber: return "Ember"
+        case .permissionsList: return "Permissions"
         }
     }
 
@@ -148,6 +156,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .showsShuffle: return ["random", "order"]
         case .showsRepeat: return ["loop", "again"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
+        case .timerPresets: return ["minutes", "5m", "25m", "45m"]
         case .timerInWings: return ["wings", "hide", "running"]
         case .calendar: return ["heads-up", "month", "date"]
         case .calendarEvents: return ["permission", "privacy"]
@@ -160,6 +169,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .batteryExample: return ["demo", "try", "preview"]
         case .levels: return ["volume", "brightness", "sound", "mute", "Accessibility"]
         case .shareFeedback: return ["bug", "report", "idea", "contact"]
+        case .aboutEmber: return ["version", "license", "GitHub", "website", "credits"]
+        case .permissionsList: return ["privacy", "allowed", "automation", "System Settings"]
         }
     }
 }

@@ -28,7 +28,9 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     case shelf
     case battery
     case levels
+    case permissions
     case feedback
+    case about
 
     var title: String {
         switch self {
@@ -40,7 +42,9 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return "Shelf"
         case .battery: return "Battery"
         case .levels: return "Volume & Brightness"
+        case .permissions: return "Permissions"
         case .feedback: return "Feedback"
+        case .about: return "About"
         }
     }
 
@@ -54,7 +58,9 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return "tray.full"
         case .battery: return "battery.100.bolt"
         case .levels: return "speaker.wave.2.fill"
+        case .permissions: return "hand.raised.fill"
         case .feedback: return "bubble.left.fill"
+        case .about: return "info.circle.fill"
         }
     }
 
@@ -69,7 +75,8 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return .brown
         case .battery: return Color(red: 0.202, green: 0.783, blue: 0.348)
         case .levels: return .indigo
-        case .feedback: return .gray
+        case .permissions: return .purple
+        case .feedback, .about: return .gray
         }
     }
 
@@ -79,7 +86,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .music: return .media
         case .timer, .calendar, .shelf: return .productivity
         case .battery, .levels: return .system
-        case .feedback: return .help
+        case .permissions, .feedback, .about: return .help
         }
     }
 }

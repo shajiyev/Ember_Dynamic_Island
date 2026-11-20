@@ -323,4 +323,43 @@ struct AppSettingsTests {
         #expect(read == custom)
         #expect(read?.text == "⌃⌥K")
     }
+
+    @Test func theTimerPresetsAreSavedAndHeldToOneMinuteToThreeHours() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.timerPresets == [5, 25, 45])
+        settings.timerPresets = [0, 90, 500]
+        #expect(settings.timerPresets == [1, 90, 180])
+        #expect(AppSettings(defaults: defaults).timerPresets == [1, 90, 180])
+        defaults.set([10, 20], forKey: "timerPresets")
+        #expect(AppSettings(defaults: defaults).timerPresets == [5, 25, 45])
+    }
+
+    @Test func resettingAPageBringsBackOnlyItsDefaults() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.glowOn = false
+        settings.restGlowStrength = 0.2
+        settings.panelGlowSpread = 30
+        settings.musicOn = false
+        settings.openDelay = 0.8
+        settings.timerPresets = [1, 2, 3]
+
+        settings.reset(.glow)
+        #expect(settings.glowOn && settings.restGlowStrength == 0.75 && settings.panelGlowSpread == 10)
+        #expect(!settings.musicOn && settings.openDelay == 0.8 && settings.timerPresets == [1, 2, 3])
+        #expect(AppSettings(defaults: defaults).glowOn)
+
+        settings.reset(.timer)
+        #expect(settings.timerPresets == [5, 25, 45])
+        #expect(!settings.musicOn)
+
+        settings.reset(.general)
+        #expect(settings.openDelay == 0.1)
+        #expect(!settings.musicOn)
+    }
+
+    @Test func everyPageWithAResetButtonHasSomethingToReset() {
+        #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .shelf, .battery])
+    }
 }

@@ -88,7 +88,7 @@ struct PresetChip: View {
 
     var body: some View {
         Button(action: action) {
-            Text("\(minutes)m")
+            Text(TimerLook.presetText(minutes: minutes))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.white.opacity(isHovering ? 1 : 0.85))
                 .padding(.horizontal, width == nil ? 12 : 0)

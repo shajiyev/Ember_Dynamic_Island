@@ -75,7 +75,9 @@ struct SettingsView: View {
         case .shelf: ShelfPage(settings: settings)
         case .battery: BatteryPage(settings: settings, showAlert: showBatteryAlert)
         case .levels: LevelsPage(levels: levels)
+        case .permissions: PermissionsPage()
         case .feedback: FeedbackPage()
+        case .about: AboutPage()
         }
     }
 }

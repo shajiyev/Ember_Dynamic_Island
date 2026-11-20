@@ -4,7 +4,17 @@ import SwiftUI
 /// How the timer looks on the pill, plus its presets and sound. All timer symbols, colours
 /// and the glow-while-running choice are defined here.
 nonisolated enum TimerLook {
+    /// The presets until the user sets their own (Settings → Timer → Presets).
     static let presetMinutes = [5, 25, 45]
+    /// A preset stays within this range, in minutes.
+    static let presetRange = 1...180
+
+    /// A preset's button: "25m", or "1h30" (and "3h") from an hour up.
+    static func presetText(minutes: Int) -> String {
+        guard minutes >= 60 else { return "\(minutes)m" }
+        let rest = minutes % 60
+        return "\(minutes / 60)h" + (rest == 0 ? "" : String(format: "%02d", rest))
+    }
     /// A macOS system sound.
     static let soundName = "Glass"
     /// At zero the sound repeats this often until "Time's up" is seen, for at most

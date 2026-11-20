@@ -7,6 +7,7 @@ import SwiftUI
 struct TimerPanelView: View {
     let timer: TimerModel
     @Environment(\.panelLayout) private var layout
+    @Environment(\.timerPresets) private var presets
 
     var body: some View {
         switch layout {
@@ -39,7 +40,7 @@ struct TimerPanelView: View {
             TimerSetter(timer: timer)
             Spacer(minLength: 16)
             HStack(spacing: 6) {
-                ForEach(TimerLook.presetMinutes, id: \.self) { minutes in
+                ForEach(Array(presets.enumerated()), id: \.offset) { _, minutes in
                     PresetChip(minutes: minutes) { timer.choosePreset(minutes: minutes) }
                 }
             }

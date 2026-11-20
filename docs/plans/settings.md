@@ -2598,3 +2598,40 @@ modifier masks shift 0x20000, control 0x40000, option 0x80000, command 0x100000)
 2. Recording ⌃⌥K: saved, no sign. ⌘⇧K: saved with the ⌘ caution. ⌥Space: the popular-apps
    caution. N alone, ⌘C, ⌘⇧4: refused with their reasons; the old shortcut stays.
 3. ⓧ: no shortcut; ⌃⌥N does nothing. Quit and reopen: the choice is kept.
+
+---
+
+# Part 11: Presets, Reset, About, Permissions, privacy and full screen
+
+Added 2026-11-18 from the settings review (the six picks). Spec: Timer (Presets), The
+window (Reset to Defaults), About, Permissions, General (Privacy and full screen). Built
+inline, test-first, in this order; tasks 31–34 share one commit, 35 and 36 one each.
+
+### Task 31: Timer presets
+- [x] Tests: `AppSettings.timerPresets` is [5, 25, 45] by default, saved, each held to
+  1…180; `TimerLook.presetText(minutes:)` gives "5m", "1h30", "3h". Then the Presets row
+  (three steppers with fields), and the Timer tab reads the presets from Settings.
+
+### Task 32: Reset to Defaults
+- [x] Tests: `AppSettings.reset(_ page:)` puts that page's values back to their defaults
+  and leaves other pages', Launch at login and the permission-tied switches alone. Then a
+  Reset to Defaults button with a confirmation at the bottom of the six pages.
+
+### Task 33: About
+- [x] Tests: `AboutInfo` reads the version text from a bundle's info ("1.0 (1)"); the
+  links. Then the About page and its sidebar entry (search: "version", "license").
+
+### Task 34: Permissions
+- [x] Tests: `PermissionStatus` names and each permission's System Settings address. Then
+  `Permissions` (EventKit, `AXIsProcessTrusted`, `AEDeterminePermissionToAutomateTarget`
+  without asking), the page and its sidebar entry. CLEAN, TEST, BUILD; the user checks
+  tasks 31–34 on screen; checkpoint and commit.
+
+### Task 35: Hide in screenshots and screen sharing
+- [ ] Test: the setting is on by default and saved. Then `PillWindow.sharingType` follows
+  it. Check with ⌘⇧4, QuickTime and a shared screen; ship only if it holds. Commit.
+
+### Task 36: Hide in full-screen apps
+- [ ] Tests: `FullScreenCheck.covers(screen:windows:)` (pure: a front-app window equal to
+  the screen's frame); the two settings' defaults. Then the watcher (space and app
+  changes) and the pill hiding (alerts through when allowed). Check on screen. Commit.

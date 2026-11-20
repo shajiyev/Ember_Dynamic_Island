@@ -23,8 +23,8 @@ and deploys on its own.
 - **Host:** Vercel, connected to the GitHub repo, with Root Directory set to `site`.
   Every push to `main` deploys, including app-only and docs-only pushes (an identical
   copy of the site; see docs/architecture.md, "Deploying"). Live since 2026-11-14 at
-  https://ember-sigma-two.vercel.app (project `ember`). The custom domain is added in
-  Vercel once one is bought.
+  https://www.getember.online (project `ember`; getember.online forwards to www, and
+  https://ember-sigma-two.vercel.app still works).
 - **Built with:** plain HTML, CSS and a little JavaScript. No build step, no dependencies.
 - **GitHub language bar:** `.gitattributes` marks `site/` so its HTML/CSS/JS is not counted;
   the repo keeps showing as a Swift project.

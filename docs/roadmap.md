@@ -168,7 +168,13 @@
   Mac's keyboard settings) are refused. Opened this way, Esc or a click elsewhere closes
   it. No permission needed. Tests pass; checked on screen by the user on macOS 26.6.2.
   Plan docs/plans/settings.md, part 10.
-- **In progress:** nothing in the app.
+- **Done:** from the settings review (2026-11-18): Timer presets you choose; Reset to
+  Defaults on General, Glow, Music, Timer, Shelf and Battery; an About page (version,
+  website, GitHub, licence, credits); a Permissions page (each permission, what uses it,
+  its status, and a button to its page in System Settings). Tests pass; checked on screen
+  by the user on macOS 26.6.2. Plan docs/plans/settings.md, part 11.
+- **In progress:** Hide in screenshots and screen sharing; Hide in full-screen apps; Quick
+  Look on the shelf (Space, as in Finder).
 - **Next:** Settings' list is done. The rest of the v1 list: Keep awake (#18, in the menu
   bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
   colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".
@@ -183,9 +189,9 @@
   then the page is left as it is, although it is out of date: Calendar and the file shelf
   still say "Planned", volume and brightness has no card, the permissions card leaves out
   Accessibility, and the demo shows the old Wide panel and Timer layout.
-  Website: live at https://ember-sigma-two.vercel.app (first deployed 2026-11-14, to see
-  how it looks and performs; not announced). Still to do: the user's check in Safari on
-  Mac and iPhone; a custom domain once bought. Later for
+  Website: live at https://www.getember.online (the domain getember.online, which forwards
+  to www; also https://ember-sigma-two.vercel.app; first deployed 2026-11-14; not
+  announced). Still to do: the user's check in Safari on Mac and iPhone. Later for
   the site: testimonials, donations, a live GitHub star count, the
   interactive Mac view.
 

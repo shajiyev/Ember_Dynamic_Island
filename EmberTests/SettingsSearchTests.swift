@@ -109,4 +109,15 @@ struct SettingsSearchTests {
     @Test func theKeyboardShortcutIsFound() {
         #expect(SettingsSearch.matches("hotkey") == [.panelShortcut])
     }
+
+    @Test func theAboutPageIsFoundByItsVersionAndLicence() {
+        #expect(SettingsSearch.matches("license") == [.aboutEmber])
+        #expect(SettingsSearch.pages(for: "version") == [.about])
+        #expect(SettingsPage.allCases.last == .about)
+    }
+
+    @Test func thePermissionsPageIsFoundAndSitsBeforeFeedback() {
+        #expect(SettingsSearch.matches("privacy").contains(.permissionsList))
+        #expect(Array(SettingsPage.allCases.suffix(3)) == [.permissions, .feedback, .about])
+    }
 }

@@ -79,6 +79,7 @@ struct GeneralPage: View {
             } footer: {
                 Text("Every tab uses the chosen layout and width; each layout keeps its own width. The panel never gets narrower than its tabs need: with more tabs on, the slider starts higher. A change shows the next time the panel opens.")
             }
+            ResetSection(page: .general, settings: settings)
         }
         .onAppear { loginStatus = LaunchAtLogin.status }
     }
@@ -146,6 +147,7 @@ struct GlowPage: View {
                 }
             }
             .disabled(!settings.glowOn)
+            ResetSection(page: .glow, settings: settings)
         }
     }
 }
