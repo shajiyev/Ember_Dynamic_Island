@@ -79,6 +79,12 @@ final class PillController {
         didSet { updateVisibility() }
     }
     @ObservationIgnored private var isFullScreenInFront = false
+    /// Hidden for full screen: the pill is drawn as the bare notch (no glow, wings or level),
+    /// which cannot be seen on the black strip around it. The window stays, so the pill
+    /// grows out of the notch and shrinks back into it as usual, and hovering still opens it.
+    private(set) var isConcealed = false
+    /// The state the pill is drawn in: the resting notch while concealed.
+    var shownState: PillState { isConcealed ? .rest : state }
     @ObservationIgnored private var fullScreenTimer: Timer?
     /// Whether files dragged onto the pill open it (a feature that takes files is on).
     @ObservationIgnored var acceptsFileDrags = false
@@ -301,17 +307,14 @@ final class PillController {
         updateVisibility()
     }
 
-    /// Shown, unless an app in front is in full screen and the setting hides the pill then:
-    /// an open panel (the keyboard shortcut) and, when allowed, an alert still show.
+    /// Conceals the pill while an app in front is in full screen and the setting asks for
+    /// it; an open panel and, when allowed, an alert still show.
     private func updateVisibility() {
         guard let window, geometry != nil else { return }
         let showsAlert = briefActivity != nil || ongoingActivity?.endsWhenSeen == true
-        let hidden = hidesInFullScreen && isFullScreenInFront && state != .open && !(alertsInFullScreen && showsAlert)
-        if hidden {
-            window.orderOut(nil)
-        } else if !window.isVisible {
-            window.orderFrontRegardless()
-        }
+        let concealed = hidesInFullScreen && isFullScreenInFront && state != .open && !(alertsInFullScreen && showsAlert)
+        if concealed != isConcealed { isConcealed = concealed }
+        if !window.isVisible { window.orderFrontRegardless() }
     }
 
     /// While the setting is on, checks once a second: macOS sends no notice when an app in

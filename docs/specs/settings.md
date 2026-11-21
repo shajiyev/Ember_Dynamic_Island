@@ -160,7 +160,7 @@ backwards (smaller is faster), so the slider shows only Slow and Fast.
 | Setting | Default | What it does |
 |---|---|---|
 | Hide in screenshots and screen sharing | on | The pill and the panel are left out of screenshots, screen recordings and shared screens, so the song, events and file names stay private. Off, they can be captured (for example to show Ember to someone). |
-| Hide in full-screen apps | off | When the app in front fills the notch's screen (a film, a game, a presentation), the pill goes away; it comes back on leaving full screen. |
+| Hide in full-screen apps | off | When the app in front fills the notch's screen (a film, a game, a presentation), the pill goes away; it comes back on leaving full screen. While it is hidden, resting the pointer on the notch still opens the panel (added 2026-11-21). |
 | Still show alerts | on | With Hide in full-screen apps on: Time's up, battery alerts and the calendar heads-up still show for their moment. Greyed out while Hide in full-screen apps is off. |
 
 - **Screenshots:** the window asks macOS to keep it out of captures (`NSWindow.sharingType
@@ -178,6 +178,15 @@ backwards (smaller is faster), so the slider shows only Slow and Fast.
   hence the check once a second. Two earlier versions failed on screen: an exact
   screen-sized window (never there), then "the menu bar is gone" (it never goes on a
   notched screen). No permission is needed (window positions, not contents).
+- **Hidden, not gone (2026-11-21):** hiding draws the pill as the bare notch: resting, no
+  glow, no wings, no volume or brightness strip. On the black strip around the notch in
+  full screen it cannot be seen, and the window stays. So, as the user asked, resting the
+  pointer on the notch still opens the panel (after the usual delay; a click with Open on
+  hover off), the panel grows out of the notch and shrinks back into it as usual, and an
+  alert's wings come out of it. The first version took the window off the screen: a
+  window off the screen gets no pointer events (it needed a global pointer monitor) and
+  does not draw, so it came back showing the resting pill and then grew, and making it
+  skip that also lost the opening and closing animations. Both found by the user on screen.
 
 ### Live activities
 

@@ -1148,3 +1148,16 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Decision:** Space opens Quick Look on the shelf's selection, as in Finder, through a
   hot key held only while the Shelf tab shows a selection. **Why:** the panel does not take
   keyboard focus, and holding Space any longer would take it from every other app.
+
+## 2026-11-21 — Hidden in full screen means drawn as the bare notch
+- **Decision:** with Hide in full-screen apps on, the pill is drawn as the bare notch (no
+  glow, wings or level) instead of its window leaving the screen. **Why:** the user asked
+  for hovering to still open the panel. A window off the screen gets no pointer events and
+  does not draw: the first version followed the pointer with a global monitor, but the
+  window came back showing the resting pill before growing, and skipping that lost the
+  opening and closing animations. In full screen the strip around the notch is black, so
+  the bare notch cannot be seen, and everything else works as usual.
+- **Dropped:** a layout of its own for Music and for Timer. **Why:** the layout also sets
+  the panel's width, so different layouts per tab would mean either a panel that changes
+  width between tabs (and a third width for Calendar and Shelf) or a compact tab sitting in
+  a wide panel. The user dropped it.

@@ -2639,3 +2639,22 @@ inline, test-first, in this order; tasks 31–34 share one commit, 35 and 36 one
   the pill hiding (alerts through when allowed). Two earlier rules failed on screen (an
   exact screen-sized window; the menu bar gone); the Dock rule was found by recording.
   Checked on screen by the user on macOS 26.6.2 (2026-11-21). Commit.
+
+## Part 12: Opening the panel while hidden in full screen
+
+Asked 2026-11-21: with Hide in full-screen apps on, hovering over the notch should still
+open the panel. Spec: docs/specs/settings.md, General, Privacy and full screen.
+
+### Task 37: Hidden, not gone
+- [x] `PillController.isConcealed` (instead of taking the window off the screen) and
+  `shownState` (the resting state while concealed); `PillView` draws `shownState`, with no
+  glow and no level while concealed, and animates the change. Hover, clicks and the
+  opening and closing animations then work as everywhere else. CLEAN, TEST, BUILD (Debug
+  and Release, no warnings).
+- [x] The user checks on screen: in a full-screen app, hovering over the notch opens the
+  panel, which grows out of the notch and shrinks back; an alert's wings come out of the
+  notch; nothing changes outside full screen. Checked by the user on macOS 26.6.2
+  (2026-11-21). Checkpoint and commit.
+- Tried first and replaced (found on screen): a global pointer monitor while the window
+  was off the screen (`HiddenPillPointer`); the window came back showing the resting pill;
+  skipping that lost the animations.

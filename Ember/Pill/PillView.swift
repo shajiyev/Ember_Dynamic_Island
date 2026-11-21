@@ -20,8 +20,10 @@ struct PillView: View {
     }
 
     var body: some View {
-        let state = controller.state
-        let level = controller.level
+        // Concealed (hidden in a full-screen app), the pill is the bare notch: resting, with
+        // no glow and no level.
+        let state = controller.shownState
+        let level = controller.isConcealed ? nil : controller.level
         let style = PillStyle.style(for: state)
         let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
         // The state's own height: the wings and the panel stay in it, the strip goes below.
@@ -36,7 +38,8 @@ struct PillView: View {
         // The glow for this moment, as set in Settings → Glow: the activity's colour (an
         // activity may have none), the panel content's colour or Ember rose, or none.
         let activityGlow = controller.currentActivity?.glowColor
-        let glow = controller.glow.glow(for: state, activity: controller.currentActivity, panelColor: panelGlow)
+        let glow = controller.isConcealed ? nil
+            : controller.glow.glow(for: state, activity: controller.currentActivity, panelColor: panelGlow)
         // No glow keeps Ember rose at no strength, so a glow that comes back fades in.
         let glowColor = glow?.color ?? PillStyle.glowColor
         let glowOpacity = glow?.opacity ?? 0
@@ -120,6 +123,7 @@ struct PillView: View {
             .animation(PillStyle.animation, value: activityGlow)
             .animation(PillStyle.animation, value: panelGlow)
             .animation(PillStyle.animation, value: controller.glow)
+            .animation(PillStyle.animation, value: controller.isConcealed)
             .animation(PillStyle.animation, value: level != nil)
     }
 }

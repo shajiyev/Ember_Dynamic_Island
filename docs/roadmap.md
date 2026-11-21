@@ -179,9 +179,13 @@
   defaults chosen again by eye (resting 75% / 6 pt / 55%, live activity 70% / 6 pt / 55%,
   open panel 80% / 10 pt / 60%). Tests pass; checked on screen by the user on macOS 26.6.2.
   Plans docs/plans/settings.md (tasks 35–36) and docs/plans/file-shelf.md (task 15).
-- **Next:** opening the panel by hovering over the notch while Ember is hidden in a
-  full-screen app; a layout of its own for Music and for Timer (in their Settings pages);
-  then each live activity's own glow settings (Music, Timer, Battery, Calendar).
+- **Done:** hidden in a full-screen app, the pill is drawn as the bare notch instead of
+  leaving the screen: hovering over the notch opens the panel, which grows out of the notch
+  and shrinks back as usual, and alerts come out of it. Tests pass; checked on screen by
+  the user on macOS 26.6.2. Plan docs/plans/settings.md, part 12.
+- **Dropped:** a layout of its own for Music and for Timer (2026-11-21); see decisions.
+- **Next:** each live activity's own glow settings (Music, Timer, Battery, Calendar: an
+  "Own glow settings" switch revealing its own Strength, Spread and Fade).
 - **Next:** Settings' list is done. The rest of the v1 list: Keep awake (#18, in the menu
   bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
   colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".

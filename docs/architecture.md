@@ -33,8 +33,10 @@
     (0…1 across its width) tells the content where the files are; a drop goes to
     `onFileDrop` with that position. The pill never refers to the shelf.
   - `PillWindow.swift`: the transparent always-on-top panel. `PillController` keeps it out
-    of screenshots and screen sharing (`sharingType`, Settings → General) and hides it while
-    a full-screen app is in front (when the setting is on).
+    of screenshots and screen sharing (`sharingType`, Settings → General). While a
+    full-screen app is in front (when the setting is on) it conceals the pill
+    (`isConcealed`): `PillView` draws `shownState`, the bare resting notch with no glow,
+    wings or level, and the window stays, so hover and the animations work as usual.
   - `FullScreenCheck.swift`: whether an app is full screen on the notch's screen, from the
     window list (no permission): a window spanning the screen and no Dock window on it.
     `PillController` asks once a second while Hide in full-screen apps is on.
