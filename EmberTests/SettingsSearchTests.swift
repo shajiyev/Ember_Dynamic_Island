@@ -18,10 +18,10 @@ struct SettingsSearchTests {
     }
 
     @Test func pagesKeepTheirSidebarOrder() {
-        // "In the notch, show first", "Show shuffle", "Show repeat", "Show the countdown in
+        // "Still show alerts", "In the notch, show first", "Show shuffle", "Show repeat", "Show the countdown in
         // the notch", "Show Calendar Events", "Show Reminders", "Show an example", "Show
         // Volume & Brightness in the Pill".
-        #expect(SettingsSearch.matches("show") == [.lastingPriority, .showsShuffle, .showsRepeat, .timerInWings,
+        #expect(SettingsSearch.matches("show") == [.alertsInFullScreen, .lastingPriority, .showsShuffle, .showsRepeat, .timerInWings,
                                                    .calendarEvents, .reminders, .batteryExample, .levels])
         #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels])
     }
@@ -60,7 +60,7 @@ struct SettingsSearchTests {
     }
 
     @Test func theScreenshotSwitchAndTheTabCooldownAreFound() {
-        #expect(SettingsSearch.matches("screenshot") == [.screenshotsToShelf])
+        #expect(SettingsSearch.matches("screenshot") == [.hidesInCaptures, .screenshotsToShelf])
         #expect(SettingsSearch.matches("cooldown") == [.tabCooldown, .shelfCooldown])
     }
 
@@ -119,5 +119,10 @@ struct SettingsSearchTests {
     @Test func thePermissionsPageIsFoundAndSitsBeforeFeedback() {
         #expect(SettingsSearch.matches("privacy").contains(.permissionsList))
         #expect(Array(SettingsPage.allCases.suffix(3)) == [.permissions, .feedback, .about])
+    }
+
+    @Test func thePrivacyAndFullScreenSwitchesAreFound() {
+        #expect(SettingsSearch.matches("screen sharing") == [.hidesInCaptures])
+        #expect(SettingsSearch.matches("full-screen") == [.hidesInFullScreen, .alertsInFullScreen])
     }
 }

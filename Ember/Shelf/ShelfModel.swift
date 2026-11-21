@@ -8,7 +8,14 @@ import Observation
 @Observable
 final class ShelfModel {
     private(set) var list = ShelfList()
-    private(set) var selection: Set<UUID> = []
+    private(set) var selection: Set<UUID> = [] {
+        didSet { updateQuickLookKey() }
+    }
+    /// The Shelf tab is on screen (the panel is open on it).
+    @ObservationIgnored private var isTabShown = false
+    /// Space, borrowed while the Shelf tab shows with a selection: the panel never takes the
+    /// keyboard, so Space could not reach it otherwise.
+    @ObservationIgnored private lazy var quickLookKey = GlobalHotKey { [weak self] in self?.quickLook() }
     /// Where each item's file is now; a missing file has none.
     private(set) var locations: [UUID: URL] = [:]
     private(set) var thumbnails: [UUID: NSImage] = [:]
@@ -84,6 +91,24 @@ final class ShelfModel {
         refresh()
         guard let url = locations[id] else { return }
         NSWorkspace.shared.open(url)
+    }
+
+    /// The Shelf tab appeared or went: Space opens Quick Look only while it shows.
+    func tabShown(_ shown: Bool) {
+        isTabShown = shown
+        updateQuickLookKey()
+    }
+
+    /// Opens Quick Look on the given items, or the selection, in the shelf's order (missing
+    /// files left out); closes it when it is open.
+    func quickLook(_ ids: Set<UUID>? = nil) {
+        refresh()
+        let urls = list.itemsForQuickLook(selection: ids ?? selection).compactMap { locations[$0.id] }
+        ShelfQuickLook.shared.toggle(urls)
+    }
+
+    private func updateQuickLookKey() {
+        quickLookKey.register(isTabShown && !selection.isEmpty ? KeyShortcut(keyCode: 49, modifiers: []) : nil)
     }
 
     func showInFinder(_ ids: Set<UUID>) {

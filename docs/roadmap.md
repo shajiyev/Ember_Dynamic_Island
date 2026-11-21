@@ -173,8 +173,15 @@
   website, GitHub, licence, credits); a Permissions page (each permission, what uses it,
   its status, and a button to its page in System Settings). Tests pass; checked on screen
   by the user on macOS 26.6.2. Plan docs/plans/settings.md, part 11.
-- **In progress:** Hide in screenshots and screen sharing; Hide in full-screen apps; Quick
-  Look on the shelf (Space, as in Finder).
+- **Done:** Settings → General → Privacy and full screen: Hide in screenshots and screen
+  sharing (on by default) and Hide in full-screen apps (off by default, with Still show
+  alerts); Quick Look on the shelf (Space, as in Finder, and a right-click item); the glow
+  defaults chosen again by eye (resting 75% / 6 pt / 55%, live activity 70% / 6 pt / 55%,
+  open panel 80% / 10 pt / 60%). Tests pass; checked on screen by the user on macOS 26.6.2.
+  Plans docs/plans/settings.md (tasks 35–36) and docs/plans/file-shelf.md (task 15).
+- **Next:** opening the panel by hovering over the notch while Ember is hidden in a
+  full-screen app; a layout of its own for Music and for Timer (in their Settings pages);
+  then each live activity's own glow settings (Music, Timer, Battery, Calendar).
 - **Next:** Settings' list is done. The rest of the v1 list: Keep awake (#18, in the menu
   bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
   colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".

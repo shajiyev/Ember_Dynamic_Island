@@ -147,6 +147,25 @@ Mocked up while designing (`.superpowers/brainstorm/`, not committed).
 
 The shelf shows nothing in the wings: the panel shows it.
 
+### Quick Look (added 2026-11-20)
+
+As in Finder: select an item (or several with ⌘-click) and press **Space**; Quick Look
+opens with the file. With several, the arrow keys move between them. **Space** or **Esc**
+closes it. The right-click menu has a **Quick Look** item too. A missing file cannot be
+previewed: Space and the menu item do nothing for it.
+
+- **Why Space has to be borrowed:** the panel never takes keyboard focus (it stays out of
+  the way; decisions 2026-11-11). So while the panel is open **on the Shelf tab with
+  something selected**, Ember takes Space for itself (a temporary `GlobalHotKey`, as Esc for
+  the keyboard shortcut); the rest of the time Space works as usual everywhere.
+- Quick Look is macOS's own preview window (`QLPreviewPanel`); Ember is its controller
+  (`ShelfQuickLook`) and comes to the front so the window can take the keys. The panel may
+  close behind it as usual; the preview stays until closed.
+- The files previewed are the selection's, in the shelf's order
+  (`ShelfList.itemsForQuickLook(selection:)`), found again first, missing ones left out.
+
+Until 2026-11-20 Quick Look previews were in "Not in this feature"; the user asked for them.
+
 ## How it is built
 
 ### Why these approaches
@@ -239,6 +258,6 @@ noted here.
 
 ## Not in this feature
 
-Text, links and browser images on the shelf; copies of files; Quick Look previews; a count
+Text, links and browser images on the shelf; copies of files; a count
 in the wings; sharing other than AirDrop; dragging a file onto the pill to open the panel
 before the pointer reaches the notch.

@@ -37,7 +37,11 @@ struct ShelfPanelView: View {
         }
         .padding(.vertical, 12)
         .background { clearsSelectionOnClick }
-        .onAppear { model.refresh() }
+        .onAppear {
+            model.refresh()
+            model.tabShown(true)
+        }
+        .onDisappear { model.tabShown(false) }
     }
 
     @ViewBuilder private var shelf: some View {
@@ -169,7 +173,7 @@ private struct ShelfItemView: View {
         .accessibilityAction(named: "Remove") { model.remove([item.id]) }
     }
 
-    /// Open, Show in Finder and Remove, for the selection when this item is part of it.
+    /// Open, Quick Look, Show in Finder and Remove, for the selection when this item is part of it.
     private func menu(isMissing: Bool) -> NSMenu {
         let ids = model.selection.contains(item.id) ? model.selection : [item.id]
         let menu = NSMenu()
@@ -178,6 +182,7 @@ private struct ShelfItemView: View {
                 model.open(item.id)
                 closePanel()
             })
+            menu.addItem(ShelfMenuItem("Quick Look") { model.quickLook(ids) })
             menu.addItem(ShelfMenuItem("Show in Finder") {
                 model.showInFinder(ids)
                 closePanel()

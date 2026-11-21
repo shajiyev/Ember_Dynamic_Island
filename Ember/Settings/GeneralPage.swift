@@ -50,6 +50,19 @@ struct GeneralPage: View {
                 Text("With hover off, click the pill to open it. The open delay is how long the pointer rests on the pill first; the close delay, how long after it leaves the panel. The speeds are how fast the panel grows and shrinks. The keyboard shortcut opens and closes it from anywhere; Esc or a click elsewhere also closes it. On the last tab, the panel opens on the tab of what the wings show, such as Music while a song plays, but reopened within the time above it comes back to the tab it was on. A chosen tab always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way.")
             }
             Section {
+                Toggle(SettingsItem.hidesInCaptures.title, isOn: $settings.hidesInCaptures)
+                    .settingsItem(.hidesInCaptures)
+                Toggle(SettingsItem.hidesInFullScreen.title, isOn: $settings.hidesInFullScreen)
+                    .settingsItem(.hidesInFullScreen)
+                Toggle(SettingsItem.alertsInFullScreen.title, isOn: $settings.alertsInFullScreen)
+                    .settingsItem(.alertsInFullScreen)
+                    .disabled(!settings.hidesInFullScreen)
+            } header: {
+                Text("Privacy and full screen")
+            } footer: {
+                Text("Hidden in screenshots and screen sharing, your songs, events and files stay private, but Ember itself cannot be captured either. In full-screen apps, alerts such as Time's up, a low battery or a calendar heads-up can still show.")
+            }
+            Section {
                 Picker(SettingsItem.lastingPriority.title, selection: $settings.lastingPriority) {
                     ForEach(LastingPriority.allCases, id: \.self) { priority in
                         Text(priority.title).tag(priority)

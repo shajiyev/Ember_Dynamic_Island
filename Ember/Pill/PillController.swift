@@ -63,6 +63,23 @@ final class PillController {
             refreshDisplay()
         }
     }
+    /// Keeps the pill and the panel out of screenshots, recordings and shared screens.
+    @ObservationIgnored var hidesInCaptures = true {
+        didSet { window?.sharingType = hidesInCaptures ? .none : .readOnly }
+    }
+    /// Hides the pill while the app in front fills the notch's screen.
+    @ObservationIgnored var hidesInFullScreen = false {
+        didSet {
+            guard hidesInFullScreen != oldValue else { return }
+            watchFullScreen(hidesInFullScreen)
+        }
+    }
+    /// While hidden for full screen, alerts still show for their moment.
+    @ObservationIgnored var alertsInFullScreen = true {
+        didSet { updateVisibility() }
+    }
+    @ObservationIgnored private var isFullScreenInFront = false
+    @ObservationIgnored private var fullScreenTimer: Timer?
     /// Whether files dragged onto the pill open it (a feature that takes files is on).
     @ObservationIgnored var acceptsFileDrags = false
     /// While files are dragged over the open panel: where across its width, 0…1, so its
@@ -121,6 +138,7 @@ final class PillController {
         if model.state != state { previousState = state }
         state = model.state
         if state != .open { stopWatchingForClose() }
+        updateVisibility()
         // A seen activity stays until the panel opens, so the pill goes straight from the
         // wings into the panel; if the pointer leaves first, it goes then.
         if state == .open || event == .pointerExited {
@@ -280,11 +298,51 @@ final class PillController {
         }
         let window = self.window ?? makeWindow()
         window.setFrame(geometry.windowFrame, display: true)
-        window.orderFrontRegardless()
+        updateVisibility()
+    }
+
+    /// Shown, unless an app in front is in full screen and the setting hides the pill then:
+    /// an open panel (the keyboard shortcut) and, when allowed, an alert still show.
+    private func updateVisibility() {
+        guard let window, geometry != nil else { return }
+        let showsAlert = briefActivity != nil || ongoingActivity?.endsWhenSeen == true
+        let hidden = hidesInFullScreen && isFullScreenInFront && state != .open && !(alertsInFullScreen && showsAlert)
+        if hidden {
+            window.orderOut(nil)
+        } else if !window.isVisible {
+            window.orderFrontRegardless()
+        }
+    }
+
+    /// While the setting is on, checks once a second: macOS sends no notice when an app in
+    /// front goes into full screen (no app switch, and no space change reached Ember in the
+    /// recordings of 2026-11-20). Reading window positions costs next to nothing.
+    private func watchFullScreen(_ watching: Bool) {
+        fullScreenTimer?.invalidate()
+        fullScreenTimer = nil
+        guard watching else {
+            isFullScreenInFront = false
+            updateVisibility()
+            return
+        }
+        fullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.checkFullScreen() }
+        }
+        checkFullScreen()
+    }
+
+    private func checkFullScreen() {
+        guard hidesInFullScreen else { return }
+        let screen = window?.screen ?? NSScreen.screens.first { $0.auxiliaryTopLeftArea != nil }
+        let isFullScreen = screen.map(FullScreenCheck.isFullScreen) ?? false
+        guard isFullScreen != isFullScreenInFront else { return }
+        isFullScreenInFront = isFullScreen
+        updateVisibility()
     }
 
     private func makeWindow() -> PillWindow {
         let window = PillWindow()
+        window.sharingType = hidesInCaptures ? .none : .readOnly
         let hostingView = FirstMouseHostingView(rootView: PillView(controller: self, panelContent: panelContent))
         hostingView.safeAreaRegions = []   // draw under the menu bar and notch
         window.contentView = hostingView

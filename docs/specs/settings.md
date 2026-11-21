@@ -19,8 +19,8 @@ what each one changes.
 | Page | Status |
 |---|---|
 | The window, search, menu, the panel's gear | Built 2026-11-15 (#0, #26a); the menu's Features section 2026-11-18 |
-| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Width 2026-11-18; the keyboard shortcut 2026-11-18 |
-| Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17 |
+| General | Built: System and Opening the panel 2026-11-15 (open and close speeds 2026-11-17); Privacy and full screen 2026-11-20; Live activities 2026-11-18; Tabs and the width rule 2026-11-17; Panel layout 2026-11-16 (#38); Open the panel on and Stay on the last tab 2026-11-16 (#39). Width 2026-11-18; the keyboard shortcut 2026-11-18 |
+| Glow | Built: Resting glow 2026-11-15 (#29); a switch per glow, a strength, spread and fade for each glow, every glow centred, a softer live activity glow 2026-11-17. the Glow switch (all glows off) and the glow colour 2026-11-17; defaults chosen again 2026-11-20 |
 | Music | Built 2026-11-15; Show shuffle and Show repeat 2026-11-16 (#33) |
 | Timer | Built 2026-11-15; Show the countdown in the notch 2026-11-18 |
 | Calendar | Built 2026-11-15 |
@@ -155,7 +155,7 @@ speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpe
 slider moves in powers of two, so the middle is 1. A number in seconds would read
 backwards (smaller is faster), so the slider shows only Slow and Fast.
 
-### Privacy and full screen (designed 2026-11-18, not built)
+### Privacy and full screen (built 2026-11-20, checked on screen 2026-11-21)
 
 | Setting | Default | What it does |
 |---|---|---|
@@ -167,9 +167,17 @@ backwards (smaller is faster), so the slider shows only Slow and Fast.
   = .none`). Recent macOS versions do not always respect this for every kind of capture,
   so it is checked with a screenshot, QuickTime and screen sharing before it ships; if it
   does not hold, the switch is not shipped.
-- **Full screen:** checked each time the app in front or the space changes: the front app
-  has a window covering the notch's whole screen. No permission is needed (window
-  positions, not their contents).
+- **Full screen:** while the setting is on, checked once a second: some app's window spans
+  the notch's screen from edge to edge and down to its bottom, starting within 40 pt of its
+  top, and the Dock's screen-sized window (layer 20) is not on that screen. Found by
+  recording the window list on the user's Mac (2026-11-20): on a notched screen a
+  full-screen app sits below the notch (Chrome's window 33 pt down), the menu bar stays (the
+  black strip around the notch), and the Dock's window is the one that goes; a maximised
+  window can be as large, so the Dock's window tells them apart. macOS sent no notice when
+  an app in front went full screen (no app switch, no space change reached the recorder),
+  hence the check once a second. Two earlier versions failed on screen: an exact
+  screen-sized window (never there), then "the menu bar is gone" (it never goes on a
+  notched screen). No permission is needed (window positions, not contents).
 
 ### Live activities
 
@@ -349,12 +357,12 @@ Glow colour   ◉ ○ ○ ○ ○ ○   (○ Custom)
 | Resting glow | on | The always-on glow (#29): a soft Ember rose glow around the notch while nothing is happening. Off, the resting pill is invisible and the notch lights up only for activity. Saved under `alwaysOnGlow` (its first name), so a user who turned it off keeps it off. |
 | Strength | 75% | How bright the glow is: its opacity, 10–100%, in 5% steps. |
 | Spread | 6 pt | How far the glow reaches from the pill: its radius, 4–30 pt, in 1 pt steps. |
-| Fade | 20% | How far down the sides the light takes to reach full strength, fading in from the top of the screen: 0–100% of the pill's height, in 5% steps. 0% lights the sides right up to the top; higher fades them out more gradually. |
+| Fade | 55% | How far down the sides the light takes to reach full strength, fading in from the top of the screen: 0–100% of the pill's height, in 5% steps. 0% lights the sides right up to the top; higher fades them out more gradually. |
 | Live activity glow | on | Off: no activity glows; the wings still show. On: each feature's switch decides for its own activities. |
-| Strength · Spread · Fade | 80% · 10 pt · 10% | As for the resting glow. |
+| Strength · Spread · Fade | 70% · 6 pt · 55% | As for the resting glow. |
 | Music, Timer, Battery, Calendar | on | Each feature's activities glow or not (Timer includes Time's up). |
 | Open panel glow | on | Off: the open panel has no glow, on any tab (the Music tab's song colour included). |
-| Strength · Spread · Fade | 80% · 10 pt · 15% | As for the resting glow. |
+| Strength · Spread · Fade | 80% · 10 pt · 60% | As for the resting glow. |
 
 Each glow's sliders (and the feature switches) are greyed out while its switch is off.
 
@@ -404,10 +412,13 @@ MacBook Pro, macOS 26.6.2, compared with the first look:
 
 | | Rest | Live activity | Open panel |
 |---|---|---|---|
-| Strength (opacity) | 75% (was 60%) | 80% (was 85%) | 80% (was 55%) |
-| Spread (radius) | 6 pt (was 8) | 10 pt (unchanged) | 10 pt (was 16) |
+| Strength (opacity) | 75% (was 60%) | 70% (was 85%) | 80% (was 55%) |
+| Spread (radius) | 6 pt (was 8) | 6 pt (was 10) | 10 pt (was 16) |
 | Pushed down | 0 pt (unchanged) | 0 pt (was 5) | 0 pt (was 8) |
-| Fade | 20% (was 60%, the line only) | 10% (the line was faded from halfway down; the glow not at all) | 15% (as live activity) |
+| Fade | 55% (was 60%, the line only) | 55% (the line was faded from halfway down; the glow not at all) | 60% (as live activity) |
+
+Chosen a second time on 2026-11-20 (the first choice, 2026-11-17, was rest 75% / 6 pt /
+20%, live activity 80% / 10 pt / 10%, open panel 80% / 10 pt / 15%).
 
 **How it works:**
 - **`LiveActivity.feature`**: which feature made it (music, timer, battery, calendar), set

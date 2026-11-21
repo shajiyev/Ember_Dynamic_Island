@@ -32,7 +32,12 @@
     over the pill opens it at once and holds it open; over the open panel, `fileDragPosition`
     (0…1 across its width) tells the content where the files are; a drop goes to
     `onFileDrop` with that position. The pill never refers to the shelf.
-  - `PillWindow.swift`: the transparent always-on-top panel.
+  - `PillWindow.swift`: the transparent always-on-top panel. `PillController` keeps it out
+    of screenshots and screen sharing (`sharingType`, Settings → General) and hides it while
+    a full-screen app is in front (when the setting is on).
+  - `FullScreenCheck.swift`: whether an app is full screen on the notch's screen, from the
+    window list (no permission): a window spanning the screen and no Dock window on it.
+    `PillController` asks once a second while Hide in full-screen apps is on.
   - `PillView.swift`, `NotchShape.swift`, `PillStyle.swift`: drawing, animation and the look
     (each state's shape and default glow). `PillView` draws the glow behind the black
     shape, masked so the light on the sides fades in from the top.
@@ -177,7 +182,9 @@
   - `ShelfBookmarks.swift`: the only file-system code: bookmarks for dropped files, and
     finding them again (moved, renamed, missing).
   - `ShelfModel.swift`: items, selection, locations and thumbnails; open, Show in Finder,
-    AirDrop (`NSSharingService`). `ShelfThumbnails.swift`: Quick Look thumbnails.
+    AirDrop (`NSSharingService`), Quick Look (Space: a `GlobalHotKey` held while the Shelf
+    tab shows a selection). `ShelfThumbnails.swift`: Quick Look thumbnails.
+    `ShelfQuickLook.swift`: the Quick Look panel's controller and data source.
   - `ShelfPanelView.swift`, `ShelfDropFrame.swift`: the Shelf tab (AirDrop area and shelf).
     `ShelfItemInteraction.swift`: an item's AppKit side (clicks, menu, hover, drag source).
   - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.

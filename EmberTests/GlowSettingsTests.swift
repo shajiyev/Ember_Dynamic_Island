@@ -10,9 +10,9 @@ struct GlowSettingsTests {
 
     @Test func byDefaultEveryGlowIsOnWithTheSofterLiveActivityGlow() {
         let glow = GlowSettings()
-        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.75, radius: 6, fade: 0.2))
-        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == PillGlow(color: .orange, opacity: 0.8, radius: 10, fade: 0.1))
-        #expect(glow.glow(for: .open, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.8, radius: 10, fade: 0.15))
+        #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.75, radius: 6, fade: 0.55))
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == PillGlow(color: .orange, opacity: 0.7, radius: 6, fade: 0.55))
+        #expect(glow.glow(for: .open, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.8, radius: 10, fade: 0.6))
     }
 
     @Test func theOpenPanelTakesTheColourItsContentAsksFor() {
@@ -90,8 +90,8 @@ struct GlowSettingsTests {
         glow.restStrength = 0.9
         glow.restSpread = 20
         #expect(glow.glow(for: .rest, activity: nil, panelColor: nil) == PillGlow(color: PillStyle.glowColor, opacity: 0.9,
-                                                                                  radius: 20, fade: 0.2))
-        #expect(glow.glow(for: .active, activity: timer, panelColor: nil)?.opacity == 0.8)
+                                                                                  radius: 20, fade: 0.55))
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil)?.opacity == 0.7)
         #expect(glow.glow(for: .open, activity: nil, panelColor: nil)?.radius == 10)
     }
 

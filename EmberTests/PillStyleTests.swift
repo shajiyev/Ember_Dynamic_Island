@@ -4,11 +4,9 @@ import Testing
 @testable import Ember
 
 struct PillStyleTests {
-    @Test func restGlowSpreadsLessThanActive() {
+    @Test func restGlowsByDefault() {
         let rest = PillStyle.style(for: .rest)
-        let active = PillStyle.style(for: .active)
         #expect(rest.glowOpacity > 0 && rest.glowRadius > 0)
-        #expect(rest.glowRadius < active.glowRadius)
     }
 
     @Test func restEdgeLineIsTwoPointsThick() {
@@ -16,9 +14,9 @@ struct PillStyleTests {
     }
 
     @Test func theSidesReachFullLightAt60PercentAtRestAndAtTheBottomOtherwise() {
-        #expect(PillStyle.style(for: .rest).glowFade == 0.2)
-        #expect(PillStyle.style(for: .active).glowFade == 0.1)
-        #expect(PillStyle.style(for: .open).glowFade == 0.15)
+        #expect(PillStyle.style(for: .rest).glowFade == 0.55)
+        #expect(PillStyle.style(for: .active).glowFade == 0.55)
+        #expect(PillStyle.style(for: .open).glowFade == 0.6)
     }
 
     @Test func restHasNoFlareSoItsBlackIsExactlyTheNotch() {
@@ -51,8 +49,8 @@ struct PillStyleTests {
 
     @Test func theLiveActivityGlowIsSofterThanAtFirst() {
         let active = PillStyle.style(for: .active)
-        #expect(active.glowOpacity == 0.8)
-        #expect(active.glowRadius == 10)
+        #expect(active.glowOpacity == 0.7)
+        #expect(active.glowRadius == 6)
     }
 
     @Test func theRestingGlowDefaultsAreTheChosenLook() {

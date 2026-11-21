@@ -1128,3 +1128,23 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Why Permissions reads without asking:** the page must never trigger a macOS prompt;
   Automation can only be read while the player is open, which the row says.
 - The other ideas from the review stay unrecorded until the user picks them.
+
+## 2026-11-20 — Hiding in screenshots and in full-screen apps; Quick Look on the shelf
+- **Decision:** Hide in screenshots and screen sharing is **on** by default. **Why:** the
+  pill shows songs, events and file names; someone who wants Ember in a capture can turn
+  it off.
+- **Decision:** Hide in full-screen apps is **off** by default, with Still show alerts on.
+  **Why:** most people expect the notch to keep working; those who watch films or play
+  games choose to hide it, and still get Time's up and battery alerts.
+- **Decision:** full screen is found from the window list, once a second: a window spans
+  the notch's screen and the Dock's screen-sized window is gone from it. **Why:** recorded
+  on the user's Mac, on a notched screen the full-screen app starts below the notch, the
+  menu bar stays and only the Dock's window goes; macOS sent no notice (no app switch, no
+  space change). Two simpler rules failed on screen first. Reading window positions needs
+  no permission.
+- **Decision:** the glow defaults were chosen again by eye: resting 75% / 6 pt / 55%,
+  live activity 70% / 6 pt / 55%, open panel 80% / 10 pt / 60%; Ember rose stays the
+  default colour.
+- **Decision:** Space opens Quick Look on the shelf's selection, as in Finder, through a
+  hot key held only while the Shelf tab shows a selection. **Why:** the panel does not take
+  keyboard focus, and holding Space any longer would take it from every other app.

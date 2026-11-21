@@ -95,4 +95,11 @@ struct ShelfItemsTests {
         #expect(ShelfDropTarget.airDrop.accepts(fromShelf: true))
         #expect(!ShelfDropTarget.keep.accepts(fromShelf: true))
     }
+
+    @Test func quickLookShowsTheSelectionInTheShelfsOrder() {
+        let a = item("/a"), b = item("/b"), c = item("/c")
+        let list = ShelfList(items: [a, b, c])
+        #expect(list.itemsForQuickLook(selection: [c.id, a.id]) == [a, c])
+        #expect(list.itemsForQuickLook(selection: []).isEmpty)
+    }
 }

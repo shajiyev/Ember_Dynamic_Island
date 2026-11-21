@@ -12,6 +12,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case panelShortcut
     case opensOnTab
     case tabCooldown
+    case hidesInCaptures
+    case hidesInFullScreen
+    case alertsInFullScreen
     case lastingPriority
     case panelLayout
     case panelWidth
@@ -57,7 +60,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var page: SettingsPage {
         switch self {
         case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
-             .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
+             .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow,
@@ -86,6 +89,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelShortcut: return "Keyboard shortcut"
         case .opensOnTab: return "Open the panel on"
         case .tabCooldown: return "Stay on the last tab for"
+        case .hidesInCaptures: return "Hide in screenshots and screen sharing"
+        case .hidesInFullScreen: return "Hide in full-screen apps"
+        case .alertsInFullScreen: return "Still show alerts"
         case .lastingPriority: return "In the notch, show first"
         case .panelLayout: return "Panel layout"
         case .panelWidth: return "Width"
@@ -134,6 +140,9 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelShortcut: return ["hotkey", "key", "keys"]
         case .opensOnTab: return ["default tab", "last tab", "start"]
         case .tabCooldown: return ["cooldown", "seconds", "return"]
+        case .hidesInCaptures: return ["privacy", "recording", "capture", "call"]
+        case .hidesInFullScreen: return ["full-screen", "video", "game", "presentation"]
+        case .alertsInFullScreen: return ["full-screen", "Time's up", "battery"]
         case .lastingPriority: return ["priority", "song", "both"]
         case .panelLayout: return ["compact", "wide", "size", "panel"]
         case .panelWidth: return ["wider", "narrower", "size"]

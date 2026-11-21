@@ -1394,3 +1394,20 @@ pure. Same Global Constraints and Commands.
 Task 9's `site/index.html` step is not done: since this plan was written, the website was
 paused until v1 (docs/specs/landing-page.md, "Redesign after v1"), so its cards stay as
 they are.
+
+---
+
+# Part 4: Quick Look
+
+Added 2026-11-20 (spec: "Quick Look"). Built inline, test-first.
+
+### Task 15: Space previews the selection
+
+- [x] Test first (`ShelfItemsTests`): `itemsForQuickLook(selection:)` gives the selected
+  items in the shelf's order, none for an empty selection.
+- [x] `ShelfModel.quickLook(_:)` (the given items or the selection, found again, missing left out); `ShelfQuickLook`: the
+  Quick Look panel's controller and data source (Ember comes to the front, the panel opens
+  on the first file; Space or Esc closes it, macOS's own keys); a `GlobalHotKey` for Space,
+  registered while the Shelf tab is shown with a selection and removed when the tab goes
+  or the selection empties; a Quick Look item in the right-click menu. BUILD; the user
+  checks on screen.

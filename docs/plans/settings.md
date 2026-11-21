@@ -2628,10 +2628,14 @@ inline, test-first, in this order; tasks 31–34 share one commit, 35 and 36 one
   tasks 31–34 on screen; checkpoint and commit.
 
 ### Task 35: Hide in screenshots and screen sharing
-- [ ] Test: the setting is on by default and saved. Then `PillWindow.sharingType` follows
+- [x] Test: the setting is on by default and saved. Then `PillWindow.sharingType` follows
   it. Check with ⌘⇧4, QuickTime and a shared screen; ship only if it holds. Commit.
 
 ### Task 36: Hide in full-screen apps
-- [ ] Tests: `FullScreenCheck.covers(screen:windows:)` (pure: a front-app window equal to
-  the screen's frame); the two settings' defaults. Then the watcher (space and app
-  changes) and the pill hiding (alerts through when allowed). Check on screen. Commit.
+- [x] Tests: `FullScreenCheck.isFullScreen(screen:mainHeight:windows:docks:)` (pure: a
+  window spanning the screen from within 40 pt of its top, and no Dock window on that
+  screen; cases from the window list recorded on the user's Mac); the two settings'
+  defaults. Then a check once a second while the setting is on (macOS sends no notice) and
+  the pill hiding (alerts through when allowed). Two earlier rules failed on screen (an
+  exact screen-sized window; the menu bar gone); the Dock rule was found by recording.
+  Checked on screen by the user on macOS 26.6.2 (2026-11-21). Commit.

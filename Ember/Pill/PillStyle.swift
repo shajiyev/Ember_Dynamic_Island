@@ -67,7 +67,7 @@ nonisolated struct PillStyle: Equatable {
     }
 
     /// The look for a state. Its glow opacity, radius and fade are the defaults of Settings →
-    /// Glow's Strength, Spread and Fade (chosen by eye 2026-11-17); `GlowSettings` decides
+    /// Glow's Strength, Spread and Fade (chosen by eye 2026-11-17, again 2026-11-20); `GlowSettings` decides
     /// whether a glow shows and how.
     static func style(for state: PillState) -> PillStyle {
         switch state {
@@ -76,13 +76,13 @@ nonisolated struct PillStyle: Equatable {
             // sides, fading out at the top of the screen. No flare, so the black is exactly
             // the notch and the line just outside it, where the screen has pixels.
             return PillStyle(topCornerRadius: 0, bottomCornerRadius: 14, glowOpacity: 0.75, glowRadius: 6,
-                             glowFade: 0.2, edgeLineWidth: 2)
+                             glowFade: 0.55, edgeLineWidth: 2)
         case .active:
-            return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.8, glowRadius: 10, glowFade: 0.1)
+            return PillStyle(topCornerRadius: 6, bottomCornerRadius: 14, glowOpacity: 0.7, glowRadius: 6, glowFade: 0.55)
         case .open:
             // The level strip sits further in on the open panel: 48 points from its edge.
             return PillStyle(topCornerRadius: 19, bottomCornerRadius: 24, glowOpacity: 0.8, glowRadius: 10,
-                             glowFade: 0.15, levelStripMargin: 29)
+                             glowFade: 0.6, levelStripMargin: 29)
         }
     }
 }

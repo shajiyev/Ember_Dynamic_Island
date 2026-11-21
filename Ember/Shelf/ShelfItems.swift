@@ -50,6 +50,11 @@ nonisolated struct ShelfList: Equatable {
         return items.filter { dragged.contains($0.id) }
     }
 
+    /// Quick Look shows the selected items, in the shelf's order.
+    func itemsForQuickLook(selection: Set<UUID>) -> [ShelfItem] {
+        items.filter { selection.contains($0.id) }
+    }
+
     /// A click selects only the clicked item; a ⌘-click adds it to, or removes it from, the
     /// selection.
     static func selection(afterClicking id: UUID, extending: Bool, current: Set<UUID>) -> Set<UUID> {

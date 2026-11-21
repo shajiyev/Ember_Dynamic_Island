@@ -11,6 +11,9 @@ extension AppDelegate {
         controller.openSize = settings.panelSize
         controller.openSideRoom = settings.openSideRoom
         panelHotKey.register(settings.panelShortcut)
+        controller.hidesInCaptures = settings.hidesInCaptures
+        controller.hidesInFullScreen = settings.hidesInFullScreen
+        controller.alertsInFullScreen = settings.alertsInFullScreen
         controller.acceptsFileDrags = settings.shelfOn
         panelSelection.defaultTab = settings.opensOnTab
         panelSelection.returnCooldown = settings.tabCooldown

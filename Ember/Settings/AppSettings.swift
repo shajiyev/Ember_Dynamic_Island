@@ -32,6 +32,12 @@ final class AppSettings {
     var glowOn: Bool { didSet { save(glowOn, Key.glowOn) } }
     /// Ember's glow colour, saved as its hex code.
     var glowColor: Color { didSet { save(GlowColors.hex(of: glowColor), Key.glowColor) } }
+    /// The pill and the panel are left out of screenshots and shared screens.
+    var hidesInCaptures: Bool { didSet { save(hidesInCaptures, Key.hidesInCaptures) } }
+    /// The pill goes away while the app in front is in full screen.
+    var hidesInFullScreen: Bool { didSet { save(hidesInFullScreen, Key.hidesInFullScreen) } }
+    /// With `hidesInFullScreen`, alerts still show.
+    var alertsInFullScreen: Bool { didSet { save(alertsInFullScreen, Key.alertsInFullScreen) } }
     /// The keyboard shortcut that opens and closes the panel; nil when the user cleared it.
     var panelShortcut: KeyShortcut? { didSet { save(panelShortcut?.saved ?? "", Key.panelShortcut) } }
     var openSpeed: Double {
@@ -193,6 +199,9 @@ final class AppSettings {
         static let closeDelay = "closeDelay"
         static let openSpeed = "openSpeed"
         static let panelShortcut = "panelShortcut"
+        static let hidesInCaptures = "hidesInCaptures"
+        static let hidesInFullScreen = "hidesInFullScreen"
+        static let alertsInFullScreen = "alertsInFullScreen"
         static let closeSpeed = "closeSpeed"
         static let glowOn = "glowOn"
         static let glowColor = "glowColor"
@@ -243,6 +252,9 @@ final class AppSettings {
         opensOnHover = bool(Key.opensOnHover)
         openDelay = delay(Key.openDelay, PillTiming().openDelay)
         closeDelay = delay(Key.closeDelay, PillTiming().closeDelay)
+        hidesInCaptures = bool(Key.hidesInCaptures)
+        hidesInFullScreen = defaults.object(forKey: Key.hidesInFullScreen) as? Bool ?? false
+        alertsInFullScreen = bool(Key.alertsInFullScreen)
         // Never saved: ⌃⌥N. Saved empty: cleared by the user.
         panelShortcut = defaults.string(forKey: Key.panelShortcut).map { $0.isEmpty ? nil : KeyShortcut(saved: $0) ?? .standard }
             ?? .standard
@@ -341,6 +353,9 @@ final class AppSettings {
             openSpeed = fresh.openSpeed
             closeSpeed = fresh.closeSpeed
             panelShortcut = fresh.panelShortcut
+            hidesInCaptures = fresh.hidesInCaptures
+            hidesInFullScreen = fresh.hidesInFullScreen
+            alertsInFullScreen = fresh.alertsInFullScreen
             opensOnTab = fresh.opensOnTab
             tabCooldown = fresh.tabCooldown
             lastingPriority = fresh.lastingPriority
@@ -392,6 +407,7 @@ final class AppSettings {
         switch page {
         case .general:
             return [Key.opensOnHover, Key.openDelay, Key.closeDelay, Key.openSpeed, Key.closeSpeed, Key.panelShortcut,
+                    Key.hidesInCaptures, Key.hidesInFullScreen, Key.alertsInFullScreen,
                     Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight, Key.panelLayout,
                     Key.compactWidth, Key.wideWidth]
         case .glow:

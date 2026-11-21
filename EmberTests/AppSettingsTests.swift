@@ -47,13 +47,13 @@ struct AppSettingsTests {
         let settings = AppSettings(defaults: freshDefaults())
         #expect(settings.activityGlowOn && settings.panelGlowOn)
         #expect(settings.musicGlowOn && settings.timerGlowOn && settings.batteryGlowOn && settings.calendarGlowOn)
-        #expect(settings.activityGlowStrength == 0.8)
+        #expect(settings.activityGlowStrength == 0.7)
         #expect(settings.panelGlowStrength == 0.8)
-        #expect(settings.activityGlowSpread == 10)
+        #expect(settings.activityGlowSpread == 6)
         #expect(settings.panelGlowSpread == 10)
-        #expect(settings.restGlowFade == 0.2)
+        #expect(settings.restGlowFade == 0.55)
         #expect(settings.restGlowStrength == 0.75 && settings.restGlowSpread == 6)
-        #expect(settings.activityGlowFade == 0.1 && settings.panelGlowFade == 0.15)
+        #expect(settings.activityGlowFade == 0.55 && settings.panelGlowFade == 0.6)
         #expect(settings.glow == GlowSettings())
     }
 
@@ -361,5 +361,18 @@ struct AppSettingsTests {
 
     @Test func everyPageWithAResetButtonHasSomethingToReset() {
         #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .shelf, .battery])
+    }
+
+    @Test func capturesAreHiddenAndFullScreenIsNotByDefaultAndBothAreSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.hidesInCaptures)
+        #expect(!settings.hidesInFullScreen)
+        #expect(settings.alertsInFullScreen)
+        settings.hidesInCaptures = false
+        settings.hidesInFullScreen = true
+        settings.alertsInFullScreen = false
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(!relaunched.hidesInCaptures && relaunched.hidesInFullScreen && !relaunched.alertsInFullScreen)
     }
 }
