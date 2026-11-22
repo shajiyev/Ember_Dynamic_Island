@@ -99,10 +99,18 @@ final class AppSettings {
             save(activityGlowFade, Key.activityGlowFade)
         }
     }
-    var musicGlowOn: Bool { didSet { save(musicGlowOn, Key.musicGlowOn) } }
-    var timerGlowOn: Bool { didSet { save(timerGlowOn, Key.timerGlowOn) } }
-    var batteryGlowOn: Bool { didSet { save(batteryGlowOn, Key.batteryGlowOn) } }
-    var calendarGlowOn: Bool { didSet { save(calendarGlowOn, Key.calendarGlowOn) } }
+    /// Each feature's live activity glow (Settings → Music, Timer, Battery, Calendar), every
+    /// feature listed; own values held to the glow ranges.
+    var featureGlows: [GlowFeature: FeatureGlow] {
+        didSet {
+            let clamped = featureGlows.mapValues { Self.clampedGlow($0) }
+            guard clamped == featureGlows else { featureGlows = clamped; return }
+            for feature in GlowFeature.allCases where featureGlows[feature] != oldValue[feature] {
+                defaults.set(Self.saved(featureGlows[feature] ?? FeatureGlow()), forKey: Key.glow(feature))
+            }
+            onChange?()
+        }
+    }
     var panelGlowOn: Bool { didSet { save(panelGlowOn, Key.panelGlowOn) } }
     var panelGlowStrength: Double {
         didSet {
@@ -214,10 +222,8 @@ final class AppSettings {
         static let restGlowFade = "restGlowFade"
         static let activityGlowFade = "activityGlowFade"
         static let panelGlowFade = "panelGlowFade"
-        static let musicGlowOn = "musicGlowOn"
-        static let timerGlowOn = "timerGlowOn"
-        static let batteryGlowOn = "batteryGlowOn"
-        static let calendarGlowOn = "calendarGlowOn"
+        /// A feature's live activity glow: "musicGlow", "timerGlow", …
+        static func glow(_ feature: GlowFeature) -> String { feature.rawValue + "Glow" }
         static let panelGlowOn = "panelGlowOn"
         static let panelGlowStrength = "panelGlowStrength"
         static let panelGlowSpread = "panelGlowSpread"
@@ -273,10 +279,9 @@ final class AppSettings {
         activityGlowStrength = strength(Key.activityGlowStrength, GlowSettings().activityStrength)
         activityGlowSpread = Self.clampedSpread(defaults.object(forKey: Key.activityGlowSpread) as? Double
                                                 ?? GlowSettings().activitySpread)
-        musicGlowOn = bool(Key.musicGlowOn)
-        timerGlowOn = bool(Key.timerGlowOn)
-        batteryGlowOn = bool(Key.batteryGlowOn)
-        calendarGlowOn = bool(Key.calendarGlowOn)
+        featureGlows = Dictionary(uniqueKeysWithValues: GlowFeature.allCases.map { feature in
+            (feature, Self.clampedGlow(Self.featureGlow(saved: defaults.dictionary(forKey: Key.glow(feature)))))
+        })
         panelGlowOn = bool(Key.panelGlowOn)
         panelGlowStrength = strength(Key.panelGlowStrength, GlowSettings().panelStrength)
         panelGlowSpread = Self.clampedSpread(defaults.object(forKey: Key.panelGlowSpread) as? Double
@@ -326,20 +331,24 @@ final class AppSettings {
 
     /// The glow switches, colour, strengths, spreads and fades, for the pill.
     var glow: GlowSettings {
-        let featureSwitches: [GlowFeature: Bool] = [.music: musicGlowOn, .timer: timerGlowOn,
-                                                    .battery: batteryGlowOn, .calendar: calendarGlowOn]
-        return GlowSettings(isOn: glowOn, color: glowColor, resting: alwaysOnGlow, restStrength: restGlowStrength, restSpread: restGlowSpread,
+        GlowSettings(isOn: glowOn, color: glowColor, resting: alwaysOnGlow, restStrength: restGlowStrength, restSpread: restGlowSpread,
                             restFade: restGlowFade,
                             activities: activityGlowOn, activityStrength: activityGlowStrength,
                             activitySpread: activityGlowSpread, activityFade: activityGlowFade,
-                            featuresOff: Set(featureSwitches.filter { !$0.value }.keys),
+                            features: featureGlows,
                             panel: panelGlowOn, panelStrength: panelGlowStrength, panelSpread: panelGlowSpread,
                             panelFade: panelGlowFade)
     }
 
     /// The pages with a Reset to Defaults button. Launch at login, Show Calendar Events, Show
     /// Reminders and Volume & Brightness are not here: they are tied to macOS or a permission.
-    static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .shelf, .battery]
+    static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .calendar, .shelf, .battery]
+
+    /// Chooses Off, Shared or Custom for a feature's glow; Custom the first time starts from
+    /// the shared live activity values.
+    func chooseGlow(_ mode: FeatureGlowMode, for feature: GlowFeature) {
+        featureGlows[feature] = (featureGlows[feature] ?? FeatureGlow()).choosing(mode, shared: glow.activityValues)
+    }
 
     /// Puts a page's settings back to their defaults; every other page keeps its own.
     func reset(_ page: SettingsPage) {
@@ -374,10 +383,6 @@ final class AppSettings {
             activityGlowStrength = fresh.activityGlowStrength
             activityGlowSpread = fresh.activityGlowSpread
             activityGlowFade = fresh.activityGlowFade
-            musicGlowOn = fresh.musicGlowOn
-            timerGlowOn = fresh.timerGlowOn
-            batteryGlowOn = fresh.batteryGlowOn
-            calendarGlowOn = fresh.calendarGlowOn
             panelGlowOn = fresh.panelGlowOn
             panelGlowStrength = fresh.panelGlowStrength
             panelGlowSpread = fresh.panelGlowSpread
@@ -386,10 +391,15 @@ final class AppSettings {
             musicOn = fresh.musicOn
             showsShuffle = fresh.showsShuffle
             showsRepeat = fresh.showsRepeat
+            featureGlows[.music] = fresh.featureGlows[.music]
         case .timer:
             timerOn = fresh.timerOn
             timerPresets = fresh.timerPresets
             timerInWings = fresh.timerInWings
+            featureGlows[.timer] = fresh.featureGlows[.timer]
+        case .calendar:
+            calendarOn = fresh.calendarOn
+            featureGlows[.calendar] = fresh.featureGlows[.calendar]
         case .shelf:
             shelfOn = fresh.shelfOn
             screenshotsToShelf = fresh.screenshotsToShelf
@@ -397,7 +407,8 @@ final class AppSettings {
         case .battery:
             batteryAlertsOn = fresh.batteryAlertsOn
             batteryInPanelOn = fresh.batteryInPanelOn
-        case .calendar, .levels, .permissions, .feedback, .about:
+            featureGlows[.battery] = fresh.featureGlows[.battery]
+        case .levels, .permissions, .feedback, .about:
             break
         }
     }
@@ -413,13 +424,13 @@ final class AppSettings {
         case .glow:
             return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
                     Key.activityGlowOn, Key.activityGlowStrength, Key.activityGlowSpread, Key.activityGlowFade,
-                    Key.musicGlowOn, Key.timerGlowOn, Key.batteryGlowOn, Key.calendarGlowOn,
                     Key.panelGlowOn, Key.panelGlowStrength, Key.panelGlowSpread, Key.panelGlowFade]
-        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat]
-        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings]
+        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat, Key.glow(.music)]
+        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings, Key.glow(.timer)]
+        case .calendar: return [Key.calendarOn, Key.glow(.calendar)]
         case .shelf: return [Key.shelfOn, Key.screenshotsToShelf, Key.shelfCooldown]
-        case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn]
-        case .calendar, .levels, .permissions, .feedback, .about: return []
+        case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn, Key.glow(.battery)]
+        case .levels, .permissions, .feedback, .about: return []
         }
     }
 
@@ -462,6 +473,34 @@ final class AppSettings {
 
     private static func clampedSpeed(_ speed: Double) -> Double {
         min(max(speed, PillTiming.speedRange.lowerBound), PillTiming.speedRange.upperBound)
+    }
+
+    /// A feature glow as saved: its choice and, once set, its own values.
+    private static func saved(_ glow: FeatureGlow) -> [String: Any] {
+        var saved: [String: Any] = ["mode": glow.mode.rawValue]
+        if let custom = glow.custom {
+            saved["strength"] = custom.strength
+            saved["spread"] = custom.spread
+            saved["fade"] = custom.fade
+        }
+        return saved
+    }
+
+    /// A saved feature glow; missing or unreadable parts read as the defaults.
+    private static func featureGlow(saved: [String: Any]?) -> FeatureGlow {
+        guard let saved else { return FeatureGlow() }
+        let mode = (saved["mode"] as? String).flatMap(FeatureGlowMode.init(rawValue:)) ?? .shared
+        guard let strength = saved["strength"] as? Double, let spread = saved["spread"] as? Double,
+              let fade = saved["fade"] as? Double else { return FeatureGlow(mode: mode) }
+        return FeatureGlow(mode: mode, custom: GlowValues(strength: strength, spread: spread, fade: fade))
+    }
+
+    private static func clampedGlow(_ glow: FeatureGlow) -> FeatureGlow {
+        var clamped = glow
+        clamped.custom = glow.custom.map {
+            GlowValues(strength: clampedStrength($0.strength), spread: clampedSpread($0.spread), fade: clampedFade($0.fade))
+        }
+        return clamped
     }
 
     private static func clampedStrength(_ strength: Double) -> Double {

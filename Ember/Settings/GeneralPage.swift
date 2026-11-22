@@ -133,18 +133,10 @@ struct GlowPage: View {
                         StrengthRow(item: .activityGlowStrength, strength: $settings.activityGlowStrength)
                         SpreadRow(item: .activityGlowSpread, spread: $settings.activityGlowSpread)
                         FadeRow(item: .activityGlowFade, fade: $settings.activityGlowFade)
-                        Toggle(SettingsItem.musicGlow.title, isOn: $settings.musicGlowOn)
-                            .settingsItem(.musicGlow)
-                        Toggle(SettingsItem.timerGlow.title, isOn: $settings.timerGlowOn)
-                            .settingsItem(.timerGlow)
-                        Toggle(SettingsItem.batteryGlow.title, isOn: $settings.batteryGlowOn)
-                            .settingsItem(.batteryGlow)
-                        Toggle(SettingsItem.calendarGlow.title, isOn: $settings.calendarGlowOn)
-                            .settingsItem(.calendarGlow)
                     }
                     .disabled(!settings.activityGlowOn)
                 } footer: {
-                    Text("The glow around the wings while something happens: a song, a timer, a battery alert or a calendar heads-up. Each feature's glow can be turned off on its own; the wings still show.")
+                    Text("The glow around the wings while something happens: a song, a timer, a battery alert or a calendar heads-up. Music, Timer, Battery and Calendar each choose on their own page: these values (Shared), their own (Custom), or no glow.")
                 }
                 Section {
                     Toggle(SettingsItem.panelGlow.title, isOn: $settings.panelGlowOn)

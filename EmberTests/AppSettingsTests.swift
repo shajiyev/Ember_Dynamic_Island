@@ -46,7 +46,7 @@ struct AppSettingsTests {
     @Test func everyGlowIsOnByDefaultWithTheSpecsStrengths() {
         let settings = AppSettings(defaults: freshDefaults())
         #expect(settings.activityGlowOn && settings.panelGlowOn)
-        #expect(settings.musicGlowOn && settings.timerGlowOn && settings.batteryGlowOn && settings.calendarGlowOn)
+        #expect(GlowFeature.allCases.allSatisfy { settings.featureGlows[$0] == FeatureGlow() })
         #expect(settings.activityGlowStrength == 0.7)
         #expect(settings.panelGlowStrength == 0.8)
         #expect(settings.activityGlowSpread == 6)
@@ -63,8 +63,8 @@ struct AppSettingsTests {
         settings.alwaysOnGlow = false
         settings.activityGlowOn = false
         settings.activityGlowStrength = 0.3
-        settings.musicGlowOn = false
-        settings.calendarGlowOn = false
+        settings.chooseGlow(.off, for: .music)
+        settings.chooseGlow(.off, for: .calendar)
         settings.panelGlowOn = false
         settings.panelGlowStrength = 0.8
         settings.activityGlowSpread = 20
@@ -77,7 +77,9 @@ struct AppSettingsTests {
 
         let glow = AppSettings(defaults: defaults).glow
         #expect(glow == GlowSettings(resting: false, restStrength: 0.9, restSpread: 12, restFade: 0.2, activities: false, activityStrength: 0.3,
-                                     activitySpread: 20, activityFade: 0.4, featuresOff: [.music, .calendar],
+                                     activitySpread: 20, activityFade: 0.4,
+                                     features: [.music: FeatureGlow(mode: .off), .timer: FeatureGlow(),
+                                                .battery: FeatureGlow(), .calendar: FeatureGlow(mode: .off)],
                                      panel: false, panelStrength: 0.8, panelSpread: 6, panelFade: 0.7))
     }
 
@@ -357,10 +359,45 @@ struct AppSettingsTests {
         settings.reset(.general)
         #expect(settings.openDelay == 0.1)
         #expect(!settings.musicOn)
+
+        // A feature's glow belongs to its own page.
+        settings.chooseGlow(.custom, for: .music)
+        settings.reset(.glow)
+        #expect(settings.featureGlows[.music]?.mode == .custom)
+        settings.reset(.music)
+        #expect(settings.featureGlows[.music] == FeatureGlow())
+        #expect(AppSettings(defaults: defaults).featureGlows[.music] == FeatureGlow())
+        settings.calendarOn = false
+        settings.chooseGlow(.off, for: .calendar)
+        settings.reset(.calendar)
+        #expect(settings.calendarOn && settings.featureGlows[.calendar] == FeatureGlow())
     }
 
     @Test func everyPageWithAResetButtonHasSomethingToReset() {
-        #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .shelf, .battery])
+        #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .calendar, .shelf, .battery])
+    }
+
+    @Test func aFeaturesOwnGlowStartsFromTheSharedValuesAndSurvivesARelaunch() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.activityGlowStrength = 0.5
+        settings.chooseGlow(.custom, for: .timer)
+        #expect(settings.featureGlows[.timer]?.custom == GlowValues(strength: 0.5, spread: 6, fade: 0.55))
+        settings.featureGlows[.timer]?.custom?.spread = 14
+        settings.chooseGlow(.shared, for: .timer)
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.featureGlows[.timer] == FeatureGlow(mode: .shared, custom: GlowValues(strength: 0.5, spread: 14, fade: 0.55)))
+        relaunched.chooseGlow(.custom, for: .timer)
+        #expect(relaunched.glow.features[.timer]?.custom?.spread == 14)
+    }
+
+    @Test func aFeaturesOwnValuesStayInTheGlowRanges() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        settings.featureGlows[.battery] = FeatureGlow(mode: .custom, custom: GlowValues(strength: 0, spread: 99, fade: 2))
+        #expect(settings.featureGlows[.battery]?.custom == GlowValues(strength: 0.1, spread: 30, fade: 1))
+        #expect(AppSettings(defaults: defaults).featureGlows[.battery]?.custom == GlowValues(strength: 0.1, spread: 30, fade: 1))
     }
 
     @Test func capturesAreHiddenAndFullScreenIsNotByDefaultAndBothAreSaved() {

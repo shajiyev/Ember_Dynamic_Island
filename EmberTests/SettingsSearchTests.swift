@@ -59,6 +59,11 @@ struct SettingsSearchTests {
         #expect(groups == groups.sorted { order.firstIndex(of: $0)! < order.firstIndex(of: $1)! })
     }
 
+    @Test func thePanelsTabsShareOneHeader() {
+        #expect(SettingsPage.allCases.filter { $0.group == .tabs } == [.music, .timer, .calendar, .shelf])
+        #expect(SettingsGroup.tabs.title == "Tabs")
+    }
+
     @Test func theScreenshotSwitchAndTheTabCooldownAreFound() {
         #expect(SettingsSearch.matches("screenshot") == [.hidesInCaptures, .screenshotsToShelf])
         #expect(SettingsSearch.matches("cooldown") == [.tabCooldown, .shelfCooldown])
@@ -71,11 +76,18 @@ struct SettingsSearchTests {
     @Test func everyGlowSwitchAndStrengthIsFound() {
         #expect(SettingsSearch.matches("resting") == [.alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade])
         #expect(SettingsSearch.matches("live activity") == [.activityGlow, .activityGlowStrength, .activityGlowSpread,
-                                                               .activityGlowFade])
+                                                               .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow])
         #expect(SettingsSearch.matches("intensity") == [.restGlowStrength, .activityGlowStrength, .panelGlowStrength])
         #expect(SettingsSearch.pages(for: "panel glow") == [.glow])
         #expect(SettingsSearch.matches("distance") == [.restGlowSpread, .activityGlowSpread, .panelGlowSpread])
-        #expect(SettingsSearch.matches("fade") == [.restGlowFade, .activityGlowFade, .panelGlowFade])
+        #expect(SettingsSearch.matches("fade") == [.restGlowFade, .activityGlowFade, .panelGlowFade,
+                                                   .musicGlow, .timerGlow, .batteryGlow, .calendarGlow])
+    }
+
+    @Test func eachFeaturesGlowIsFoundOnItsOwnPage() {
+        #expect(SettingsSearch.matches("custom") == [.glowColor, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow])
+        #expect(SettingsItem.musicGlow.page == .music && SettingsItem.timerGlow.page == .timer)
+        #expect(SettingsItem.batteryGlow.page == .battery && SettingsItem.calendarGlow.page == .calendar)
     }
 
     @Test func theGlowSwitchAndColourAreFound() {

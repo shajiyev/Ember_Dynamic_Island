@@ -68,13 +68,15 @@ struct CooldownRow: View {
     }
 }
 
-/// A glow's strength: a 10–100% slider in 5% steps, the item's name on the left.
+/// A glow's strength: a 10–100% slider in 5% steps, its name on the left.
 struct StrengthRow: View {
     let item: SettingsItem
     @Binding var strength: Double
+    /// The row's label, when it is not the item's name (a feature's own glow).
+    var title: String? = nil
 
     var body: some View {
-        LabeledContent(item.title) {
+        LabeledContent(title ?? item.title) {
             HStack(spacing: 8) {
                 Slider(value: $strength, in: GlowSettings.strengthRange, step: 0.05)
                     .frame(width: 160)
@@ -88,13 +90,15 @@ struct StrengthRow: View {
     }
 }
 
-/// A glow's spread: a 4–30 pt slider in 1 pt steps, the item's name on the left.
+/// A glow's spread: a 4–30 pt slider in 1 pt steps, its name on the left.
 struct SpreadRow: View {
     let item: SettingsItem
     @Binding var spread: Double
+    /// The row's label, when it is not the item's name (a feature's own glow).
+    var title: String? = nil
 
     var body: some View {
-        LabeledContent(item.title) {
+        LabeledContent(title ?? item.title) {
             HStack(spacing: 8) {
                 Slider(value: $spread, in: GlowSettings.spreadRange, step: 1)
                     .frame(width: 160)
@@ -113,9 +117,11 @@ struct SpreadRow: View {
 struct FadeRow: View {
     let item: SettingsItem
     @Binding var fade: Double
+    /// The row's label, when it is not the item's name (a feature's own glow).
+    var title: String? = nil
 
     var body: some View {
-        LabeledContent(item.title) {
+        LabeledContent(title ?? item.title) {
             HStack(spacing: 8) {
                 Slider(value: $fade, in: GlowSettings.fadeRange, step: 0.05)
                     .frame(width: 160)

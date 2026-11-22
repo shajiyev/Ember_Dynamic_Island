@@ -37,14 +37,35 @@ struct GlowSettingsTests {
 
     @Test func aFeatureTurnedOffLosesItsGlowWhileTheOthersKeepTheirs() {
         var glow = GlowSettings()
-        glow.featuresOff = [.timer]
+        glow.features[.timer] = FeatureGlow(mode: .off)
         #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == nil)
         #expect(glow.glow(for: .active, activity: music, panelColor: nil)?.color == .blue)
+    }
+
+    @Test func aCustomFeatureUsesItsOwnValuesAndSharedOnesTheSharedValues() {
+        var glow = GlowSettings()
+        glow.features[.music] = FeatureGlow(mode: .custom, custom: GlowValues(strength: 0.4, spread: 20, fade: 0.1))
+        #expect(glow.glow(for: .active, activity: music, panelColor: nil) == PillGlow(color: .blue, opacity: 0.4, radius: 20, fade: 0.1))
+        #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == PillGlow(color: .orange, opacity: 0.7, radius: 6, fade: 0.55))
+        glow.features[.music]?.mode = .shared
+        #expect(glow.glow(for: .active, activity: music, panelColor: nil)?.opacity == 0.7)
+    }
+
+    @Test func choosingCustomTheFirstTimeStartsFromTheSharedValuesAndKeepsThemAfter() {
+        let shared = GlowValues(strength: 0.7, spread: 6, fade: 0.55)
+        let custom = FeatureGlow().choosing(.custom, shared: shared)
+        #expect(custom == FeatureGlow(mode: .custom, custom: shared))
+        var changed = custom
+        changed.custom?.strength = 0.3
+        let off = changed.choosing(.off, shared: shared)
+        #expect(off.mode == .off && off.custom?.strength == 0.3)
+        #expect(off.choosing(.shared, shared: shared).choosing(.custom, shared: shared).custom?.strength == 0.3)
     }
 
     @Test func turningLiveActivityGlowsOffOverridesEveryFeature() {
         var glow = GlowSettings()
         glow.activities = false
+        glow.features[.timer] = FeatureGlow(mode: .custom, custom: GlowValues(strength: 1, spread: 10, fade: 0))
         var unnamed = timer
         unnamed.feature = nil
         #expect(glow.glow(for: .active, activity: timer, panelColor: nil) == nil)

@@ -3,16 +3,15 @@ import SwiftUI
 /// The sidebar's groups, in order. Only the feature groups have a header.
 nonisolated enum SettingsGroup: CaseIterable {
     case main
-    case media
-    case productivity
+    /// The panel's tabs: Music, Timer, Calendar and Shelf.
+    case tabs
     case system
     case help
 
     var title: String? {
         switch self {
         case .main, .help: return nil
-        case .media: return "Media"
-        case .productivity: return "Productivity"
+        case .tabs: return "Tabs"
         case .system: return "System"
         }
     }
@@ -83,8 +82,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     var group: SettingsGroup {
         switch self {
         case .general, .glow: return .main
-        case .music: return .media
-        case .timer, .calendar, .shelf: return .productivity
+        case .music, .timer, .calendar, .shelf: return .tabs
         case .battery, .levels: return .system
         case .permissions, .feedback, .about: return .help
         }

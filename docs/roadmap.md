@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-17)
+## Current status (2026-11-22)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -184,9 +184,21 @@
   and shrinks back as usual, and alerts come out of it. Tests pass; checked on screen by
   the user on macOS 26.6.2. Plan docs/plans/settings.md, part 12.
 - **Dropped:** a layout of its own for Music and for Timer (2026-11-21); see decisions.
-- **Next:** each live activity's own glow settings (Music, Timer, Battery, Calendar: an
-  "Own glow settings" switch revealing its own Strength, Spread and Fade).
-- **Next:** Settings' list is done. The rest of the v1 list: Keep awake (#18, in the menu
+- **Done:** each live activity's own glow (2026-11-22): Music, Timer, Battery and Calendar
+  each choose Off, Shared or Custom (own Strength, Spread, Fade) on their own page, with a
+  Preview that plays the feature's activity in the notch; the Glow page lost its four
+  switches. The sidebar's Media and Productivity headers became one, **Tabs**. 474 tests
+  pass; checked on screen by the user on macOS 26.6.2. Plan docs/plans/settings.md,
+  part 13.
+- **Done:** Atoll's Settings compared page by page (2026-11-22); what Ember adds, and what
+  not, is in docs/specs/settings.md, "Compared with Atoll".
+- **Next:** Settings, parts 14–19 (docs/plans/settings.md): each feature's colour; Timer's
+  Time's up sound and example and hiding when paused; a switch per battery alert and the
+  low battery sound; up to three calendar heads-ups with sound, example and list options;
+  volume and brightness as two switches; the menu bar icon and the trackpad tap. Then
+  Music: the song's name when it changes, and arranging the buttons
+  (docs/plans/now-playing.md, parts 2–3).
+- **Then:** the rest of the v1 list: Keep awake (#18, in the menu
   bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
   colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and

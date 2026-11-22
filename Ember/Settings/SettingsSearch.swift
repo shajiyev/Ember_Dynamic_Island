@@ -63,14 +63,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
              .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
-             .activityGlowFade, .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow,
-             .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
+             .activityGlowFade, .panelGlow, .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
-        case .music, .showsShuffle, .showsRepeat: return .music
-        case .timer, .timerPresets, .timerInWings: return .timer
-        case .calendar, .calendarEvents, .reminders: return .calendar
+        case .music, .showsShuffle, .showsRepeat, .musicGlow: return .music
+        case .timer, .timerPresets, .timerInWings, .timerGlow: return .timer
+        case .calendar, .calendarEvents, .reminders, .calendarGlow: return .calendar
         case .shelf, .screenshotsToShelf, .shelfCooldown: return .shelf
-        case .batteryAlerts, .batteryInPanel, .batteryExample: return .battery
+        case .batteryAlerts, .batteryInPanel, .batteryExample, .batteryGlow: return .battery
         case .levels: return .levels
         case .shareFeedback: return .feedback
         case .aboutEmber: return .about
@@ -103,10 +102,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .restGlowStrength, .activityGlowStrength, .panelGlowStrength: return "Strength"
         case .restGlowSpread, .activityGlowSpread, .panelGlowSpread: return "Spread"
         case .restGlowFade, .activityGlowFade, .panelGlowFade: return "Fade"
-        case .musicGlow: return "Music"
-        case .timerGlow: return "Timer"
-        case .batteryGlow: return "Battery"
-        case .calendarGlow: return "Calendar"
+        case .musicGlow, .timerGlow, .batteryGlow, .calendarGlow: return "Live activity glow"
         case .panelGlow: return "Open panel glow"
         case .music: return "Music"
         case .showsShuffle: return "Show shuffle"
@@ -148,13 +144,14 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelWidth: return ["wider", "narrower", "size"]
         case .tabArrangement: return ["arrange", "drag", "top row", "side"]
         case .glowOn: return ["no glow", "all glows", "off"]
-        case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white"]
+        case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white", "custom"]
         case .alwaysOnGlow: return ["always-on", "light", "rest", "notch"]
         case .activityGlow: return ["wings", "alert"]
         case .restGlowStrength: return ["intensity", "opacity", "resting"]
         case .restGlowSpread: return ["distance", "reach", "size", "radius", "resting"]
         case .activityGlowStrength: return ["intensity", "opacity", "live activity"]
-        case .musicGlow, .timerGlow, .batteryGlow, .calendarGlow, .panelGlow: return []
+        case .musicGlow, .timerGlow, .batteryGlow, .calendarGlow: return ["strength", "spread", "fade", "custom", "wings"]
+        case .panelGlow: return []
         case .panelGlowStrength: return ["intensity", "opacity", "open panel"]
         case .activityGlowSpread: return ["distance", "reach", "size", "radius", "live activity"]
         case .panelGlowSpread: return ["distance", "reach", "size", "radius", "open panel"]

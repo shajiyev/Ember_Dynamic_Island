@@ -52,7 +52,11 @@
     `PillController.glow`): the Glow switch, the glow colour, which glows are on, and each
     glow's strength, spread and fade. Its pure `glow(for:activity:panelColor:)` gives the
     glow for a state, or none. `GlowColors.swift`: the six offered colours and the hex,
-    typed-code and hue/saturation/brightness conversions.
+    typed-code and hue/saturation/brightness conversions. Each live activity glow
+    (`GlowFeature`) is Off, Shared or Custom (`FeatureGlow`, its own `GlowValues`), set on
+    the feature's own Settings page (`FeatureGlowSection`), whose Preview plays
+    `GlowFeature.exampleActivity` (`Ember/Activity/GlowExample.swift`) through the Settings
+    window's `showExample`.
     `PillTiming` (in `PillController.swift`) holds the open and close delays and speeds;
     `PillStyle.animation(from:to:timing:)` and `panelTransition(timing:)` apply the speeds
     to opening and closing the panel (`PillController.previousState` tells a close apart).

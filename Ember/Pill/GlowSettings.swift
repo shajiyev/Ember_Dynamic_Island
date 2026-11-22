@@ -1,8 +1,49 @@
 import SwiftUI
 
-/// The features whose live activities can have their glow turned off one by one.
-nonisolated enum GlowFeature: CaseIterable, Hashable {
+/// The features whose live activities each have their own glow choice (on their Settings page).
+nonisolated enum GlowFeature: String, CaseIterable, Hashable {
     case music, timer, battery, calendar
+}
+
+/// How a feature's live activities glow.
+nonisolated enum FeatureGlowMode: String, CaseIterable {
+    /// No glow; the wings still show.
+    case off
+    /// The shared live activity glow (Settings → Glow).
+    case shared
+    /// The feature's own strength, spread and fade.
+    case custom
+
+    var title: String {
+        switch self {
+        case .off: return "Off"
+        case .shared: return "Shared"
+        case .custom: return "Custom"
+        }
+    }
+}
+
+/// A glow's strength (its opacity), spread (its radius, in points) and fade.
+nonisolated struct GlowValues: Equatable {
+    var strength: Double
+    var spread: Double
+    var fade: Double
+}
+
+/// A feature's live activity glow: off, shared, or its own values.
+nonisolated struct FeatureGlow: Equatable {
+    var mode: FeatureGlowMode = .shared
+    /// The feature's own values: nil until Custom is first chosen, then kept while Off or
+    /// Shared is chosen, so choosing Custom again brings them back.
+    var custom: GlowValues?
+
+    /// This glow with `mode` chosen; Custom chosen the first time starts from `shared`.
+    func choosing(_ mode: FeatureGlowMode, shared: GlowValues) -> FeatureGlow {
+        var chosen = self
+        chosen.mode = mode
+        if mode == .custom, chosen.custom == nil { chosen.custom = shared }
+        return chosen
+    }
 }
 
 /// A glow to draw around the pill: its colour, its strength (the opacity), its spread (the
@@ -40,15 +81,22 @@ nonisolated struct GlowSettings: Equatable {
     var activityStrength = PillStyle.style(for: .active).glowOpacity
     var activitySpread = Double(PillStyle.style(for: .active).glowRadius)
     var activityFade = PillStyle.style(for: .active).glowFade
-    /// Features whose activities do not glow, while `activities` is on.
-    var featuresOff: Set<GlowFeature> = []
+    /// Each feature's choice, while `activities` is on; every feature Shared by default (one
+    /// left out counts as Shared too).
+    var features = Dictionary(uniqueKeysWithValues: GlowFeature.allCases.map { ($0, FeatureGlow()) })
     var panel = true
     var panelStrength = PillStyle.style(for: .open).glowOpacity
     var panelSpread = Double(PillStyle.style(for: .open).glowRadius)
     var panelFade = PillStyle.style(for: .open).glowFade
 
+    /// The live activity glow's values, used by every feature set to Shared.
+    var activityValues: GlowValues {
+        GlowValues(strength: activityStrength, spread: activitySpread, fade: activityFade)
+    }
+
     /// The glow for a state, or nil for none. Active: the activity's colour, unless it has
-    /// none or its glow is off. Open: the colour the panel's content asks for, or `color`.
+    /// none or its glow is off, with its feature's values (shared or its own). Open: the
+    /// colour the panel's content asks for, or `color`.
     func glow(for state: PillState, activity: LiveActivity?, panelColor: Color?) -> PillGlow? {
         guard isOn else { return nil }
         switch state {
@@ -57,9 +105,14 @@ nonisolated struct GlowSettings: Equatable {
             return PillGlow(color: color, opacity: restStrength, radius: restSpread, fade: restFade)
         case .active:
             guard activities, let activity, let color = activity.glowColor else { return nil }
-            if let feature = activity.feature, featuresOff.contains(feature) { return nil }
-            return PillGlow(color: color, opacity: activityStrength, radius: activitySpread,
-                            fade: activityFade)
+            let own = activity.feature.flatMap { features[$0] } ?? FeatureGlow()
+            let values: GlowValues
+            switch own.mode {
+            case .off: return nil
+            case .shared: values = activityValues
+            case .custom: values = own.custom ?? activityValues
+            }
+            return PillGlow(color: color, opacity: values.strength, radius: values.spread, fade: values.fade)
         case .open:
             guard panel else { return nil }
             return PillGlow(color: panelColor ?? color, opacity: panelStrength, radius: panelSpread,

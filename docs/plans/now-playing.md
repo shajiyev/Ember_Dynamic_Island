@@ -1751,3 +1751,29 @@ git add docs/roadmap.md docs/features.md docs/decisions.md docs/specs/now-playin
 ```
 
 Add any files fixed in Step 2 to the `git add` list, and fill the `<…>` before giving the command.
+
+---
+
+## Part 2: The song when it changes (planned 2026-11-22)
+
+Spec: docs/specs/now-playing.md, "The song when it changes". Built after the settings in
+docs/plans/settings.md, Parts 14–19.
+
+- [ ] Tests first: a song change asks for the strip; another change while it is down keeps
+  it down and restarts the time; a volume or brightness change (during or at the same
+  time) takes the strip and the song does not come back after it; nothing on resume of the same song, with the panel open, or
+  while hidden in full screen; nothing with the switch off.
+- [ ] The strip's song row (symbol, title, dimmer artist) and its change between songs;
+  the switch in Settings → Music. CLEAN, TEST, BUILD.
+- [ ] The user checks on screen (including skipping fast). Checkpoint and commit.
+
+## Part 3: Arranging the buttons (planned 2026-11-22)
+
+Spec: docs/specs/now-playing.md, "Arranging the buttons". The open details are agreed
+with the user first.
+
+- [ ] Tests first: the saved row; play/pause always in the middle; defaults match today's;
+  reset brings them back; Show shuffle and Show repeat go.
+- [ ] The preview row and Spare with dragging; the Music tab draws the saved row. CLEAN,
+  TEST, BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.

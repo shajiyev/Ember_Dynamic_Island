@@ -32,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var panelHotKey = GlobalHotKey { [weak self] in self?.controller.shortcutPressed() }
     lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, hotKey: panelHotKey,
                                              notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
-                                             showBatteryAlert: { [weak self] in self?.controller.show($0.exampleActivity) })
+                                             showExample: { [weak self] in self?.controller.show($0) })
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?

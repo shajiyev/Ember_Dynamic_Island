@@ -2658,3 +2658,111 @@ open the panel. Spec: docs/specs/settings.md, General, Privacy and full screen.
 - Tried first and replaced (found on screen): a global pointer monitor while the window
   was off the screen (`HiddenPillPointer`); the window came back showing the resting pill;
   skipping that lost the animations.
+
+## Part 13: Each feature's own live activity glow
+
+Asked 2026-11-21. Spec: docs/specs/settings.md, Glow, "Each feature's own live activity
+glow". The four feature switches leave the Glow page; Music, Timer, Battery and Calendar
+each get a Live activity glow section: Off, Shared or Custom (its own Strength, Spread,
+Fade).
+
+### Task 38: The rules
+- [x] Tests first (`GlowSettingsTests`): a feature set to Off has no glow, Shared uses the
+  shared values, Custom its own; Live activity glow off still overrides all.
+  `FeatureGlow.choosing(_:shared:)`: Custom the first time starts from the shared values,
+  later keeps its own; Off and Shared keep them.
+- [x] `FeatureGlowMode`, `GlowValues`, `FeatureGlow` and `GlowSettings.features` (instead
+  of `featuresOff`), in `GlowSettings.swift`.
+
+### Task 39: Saved, reset, shown
+- [x] Tests first (`AppSettingsTests`): every feature Shared by default; a choice and own
+  values survive a relaunch and reach `glow`; own values held to the ranges; a feature
+  page's reset brings back Shared, the Glow page's leaves it; Calendar is resettable.
+  (`SettingsSearchTests`): the four sections are on their pages and found by "custom".
+- [x] `AppSettings.featureGlows` (saved per feature as a small dictionary) and
+  `chooseGlow(_:for:)`; the four switches go. `FeatureGlowSection` (a segmented Off |
+  Shared | Custom and, with Custom, the three sliders), on Music, Timer, Battery and
+  Calendar; Calendar gets a Reset to Defaults; the Glow page loses the switches. CLEAN,
+  TEST, BUILD (Debug and Release, no warnings): 471 tests pass.
+
+### Task 40: One header for the panel's tabs (asked 2026-11-21)
+- [x] Test first (`SettingsSearchTests`): Music, Timer, Calendar and Shelf sit under one
+  sidebar header, "Tabs". `SettingsGroup.media` and `.productivity` become `.tabs`.
+  472 tests pass. The user checked the per-feature glow and the header on screen.
+
+### Task 40a: Preview (asked 2026-11-22)
+- [x] Test first (`GlowExampleTests`): with Custom, a Preview button plays an example of
+  the feature's activity in the notch for 5 s with its glow (`GlowFeature.exampleActivity`,
+  `GlowExample`); the Settings window gets one `showExample` for this and Battery's
+  examples. CLEAN, TEST, BUILD (Debug and Release, no warnings): 474 tests pass.
+- [x] The user checked Preview on screen (2026-11-22). Checkpoint and commit.
+
+
+## Part 14: Each feature's colour
+
+Asked 2026-11-22. Spec: docs/specs/settings.md, "Each feature's colour".
+
+### Task 41: The colours
+- [ ] Tests first: `FeatureColor` (the feature's own default, or one colour) saved for
+  Music, Timer, Time's up, Calendar and Shelf, with defaults, reset with their page; the
+  song's activity, the countdown, Time's up, the heads-up and the panel tabs' glow take
+  the chosen colour or their default (a new cover, a calendar's colour, the Glow colour).
+- [ ] The Colour row (a menu: the default, the six colours, Custom; the Glow colour's
+  menu) on Music, Timer (two), Calendar and Shelf; the shelf's drop outline follows.
+  CLEAN, TEST, BUILD (Debug and Release, no warnings).
+- [ ] The user checks on screen. Checkpoint and commit.
+
+## Part 15: Timer — Time's up's sound and example, hiding when paused
+
+Spec: docs/specs/settings.md, Timer ("When time's up", "Alert sounds").
+
+### Task 42: Alert sounds, the example, hiding when paused
+- [ ] Tests first: `AlertSound` (None, Glass, Ping; None has no sound); Time's up's sound
+  and Hide the timer when paused saved with their defaults and reset with the Timer page;
+  a paused timer gives no activity to the wings when hidden (`LastingChoice`).
+- [ ] The rows and Show an example (Time's up once, its sound once, leaves after 5 s or on
+  hover). CLEAN, TEST, BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.
+
+## Part 16: Battery — a switch per alert, and the low battery sound
+
+### Task 43
+- [ ] Tests first: each of the four alerts can be off on its own (`BatteryAlertRules`);
+  the switches and Low battery sound are saved, reset with the Battery page, and greyed
+  out while Battery alerts is off.
+- [ ] The four switches and the sound row; Low and Very low play the sound. CLEAN, TEST,
+  BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.
+
+## Part 17: Calendar — heads-ups, their sound and example, and the tab's list
+
+### Task 44: Up to three heads-ups
+- [ ] Tests first (`HeadsUpSchedule`): several lead times give a heads-up at each; a heads-up
+  whose time passed before the event was found is not shown; two rows never share a time.
+- [ ] The Heads-ups rows (minutes menu, −, + Add a heads-up, up to three), saved and reset
+  with the Calendar page.
+
+### Task 45: Sound, example, and hiding in the list
+- [ ] Tests first: Hide all-day events and Hide completed reminders leave them out of the
+  day's list; the heads-up's sound is saved and reset.
+- [ ] The rows and Show an example. CLEAN, TEST, BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.
+
+## Part 18: Volume & Brightness — two switches
+
+### Task 46
+- [ ] Tests first: with only volume on, Ember takes the volume keys and lets brightness
+  keys through to macOS, and the other way round; both off stops the key tap.
+- [ ] Two switches on the page and in the menu's Features; Accessibility asked when the
+  first is turned on. CLEAN, TEST, BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.
+
+## Part 19: General — the menu bar icon and the trackpad tap
+
+### Task 47
+- [ ] Tests first: both saved with their defaults (icon on, tap off) and reset with General.
+- [ ] Show the menu bar icon (off: opening Ember again opens Settings); Tap the trackpad
+  when the panel opens (`NSHapticFeedbackManager` as the panel opens). CLEAN, TEST, BUILD.
+- [ ] The user checks on screen. Checkpoint and commit.
+
+After Part 19, the two Music features in docs/plans/now-playing.md (Parts 2 and 3).

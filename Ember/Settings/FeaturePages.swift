@@ -4,6 +4,7 @@ import SwiftUI
 /// Settings → Music.
 struct MusicPage: View {
     @Bindable var settings: AppSettings
+    let showExample: (LiveActivity) -> Void
 
     var body: some View {
         Form {
@@ -24,6 +25,7 @@ struct MusicPage: View {
                 Text("Shuffle sits at the left end of the buttons, repeat at the right. Each switches the player's own setting; repeat plays the whole list again.")
             }
             .disabled(!settings.musicOn)
+            FeatureGlowSection(settings: settings, feature: .music, isFeatureOn: settings.musicOn, showExample: showExample)
             ResetSection(page: .music, settings: settings)
         }
     }
@@ -32,6 +34,7 @@ struct MusicPage: View {
 /// Settings → Timer.
 struct TimerPage: View {
     @Bindable var settings: AppSettings
+    let showExample: (LiveActivity) -> Void
 
     var body: some View {
         Form {
@@ -61,6 +64,7 @@ struct TimerPage: View {
                 Text("Off, a running timer is seen only in the Timer tab, and a playing song keeps the notch. \"Time's up\" still shows there when the timer finishes.")
             }
             .disabled(!settings.timerOn)
+            FeatureGlowSection(settings: settings, feature: .timer, isFeatureOn: settings.timerOn, showExample: showExample)
             ResetSection(page: .timer, settings: settings)
         }
     }
@@ -87,6 +91,7 @@ private struct PresetField: View {
 struct CalendarPage: View {
     @Bindable var settings: AppSettings
     let calendar: CalendarModel
+    let showExample: (LiveActivity) -> Void
 
     var body: some View {
         Form {
@@ -109,6 +114,8 @@ struct CalendarPage: View {
                 Text("Each asks for its own permission the first time. Off, Ember never reads them.")
             }
             .disabled(!settings.calendarOn)
+            FeatureGlowSection(settings: settings, feature: .calendar, isFeatureOn: settings.calendarOn, showExample: showExample)
+            ResetSection(page: .calendar, settings: settings)
         }
     }
 }
@@ -152,8 +159,8 @@ struct ShelfPage: View {
 /// Settings → Battery.
 struct BatteryPage: View {
     @Bindable var settings: AppSettings
-    /// Plays an alert in the notch, as an example.
-    let showAlert: (BatteryAlert) -> Void
+    /// Plays an activity in the notch, as an example.
+    let showExample: (LiveActivity) -> Void
 
     var body: some View {
         Form {
@@ -163,7 +170,7 @@ struct BatteryPage: View {
                 LabeledContent("See what each alert looks like in the notch.") {
                     Menu(SettingsItem.batteryExample.title) {
                         ForEach(BatteryAlert.allCases, id: \.self) { alert in
-                            Button(alert.title) { showAlert(alert) }
+                            Button(alert.title) { showExample(alert.exampleActivity) }
                         }
                     }
                     .fixedSize()
@@ -174,6 +181,7 @@ struct BatteryPage: View {
             } footer: {
                 Text("Alerts show in the notch when you plug in or unplug, and at 20% and 10%. The percentage sits at the top right of the open panel.")
             }
+            FeatureGlowSection(settings: settings, feature: .battery, isFeatureOn: settings.batteryAlertsOn, showExample: showExample)
             ResetSection(page: .battery, settings: settings)
         }
     }

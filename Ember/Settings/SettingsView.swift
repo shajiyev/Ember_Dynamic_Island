@@ -18,7 +18,8 @@ struct SettingsView: View {
     let hotKey: GlobalHotKey
     /// The notch's width, for drawings of the panel.
     let notchWidth: CGFloat
-    let showBatteryAlert: (BatteryAlert) -> Void
+    /// Plays a brief activity in the notch, as an example.
+    let showExample: (LiveActivity) -> Void
     @State private var searchText = ""
 
     var body: some View {
@@ -69,11 +70,11 @@ struct SettingsView: View {
         switch page {
         case .general: GeneralPage(settings: settings, hotKey: hotKey, notchWidth: notchWidth)
         case .glow: GlowPage(settings: settings)
-        case .music: MusicPage(settings: settings)
-        case .timer: TimerPage(settings: settings)
-        case .calendar: CalendarPage(settings: settings, calendar: calendar)
+        case .music: MusicPage(settings: settings, showExample: showExample)
+        case .timer: TimerPage(settings: settings, showExample: showExample)
+        case .calendar: CalendarPage(settings: settings, calendar: calendar, showExample: showExample)
         case .shelf: ShelfPage(settings: settings)
-        case .battery: BatteryPage(settings: settings, showAlert: showBatteryAlert)
+        case .battery: BatteryPage(settings: settings, showExample: showExample)
         case .levels: LevelsPage(levels: levels)
         case .permissions: PermissionsPage()
         case .feedback: FeedbackPage()

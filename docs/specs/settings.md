@@ -55,9 +55,10 @@ observers, no timers, no Apple Events.
 
 Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember.
 - **Sidebar:** a search field at the top, a divider, then the pages in groups with small
-  grey headers: General and Glow (no header), **Media** (Music), **Productivity** (Timer,
-  Calendar, Shelf), **System** (Battery, Volume & Brightness), then Permissions, Feedback
-  and About (no header; Permissions and About since 2026-11-18).
+  grey headers: General and Glow (no header), **Tabs** (Music, Timer, Calendar, Shelf: the
+  panel's tabs; one header since 2026-11-21, before that Media and Productivity),
+  **System** (Battery, Volume & Brightness), then Permissions, Feedback and About (no
+  header; Permissions and About since 2026-11-18).
   Rows about 36–44 pt tall, about 210 pt wide.
 - **Icons:** a 26 pt rounded square (corner 8) filled with a gradient from the page's
   colour to 70% of it, a thin white edge, a soft shadow in the same colour, and a white SF
@@ -135,8 +136,10 @@ Settings window came: the user wants them at hand.
 |---|---|---|
 | Launch at login | off | Uses macOS's login-item service. The switch shows the real state, read again each time the page appears (the user can remove Ember in System Settings → General → Login Items). If macOS needs the user's approval, a line under the switch says so, with a button that opens Login Items. |
 
-Off by default: onboarding (#0, later) asks on first launch, so nothing changes on the
-user's Mac without their choice.
+| Show the menu bar icon | on | *Planned 2026-11-22.* Off: Ember's icon leaves the menu bar. Settings then opens when Ember is opened again (from Finder, Spotlight or Launchpad) and from the panel's gear; a line under the switch says so. |
+
+Launch at login is off by default: onboarding (#0, later) asks on first launch, so nothing
+changes on the user's Mac without their choice.
 
 ### Opening the panel
 
@@ -149,6 +152,7 @@ user's Mac without their choice.
 | Close speed | the middle | How fast the panel shrinks back to the notch or the wings, its content leaving with it. As above. Growing into the wings and glow changes keep their own speed. |
 | Open the panel on | Last tab (Recommended) | **Last tab:** the tab of what the wings show (such as Music while a song plays), but reopened within the time below it comes back to the tab it was on. **A fixed tab** (Music, Shelf, Timer, Calendar) always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way. Details: docs/specs/file-shelf.md. |
 | Stay on the last tab for | 5 s | 1–20 s, whole seconds. Shown only with Last tab. |
+| Tap the trackpad when the panel opens | off | *Planned 2026-11-22.* A light tap from the trackpad as the panel opens, the kind macOS gives when something snaps into place. Felt only on a Force Touch trackpad with a finger resting on it. |
 
 The delays were 0.2 s and 0.3 s until 2026-11-16. The speeds were added 2026-11-17: a
 speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpeed`); the
@@ -349,10 +353,6 @@ Glow colour   ◉ ○ ○ ○ ○ ○   (○ Custom)
       Strength  ─────o───
       Spread    ────o────
       Fade      ────────o
-      [x] Music
-      [x] Timer
-      [x] Battery
-      [x] Calendar
 [x] Open panel glow
       Strength  ─────o───
       Spread    ─────o───
@@ -367,13 +367,46 @@ Glow colour   ◉ ○ ○ ○ ○ ○   (○ Custom)
 | Strength | 75% | How bright the glow is: its opacity, 10–100%, in 5% steps. |
 | Spread | 6 pt | How far the glow reaches from the pill: its radius, 4–30 pt, in 1 pt steps. |
 | Fade | 55% | How far down the sides the light takes to reach full strength, fading in from the top of the screen: 0–100% of the pill's height, in 5% steps. 0% lights the sides right up to the top; higher fades them out more gradually. |
-| Live activity glow | on | Off: no activity glows; the wings still show. On: each feature's switch decides for its own activities. |
-| Strength · Spread · Fade | 70% · 6 pt · 55% | As for the resting glow. |
-| Music, Timer, Battery, Calendar | on | Each feature's activities glow or not (Timer includes Time's up). |
+| Live activity glow | on | Off: no activity glows; the wings still show. On: each feature's own Live activity glow (on its page) decides for its activities. |
+| Strength · Spread · Fade | 70% · 6 pt · 55% | As for the resting glow. These are the shared values: every feature set to Shared uses them. |
 | Open panel glow | on | Off: the open panel has no glow, on any tab (the Music tab's song colour included). |
 | Strength · Spread · Fade | 80% · 10 pt · 60% | As for the resting glow. |
 
-Each glow's sliders (and the feature switches) are greyed out while its switch is off.
+Each glow's sliders are greyed out while its switch is off.
+
+**Each feature's own live activity glow** (2026-11-21, asked by the user): Music, Timer,
+Battery and Calendar each have a **Live activity glow** section on their own page (until
+then, four switches under Live activity glow here). Someone who finds the song's glow too
+strong looks on the Music page, and this page gets shorter.
+
+```
+Live activity glow   [ Off | Shared | Custom ]
+      Strength  ─────o───        ← only with Custom
+      Spread    ───o─────
+      Fade      ──────o──
+      See this glow on the pill in the notch.   [Preview]
+```
+
+**Preview** (2026-11-22, with Custom): plays an example of the feature's activity in the
+notch for 5 s, with the glow as set: a song (Ember's rose, no cover), a 24:59 countdown,
+Plugged in at 73%, or a heads-up 5 minutes before an event. It changes nothing in the
+feature. Dragging a slider while it shows changes the glow at once.
+
+| Choice | What it does |
+|---|---|
+| Off | The feature's activities have no glow; the wings still show. (Was the feature's switch here.) |
+| Shared | The default: the shared Strength, Spread and Fade from Live activity glow on this page. |
+| Custom | The feature's own Strength, Spread and Fade, with the same ranges. Chosen the first time, they start from the shared values; they are kept while Off or Shared is chosen, so choosing Custom again brings them back. |
+
+- The section is greyed out while Glow or Live activity glow is off on this page (its
+  footer says so), and while the feature itself is off.
+- The feature page's Reset to Defaults puts it back to Shared and forgets its own values;
+  the Glow page's Reset leaves it alone. The Calendar page gets a Reset to Defaults for
+  this (Calendar on, its glow); Show Calendar Events and Show Reminders stay as they are.
+- Saved per feature under `musicGlow`, `timerGlow`, `batteryGlow`, `calendarGlow` (the
+  choice and, once set, the own values). The four switches' old keys are not read: Ember
+  is not released yet.
+- Search finds each section by "glow", "strength", "spread", "fade" and "custom".
 
 **The colours** (sRGB; tuned by eye once seen on the notch): Ember rose `#D9776B` (the
 logo's), amber `#E8A33D`, mint `#5CCFA0`, blue `#5AA9F0`, lilac `#A58BF0`, white `#F2F2F2`.
@@ -465,6 +498,10 @@ as it is picked. Its answers are these two settings; Settings → Glow changes t
 | Music | on | The Music tab and the song in the wings; Apple Music and Spotify. Off: Ember stops listening to both players (no change notices, no Apple Events), the song leaves the wings, the Music tab goes. On again: Ember reads the players once and shows whatever is playing. |
 | Show shuffle | off | *In the Music tab.* A shuffle button at the left end of the controls; it switches the player's own setting. Greyed out while Music is off. |
 | Show repeat | off | *In the Music tab.* A repeat button at the right end; repeat plays the whole list again. Greyed out while Music is off. |
+| Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the song's glow in the wings: see Glow, "Each feature's own live activity glow". |
+| Colour | The song's colour | *Planned 2026-11-22.* The colour of the song in the wings (equalizer and glow) and of the Music tab's panel glow: the cover's colour (today's look), or one colour from the colour menu. See "Each feature's colour" below. Greyed out while Music is off. |
+| Show the song when it changes | on | *Planned 2026-11-22, built with the feature.* When the song changes, the pill grows down by a strip, like the volume's, with the new song's name. Greyed out while Music is off. Details: docs/specs/now-playing.md, "The song when it changes". |
+| Buttons | Previous, Play/Pause, Next | *Planned 2026-11-22, built with the feature.* The Music tab's buttons, arranged by dragging on a preview of the row; it replaces Show shuffle and Show repeat. Details: docs/specs/now-playing.md, "Arranging the buttons". |
 
 Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 
@@ -477,6 +514,21 @@ Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 | Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
 | Presets | 5, 25, 45 min | (2026-11-18.) The Timer tab's three preset buttons: each a number box with arrows, 1–180 minutes. The buttons show "5m", "25m", or "1h30" from an hour up. |
 | Show the countdown in the notch | on | (2026-11-18) Off: a running or paused timer stays out of the wings and is seen only in the Timer tab; a playing song keeps the wings instead. "Time's up" still shows in the wings, with its sound: it is the alert that the timer finished. Greyed out while Timer is off. |
+| Colour | Orange, #FF7A1E | *Planned 2026-11-22.* The countdown's colour wherever the timer is orange today: its symbol and its glow in the wings, and the Timer tab with its panel glow. See "Each feature's colour" below. Greyed out while Timer is off. |
+| Hide the timer when paused | off | *Planned 2026-11-22.* On: a paused timer leaves the wings and the pill goes back to rest (or a playing song takes the wings); resuming brings it back. The Timer tab still shows it. Greyed out while Timer or Show the countdown in the notch is off. |
+| Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the countdown's and Time's up's glow: see Glow, "Each feature's own live activity glow". |
+
+**When time's up** (*planned 2026-11-22*), its own section:
+
+| Setting | Default | What it does |
+|---|---|---|
+| Colour | Amber, #FFA826 | Time's up's symbol and glow. See "Each feature's colour". |
+| Sound | Glass | From the alert sounds (see below). None: Time's up shows without a sound. |
+| Show an example | — | A button: Time's up plays in the notch as it really looks, its sound once, and leaves after 5 s or when hovered. It does not touch a timer that is running, and works while Timer is off. |
+
+**Alert sounds** (*planned 2026-11-22*): Timer, Calendar and Battery choose from one list:
+None, Glass and Ping, the two sounds Ember plays today. More sounds are chosen later with
+the user. The list plays the sound when a sound is picked.
 
 Details: docs/specs/timers.md.
 
@@ -489,9 +541,20 @@ Details: docs/specs/timers.md.
 | Calendar | on | The Calendar tab and the heads-up before each event. Off: the heads-up timer and the calendar's change watching stop; the tab goes. Permissions are not touched. |
 | Show Calendar Events | off | *In the Calendar tab.* The day's events. Asks for the Calendar permission the first time. Off, Ember never reads them. Greyed out while Calendar is off; keeps its state. Saved under `showsCalendarEvents` in `CalendarModel`. |
 | Show Reminders | off | *In the Calendar tab.* The day's reminders, with the same rules and its own permission. Saved under `showsReminders`. |
+| Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the heads-up's glow: see Glow, "Each feature's own live activity glow". With it came a Reset to Defaults (Calendar and its glow). |
 
-Later: a setting for how long before an event the heads-up comes (now 5 minutes).
-Details: docs/specs/calendar.md.
+*Planned 2026-11-22:*
+
+| Setting | Default | What it does |
+|---|---|---|
+| Hide all-day events | off | *In the Calendar tab.* All-day events leave the day's list. Greyed out while Show Calendar Events is off. |
+| Hide completed reminders | off | *In the Calendar tab.* Reminders completed that day leave the end of the day's list. Greyed out while Show Reminders is off. |
+| Heads-ups | one, 5 minutes before | Up to three heads-ups before each event. Each is a row with a minutes menu (1, 2, 5, 10, 15, 30, 60) and a − button; the last one left has no −. "+ Add a heads-up" adds one, up to three. A time already used is left out of the other rows' menus. A heads-up whose time has already passed when the event is found (the event was just added) is not shown; only those still to come are. |
+| Colour | The calendar's colour | The heads-up's symbol and glow: the event's calendar colour (today's look), or one colour. See "Each feature's colour". |
+| Sound | Ping | From the alert sounds (see Timer). |
+| Show an example | — | A button: a heads-up for an example event plays in the notch, as it really looks, with its sound. Works while Calendar is off. |
+
+The heads-up settings, except Show an example, are greyed out while Calendar is off. Details: docs/specs/calendar.md.
 
 ---
 
@@ -501,6 +564,7 @@ Details: docs/specs/calendar.md.
 |---|---|---|
 | Shelf | on | The Shelf tab: files dropped on the notch are kept there as links, and can be sent with AirDrop. |
 | Add screenshots to the shelf | on | A new screenshot goes first on the shelf. Greyed out while Shelf is off. |
+| Colour | The glow colour | *Planned 2026-11-22.* The Shelf tab's panel glow and the outline that lights up while files are dragged over the shelf: the Glow page's colour (the resting glow's), or one colour. See "Each feature's colour". Greyed out while Shelf is off. |
 | Stay on the Shelf tab for | 5 s | After a screenshot or a drop, the panel opens on the Shelf tab for this long, whatever "Open the panel on" says. 1–20 s, whole seconds. Greyed out while Shelf is off. |
 
 A last section explains that macOS can open Mission Control when something is dragged to
@@ -514,7 +578,10 @@ docs/specs/file-shelf.md.
 | Setting | Default | What it does |
 |---|---|---|
 | Battery alerts | on | Alerts in the wings when the charger is plugged in or out, and at 20% and 10%. |
+| Plugged in · Unplugged · Low (20%) · Very low (10%) | all on | *Planned 2026-11-22.* A switch for each alert, under Battery alerts and greyed out while it is off. The two low alerts stay red and at 20% and 10%, as on Apple's own devices. |
+| Low battery sound | Ping | *Planned 2026-11-22.* Plays with the Low and Very low alerts; from the alert sounds (see Timer). None: silent, as today. |
 | Battery in the panel | on | The percentage at the top right of the open panel. |
+| Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the battery alerts' glow: see Glow, "Each feature's own live activity glow". Greyed out while Battery alerts is off. |
 
 **Show an example** (2026-11-18): a menu button right under Battery alerts with the four
 alerts, Plugged in, Unplugged, Low (20%) and Very low (10%); choosing one plays that alert
@@ -531,6 +598,12 @@ With both off, Ember stops listening to the battery. Details: docs/specs/battery
 | Setting | Default | What it does |
 |---|---|---|
 | Show Volume & Brightness in the Pill | off | The volume and the built-in screen's brightness in the pill instead of macOS's own indicator. Needs Accessibility, which Ember asks for when it is turned on. Saved under `showsLevelsInPill` in `LevelModel`. |
+
+*Planned 2026-11-22:* two switches instead, **Show volume in the pill** and **Show brightness
+in the pill**, each off by default. Ember takes only the keys of the one that is on; the
+other keeps macOS's own indicator. Accessibility is asked for when the first one is turned
+on. The menu bar menu's Features section gets both. The old switch is not carried over
+(Ember is not released yet).
 
 Details: docs/specs/volume-brightness.md ("The switch").
 
@@ -661,6 +734,46 @@ background are adapted from Atoll's `SettingsView.swift`, and the bring-to-front
 activation-policy steps from its `SettingsWindowController.swift`. Written into Ember's own
 files with Ember's names; covered by the README credit. None of Atoll's identifiers,
 Sparkle wiring, search highlight coordinator or settings keys come along.
+
+## Each feature's colour (planned 2026-11-22)
+
+Asked 2026-11-22. Music, Timer (the countdown and Time's up), Calendar (the heads-up) and
+Shelf each get a **Colour** row on their own page. It is not part of the Live activity
+glow section: it applies whether that is Off, Shared or Custom, and has nothing to do with
+Strength, Spread or Fade. With the glow Off, the colour still tints the symbol.
+
+```
+Colour   ● Orange (Timer's own)  ▾
+         ─────────────
+         ● Rose  ● Amber  ● Mint  ● Blue  ● Lilac  ● White
+         Custom…
+```
+
+| Page | The menu's first choice (the default) | What the colour paints |
+|---|---|---|
+| Music | The song's colour (from the cover) | The equalizer and glow in the wings; the Music tab's panel glow |
+| Timer → Colour | Orange, #FF7A1E | The countdown's symbol and glow; the Timer tab and its panel glow |
+| Timer → When time's up → Colour | Amber, #FFA826 | Time's up's symbol and glow |
+| Calendar → Colour | The calendar's colour (each event's own) | The heads-up's symbol and glow |
+| Shelf → Colour | The glow colour (the Glow page's, as the resting glow) | The Shelf tab's panel glow; the drop outline (Ember rose today) |
+
+- Every menu starts with the feature's own default, then the six colours offered for the
+  Glow colour, then Custom (the same menu as Glow colour). Choosing the first choice again
+  goes back to following it (a new song's cover, a calendar's colour, a new Glow colour).
+- The Calendar tab and "Nothing playing" keep the pill's own glow.
+- Each page's Reset to Defaults brings back its colours.
+
+## Compared with Atoll (2026-11-22)
+
+Atoll's Settings (21 pages) were gone through page by page; most of what Ember lacks
+belongs to features Ember does not have. Chosen from it, besides the planned rows above:
+- **Not added:** a fully charged alert; choosing the low battery percentages; presets with
+  names or more than three (the three number boxes stay); how long the song stays after
+  pausing; a larger hover area; Shelf's drag-out options and larger drop area.
+- **Back on the later list:** gestures, only a two-finger swipe between tabs (#3);
+  downloads, shown straight on the shelf (#9).
+- **Still dropped:** a visualizer moving with the real sound (#2): it needs the Screen &
+  System Audio Recording permission, and the wings' bars already show music playing.
 
 ## Not in Settings yet
 

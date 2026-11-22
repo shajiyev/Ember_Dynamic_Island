@@ -115,6 +115,53 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
   the user can allow it later in System Settings → Privacy & Security → Automation.
 - The README documents the Automation permission (project rule for new permissions).
 
+### The song when it changes (planned 2026-11-22)
+
+Asked 2026-11-22. A switch in Settings → Music, **Show the song when it changes**, on by
+default.
+
+```
+        ┌──── wings ────┐ notch ┌──── wings ────┐
+        │  ♫  Song title                        │   ← the strip, as volume's,
+        │     Artist                            │     a line taller
+        └───────────────────────────────────────┘
+```
+
+- When the playing song changes, the pill grows down like it does for the volume and
+  brightness (docs/specs/volume-brightness.md) and shows the new song: a music symbol,
+  the title, and under it the artist in smaller grey text, each cut with "…". It stays
+  about 2.5 s, then the pill goes back up.
+- **Skipping fast:** a new song while the strip is down keeps the strip down; the old
+  name leaves and the new one comes in (the same blur used by the wings' content), and
+  the 2.5 s start again. The pill does not go up and down between songs.
+- **Volume and brightness come first:** when the volume or brightness changes while the
+  song's name shows, or at the same time as the song changes, the strip shows the volume
+  or brightness. When that strip goes, the pill goes back up; the song's name does not
+  come back.
+- Not shown when the music starts or resumes on the same song, while the panel is open,
+  or while Ember is hidden in a full-screen app. It shows whatever the wings show (the
+  song, the timer or nothing).
+
+### Arranging the buttons (planned 2026-11-22)
+
+Asked 2026-11-22; Atoll's palette of slots is the reference, the look and the rules are
+Ember's own. In Settings → Music, **Buttons** replaces Show shuffle and Show repeat:
+
+```
+  Buttons
+     ⇄    ⏮    (⏯)    ⏭    ↻          ← the Music tab's row, as it looks
+  ───────────────────────────────
+  Spare:   ⟲10   10⟳   ☆              ← drag up to add, down to remove
+```
+
+- The row is a preview of the Music tab's buttons. Dragging a button moves it; dragging
+  it down to Spare takes it out; dragging a spare one up adds it where it is dropped.
+- Play/pause stays in the middle and cannot be removed.
+- Spare starts with Shuffle and Repeat, so the default row is today's. Back and forward
+  10 seconds (#33) and the favourite star (#40) join Spare when they are built.
+- Reset to Defaults on the Music page brings back the default row. The other details
+  (how many buttons fit, the drag's look) are agreed when this is built.
+
 ## How it is built
 
 The pill learns to draw artwork and an equalizer in the wings, but still knows nothing

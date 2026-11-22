@@ -1161,3 +1161,26 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   the panel's width, so different layouts per tab would mean either a panel that changes
   width between tabs (and a third width for Calendar and Shelf) or a compact tab sitting in
   a wide panel. The user dropped it.
+
+## 2026-11-22 — Each live activity's glow on its own page; Atoll's Settings compared
+- **Decision:** Music, Timer, Battery and Calendar each set their live activity glow on
+  their own page: Off, Shared (the Glow page's values) or Custom (own Strength, Spread,
+  Fade, starting from the shared ones), with a Preview. **Why:** the user found the General
+  and Glow pages too full; someone who finds the song's glow too strong looks on the Music
+  page. The old per-feature switches are not carried over (Ember is not released).
+- **Decision:** one sidebar header, **Tabs**, for Music, Timer, Calendar and Shelf (were
+  Media and Productivity). **Why:** these are the panel's tabs, and Media held one page.
+- **Decision:** after comparing Atoll's 21 Settings pages, Ember adds each feature's colour
+  (independent of the glow's strength), alert sounds and examples, a switch per battery
+  alert, up to three heads-ups, separate volume and brightness switches, hiding the menu
+  bar icon and a trackpad tap. **Not added:** a fully charged alert, choosing the low
+  battery percentages (20% and 10% stay, as on Apple's devices), named or extra timer
+  presets, a pause timeout for music, a larger hover area, Shelf's drag-out options.
+  **Why:** the user chose each one; most of Atoll's other pages belong to features Ember
+  does not have.
+- **Decision:** a heads-up whose time passed before the event was found is not shown.
+  **Why:** the user expects only heads-ups still to come (today's code shows a late one
+  at once; that changes with the heads-ups list).
+- **Back on the later list:** a two-finger swipe between tabs (#3, only that gesture) and
+  downloads landing on the shelf (#9). **Still dropped:** a visualizer that moves with the
+  real sound (#2): it needs the Screen & System Audio Recording permission.

@@ -12,19 +12,19 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let hotKey: GlobalHotKey
     /// The notch's width on the pill's display, read each time the window opens.
     private let notchWidth: () -> CGFloat?
-    /// Plays a battery alert in the notch (Battery → Show an example).
-    private let showBatteryAlert: (BatteryAlert) -> Void
+    /// Plays a brief activity in the notch: Battery → Show an example, a glow's Preview.
+    private let showExample: (LiveActivity) -> Void
     private let navigation = SettingsNavigation()
     private var window: NSWindow?
 
     init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel, hotKey: GlobalHotKey, notchWidth: @escaping () -> CGFloat?,
-         showBatteryAlert: @escaping (BatteryAlert) -> Void) {
+         showExample: @escaping (LiveActivity) -> Void) {
         self.settings = settings
         self.calendar = calendar
         self.levels = levels
         self.hotKey = hotKey
         self.notchWidth = notchWidth
-        self.showBatteryAlert = showBatteryAlert
+        self.showExample = showExample
         super.init()
     }
 
@@ -44,7 +44,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         let hosting = NSHostingController(rootView: SettingsView(navigation: navigation, settings: settings,
                                                                  calendar: calendar, levels: levels, hotKey: hotKey,
                                                                  notchWidth: notchWidth() ?? 185,
-                                                                 showBatteryAlert: showBatteryAlert))
+                                                                 showExample: showExample))
         hosting.sceneBridgingOptions = [.title, .toolbars]
         let window = NSWindow(contentViewController: hosting)
         window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
