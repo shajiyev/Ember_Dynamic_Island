@@ -1322,3 +1322,13 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   is only a request the app in front can refuse. Windows now order themselves in front of
   every app and ask to activate a moment later, once the menu or panel has closed.
   Checked by the user from the menu, the panel's gear and a reopen.
+
+## 2026-11-23 — Performance audit before the 0.9 beta
+- **Fixed:** the equalizer now runs on Core Animation (6.5 % CPU while music played, now
+  0 %), and the glow is an equatable view that is not redrawn when the wings' content
+  changes (5.7 % under a running timer, now 0.2 %). Measured with `top`; see
+  docs/performance.md.
+- **Kept for after the beta:** the glow's blur redrawn during size animations (about 10 %
+  while pressing the volume keys) and the Music tab compiling its AppleScript at every
+  2-second read (2.9 % while the tab shows). **Why:** both last only seconds at a time; the
+  lasting states (rest, a song, a timer, Keep awake) are all near zero.

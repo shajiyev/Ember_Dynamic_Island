@@ -471,6 +471,12 @@ animations were judged not true enough to it.
   committed). The useful lesson from them: the pill must follow the app's current
   `PillStyle` and `NotchGeometry` (no flare at rest, 32 px tall, no overshoot when it
   settles, the edge line wholly outside the black).
+- **Last step of the rework (agreed 2026-11-23): the download.** The Download button links
+  to the latest DMG on GitHub Releases (`…/releases/latest/download/…`), the page says
+  which version it is (0.9 public beta until 1.0), and the out-of-date bits listed in the
+  roadmap are gone (Calendar and the shelf "Planned", no Volume & Brightness card, the
+  permissions card without Accessibility). The 0.9 beta itself is released before the
+  rework, through GitHub Releases only; the appcast is already on the site.
 
 ## Look (light mode)
 

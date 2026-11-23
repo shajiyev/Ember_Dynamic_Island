@@ -3,7 +3,7 @@ import SwiftUI
 /// The outline of the pill: flat against the top of the screen, top corners that flare
 /// outward, and rounded bottom corners. The flares lie inside the shape's frame, so the
 /// body is `2 * topCornerRadius` narrower than the frame.
-nonisolated struct NotchShape: Shape {
+nonisolated struct NotchShape: Shape, Equatable {
     var topCornerRadius: CGFloat
     var bottomCornerRadius: CGFloat
 

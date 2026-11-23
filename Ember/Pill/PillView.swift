@@ -50,21 +50,10 @@ struct PillView: View {
             .fill(.black)
             .frame(width: size.width, height: size.height)
             .background {
-                // The light: a copy of the shape with a thin bright line just outside its edge
-                // (`PillStyle.edgeOutset`) and the glow. Behind the black shape, so only the
-                // light is faded on the sides, never the black. It belongs to the shape only:
-                // the wings' and the panel's content cast no glow of their own.
-                let outset = style.edgeOutset
-                shape
-                    .fill(.black)
-                    .overlay {
-                        shape
-                            .stroke(PillStyle.edgeColor(for: glowColor).opacity(glowOpacity),
-                                    lineWidth: style.edgeLineWidth)
-                            .padding(EdgeInsets(top: 0, leading: -outset, bottom: -outset, trailing: -outset))
-                    }
-                    .shadow(color: glowColor.opacity(glowOpacity), radius: glow?.radius ?? style.glowRadius)
-                    .mask(SideFade(fade: glow?.fade ?? style.glowFade, height: size.height))
+                PillLight(shape: shape, color: glowColor, opacity: glowOpacity,
+                         radius: glow?.radius ?? style.glowRadius, fade: glow?.fade ?? style.glowFade,
+                         lineWidth: style.edgeLineWidth, height: size.height)
+                    .equatable()
             }
             .overlay {
                 // This container always exists and is clipped to the shape, so its clip
@@ -131,6 +120,37 @@ struct PillView: View {
             .animation(PillStyle.animation, value: controller.glow)
             .animation(PillStyle.animation, value: controller.isConcealed)
             .animation(PillStyle.animation, value: stripHeight)
+    }
+}
+
+/// The light around the pill: a copy of the shape with a thin bright line just outside its
+/// edge (`PillStyle.edgeOutset`) and the glow. Behind the black shape, so only the light is
+/// faded on the sides, never the black. It belongs to the shape only: the wings' and the
+/// panel's content cast no glow of their own.
+///
+/// Equatable, so SwiftUI redraws its costly blur only when the light itself changes, not when
+/// the wings' content does (a running timer's countdown redrew it every second: about 5.7%
+/// CPU, measured 2026-11-23).
+private struct PillLight: View, Equatable {
+    let shape: NotchShape
+    let color: Color
+    let opacity: Double
+    let radius: CGFloat
+    let fade: Double
+    let lineWidth: CGFloat
+    let height: CGFloat
+
+    var body: some View {
+        let outset = lineWidth / 2
+        shape
+            .fill(.black)
+            .overlay {
+                shape
+                    .stroke(PillStyle.edgeColor(for: color).opacity(opacity), lineWidth: lineWidth)
+                    .padding(EdgeInsets(top: 0, leading: -outset, bottom: -outset, trailing: -outset))
+            }
+            .shadow(color: color.opacity(opacity), radius: radius)
+            .mask(SideFade(fade: fade, height: height))
     }
 }
 
