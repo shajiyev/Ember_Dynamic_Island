@@ -136,7 +136,7 @@ Settings window came: the user wants them at hand.
 |---|---|---|
 | Launch at login | off | Uses macOS's login-item service. The switch shows the real state, read again each time the page appears (the user can remove Ember in System Settings → General → Login Items). If macOS needs the user's approval, a line under the switch says so, with a button that opens Login Items. |
 
-| Show the menu bar icon | on | *Planned 2026-11-22.* Off: Ember's icon leaves the menu bar. Settings then opens when Ember is opened again (from Finder, Spotlight or Launchpad) and from the panel's gear; a line under the switch says so. |
+| Show the menu bar icon | on | (Built 2026-11-23, under Launch at login; saved under `showsMenuBarIcon`.) Off: Ember's icon leaves the menu bar. Settings then opens when Ember is opened again (from Finder, Spotlight or Launchpad) and from the panel's gear; a line under the switch says so. |
 
 Launch at login is off by default: onboarding (#0, later) asks on first launch, so nothing
 changes on the user's Mac without their choice.
@@ -152,7 +152,7 @@ changes on the user's Mac without their choice.
 | Close speed | the middle | How fast the panel shrinks back to the notch or the wings, its content leaving with it. As above. Growing into the wings and glow changes keep their own speed. |
 | Open the panel on | Last tab (Recommended) | **Last tab:** the tab of what the wings show (such as Music while a song plays), but reopened within the time below it comes back to the tab it was on. **A fixed tab** (Music, Shelf, Timer, Calendar) always opens. Alerts (Time's up, a calendar heads-up) and files dropped on the shelf open their own tab either way. Details: docs/specs/file-shelf.md. |
 | Stay on the last tab for | 5 s | 1–20 s, whole seconds. Shown only with Last tab. |
-| Tap the trackpad when the panel opens | off | *Planned 2026-11-22.* A light tap from the trackpad as the panel opens, the kind macOS gives when something snaps into place. Felt only on a Force Touch trackpad with a finger resting on it. |
+| Tap the trackpad when the panel opens | off | (Built 2026-11-23, last in Opening the panel; saved under `tapsTrackpadOnOpen`.) A light tap from the trackpad as the panel opens, the kind macOS gives when something snaps into place. Felt only on a Force Touch trackpad with a finger resting on it. |
 
 The delays were 0.2 s and 0.3 s until 2026-11-16. The speeds were added 2026-11-17: a
 speed is saved as a multiple of the first speed, 0.5–2 (`openSpeed`, `closeSpeed`); the
@@ -496,12 +496,10 @@ as it is picked. Its answers are these two settings; Settings → Glow changes t
 | Setting | Default | What it does |
 |---|---|---|
 | Music | on | The Music tab and the song in the wings; Apple Music and Spotify. Off: Ember stops listening to both players (no change notices, no Apple Events), the song leaves the wings, the Music tab goes. On again: Ember reads the players once and shows whatever is playing. |
-| Show shuffle | off | *In the Music tab.* A shuffle button at the left end of the controls; it switches the player's own setting. Greyed out while Music is off. |
-| Show repeat | off | *In the Music tab.* A repeat button at the right end; repeat plays the whole list again. Greyed out while Music is off. |
 | Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the song's glow in the wings: see Glow, "Each feature's own live activity glow". |
 | Colour | The song's colour | (2026-11-22.) The colour of the song in the wings (equalizer and glow) and of the Music tab's panel glow: the cover's colour (today's look), or one colour from the colour menu. See "Each feature's colour" below. Greyed out while Music is off. |
-| Show the song when it changes | on | *Planned 2026-11-22, built with the feature.* When the song changes, the pill grows down by a strip, like the volume's, with the new song's name. Greyed out while Music is off. Details: docs/specs/now-playing.md, "The song when it changes". |
-| Buttons | Previous, Play/Pause, Next | *Planned 2026-11-22, built with the feature.* The Music tab's buttons, arranged by dragging on a preview of the row; it replaces Show shuffle and Show repeat. Details: docs/specs/now-playing.md, "Arranging the buttons". |
+| Show the song when it changes | on | (Built 2026-11-23.) When the song changes, the pill grows down by a strip, like the volume's, with the new song's name. Greyed out while Music is off. Details: docs/specs/now-playing.md, "The song when it changes". |
+| Buttons | Previous, Play/Pause, Next | (Built 2026-11-23.) The Music tab's buttons, arranged by dragging on a preview of the row: two places on each side of play/pause, Spare below. It replaced Show shuffle and Show repeat (2026-11-16 to 2026-11-23), which are not carried over. Greyed out while Music is off. Details: docs/specs/now-playing.md, "Arranging the buttons". |
 
 Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 
@@ -600,15 +598,27 @@ With both off, Ember stops listening to the battery. Details: docs/specs/battery
 
 | Setting | Default | What it does |
 |---|---|---|
-| Show Volume & Brightness in the Pill | off | The volume and the built-in screen's brightness in the pill instead of macOS's own indicator. Needs Accessibility, which Ember asks for when it is turned on. Saved under `showsLevelsInPill` in `LevelModel`. |
+| Show volume in the pill | on | (2026-11-23; on by default, asked by the user.) The volume and mute keys show the volume in the pill instead of macOS's own indicator. Saved under `showsVolumeInPill` in `LevelModel`. |
+| Show brightness in the pill | on | (2026-11-23; on by default.) The brightness keys show the built-in screen's brightness in the pill instead of macOS's own indicator. Saved under `showsBrightnessInPill`. |
 
-*Planned 2026-11-22:* two switches instead, **Show volume in the pill** and **Show brightness
-in the pill**, each off by default. Ember takes only the keys of the one that is on; the
-other keeps macOS's own indicator. Accessibility is asked for when the first one is turned
-on. The menu bar menu's Features section gets both. The old switch is not carried over
-(Ember is not released yet).
+Ember takes only the keys of the switch that is on; the other keys keep macOS's own
+indicator. Both need Accessibility, which Ember asks for when the first one is turned on.
+On by default, Ember does not ask at launch: it waits, checking every 2 s, and takes the
+keys once Accessibility is allowed (onboarding, #0, will ask). With both off, Ember stops
+taking keys. The menu bar menu's Features section has both, as
+**Volume** and **Brightness**. They replaced one switch, Show Volume & Brightness in the
+Pill (`showsLevelsInPill`), which is not carried over (Ember is not released yet). The
+level strip can be dragged only while its own switch is on.
 
 Details: docs/specs/volume-brightness.md ("The switch").
+
+---
+
+## Keep Awake
+
+Added 2026-11-23 with the feature (#18): Keep awake (on), Times (30, 60, 120, 180 min,
+5–720), Also with the lid closed (off), and Reset to Defaults. Details:
+docs/specs/keep-awake.md, "Settings → Keep awake".
 
 ---
 

@@ -34,6 +34,10 @@ final class AppSettings {
     var glowColor: Color { didSet { save(GlowColors.hex(of: glowColor), Key.glowColor) } }
     /// The pill and the panel are left out of screenshots and shared screens.
     var hidesInCaptures: Bool { didSet { save(hidesInCaptures, Key.hidesInCaptures) } }
+    /// Ember's icon in the menu bar; without it, opening Ember again opens Settings.
+    var showsMenuBarIcon: Bool { didSet { save(showsMenuBarIcon, Key.showsMenuBarIcon) } }
+    /// A light trackpad tap as the panel opens.
+    var tapsTrackpadOnOpen: Bool { didSet { save(tapsTrackpadOnOpen, Key.tapsTrackpadOnOpen) } }
     /// The pill goes away while the app in front is in full screen.
     var hidesInFullScreen: Bool { didSet { save(hidesInFullScreen, Key.hidesInFullScreen) } }
     /// With `hidesInFullScreen`, alerts still show.
@@ -187,6 +191,18 @@ final class AppSettings {
     var screenshotsToShelf: Bool { didSet { save(screenshotsToShelf, Key.screenshotsToShelf) } }
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
+    /// Keep awake's cup in the panel and its item in the menu bar menu.
+    var keepAwakeOn: Bool { didSet { save(keepAwakeOn, Key.keepAwakeOn) } }
+    /// Keep awake's four times, in minutes.
+    var keepAwakeTimes: [Int] {
+        didSet {
+            let clamped = KeepAwakeTimes.clamped(keepAwakeTimes)
+            guard clamped == keepAwakeTimes else { keepAwakeTimes = clamped; return }
+            save(keepAwakeTimes, Key.keepAwakeTimes)
+        }
+    }
+    /// Keep awake's Also with the lid closed, remembered between starts.
+    var keepAwakeLidClosed: Bool { didSet { save(keepAwakeLidClosed, Key.keepAwakeLidClosed) } }
     /// The battery alerts switched on, under Battery alerts.
     var shownBatteryAlerts: Set<BatteryAlert> {
         didSet { save(BatteryAlert.allCases.filter(shownBatteryAlerts.contains).map(\.rawValue), Key.shownBatteryAlerts) }
@@ -230,8 +246,10 @@ final class AppSettings {
             onChange?()
         }
     }
-    var showsShuffle: Bool { didSet { save(showsShuffle, Key.showsShuffle) } }
-    var showsRepeat: Bool { didSet { save(showsRepeat, Key.showsRepeat) } }
+    /// The Music tab's buttons around play/pause.
+    var musicButtons: MusicButtonRow { didSet { save(musicButtons.saved, Key.musicButtons) } }
+    /// The new song's name in a strip below the pill when the song changes.
+    var showsSongOnChange: Bool { didSet { save(showsSongOnChange, Key.showsSongOnChange) } }
 
     /// Called after every change.
     @ObservationIgnored var onChange: (() -> Void)?
@@ -244,6 +262,8 @@ final class AppSettings {
         static let openSpeed = "openSpeed"
         static let panelShortcut = "panelShortcut"
         static let hidesInCaptures = "hidesInCaptures"
+        static let showsMenuBarIcon = "showsMenuBarIcon"
+        static let tapsTrackpadOnOpen = "tapsTrackpadOnOpen"
         static let hidesInFullScreen = "hidesInFullScreen"
         static let alertsInFullScreen = "alertsInFullScreen"
         static let closeSpeed = "closeSpeed"
@@ -285,14 +305,17 @@ final class AppSettings {
         static let batteryAlertsOn = "batteryAlertsOn"
         static let batteryInPanelOn = "batteryInPanelOn"
         static let shownBatteryAlerts = "shownBatteryAlerts"
+        static let keepAwakeOn = "keepAwakeOn"
+        static let keepAwakeTimes = "keepAwakeTimes"
+        static let keepAwakeLidClosed = "keepAwakeLidClosed"
         static let lowBatterySound = "lowBatterySound"
         static let panelLayout = "panelLayout"
         static let tabsLeft = "tabsLeft"
         static let compactWidth = "compactWidth"
         static let wideWidth = "wideWidth"
         static let tabsRight = "tabsRight"
-        static let showsShuffle = "showsShuffle"
-        static let showsRepeat = "showsRepeat"
+        static let musicButtons = "musicButtons"
+        static let showsSongOnChange = "showsSongOnChange"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -305,6 +328,8 @@ final class AppSettings {
         openDelay = delay(Key.openDelay, PillTiming().openDelay)
         closeDelay = delay(Key.closeDelay, PillTiming().closeDelay)
         hidesInCaptures = bool(Key.hidesInCaptures)
+        showsMenuBarIcon = bool(Key.showsMenuBarIcon)
+        tapsTrackpadOnOpen = defaults.object(forKey: Key.tapsTrackpadOnOpen) as? Bool ?? false
         hidesInFullScreen = defaults.object(forKey: Key.hidesInFullScreen) as? Bool ?? false
         alertsInFullScreen = bool(Key.alertsInFullScreen)
         // Never saved: ⌃⌥N. Saved empty: cleared by the user.
@@ -363,6 +388,9 @@ final class AppSettings {
         shownBatteryAlerts = (defaults.stringArray(forKey: Key.shownBatteryAlerts)?.compactMap(BatteryAlert.init(rawValue:)))
             .map(Set.init) ?? Set(BatteryAlert.allCases)
         lowBatterySound = defaults.string(forKey: Key.lowBatterySound).flatMap(AlertSound.init(rawValue:)) ?? .ping
+        keepAwakeOn = bool(Key.keepAwakeOn)
+        keepAwakeTimes = (defaults.array(forKey: Key.keepAwakeTimes) as? [Int]).map(KeepAwakeTimes.clamped) ?? KeepAwakeTimes.standard
+        keepAwakeLidClosed = defaults.object(forKey: Key.keepAwakeLidClosed) as? Bool ?? false
         panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
         compactWidth = Self.clamped(defaults.object(forKey: Key.compactWidth) as? Double ?? PanelLayout.compact.size.width,
                                     to: .compact)
@@ -370,8 +398,8 @@ final class AppSettings {
                                  to: .wide)
         tabArrangement = TabArrangement(left: defaults.stringArray(forKey: Key.tabsLeft) ?? [],
                                         right: defaults.stringArray(forKey: Key.tabsRight) ?? [])
-        showsShuffle = defaults.object(forKey: Key.showsShuffle) as? Bool ?? false
-        showsRepeat = defaults.object(forKey: Key.showsRepeat) as? Bool ?? false
+        musicButtons = defaults.stringArray(forKey: Key.musicButtons).map(MusicButtonRow.init(saved:)) ?? .standard
+        showsSongOnChange = bool(Key.showsSongOnChange)
     }
 
     var pillTiming: PillTiming {
@@ -400,7 +428,7 @@ final class AppSettings {
 
     /// The pages with a Reset to Defaults button. Launch at login, Show Calendar Events, Show
     /// Reminders and Volume & Brightness are not here: they are tied to macOS or a permission.
-    static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .calendar, .shelf, .battery]
+    static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .calendar, .shelf, .battery, .keepAwake]
 
     /// Chooses Off, Shared or Custom for a feature's glow; Custom the first time starts from
     /// the shared live activity values.
@@ -421,6 +449,8 @@ final class AppSettings {
             closeSpeed = fresh.closeSpeed
             panelShortcut = fresh.panelShortcut
             hidesInCaptures = fresh.hidesInCaptures
+            showsMenuBarIcon = fresh.showsMenuBarIcon
+            tapsTrackpadOnOpen = fresh.tapsTrackpadOnOpen
             hidesInFullScreen = fresh.hidesInFullScreen
             alertsInFullScreen = fresh.alertsInFullScreen
             opensOnTab = fresh.opensOnTab
@@ -447,8 +477,8 @@ final class AppSettings {
             panelGlowFade = fresh.panelGlowFade
         case .music:
             musicOn = fresh.musicOn
-            showsShuffle = fresh.showsShuffle
-            showsRepeat = fresh.showsRepeat
+            musicButtons = fresh.musicButtons
+            showsSongOnChange = fresh.showsSongOnChange
             featureGlows[.music] = fresh.featureGlows[.music]
             featureColors[.music] = nil
         case .timer:
@@ -480,6 +510,10 @@ final class AppSettings {
             for alert in BatteryAlert.allCases { featureColors[alert.colorSlot] = nil }
             lowBatterySound = fresh.lowBatterySound
             featureGlows[.battery] = fresh.featureGlows[.battery]
+        case .keepAwake:
+            keepAwakeOn = fresh.keepAwakeOn
+            keepAwakeTimes = fresh.keepAwakeTimes
+            keepAwakeLidClosed = fresh.keepAwakeLidClosed
         case .levels, .permissions, .feedback, .about:
             break
         }
@@ -491,13 +525,15 @@ final class AppSettings {
         case .general:
             return [Key.opensOnHover, Key.openDelay, Key.closeDelay, Key.openSpeed, Key.closeSpeed, Key.panelShortcut,
                     Key.hidesInCaptures, Key.hidesInFullScreen, Key.alertsInFullScreen,
+                    Key.showsMenuBarIcon, Key.tapsTrackpadOnOpen,
                     Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight, Key.panelLayout,
                     Key.compactWidth, Key.wideWidth]
         case .glow:
             return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
                     Key.activityGlowOn, Key.activityGlowStrength, Key.activityGlowSpread, Key.activityGlowFade,
                     Key.panelGlowOn, Key.panelGlowStrength, Key.panelGlowSpread, Key.panelGlowFade]
-        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat, Key.glow(.music), Key.color(.music)]
+        case .music: return [Key.musicOn, Key.musicButtons, Key.showsSongOnChange, Key.glow(.music),
+                             Key.color(.music)]
         case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings, Key.hidesPausedTimer, Key.glow(.timer),
                              Key.color(.timer), Key.color(.timesUp), Key.timesUpSound]
         case .calendar: return [Key.calendarOn, Key.headsUpMinutes, Key.headsUpSound, Key.hidesAllDayEvents,
@@ -505,6 +541,7 @@ final class AppSettings {
         case .shelf: return [Key.shelfOn, Key.screenshotsToShelf, Key.shelfCooldown, Key.color(.shelf)]
         case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn, Key.shownBatteryAlerts, Key.lowBatterySound,
                                Key.glow(.battery)] + BatteryAlert.allCases.map { Key.color($0.colorSlot) }
+        case .keepAwake: return [Key.keepAwakeOn, Key.keepAwakeTimes, Key.keepAwakeLidClosed]
         case .levels, .permissions, .feedback, .about: return []
         }
     }
@@ -529,7 +566,7 @@ final class AppSettings {
     /// The room the top row needs on each side of the notch, for the pill (the width rule).
     var openSideRoom: CGFloat {
         TopRowLayout.sideRoom(left: shownTabs(on: .left).count, right: shownTabs(on: .right).count,
-                              showsBattery: batteryInPanelOn)
+                              showsBattery: batteryInPanelOn, showsKeepAwake: keepAwakeOn)
     }
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {

@@ -28,6 +28,9 @@ final class NowPlayingModel {
     /// The players installed on this Mac, for the Open buttons.
     let installed = Player.allCases.filter { $0.appURL != nil }
     @ObservationIgnored var onActivity: ((LiveActivity?) -> Void)?
+    /// Called with the new song when another song starts playing (not when the music starts
+    /// or resumes), for the strip below the pill.
+    @ObservationIgnored var onSongChange: ((SongReadout) -> Void)?
 
     @ObservationIgnored private let source: PlayerSource
 
@@ -167,7 +170,11 @@ final class NowPlayingModel {
         if chosen?.artwork !== current?.artwork {
             glow = chosen?.artwork.map { CoverColor.glow(of: $0) }
         }
+        let previous = current
         current = chosen
+        if let chosen, NowPlayingLook.isNewSong(chosen, after: previous) {
+            onSongChange?(NowPlayingLook.songReadout(for: chosen))
+        }
         if let chosen, chosen.isPlaying {
             onActivity?(NowPlayingLook.activity(for: chosen, glow: songColor, defaultGlow: defaultGlow))
         } else {

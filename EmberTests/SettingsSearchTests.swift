@@ -21,17 +21,18 @@ struct SettingsSearchTests {
         // "Still show alerts", "In the notch, show first", "Show shuffle", "Show repeat", "Show the countdown in
         // the notch", "Show Calendar Events", "Show Reminders", "Show an example", "Show
         // Volume & Brightness in the Pill".
-        #expect(SettingsSearch.matches("show") == [.alertsInFullScreen, .lastingPriority, .showsShuffle, .showsRepeat, .timerInWings,
+        #expect(SettingsSearch.matches("show") == [.showsMenuBarIcon, .alertsInFullScreen, .lastingPriority, .songOnChange, .timerInWings,
                                                    .timesUpExample, .calendarEvents, .reminders, .headsUpExample,
-                                                   .batteryExample, .levels])
+                                                   .batteryExample, .volumeInPill, .brightnessInPill])
         #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels])
     }
 
     @Test func theLayoutAndThePlayerButtonsAreFound() {
         #expect(SettingsSearch.matches("compact") == [.panelLayout])
         #expect(SettingsSearch.matches("layout") == [.panelLayout])
-        #expect(SettingsSearch.matches("shuffle") == [.showsShuffle])
-        #expect(SettingsSearch.matches("repeat") == [.showsRepeat])
+        #expect(SettingsSearch.matches("shuffle") == [.musicButtons])
+        #expect(SettingsSearch.matches("repeat") == [.musicButtons])
+        #expect(SettingsItem.musicButtons.page == .music)
     }
 
     @Test func aPageIsFoundByItsOwnName() {
@@ -173,5 +174,32 @@ struct SettingsSearchTests {
         for item in [SettingsItem.headsUps, .headsUpSound, .headsUpExample, .hidesAllDayEvents, .hidesCompletedReminders] {
             #expect(item.page == .calendar)
         }
+    }
+
+    @Test func volumeAndBrightnessHaveASwitchEach() {
+        #expect(SettingsSearch.matches("volume") == [.volumeInPill])
+        #expect(SettingsSearch.matches("brightness") == [.brightnessInPill])
+        #expect(SettingsSearch.pages(for: "mute") == [.levels])
+    }
+
+    @Test func theMenuBarIconAndTheTrackpadTapAreFound() {
+        #expect(SettingsSearch.matches("menu bar icon") == [.showsMenuBarIcon])
+        #expect(SettingsSearch.matches("haptic") == [.tapsTrackpadOnOpen])
+        #expect(SettingsItem.showsMenuBarIcon.page == .general && SettingsItem.tapsTrackpadOnOpen.page == .general)
+    }
+
+    @Test func theSongWhenItChangesIsFound() {
+        #expect(SettingsSearch.matches("when it changes") == [.songOnChange])
+        #expect(SettingsSearch.matches("skip").contains(.songOnChange))
+        #expect(SettingsItem.songOnChange.page == .music)
+    }
+
+    @Test func keepAwakeHasItsOwnPageAfterVolumeAndBrightness() {
+        #expect(SettingsSearch.pages(for: "caffeinate") == [.keepAwake])
+        #expect(SettingsSearch.matches("lid closed") == [.keepAwakeLidClosed])
+        #expect(SettingsItem.keepAwakeTimes.page == .keepAwake)
+        let pages = SettingsPage.allCases
+        #expect(pages[pages.firstIndex(of: .levels)! + 1] == .keepAwake)
+        #expect(SettingsPage.keepAwake.group == .system)
     }
 }

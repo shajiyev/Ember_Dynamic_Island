@@ -36,7 +36,9 @@ struct LevelLookTests {
             symbolName: "sun.min.fill", text: "25%", fill: 0.25, steps: 16, duration: 1.5))
     }
 
-    @Test func menuTitle() {
-        #expect(LevelLook.switchTitle == "Show Volume & Brightness in the Pill")
+    @Test func eachSwitchHasItsOwnTitleAndMenuName() {
+        #expect(LevelLook.switchTitle(.volume) == "Show volume in the pill")
+        #expect(LevelLook.switchTitle(.brightness) == "Show brightness in the pill")
+        #expect(LevelKind.allCases.map(\.title) == ["Volume", "Brightness"])
     }
 }

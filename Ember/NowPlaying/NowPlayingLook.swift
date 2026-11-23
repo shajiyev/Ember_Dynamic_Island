@@ -3,6 +3,21 @@ import SwiftUI
 
 /// How Now Playing looks. All music symbols, colours and text formats are defined here.
 nonisolated enum NowPlayingLook {
+    /// How long the song's name stays in the strip below the pill after it changes.
+    static let songStripDuration: TimeInterval = 2.5
+
+    /// Whether the strip should show `track`: another song than before, playing. Not when
+    /// the music starts (nothing before), resumes the same song, or a new song is paused.
+    static func isNewSong(_ track: Track?, after previous: Track?) -> Bool {
+        guard let track, let previous, track.isPlaying else { return false }
+        return (track.player, track.title, track.artist, track.album)
+            != (previous.player, previous.title, previous.artist, previous.album)
+    }
+
+    static func songReadout(for track: Track) -> SongReadout {
+        SongReadout(title: track.title, artist: track.artist, duration: songStripDuration)
+    }
+
     /// Time played or a song's length: "1:12", or "1:02:05" from an hour up.
     static func timeText(_ seconds: TimeInterval) -> String {
         let total = Int(max(0, seconds))

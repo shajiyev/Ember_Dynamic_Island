@@ -5,6 +5,9 @@ nonisolated enum LevelKey: Hashable, Sendable {
     var isVolume: Bool {
         self == .volumeUp || self == .volumeDown || self == .mute
     }
+
+    /// The switch in Settings that lets Ember take this key.
+    var kind: LevelKind { isVolume ? .volume : .brightness }
 }
 
 /// A press, release or repeat of one of the five keys, read from a system-defined event.

@@ -25,16 +25,36 @@ protocol BrightnessControl: AnyObject {
     var isPointedAt: Bool { get }
 }
 
-/// Volume and brightness in the pill (#11): the Settings switch, and for each key, whether
-/// Ember takes it from macOS and what the pill shows.
+/// The two levels Ember can show in the pill, each behind its own switch.
+nonisolated enum LevelKind: CaseIterable {
+    case volume
+    case brightness
+
+    /// Its name in the menu bar menu's Features.
+    var title: String {
+        switch self {
+        case .volume: return "Volume"
+        case .brightness: return "Brightness"
+        }
+    }
+
+    var switchKey: String {
+        switch self {
+        case .volume: return "showsVolumeInPill"
+        case .brightness: return "showsBrightnessInPill"
+        }
+    }
+}
+
+/// Volume and brightness in the pill (#11): the two Settings switches, and for each key,
+/// whether Ember takes it from macOS and what the pill shows.
 @Observable
 final class LevelModel {
-    static let switchKey = "showsLevelsInPill"
-
-    private(set) var isOn: Bool
+    private var switchesOn: Set<LevelKind>
     /// Called with what the pill should show after a key changed a level.
     @ObservationIgnored var onReadout: ((LevelReadout) -> Void)?
-    /// Called when the switch is turned on or off.
+    /// Called with true when the first switch goes on and false when the last goes off: the
+    /// key tap runs while either is on.
     @ObservationIgnored var onSwitchChange: ((Bool) -> Void)?
     /// False when there is no notch display to show a level on; then no key is taken. Asked
     /// only when a key goes down.
@@ -52,19 +72,25 @@ final class LevelModel {
         self.volume = volume
         self.brightness = brightness
         self.defaults = defaults
-        isOn = defaults.bool(forKey: Self.switchKey)
+        // Both on until turned off; the keys are taken once Accessibility is allowed.
+        switchesOn = Set(LevelKind.allCases.filter { defaults.object(forKey: $0.switchKey) as? Bool ?? true })
     }
 
-    func turn(on: Bool) {
-        guard on != isOn else { return }
-        isOn = on
-        defaults.set(on, forKey: Self.switchKey)
-        onSwitchChange?(on)
+    func isOn(_ kind: LevelKind) -> Bool { switchesOn.contains(kind) }
+    /// Whether either switch is on, so the key tap is needed.
+    var takesAnyKey: Bool { !switchesOn.isEmpty }
+
+    func turn(_ kind: LevelKind, on: Bool) {
+        guard on != isOn(kind) else { return }
+        let wasTaking = takesAnyKey
+        if on { switchesOn.insert(kind) } else { switchesOn.remove(kind) }
+        defaults.set(on, forKey: kind.switchKey)
+        if takesAnyKey != wasTaking { onSwitchChange?(takesAnyKey) }
     }
 
     /// Whether Ember takes this key from macOS. That is decided once, on the press: a repeat
     /// or release is taken exactly when its press was, whatever changed while the key was
-    /// held, so macOS never sees half a press. A press is taken when the switch is on, there
+    /// held, so macOS never sees half a press. A press is taken when its switch is on, there
     /// is a notch display, no Command, Control or Option shortcut is held, and the level can
     /// be changed: the output can set its volume (and mute, for the mute key), or the pointer
     /// is on the built-in screen.
@@ -100,7 +126,7 @@ final class LevelModel {
     }
 
     private func canTake(_ press: LevelKeyPress) -> Bool {
-        guard isOn, canShow(), !press.isShortcut else { return false }
+        guard isOn(press.key.kind), canShow(), !press.isShortcut else { return false }
         if press.key == .mute { return volume.canSetVolume && volume.canMute }
         if press.key.isVolume { return volume.canSetVolume }
         return brightness.isPointedAt && brightness.brightness() != nil
@@ -109,7 +135,7 @@ final class LevelModel {
     /// Sets the level the strip shows to `level` (0…1), when the user clicks or drags the
     /// strip's bar. Dragging the volume unmutes, as macOS's Control Center slider does.
     func set(level: Double) {
-        guard isOn, let showsVolume else { return }
+        guard let showsVolume, isOn(showsVolume ? .volume : .brightness) else { return }
         let level = min(max(level, 0), 1)
         if showsVolume {
             guard volume.canSetVolume else { return }

@@ -155,21 +155,22 @@ struct AppSettingsTests {
         #expect(settings.pillTiming == PillTiming(openDelay: 0.4, closeDelay: 0.7))
     }
 
-    @Test func theCompactLayoutIsTheDefaultAndShuffleAndRepeatAreHidden() {
+    @Test func theCompactLayoutIsTheDefaultAndShuffleAndRepeatAreSpare() {
         let settings = AppSettings(defaults: freshDefaults())
         #expect(settings.panelLayout == .compact)
-        #expect(!settings.showsShuffle && !settings.showsRepeat)
+        #expect(settings.musicButtons == .standard)
     }
 
-    @Test func layoutAndPlayerButtonsSurviveARelaunch() {
+    @Test func layoutAndPlayerButtonsSurviveARelaunchAndTheButtonsReset() {
         let defaults = freshDefaults()
         let settings = AppSettings(defaults: defaults)
         settings.panelLayout = .wide
-        settings.showsShuffle = true
-        settings.showsRepeat = true
+        settings.musicButtons = MusicButtonRow.standard.placing(.shuffle, at: 0)
         let relaunched = AppSettings(defaults: defaults)
         #expect(relaunched.panelLayout == .wide)
-        #expect(relaunched.showsShuffle && relaunched.showsRepeat)
+        #expect(relaunched.musicButtons.places == [.shuffle, .previous, .next, nil])
+        relaunched.reset(.music)
+        #expect(relaunched.musicButtons == .standard)
     }
 
     @Test func theTabCooldownIsFiveSecondsAndStaysWithinOneToTwenty() {
@@ -375,7 +376,7 @@ struct AppSettingsTests {
     }
 
     @Test func everyPageWithAResetButtonHasSomethingToReset() {
-        #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .calendar, .shelf, .battery])
+        #expect(AppSettings.resettablePages == [.general, .glow, .music, .timer, .calendar, .shelf, .battery, .keepAwake])
     }
 
     @Test func aFeaturesOwnGlowStartsFromTheSharedValuesAndSurvivesARelaunch() {
@@ -494,5 +495,50 @@ struct AppSettingsTests {
         #expect(relaunched.headsUpMinutes == [5] && relaunched.headsUpSound == .ping)
         #expect(!relaunched.hidesAllDayEvents && !relaunched.hidesCompletedReminders)
         #expect(AppSettings(defaults: defaults).headsUpMinutes == [5])
+    }
+
+    @Test func theMenuBarIconShowsAndTheTrackpadStaysStillByDefaultAndBothAreSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.showsMenuBarIcon && !settings.tapsTrackpadOnOpen)
+        settings.showsMenuBarIcon = false
+        settings.tapsTrackpadOnOpen = true
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(!relaunched.showsMenuBarIcon && relaunched.tapsTrackpadOnOpen)
+        relaunched.reset(.general)
+        #expect(relaunched.showsMenuBarIcon && !relaunched.tapsTrackpadOnOpen)
+        #expect(AppSettings(defaults: defaults).showsMenuBarIcon)
+    }
+
+    @Test func theSongShowsWhenItChangesByDefaultAndTheChoiceIsSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.showsSongOnChange)
+        settings.showsSongOnChange = false
+        #expect(!AppSettings(defaults: defaults).showsSongOnChange)
+        settings.reset(.music)
+        #expect(settings.showsSongOnChange)
+    }
+
+    @Test func keepAwakeIsOnWithItsFourTimesAndTheLidOpenByDefault() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.keepAwakeOn && settings.keepAwakeTimes == KeepAwakeTimes.standard && !settings.keepAwakeLidClosed)
+        settings.keepAwakeOn = false
+        settings.keepAwakeTimes = [15, 30, 2000, 45]
+        settings.keepAwakeLidClosed = true
+        #expect(settings.keepAwakeTimes == [15, 30, 720, 45])
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(!relaunched.keepAwakeOn && relaunched.keepAwakeTimes == [15, 30, 720, 45] && relaunched.keepAwakeLidClosed)
+        relaunched.reset(.keepAwake)
+        #expect(relaunched.keepAwakeOn && relaunched.keepAwakeTimes == KeepAwakeTimes.standard && !relaunched.keepAwakeLidClosed)
+    }
+
+    @Test func theTopRowMakesRoomForTheCupWhileKeepAwakeIsOn() {
+        let settings = AppSettings(defaults: freshDefaults())
+        let left = settings.shownTabs(on: .left).count
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: left, right: 0, showsBattery: true, showsKeepAwake: true))
+        settings.keepAwakeOn = false
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: left, right: 0, showsBattery: true))
     }
 }

@@ -9,7 +9,7 @@ pill instead of macOS's own indicator. The pill grows **taller** by a strip abou
 notch's height, like a second pill under the first, and keeps the width of whatever state
 it is in (rest, activity or open panel). Nothing already on the pill moves or goes away.
 
-When this is done, a user with "Show Volume & Brightness in the Pill" on can press volume
+When this is done, a user with "Show Volume & Brightness in the Pill" (since 2026-11-23, Show volume in the pill and Show brightness in the pill) on can press volume
 up at 62% while a song plays: the song stays in the wings, a strip grows below with a
 speaker, a capsule bar filled to 69% and `69%` (one step snaps to the next 1/16 mark:
 11/16), macOS shows no indicator of its own, and
@@ -159,7 +159,9 @@ Ember lets the key through to macOS, which shows its own indicator as it does to
 
 One checkmark item in the menu bar menu, **Show Volume & Brightness in the Pill**, **off**
 by default, saved in UserDefaults. It moves to the Settings window when that is built
-(#0).
+(#0). Since 2026-11-23 it is two switches, Show volume in the pill and Show brightness in
+the pill (docs/specs/settings.md, Volume & Brightness), both on by default; what follows
+holds for each, and Accessibility is asked for when the first one is turned on.
 
 - Turning it on asks macOS for **Accessibility** (Ember needs it to take the keys before
   macOS does). Until it is granted, Ember checks again every 2 s and starts working as

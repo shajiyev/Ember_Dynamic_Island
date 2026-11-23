@@ -14,6 +14,8 @@ nonisolated enum PillMetrics {
     /// Height of the strip that shows a volume or brightness level below the pill (#11):
     /// about the notch's height, so it reads as a second pill under the first.
     static let levelStripHeight: CGFloat = 32
+    /// The strip that shows the new song (title, and the artist under it): a line taller.
+    static let songStripHeight: CGFloat = levelStripHeight + 12
 }
 
 /// Where the notch is on one screen, and the rectangle the pill fills in each state.
@@ -49,13 +51,11 @@ nonisolated struct NotchGeometry: Equatable {
         self.openSize = CGSize(width: max(openSize.width, width + 2 * openSideRoom), height: openSize.height)
     }
 
-    /// The frame of the pill's shape in the given state, with the level strip below it
-    /// when `showsLevel` is true. The strip never changes the width.
-    func rect(for state: PillState, showsLevel: Bool = false) -> CGRect {
+    /// The frame of the pill's shape in the given state, with a strip of `stripHeight` below
+    /// it (a level's or a song's). The strip never changes the width.
+    func rect(for state: PillState, stripHeight: CGFloat = 0) -> CGRect {
         let shape = shapeRect(for: state)
-        guard showsLevel else { return shape }
-        let strip = PillMetrics.levelStripHeight
-        return CGRect(x: shape.minX, y: shape.minY - strip, width: shape.width, height: shape.height + strip)
+        return CGRect(x: shape.minX, y: shape.minY - stripHeight, width: shape.width, height: shape.height + stripHeight)
     }
 
     private func shapeRect(for state: PillState) -> CGRect {
@@ -75,10 +75,10 @@ nonisolated struct NotchGeometry: Equatable {
         }
     }
 
-    /// The frame of the window that holds the pill: the open panel with the level strip,
+    /// The frame of the window that holds the pill: the open panel with the taller strip,
     /// plus room for the glow on the left, right and bottom.
     var windowFrame: CGRect {
-        let open = rect(for: .open, showsLevel: true)
+        let open = rect(for: .open, stripHeight: max(PillMetrics.levelStripHeight, PillMetrics.songStripHeight))
         let margin = PillMetrics.glowMargin
         return CGRect(x: open.minX - margin, y: open.minY - margin,
                       width: open.width + 2 * margin, height: open.height + margin)

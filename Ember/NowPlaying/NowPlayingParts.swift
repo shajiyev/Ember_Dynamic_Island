@@ -105,36 +105,47 @@ struct SongBar: View {
     }
 }
 
-/// Previous, play/pause and next, centred; shuffle at the far left and repeat at the far
-/// right while switched on in Settings. Otherwise their places stay empty, so the middle
-/// three never move.
+/// Play/pause, centred, with the row chosen in Settings → Music → Buttons around it: a
+/// place on each side next to it and one at each edge. An empty place keeps its room, so
+/// play/pause and the inner buttons never move.
 struct MusicControls: View {
     let track: Track
     let model: NowPlayingModel
-    let showsShuffle: Bool
-    let showsRepeat: Bool
+    let buttons: MusicButtonRow
 
     var body: some View {
         HStack(spacing: 26) {
-            PlainButton(symbolName: "backward.end.fill", title: "Previous", action: model.previous)
+            place(1)
             CircleButton(symbolName: track.isPlaying ? "pause.fill" : "play.fill",
                          title: track.isPlaying ? "Pause" : "Play", action: model.playPause)
-            PlainButton(symbolName: "forward.end.fill", title: "Next", action: model.next)
+            place(2)
         }
         .frame(maxWidth: .infinity)
         .overlay {
             HStack {
-                if showsShuffle {
-                    PlayerToggleButton(symbolName: "shuffle", title: "Shuffle", isOn: track.isShuffling,
-                                       action: model.toggleShuffle)
-                }
+                place(0)
                 Spacer()
-                if showsRepeat {
-                    PlayerToggleButton(symbolName: track.repeatMode == .one ? "repeat.1" : "repeat",
-                                       title: track.repeatMode == .one ? "Repeat one" : "Repeat",
-                                       isOn: track.repeatMode != .off, action: model.cycleRepeat)
-                }
+                place(3)
             }
+        }
+    }
+
+    @ViewBuilder private func place(_ index: Int) -> some View {
+        switch buttons.places[index] {
+        case .previous:
+            PlainButton(symbolName: "backward.end.fill", title: "Previous", action: model.previous)
+        case .next:
+            PlainButton(symbolName: "forward.end.fill", title: "Next", action: model.next)
+        case .shuffle:
+            PlayerToggleButton(symbolName: "shuffle", title: "Shuffle", isOn: track.isShuffling,
+                               action: model.toggleShuffle)
+        case .repeatMode:
+            PlayerToggleButton(symbolName: track.repeatMode == .one ? "repeat.1" : "repeat",
+                               title: track.repeatMode == .one ? "Repeat one" : "Repeat",
+                               isOn: track.repeatMode != .off, action: model.cycleRepeat)
+        case nil:
+            // Every button is 24 points wide.
+            Color.clear.frame(width: 24, height: 24)
         }
     }
 }

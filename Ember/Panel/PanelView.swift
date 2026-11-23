@@ -11,6 +11,7 @@ struct PanelView: View {
     let selection: PanelSelection
     let settings: AppSettings
     let shelf: ShelfModel
+    let keepAwake: KeepAwakeModel
     /// Opens the Settings window on a page: General from the gear, Music from the all-off message.
     let openSettings: (SettingsPage) -> Void
     @Environment(\.notchHeight) private var notchHeight
@@ -24,7 +25,7 @@ struct PanelView: View {
         let leftTabs = settings.shownTabs(on: .left)
         let rightTabs = settings.shownTabs(on: .right)
         let row = TopRowLayout.fitting(left: leftTabs.count, right: rightTabs.count,
-                                       showsBattery: settings.batteryInPanelOn,
+                                       showsBattery: settings.batteryInPanelOn, showsKeepAwake: settings.keepAwakeOn,
                                        panelWidth: panelWidth, notchWidth: notchWidth)
         let tabSelection = Binding(get: { shownTab ?? .music }, set: { selection.choose($0) })
         VStack(spacing: 0) {
@@ -32,6 +33,9 @@ struct PanelView: View {
                 PanelTabRow(tabs: leftTabs, selection: tabSelection, size: row.size, spacing: row.leftSpacing)
                 Spacer(minLength: 0)
                 PanelTabRow(tabs: rightTabs, selection: tabSelection, size: row.size, spacing: row.rightSpacing)
+                if settings.keepAwakeOn {
+                    KeepAwakeButton(model: keepAwake, settings: settings, size: row.size)
+                }
                 if settings.batteryInPanelOn, let reading = battery.reading {
                     BatteryStatusView(reading: reading)
                 }
@@ -44,8 +48,7 @@ struct PanelView: View {
 
             Group {
                 switch shownTab {
-                case .music: NowPlayingPanelView(model: nowPlaying, showsShuffle: settings.showsShuffle,
-                                                 showsRepeat: settings.showsRepeat)
+                case .music: NowPlayingPanelView(model: nowPlaying, buttons: settings.musicButtons)
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
                 case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor)

@@ -35,12 +35,22 @@ final class PillController {
     /// A volume or brightness level, shown in a strip below the pill until its duration
     /// runs out (`showLevel(_:)`).
     private(set) var level: LevelReadout?
+    /// The new song, shown in a taller strip below the pill until its duration runs out
+    /// (`showSong(_:)`). A level takes its place.
+    private(set) var song: SongReadout?
 
     var hasNotchDisplay: Bool { geometry != nil }
 
     /// The open and close delays; a change applies from the next delay.
     @ObservationIgnored var timing: PillTiming
     /// Whether resting the pointer on the pill opens the panel.
+    /// A light tap from the trackpad as the panel opens (Settings → General).
+    @ObservationIgnored var tapsTrackpadOnOpen = false
+    /// The tap itself: macOS's "snapped into place" feel; felt only on a Force Touch trackpad
+    /// with a finger on it. Replaced in tests.
+    @ObservationIgnored var tapTrackpad: () -> Void = {
+        NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+    }
     var opensOnHover: Bool {
         get { model.opensOnHover }
         set { model.opensOnHover = newValue }
@@ -109,6 +119,7 @@ final class PillController {
     @ObservationIgnored var onActivitySeen: (() -> Void)?
     @ObservationIgnored private var briefTimeout: Task<Void, Never>?
     @ObservationIgnored private var levelTimeout: Task<Void, Never>?
+    @ObservationIgnored private var songTimeout: Task<Void, Never>?
     /// The pointer is on the level strip or dragging it: the level stays (`holdLevel(_:)`).
     @ObservationIgnored private var isLevelHeld = false
     /// Called with the fill the user clicked or dragged the level strip's bar to. The
@@ -142,7 +153,9 @@ final class PillController {
             break
         }
         if model.state != state { previousState = state }
+        if tapsTrackpadOnOpen && model.state == .open && state != .open { tapTrackpad() }
         state = model.state
+        if state == .open { hideSong() }
         if state != .open { stopWatchingForClose() }
         updateVisibility()
         // A seen activity stays until the panel opens, so the pill goes straight from the
@@ -215,9 +228,29 @@ final class PillController {
     /// Shows a level in the strip below the pill for its duration. A newer level replaces it
     /// and starts its own time from zero. The pill's state and activities stay as they are.
     func showLevel(_ readout: LevelReadout) {
+        hideSong()   // the level comes first; the song does not come back after it
         level = readout
         levelTimeout?.cancel()
         if !isLevelHeld { startLevelTimeout() }
+    }
+
+    /// Shows the new song in the strip below the pill for its duration; a newer one replaces
+    /// it and starts the time again, keeping the strip down. Not while a level shows, the
+    /// panel is open, or the pill is hidden in a full-screen app.
+    func showSong(_ readout: SongReadout) {
+        guard level == nil, state != .open, !isConcealed else { return }
+        song = readout
+        songTimeout?.cancel()
+        songTimeout = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(readout.duration))
+            guard !Task.isCancelled else { return }
+            self?.song = nil
+        }
+    }
+
+    private func hideSong() {
+        songTimeout?.cancel()
+        song = nil
     }
 
     /// Keeps the level while `held` (the pointer is on the strip, or dragging it); letting go

@@ -27,6 +27,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     case shelf
     case battery
     case levels
+    case keepAwake
     case permissions
     case feedback
     case about
@@ -41,6 +42,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return "Shelf"
         case .battery: return "Battery"
         case .levels: return "Volume & Brightness"
+        case .keepAwake: return "Keep Awake"
         case .permissions: return "Permissions"
         case .feedback: return "Feedback"
         case .about: return "About"
@@ -57,6 +59,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return "tray.full"
         case .battery: return "battery.100.bolt"
         case .levels: return "speaker.wave.2.fill"
+        case .keepAwake: return "cup.and.saucer.fill"
         case .permissions: return "hand.raised.fill"
         case .feedback: return "bubble.left.fill"
         case .about: return "info.circle.fill"
@@ -74,6 +77,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         case .shelf: return .brown
         case .battery: return Color(red: 0.202, green: 0.783, blue: 0.348)
         case .levels: return .indigo
+        case .keepAwake: return .teal
         case .permissions: return .purple
         case .feedback, .about: return .gray
         }
@@ -83,7 +87,7 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
         switch self {
         case .general, .glow: return .main
         case .music, .timer, .calendar, .shelf: return .tabs
-        case .battery, .levels: return .system
+        case .battery, .levels, .keepAwake: return .system
         case .permissions, .feedback, .about: return .help
         }
     }

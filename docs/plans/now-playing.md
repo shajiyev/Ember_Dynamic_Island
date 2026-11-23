@@ -1759,21 +1759,26 @@ Add any files fixed in Step 2 to the `git add` list, and fill the `<…>` before
 Spec: docs/specs/now-playing.md, "The song when it changes". Built after the settings in
 docs/plans/settings.md, Parts 14–19.
 
-- [ ] Tests first: a song change asks for the strip; another change while it is down keeps
+- [x] Tests first: a song change asks for the strip; another change while it is down keeps
   it down and restarts the time; a volume or brightness change (during or at the same
   time) takes the strip and the song does not come back after it; nothing on resume of the same song, with the panel open, or
   while hidden in full screen; nothing with the switch off.
-- [ ] The strip's song row (symbol, title, dimmer artist) and its change between songs;
-  the switch in Settings → Music. CLEAN, TEST, BUILD.
-- [ ] The user checks on screen (including skipping fast). Checkpoint and commit.
+- [x] The strip's song row (symbol, title, dimmer artist) and its change between songs;
+  the switch in Settings → Music. CLEAN, TEST, BUILD (Debug and Release, no warnings): 528
+  tests pass.
+- [x] Asked after the first look: no symbol, the title and artist centred.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 3: Arranging the buttons (planned 2026-11-22)
 
 Spec: docs/specs/now-playing.md, "Arranging the buttons". The open details are agreed
 with the user first.
 
-- [ ] Tests first: the saved row; play/pause always in the middle; defaults match today's;
-  reset brings them back; Show shuffle and Show repeat go.
-- [ ] The preview row and Spare with dragging; the Music tab draws the saved row. CLEAN,
-  TEST, BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] Agreed with the user (2026-11-23): two places a side, a drop on a filled place swaps,
+  the preview looks like the Music tab.
+- [x] Tests first: the saved row; play/pause always in the middle; defaults match today's;
+  reset brings them back; Show shuffle and Show repeat go (`MusicButtonRow`).
+- [x] The preview row and Spare with dragging (`MusicButtonsEditor`); the Music tab draws the
+  saved row (`MusicControls`). CLEAN, TEST, BUILD (Debug and Release, no warnings): 535
+  tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.

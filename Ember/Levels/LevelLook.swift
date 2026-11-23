@@ -4,7 +4,13 @@ import Foundation
 nonisolated enum LevelLook {
     /// How long the strip stays after the last key press.
     static let duration: TimeInterval = 1.5
-    static let switchTitle = "Show Volume & Brightness in the Pill"
+    /// The switch's title in Settings → Volume & Brightness.
+    static func switchTitle(_ kind: LevelKind) -> String {
+        switch kind {
+        case .volume: return "Show volume in the pill"
+        case .brightness: return "Show brightness in the pill"
+        }
+    }
     static let mutedText = "Muted"
 
     static func percentText(_ level: Double) -> String {

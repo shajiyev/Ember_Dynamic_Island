@@ -6,6 +6,7 @@ extension AppDelegate {
     func applySettings() {
         controller.timing = settings.pillTiming
         controller.opensOnHover = settings.opensOnHover
+        controller.tapsTrackpadOnOpen = settings.tapsTrackpadOnOpen
         controller.glow = settings.glow
         nowPlaying.defaultGlow = settings.glowColor
         nowPlaying.chosenColor = settings.featureColors[.music]
@@ -33,6 +34,7 @@ extension AppDelegate {
         if settings.calendarOn { calendar.start() } else { calendar.stop() }
         if settings.batteryAlertsOn || settings.batteryInPanelOn { battery.start() } else { battery.stop() }
         if !settings.timerOn { turnTimerOff() }
+        if !settings.keepAwakeOn { keepAwake.stop() }
         showLastingActivity()   // the countdown in or out of the notch
     }
 

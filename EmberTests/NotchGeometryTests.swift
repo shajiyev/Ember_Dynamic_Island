@@ -62,19 +62,20 @@ struct NotchGeometryTests {
     }
 
     @Test func windowCoversTheOpenPanelWithItsLevelStripPlusTheGlowMargin() throws {
-        #expect(try geometry().windowFrame == CGRect(x: 406, y: 710, width: 700, height: 272))
+        // Room for the taller strip, the song's (#42).
+        #expect(try geometry().windowFrame == CGRect(x: 406, y: 698, width: 700, height: 284))
     }
 
     @Test func levelAddsAStripBelowRestAtTheNotchWidth() throws {
-        #expect(try geometry().rect(for: .rest, showsLevel: true) == CGRect(x: 663.5, y: 918, width: 185, height: 64))
+        #expect(try geometry().rect(for: .rest, stripHeight: PillMetrics.levelStripHeight) == CGRect(x: 663.5, y: 918, width: 185, height: 64))
     }
 
     @Test func levelAddsAStripBelowTheWings() throws {
-        #expect(try geometry().rect(for: .active, showsLevel: true) == CGRect(x: 615.5, y: 918, width: 281, height: 64))
+        #expect(try geometry().rect(for: .active, stripHeight: PillMetrics.levelStripHeight) == CGRect(x: 615.5, y: 918, width: 281, height: 64))
     }
 
     @Test func levelAddsAStripBelowTheOpenPanel() throws {
-        #expect(try geometry().rect(for: .open, showsLevel: true) == CGRect(x: 446, y: 750, width: 620, height: 232))
+        #expect(try geometry().rect(for: .open, stripHeight: PillMetrics.levelStripHeight) == CGRect(x: 446, y: 750, width: 620, height: 232))
     }
 
     @Test func theOpenPanelIsAtLeastWideEnoughForTheTopRowAndStaysCentred() throws {
@@ -86,5 +87,11 @@ struct NotchGeometryTests {
         let roomy = try #require(NotchGeometry(screenFrame: builtIn, topLeftArea: left, topRightArea: right,
                                                openSize: CGSize(width: 620, height: 184), openSideRoom: 154))
         #expect(roomy.rect(for: .open).width == 620)
+    }
+
+    @Test func theSongsStripIsALineTallerThanTheLevels() throws {
+        #expect(PillMetrics.songStripHeight == PillMetrics.levelStripHeight + 12)
+        #expect(try geometry().rect(for: .active, stripHeight: PillMetrics.songStripHeight)
+                == CGRect(x: 615.5, y: 906, width: 281, height: 76))
     }
 }

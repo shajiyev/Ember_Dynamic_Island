@@ -2759,18 +2759,24 @@ Spec: docs/specs/settings.md, Timer ("When time's up", "Alert sounds").
 ## Part 18: Volume & Brightness — two switches
 
 ### Task 46
-- [ ] Tests first: with only volume on, Ember takes the volume keys and lets brightness
+- [x] Tests first: with only volume on, Ember takes the volume keys and lets brightness
   keys through to macOS, and the other way round; both off stops the key tap.
-- [ ] Two switches on the page and in the menu's Features; Accessibility asked when the
-  first is turned on. CLEAN, TEST, BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] Two switches on the page and in the menu's Features (`LevelKind`); Accessibility asked
+  when the first is turned on. CLEAN, TEST, BUILD (Debug and Release, no warnings): 512
+  tests pass.
+- [x] Asked after the check: both on by default (`LevelModel` reads a missing switch as on).
+  513 tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 19: General — the menu bar icon and the trackpad tap
 
 ### Task 47
-- [ ] Tests first: both saved with their defaults (icon on, tap off) and reset with General.
-- [ ] Show the menu bar icon (off: opening Ember again opens Settings); Tap the trackpad
-  when the panel opens (`NSHapticFeedbackManager` as the panel opens). CLEAN, TEST, BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] Tests first: both saved with their defaults (icon on, tap off) and reset with General;
+  the trackpad taps once as the panel opens, only when asked (`PillController`).
+- [x] Show the menu bar icon (`MenuBarExtra(isInserted:)`; off: opening Ember again opens
+  Settings, `applicationShouldHandleReopen`); Tap the trackpad when the panel opens
+  (`NSHapticFeedbackManager`, `.alignment`, as the panel opens). CLEAN, TEST, BUILD (Debug
+  and Release, no warnings): 516 tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 After Part 19, the two Music features in docs/plans/now-playing.md (Parts 2 and 3).

@@ -4,8 +4,8 @@ import SwiftUI
 /// with buttons to open the installed players.
 struct NowPlayingPanelView: View {
     let model: NowPlayingModel
-    let showsShuffle: Bool
-    let showsRepeat: Bool
+    /// The buttons around play/pause (Settings → Music → Buttons).
+    let buttons: MusicButtonRow
     @Environment(\.panelLayout) private var layout
     @Environment(\.closePanel) private var closePanel
 
@@ -14,8 +14,7 @@ struct NowPlayingPanelView: View {
             if let track = model.current {
                 switch layout {
                 case .compact:
-                    CompactMusicView(track: track, model: model, showsShuffle: showsShuffle,
-                                     showsRepeat: showsRepeat, openPlayer: openPlayer)
+                    CompactMusicView(track: track, model: model, buttons: buttons, openPlayer: openPlayer)
                 case .wide:
                     wide(track)
                 }
@@ -44,7 +43,7 @@ struct NowPlayingPanelView: View {
                 SongArtist(track: track)
                     .onTapGesture { openPlayer(track.player) }
                 SongBar(track: track, model: model)
-                MusicControls(track: track, model: model, showsShuffle: showsShuffle, showsRepeat: showsRepeat)
+                MusicControls(track: track, model: model, buttons: buttons)
             }
             // The controls end level with the cover's bottom, as they do on the Timer tab.
             .frame(height: 96, alignment: .bottom)

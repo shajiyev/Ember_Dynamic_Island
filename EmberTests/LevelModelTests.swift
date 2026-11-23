@@ -29,11 +29,15 @@ struct LevelModelTests {
         return defaults
     }
 
-    /// A model with the switch on.
+    /// A model with both switches on.
     private func makeModel() -> LevelModel {
         let model = LevelModel(volume: volume, brightness: brightness, defaults: freshDefaults())
-        model.turn(on: true)
+        for kind in LevelKind.allCases { model.turn(kind, on: true) }
         return model
+    }
+
+    private func turnBothOff(_ model: LevelModel) {
+        for kind in LevelKind.allCases { model.turn(kind, on: false) }
     }
 
     private func press(_ key: LevelKey, isDown: Bool = true, isRepeat: Bool = false,
@@ -41,21 +45,66 @@ struct LevelModelTests {
         LevelKeyPress(key: key, isDown: isDown, isRepeat: isRepeat, isFine: isFine, isShortcut: isShortcut)
     }
 
-    @Test func offByDefaultAndPassesEveryKey() {
+    @Test func bothOnByDefault() {
         let model = LevelModel(volume: volume, brightness: brightness, defaults: freshDefaults())
-        #expect(!model.isOn)
+        #expect(model.isOn(.volume) && model.isOn(.brightness) && model.takesAnyKey)
+    }
+
+    @Test func bothOffPassEveryKey() {
+        let model = makeModel()
+        turnBothOff(model)
+        #expect(!model.takesAnyKey)
         #expect(!model.handle(press(.volumeUp)))
+        #expect(!model.handle(press(.brightnessUp)))
         #expect(volume.volume == 0.5)
     }
 
-    @Test func turningOnIsSavedAndTold() {
+    @Test func eachSwitchIsSavedOnItsOwn() {
         let defaults = freshDefaults()
         let model = LevelModel(volume: volume, brightness: brightness, defaults: defaults)
+        model.turn(.volume, on: false)
+        let relaunched = LevelModel(volume: volume, brightness: brightness, defaults: defaults)
+        #expect(relaunched.isOn(.brightness) && !relaunched.isOn(.volume))
+    }
+
+    @Test func theKeyTapIsToldWhenTheFirstSwitchGoesOnAndTheLastGoesOff() {
+        let model = LevelModel(volume: volume, brightness: brightness, defaults: freshDefaults())
+        turnBothOff(model)
         var told: [Bool] = []
         model.onSwitchChange = { told.append($0) }
-        model.turn(on: true)
+        model.turn(.volume, on: true)
+        model.turn(.brightness, on: true)
+        model.turn(.volume, on: false)
         #expect(told == [true])
-        #expect(LevelModel(volume: volume, brightness: brightness, defaults: defaults).isOn)
+        model.turn(.brightness, on: false)
+        #expect(told == [true, false])
+    }
+
+    @Test func withOnlyVolumeOnTheBrightnessKeysGoToMacOS() {
+        let model = makeModel()
+        model.turn(.brightness, on: false)
+        #expect(model.handle(press(.volumeUp)) && model.handle(press(.mute)))
+        #expect(!model.handle(press(.brightnessUp)))
+        #expect(brightness.level == 0.5)
+    }
+
+    @Test func withOnlyBrightnessOnTheVolumeKeysGoToMacOS() {
+        let model = makeModel()
+        model.turn(.volume, on: false)
+        #expect(model.handle(press(.brightnessDown)))
+        #expect(!model.handle(press(.volumeUp)) && !model.handle(press(.mute)))
+        #expect(volume.volume == 0.5)
+    }
+
+    @Test func draggingTheStripFollowsItsOwnSwitch() {
+        let model = makeModel()
+        _ = model.handle(press(.volumeUp))
+        model.turn(.brightness, on: false)   // the strip shows the volume: still draggable
+        model.set(level: 0.3)
+        #expect(volume.volume == 0.3)
+        model.turn(.volume, on: false)
+        model.set(level: 0.8)
+        #expect(volume.volume == 0.3)
     }
 
     @Test func takesVolumeUpAndShowsTheNewLevel() {
@@ -139,7 +188,7 @@ struct LevelModelTests {
     @Test func takesTheReleaseAfterTheSwitchWasTurnedOffWhileHeld() {
         let model = makeModel()
         #expect(model.handle(press(.volumeUp)))
-        model.turn(on: false)
+        turnBothOff(model)
         #expect(model.handle(press(.volumeUp, isDown: false)))
     }
 
@@ -250,7 +299,7 @@ struct LevelModelTests {
     @Test func draggingWithTheSwitchOffDoesNothing() {
         let model = makeModel()
         _ = model.handle(press(.volumeUp))
-        model.turn(on: false)
+        turnBothOff(model)
         model.set(level: 0.3)
         #expect(volume.volume == 0.5625)
     }
@@ -259,7 +308,7 @@ struct LevelModelTests {
         // macOS paused the tap and the first release never came.
         let model = makeModel()
         #expect(model.handle(press(.volumeUp)))
-        model.turn(on: false)
+        turnBothOff(model)
         #expect(!model.handle(press(.volumeUp)))
         #expect(!model.handle(press(.volumeUp, isDown: false)))
     }

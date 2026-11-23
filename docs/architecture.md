@@ -70,6 +70,9 @@
     its song's. It can also close the panel (`closePanel` environment action), as the Music
     and Calendar tabs do after sending the user to another app.
   - `LevelStrip.swift`: the level strip below the pill (symbol, `CapsuleBar` with step dots, text).
+    `SongStrip.swift`: the taller strip with the new song's title and artist
+    (`SongReadout`, from `NowPlayingModel.onSongChange` through `PillController.showSong`;
+    a level replaces it). `NotchGeometry.rect(for:stripHeight:)` sizes either strip.
   - `CapsuleBar.swift`: the thin capsule bar (fill, optional step dots, optional seeking),
     shared by the Music tab's scrubber and the volume and brightness strip.
 - `Ember/Activity/LiveActivity.swift` — `LiveActivity`: what a feature shows on the closed
@@ -123,7 +126,8 @@
     pure rules: the song and its position, which player to show, the glow from the cover,
     the wings' activity and the time texts (played, length, time left).
   - `NowPlayingModel.swift`: listens to the players' change notices, reads them once the
-    notices settle, publishes the chosen track and sends commands. A seek shows its new
+    notices settle, publishes the chosen track (and, through `onSongChange`, a new song for
+    the strip below the pill) and sends commands. A seek shows its new
     position at once (`Track.seeked`), and shuffle and repeat their new state, before the
     player's own reading confirms it. A newer read or a command cancels a read under way,
     so a stale answer is never shown. `defaultGlow` (Ember's glow colour, from Settings)
@@ -136,8 +140,11 @@
     width, the buttons in the last row.
   - `NowPlayingParts.swift`: what both layouts share: `SongCover`, `SongTitleLine`,
     `SongArtist`, `SongBar` (a `CapsuleBar` scrubber whose length can be clicked to show
-    the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (with shuffle
-    and repeat at the ends when switched on) and `PlayerToggleButton`.
+    the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (play/pause
+    with the saved row around it) and `PlayerToggleButton`.
+  - `MusicButtonRow.swift`: `MusicButton` and `MusicButtonRow`, the four places around
+    play/pause and Spare, with the drop rules (swap, take out). Pure. Arranged in Settings
+    with `MusicButtonsEditor.swift`.
 - `Ember/Calendar/` — calendar & reminders (#14).
   - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `HeadsUpTimes.swift`,
     `CalendarLook.swift`: the pure rules: the month's 42 days, a day's events and reminders
@@ -153,6 +160,17 @@
   - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
     Calendar tab. `.opensApp(for:model:)` makes the month and the list headings open
     their app and close the panel.
+- `Ember/KeepAwake/` — Keep awake (#18).
+  - `KeepAwakeTimes.swift`, `KeepAwakeScript.swift`: the pure rules: the four times and
+    their texts; the shell that turns lid-closed sleep off with a watcher that turns it back
+    on (deadline, 10% battery, Ember gone), the stop, the sudoers rule and its install and
+    removal, the AppleScript that runs a script as root, and reading `pmset -g`.
+  - `KeepAwakeModel.swift`: the session, the power assertion (lid open), running the
+    lid-closed scripts through sudo when the rule is installed or as root through the
+    password dialog (`UserShell`, `AdminShell`), the time left, the check after a restart.
+  - `KeepAwakeMenu.swift`: the menu shared by the panel's cup and the menu bar menu, the cup
+    button, and the menu bar icon with its dot (`MenuBarIcon`). Settings: `KeepAwakePage.swift`.
+  The top row makes room for the cup (`TopRowLayout`, `showsKeepAwake`).
 - `Ember/Levels/` — volume and brightness in the pill (#11).
   - `LevelKey.swift`, `LevelStep.swift`, `LevelLook.swift`: the pure rules: reading a media
     key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,
@@ -161,8 +179,9 @@
     keys `LevelModel` asks for. The tap sits at the HID level, ahead of other apps' taps.
   - `SystemVolume.swift` (Core Audio) and `BuiltInBrightness.swift` (DisplayServices,
     private, loaded at run time; built-in screen only): the only system code for each.
-  - `LevelModel.swift`: the switch, and for each key whether Ember takes it; applies the
-    step and hands a `LevelReadout` to the pill.
+  - `LevelModel.swift`: the two switches (`LevelKind`: volume, brightness; the key tap runs
+    while either is on), and for each key whether Ember takes it; applies the step and
+    hands a `LevelReadout` to the pill.
 - `Ember/Activity/AlertSound.swift` — `AlertSound`: the sounds an alert can play (None,
   Glass, Ping), chosen in Settings with `AlertSoundPicker` (in `FeaturePages.swift`), which
   plays each as it is picked.
@@ -239,7 +258,8 @@
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
-  bar icon and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
+  bar icon (shown while Settings → General asks; without it, reopening Ember opens
+  Settings) and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
   `applySettings()`. `AppDelegate+Shelf.swift`: dropped files and screenshots to the shelf
   or AirDrop.
 - `Ember/DistributedNotificationCenter+Immediate.swift` — `addImmediateObserver`: other

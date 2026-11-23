@@ -32,4 +32,26 @@ struct NowPlayingLookTests {
         #expect(activity.glowColor == .green)
         #expect(activity.symbolColor == .green)
     }
+
+    private func song(_ title: String, playing: Bool = true, player: Player = .spotify) -> Track {
+        Track(player: player, title: title, artist: "Artist", album: "Album", length: 200, position: 0,
+              readAt: Date(), isPlaying: playing)
+    }
+
+    @Test func aDifferentSongPlayingCountsAsAChange() {
+        #expect(NowPlayingLook.isNewSong(song("B"), after: song("A")))
+        #expect(NowPlayingLook.isNewSong(song("B"), after: song("A", playing: false)))   // skipped while paused
+    }
+
+    @Test func startingResumingOrStoppingIsNotAChange() {
+        #expect(!NowPlayingLook.isNewSong(song("A"), after: nil))                     // the music starts
+        #expect(!NowPlayingLook.isNewSong(song("A"), after: song("A", playing: false)))   // resumes
+        #expect(!NowPlayingLook.isNewSong(song("B", playing: false), after: song("A")))   // a new song, paused
+        #expect(!NowPlayingLook.isNewSong(nil, after: song("A")))
+    }
+
+    @Test func theSongsStripShowsTheTitleAndArtistForTwoAndAHalfSeconds() {
+        #expect(NowPlayingLook.songReadout(for: song("Ultraviolence"))
+                == SongReadout(title: "Ultraviolence", artist: "Artist", duration: 2.5))
+    }
 }

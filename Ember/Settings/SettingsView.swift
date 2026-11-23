@@ -15,6 +15,7 @@ struct SettingsView: View {
     let settings: AppSettings
     let calendar: CalendarModel
     let levels: LevelModel
+    let keepAwake: KeepAwakeModel
     let hotKey: GlobalHotKey
     /// The notch's width, for drawings of the panel.
     let notchWidth: CGFloat
@@ -76,6 +77,7 @@ struct SettingsView: View {
         case .shelf: ShelfPage(settings: settings)
         case .battery: BatteryPage(settings: settings, showExample: showExample)
         case .levels: LevelsPage(levels: levels)
+        case .keepAwake: KeepAwakePage(settings: settings, keepAwake: keepAwake)
         case .permissions: PermissionsPage()
         case .feedback: FeedbackPage()
         case .about: AboutPage()

@@ -211,12 +211,32 @@
   sound and example, Hide all-day events and Hide completed reminders; an hour before
   reads "1 hour". 507 tests pass; checked on screen by the user on macOS 26.6.2. Plan
   docs/plans/settings.md, part 17.
-- **Next:** Settings, parts 18–19 (docs/plans/settings.md):
-  volume and brightness as two switches; the menu bar icon and the trackpad tap. Then
-  Music: the song's name when it changes, and arranging the buttons
-  (docs/plans/now-playing.md, parts 2–3).
-- **Then:** the rest of the v1 list: Keep awake (#18, in the menu
-  bar), onboarding and permission requests (#0, with a Glow step: glow or not, and its
+- **Done:** Settings → Volume & Brightness (2026-11-23): two switches, Show volume in the
+  pill and Show brightness in the pill, both on by default; each takes only its own keys,
+  and the menu bar menu has both. 513 tests pass; checked on screen by the user on macOS
+  26.6.2. Plan docs/plans/settings.md, part 18.
+- **Done:** Settings → General (2026-11-23): Show the menu bar icon (off: opening Ember again
+  opens Settings) and Tap the trackpad when the panel opens. 516 tests pass; checked on
+  screen by the user on macOS 26.6.2. Plan docs/plans/settings.md, part 19. This finishes
+  the Settings parts from the Atoll comparison (14–19).
+- **Done:** the song's name when it changes (#42, 2026-11-23): the pill grows down a
+  44-point strip with the title and, under it, the artist, centred; skipping fast keeps it
+  down; volume and brightness take its place. Settings → Music → Show the song when it
+  changes, on by default. 528 tests pass; checked on screen by the user on macOS 26.6.2.
+  Plan docs/plans/now-playing.md, part 2.
+- **Done:** arranging the Music tab's buttons (#43, 2026-11-23): Settings → Music → Buttons,
+  a preview of the row with two places on each side of play/pause and Spare below, arranged
+  by dragging (a drop on a filled place swaps); it replaced Show shuffle and Show repeat.
+  535 tests pass; checked on screen by the user on macOS 26.6.2. Plan
+  docs/plans/now-playing.md, part 3. Everything chosen from the Atoll comparison is built.
+- **Done:** Keep awake (#18, 2026-11-23): a cup in the panel's top row and an item in the
+  menu bar menu keep the Mac awake for a chosen time (four times from Settings, or until
+  stopped); Settings → Keep Awake's Also with the lid closed adds lid-closed keeping awake
+  through `pmset disablesleep` with a watcher that turns sleep back on (end, 10% battery,
+  Ember gone), asking for the password or, after Allow Without Password, not. 551 tests
+  pass; checked on screen by the user on macOS 26.6.2. Spec docs/specs/keep-awake.md, plan
+  docs/plans/keep-awake.md.
+- **Next:** onboarding and permission requests (#0, with a Glow step: glow or not, and its
   colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.

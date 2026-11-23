@@ -5,8 +5,7 @@ import SwiftUI
 struct CompactMusicView: View {
     let track: Track
     let model: NowPlayingModel
-    let showsShuffle: Bool
-    let showsRepeat: Bool
+    let buttons: MusicButtonRow
     /// Brings the player to the front and closes the panel.
     let openPlayer: (Player) -> Void
 
@@ -27,7 +26,7 @@ struct CompactMusicView: View {
             SongBar(track: track, model: model)
                 .padding(.top, 12)
             Spacer(minLength: 8)
-            MusicControls(track: track, model: model, showsShuffle: showsShuffle, showsRepeat: showsRepeat)
+            MusicControls(track: track, model: model, buttons: buttons)
                 .padding(.bottom, PanelLayout.controlsBottomInset)
         }
     }

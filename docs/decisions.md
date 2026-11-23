@@ -1215,3 +1215,48 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   user wants only heads-ups still to come; the next time up is the likeliest second one.
 - **Decision:** Hide completed reminders stops Ember reading them at all. **Why:** nothing
   shows them then.
+
+## 2026-11-23 — Volume and brightness: two switches, on by default
+- **Decision:** Show volume in the pill and Show brightness in the pill replace the one
+  switch; each takes only its own keys. Both are on by default. **Why:** the user wants
+  them separate and on from the start. Without Accessibility, Ember does not ask at launch:
+  it takes the keys once the permission is allowed (onboarding, #0, will ask), and until
+  then macOS keeps the keys.
+
+## 2026-11-23 — The menu bar icon and the trackpad tap
+- **Decision:** with the menu bar icon hidden, opening Ember again (Finder, Spotlight,
+  Launchpad) opens Settings; with it shown, reopening does nothing, as before. **Why:** it
+  is the only way back to Settings besides the panel's gear.
+- **Decision:** the trackpad tap is macOS's "alignment" feel, once per opening, off by
+  default. **Why:** the lightest tap macOS offers; some people dislike haptics.
+
+## 2026-11-23 — The song's name when it changes
+- **Decision:** the strip shows only the title and the artist, centred, without a symbol,
+  44 points tall (the level strip's 32 plus a line). **Why:** the user found the music
+  note on the left unneeded; the wings above already show the song.
+- **Decision:** a song counts as new when another song plays (player, title, artist or
+  album differ); not when the music starts, resumes, or Music is turned back on. Opening
+  the panel takes the strip away. **Why:** the strip is for a change the user did not
+  look at; the panel already shows the song.
+
+## 2026-11-23 — Arranging the Music tab's buttons
+- **Decision:** four places around play/pause (two a side, the outer ones at the panel's
+  edges); a button dropped on a filled place swaps with it; the preview in Settings looks
+  like the Music tab. Previous and Next can be taken out too. **Why:** the user chose each
+  one; fixed places keep play/pause and the inner buttons from moving. Show shuffle and
+  Show repeat are gone and not carried over (Ember is not released).
+
+## 2026-11-23 — Keep awake (#18)
+- **Decision:** lid open is a power assertion (no permission); lid closed uses
+  `pmset -a disablesleep`, the only switch macOS has, with a watcher started in the same
+  step that turns sleep back on at the end, at 10% battery, or when Ember is gone. **Why:**
+  sleep must never stay off by mistake, even after a crash.
+- **Decision:** the cup sits in the panel's top row (on the right of the tabs) as well as in
+  the menu bar menu (2026-11-17 said menu bar only). Also with the lid closed is set in
+  Settings only, not in the menu. **Why:** the user chose both after the first look; the
+  panel keeps it reachable with the menu bar icon hidden.
+- **Decision:** Allow Without Password installs a sudoers rule for exactly the two
+  `pmset disablesleep` commands, for this account, checked by `visudo` before it goes in;
+  Remove deletes it. **Why:** asking for the password at every start and stop was too much;
+  a helper daemon would need a paid developer account. The cost: any app running as this
+  account could switch lid-closed sleep without a password, and nothing else.

@@ -115,21 +115,22 @@ itself. Brief alerts (battery) show over all of them for their few seconds, as b
   the user can allow it later in System Settings → Privacy & Security → Automation.
 - The README documents the Automation permission (project rule for new permissions).
 
-### The song when it changes (planned 2026-11-22)
+### The song when it changes (planned 2026-11-22, built 2026-11-23)
 
 Asked 2026-11-22. A switch in Settings → Music, **Show the song when it changes**, on by
 default.
 
 ```
         ┌──── wings ────┐ notch ┌──── wings ────┐
-        │  ♫  Song title                        │   ← the strip, as volume's,
-        │     Artist                            │     a line taller
+        │              Song title               │   ← the strip, as volume's,
+        │                Artist                 │     a line taller
         └───────────────────────────────────────┘
 ```
 
 - When the playing song changes, the pill grows down like it does for the volume and
-  brightness (docs/specs/volume-brightness.md) and shows the new song: a music symbol,
-  the title, and under it the artist in smaller grey text, each cut with "…". It stays
+  brightness (docs/specs/volume-brightness.md) and shows the new song: the title, and
+  under it the artist in smaller grey text, centred, each cut with "…" (no symbol: asked
+  2026-11-23 after the first look). It stays
   about 2.5 s, then the pill goes back up.
 - **Skipping fast:** a new song while the strip is down keeps the strip down; the old
   name leaves and the new one comes in (the same blur used by the wings' content), and
@@ -141,6 +142,12 @@ default.
 - Not shown when the music starts or resumes on the same song, while the panel is open,
   or while Ember is hidden in a full-screen app. It shows whatever the wings show (the
   song, the timer or nothing).
+- A song counts as new when its player, title, artist or album differ from the song before
+  and it is playing; a song skipped to while paused shows once it plays
+  (`NowPlayingLook.isNewSong`). Opening the panel takes the strip away.
+- Built as `SongReadout` (`NowPlayingModel.onSongChange`), `PillController.showSong` and
+  `SongStrip`; the strip is 44 points (`PillMetrics.songStripHeight`), the level's 32 plus a
+  line. Saved under `showsSongOnChange`.
 
 ### Arranging the buttons (planned 2026-11-22)
 
@@ -159,8 +166,16 @@ Ember's own. In Settings → Music, **Buttons** replaces Show shuffle and Show r
 - Play/pause stays in the middle and cannot be removed.
 - Spare starts with Shuffle and Repeat, so the default row is today's. Back and forward
   10 seconds (#33) and the favourite star (#40) join Spare when they are built.
-- Reset to Defaults on the Music page brings back the default row. The other details
-  (how many buttons fit, the drag's look) are agreed when this is built.
+- Reset to Defaults on the Music page brings back the default row.
+- **Agreed 2026-11-23:** two places on each side of play/pause: the inner ones next to it,
+  the outer ones at the panel's edges (where shuffle and repeat sat). An empty place stays
+  empty, so play/pause never moves. Dropping a button on a place that has one swaps the
+  two (a spare one dropped there sends the other to Spare). The preview looks like the
+  Music tab: a small black strip with the white buttons and the white play/pause circle;
+  an empty place shows a faint dashed circle. Spare is a row of the same icons below it.
+  Previous and Next can go to Spare too. Saved under `musicButtons` (four places, left to
+  right; empty is ""), `MusicButtonRow`. Show shuffle and Show repeat (`showsShuffle`,
+  `showsRepeat`) are gone and not carried over.
 
 ## How it is built
 

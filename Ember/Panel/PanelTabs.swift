@@ -167,27 +167,29 @@ nonisolated struct TopRowLayout: Equatable {
 
     /// The room the row needs beside the notch on each side, from the panel's edge: the
     /// fuller side at the regular size and the smallest gaps.
-    static func sideRoom(left: Int, right: Int, showsBattery: Bool) -> CGFloat {
+    static func sideRoom(left: Int, right: Int, showsBattery: Bool, showsKeepAwake: Bool = false) -> CGFloat {
         let row = TopRowLayout(size: .regular, leftSpacing: minSpacing, rightSpacing: minSpacing)
         let leftNeed = row.rowWidth(left, spacing: minSpacing)
         let rightNeed = row.rowWidth(right, spacing: minSpacing)
-            + row.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+            + row.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery, showsKeepAwake: showsKeepAwake)
         return rowInset + notchClearance + max(leftNeed, rightNeed)
     }
 
     /// The row in a panel `panelWidth` wide, centred on a notch `notchWidth` wide.
-    static func fitting(left: Int, right: Int, showsBattery: Bool, panelWidth: CGFloat, notchWidth: CGFloat) -> TopRowLayout {
+    static func fitting(left: Int, right: Int, showsBattery: Bool, showsKeepAwake: Bool = false,
+                        panelWidth: CGFloat, notchWidth: CGFloat) -> TopRowLayout {
         let space = (panelWidth - notchWidth) / 2 - rowInset - notchClearance
         func row(_ size: PanelTabSize) -> TopRowLayout {
             let sized = TopRowLayout(size: size, leftSpacing: 0, rightSpacing: 0)
-            let rightSpace = space - sized.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+            let rightSpace = space - sized.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery,
+                                                           showsKeepAwake: showsKeepAwake)
             return TopRowLayout(size: size, leftSpacing: spread(size, left, in: space),
                                 rightSpacing: spread(size, right, in: rightSpace))
         }
         let large = row(.large)
         let fits = large.rowWidth(left, spacing: minSpacing) <= space
             && large.rowWidth(right, spacing: minSpacing)
-                <= space - large.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
+                <= space - large.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery, showsKeepAwake: showsKeepAwake)
         return fits ? large : row(.regular)
     }
 
@@ -196,11 +198,12 @@ nonisolated struct TopRowLayout: Equatable {
         CGFloat(count) * size.tabWidth + CGFloat(max(count - 1, 0)) * spacing
     }
 
-    /// What the right side holds besides its tabs: the battery when shown and the gear, with
-    /// a gap before each that follows something.
-    func fixedRightWidth(hasTabs: Bool, showsBattery: Bool) -> CGFloat {
+    /// What the right side holds besides its tabs: Keep awake's cup and the battery when
+    /// shown, and the gear, with a gap before each that follows something.
+    func fixedRightWidth(hasTabs: Bool, showsBattery: Bool, showsKeepAwake: Bool = false) -> CGFloat {
+        let cup = showsKeepAwake ? size.tabWidth + Self.groupGap : 0
         let battery = showsBattery ? Self.batteryWidth + Self.groupGap : 0
-        return (hasTabs ? Self.groupGap : 0) + battery + size.tabWidth
+        return (hasTabs ? Self.groupGap : 0) + cup + battery + size.tabWidth
     }
 
     /// The room left in `space` spread evenly between `count` tabs, from none to `maxSpacing`.

@@ -21,11 +21,13 @@ struct PillView: View {
 
     var body: some View {
         // Concealed (hidden in a full-screen app), the pill is the bare notch: resting, with
-        // no glow and no level.
+        // no glow and no strip.
         let state = controller.shownState
         let level = controller.isConcealed ? nil : controller.level
+        let song = controller.isConcealed || level != nil ? nil : controller.song
+        let stripHeight = level != nil ? PillMetrics.levelStripHeight : song != nil ? PillMetrics.songStripHeight : 0
         let style = PillStyle.style(for: state)
-        let size = controller.geometry?.rect(for: state, showsLevel: level != nil).size ?? .zero
+        let size = controller.geometry?.rect(for: state, stripHeight: stripHeight).size ?? .zero
         // The state's own height: the wings and the panel stay in it, the strip goes below.
         let stateHeight = controller.geometry?.rect(for: state).height ?? 0
         let notchHeight = controller.geometry?.notchRect.height ?? 0
@@ -94,6 +96,10 @@ struct PillView: View {
                                    onChange: controller.levelDragged(to:), onHold: controller.holdLevel)
                             .frame(height: PillMetrics.levelStripHeight)
                             .transition(PillStyle.contentTransition)
+                    } else if let song {
+                        SongStrip(song: song, margin: style.topCornerRadius + style.levelStripMargin)
+                            .frame(height: PillMetrics.songStripHeight)
+                            .transition(PillStyle.contentTransition)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -124,7 +130,7 @@ struct PillView: View {
             .animation(PillStyle.animation, value: panelGlow)
             .animation(PillStyle.animation, value: controller.glow)
             .animation(PillStyle.animation, value: controller.isConcealed)
-            .animation(PillStyle.animation, value: level != nil)
+            .animation(PillStyle.animation, value: stripHeight)
     }
 }
 

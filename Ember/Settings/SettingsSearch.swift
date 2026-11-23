@@ -4,6 +4,8 @@ import Foundation
 /// also finds it by. Adding a setting to a page means adding a case here.
 nonisolated enum SettingsItem: CaseIterable, Hashable {
     case launchAtLogin
+    case showsMenuBarIcon
+    case tapsTrackpadOnOpen
     case opensOnHover
     case openDelay
     case closeDelay
@@ -43,8 +45,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case panelGlowSpread
     case panelGlowFade
     case music
-    case showsShuffle
-    case showsRepeat
+    case songOnChange
+    case musicButtons
     case timer
     case timerPresets
     case timerInWings
@@ -74,20 +76,25 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case unpluggedColor
     case lowColor
     case veryLowColor
-    case levels
+    case volumeInPill
+    case brightnessInPill
+    case keepAwake
+    case keepAwakeTimes
+    case keepAwakeLidClosed
+    case keepAwakeWithoutPassword
     case permissionsList
     case shareFeedback
     case aboutEmber
 
     var page: SettingsPage {
         switch self {
-        case .launchAtLogin, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
+        case .launchAtLogin, .showsMenuBarIcon, .tapsTrackpadOnOpen, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
              .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .panelGlow, .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
-        case .music, .showsShuffle, .showsRepeat, .musicGlow, .musicColor: return .music
+        case .music, .songOnChange, .musicButtons, .musicGlow, .musicColor: return .music
         case .timer, .timerPresets, .timerInWings, .hidesPausedTimer, .timerGlow, .timerColor, .timesUpColor,
              .timesUpSound, .timesUpExample: return .timer
         case .calendar, .calendarEvents, .reminders, .calendarGlow, .calendarColor, .hidesAllDayEvents,
@@ -96,7 +103,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .batteryAlerts, .batteryInPanel, .batteryExample, .batteryGlow, .pluggedInAlert, .unpluggedAlert,
              .lowAlert, .veryLowAlert, .lowBatterySound, .pluggedInColor, .unpluggedColor, .lowColor,
              .veryLowColor: return .battery
-        case .levels: return .levels
+        case .volumeInPill, .brightnessInPill: return .levels
+        case .keepAwake, .keepAwakeTimes, .keepAwakeLidClosed, .keepAwakeWithoutPassword: return .keepAwake
         case .shareFeedback: return .feedback
         case .aboutEmber: return .about
         case .permissionsList: return .permissions
@@ -106,6 +114,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var title: String {
         switch self {
         case .launchAtLogin: return "Launch at login"
+        case .showsMenuBarIcon: return "Show the menu bar icon"
+        case .tapsTrackpadOnOpen: return "Tap the trackpad when the panel opens"
         case .opensOnHover: return "Open the panel on hover"
         case .openDelay: return "Open delay"
         case .closeDelay: return "Close delay"
@@ -133,8 +143,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
              .lowColor, .veryLowColor: return "Colour"
         case .panelGlow: return "Open panel glow"
         case .music: return "Music"
-        case .showsShuffle: return "Show shuffle"
-        case .showsRepeat: return "Show repeat"
+        case .songOnChange: return "Show the song when it changes"
+        case .musicButtons: return "Buttons"
         case .timer: return "Timer"
         case .timerPresets: return "Presets"
         case .timerInWings: return "Show the countdown in the notch"
@@ -160,7 +170,12 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .lowAlert: return BatteryAlert.low.title
         case .veryLowAlert: return BatteryAlert.veryLow.title
         case .lowBatterySound: return "Low battery sound"
-        case .levels: return LevelLook.switchTitle
+        case .volumeInPill: return LevelLook.switchTitle(.volume)
+        case .brightnessInPill: return LevelLook.switchTitle(.brightness)
+        case .keepAwake: return "Keep awake"
+        case .keepAwakeTimes: return "Times"
+        case .keepAwakeLidClosed: return "Also with the lid closed"
+        case .keepAwakeWithoutPassword: return "Allow Without Password"
         case .shareFeedback: return "Share Feedback"
         case .aboutEmber: return "Ember"
         case .permissionsList: return "Permissions"
@@ -170,6 +185,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var keywords: [String] {
         switch self {
         case .launchAtLogin: return ["startup", "login item", "autostart"]
+        case .showsMenuBarIcon: return ["status bar", "hide", "menu"]
+        case .tapsTrackpadOnOpen: return ["haptic", "feedback", "Force Touch", "vibration"]
         case .opensOnHover: return ["hover", "click", "pointer"]
         case .openDelay: return ["hover", "wait", "speed"]
         case .closeDelay: return ["wait", "speed"]
@@ -205,8 +222,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .activityGlowFade: return ["sides", "top", "shadow", "gradient", "live activity"]
         case .panelGlowFade: return ["sides", "top", "shadow", "gradient", "open panel"]
         case .music: return ["Apple Music", "Spotify", "now playing", "song"]
-        case .showsShuffle: return ["random", "order"]
-        case .showsRepeat: return ["loop", "again"]
+        case .songOnChange: return ["skip", "next", "track", "title", "artist"]
+        case .musicButtons: return ["shuffle", "repeat", "previous", "next", "controls", "random", "loop"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
         case .timerPresets: return ["minutes", "5m", "25m", "45m"]
         case .timerInWings: return ["wings", "hide", "running"]
@@ -234,7 +251,12 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .pluggedInColor: return ["color", "charger", "green"]
         case .unpluggedColor: return ["color", "charger", "yellow"]
         case .lowColor, .veryLowColor: return ["color", "low battery", "red"]
-        case .levels: return ["volume", "brightness", "sound", "mute", "Accessibility"]
+        case .volumeInPill: return ["sound", "mute", "speaker", "Accessibility"]
+        case .brightnessInPill: return ["screen", "display", "Accessibility"]
+        case .keepAwake: return ["caffeinate", "sleep", "awake", "cup", "agent"]
+        case .keepAwakeTimes: return ["minutes", "hours", "awake"]
+        case .keepAwakeLidClosed: return ["clamshell", "pmset"]
+        case .keepAwakeWithoutPassword: return ["sudo", "admin"]
         case .shareFeedback: return ["bug", "report", "idea", "contact"]
         case .aboutEmber: return ["version", "license", "GitHub", "website", "credits"]
         case .permissionsList: return ["privacy", "allowed", "automation", "System Settings"]

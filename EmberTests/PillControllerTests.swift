@@ -367,4 +367,69 @@ struct PillControllerTests {
         controller.send(.closeRequested)
         #expect(controller.state == .rest && controller.previousState == .open)
     }
+
+    @Test func theTrackpadTapsOnceAsThePanelOpensOnlyWhenAsked() {
+        let controller = PillController(timing: fast)
+        var taps = 0
+        controller.tapTrackpad = { taps += 1 }
+        controller.send(.clicked)
+        #expect(controller.state == .open && taps == 0)   // off by default
+        controller.send(.pointerExited)
+        controller.send(.closeDelayElapsed)
+        controller.tapsTrackpadOnOpen = true
+        controller.send(.clicked)
+        #expect(controller.state == .open && taps == 1)
+        controller.send(.clicked)   // already open: no second tap
+        #expect(taps == 1)
+    }
+
+    private func songReadout(_ title: String, duration: TimeInterval = 0.05) -> SongReadout {
+        SongReadout(title: title, artist: "Artist", duration: duration)
+    }
+
+    @Test func aNewSongShowsForItsDurationThenGoes() async throws {
+        let controller = PillController(timing: fast)
+        controller.showSong(songReadout("A"))
+        #expect(controller.song?.title == "A")
+        try await settle()
+        #expect(controller.song == nil)
+    }
+
+    @Test func skippingKeepsTheStripDownAndStartsItsTimeAgain() async throws {
+        let controller = PillController(timing: fast)
+        controller.showSong(songReadout("A", duration: 0.3))
+        try await Task.sleep(for: .milliseconds(200))
+        controller.showSong(songReadout("B", duration: 0.3))
+        try await Task.sleep(for: .milliseconds(200))
+        #expect(controller.song?.title == "B")
+        try await settle()
+        #expect(controller.song == nil)
+    }
+
+    @Test func aLevelTakesTheStripAndTheSongDoesNotComeBack() async throws {
+        let controller = PillController(timing: fast)
+        controller.showSong(songReadout("A", duration: 1))
+        controller.showLevel(readout())
+        #expect(controller.song == nil && controller.level != nil)
+        try await settle()
+        #expect(controller.song == nil && controller.level == nil)
+    }
+
+    @Test func aSongWaitsForNoLevelOrPanel() {
+        let controller = PillController(timing: fast)
+        controller.showLevel(readout(duration: 1))
+        controller.showSong(songReadout("A"))   // at the same time as a volume change
+        #expect(controller.song == nil)
+        let open = PillController(timing: fast)
+        open.send(.clicked)
+        open.showSong(songReadout("A"))
+        #expect(open.song == nil)
+    }
+
+    @Test func openingThePanelTakesTheSongAway() {
+        let controller = PillController(timing: fast)
+        controller.showSong(songReadout("A", duration: 1))
+        controller.send(.clicked)
+        #expect(controller.song == nil)
+    }
 }

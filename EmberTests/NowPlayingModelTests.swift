@@ -136,4 +136,19 @@ import Testing
         #expect(activity?.glowColor == PillStyle.glowColor)   // no cover: Ember's glow colour
         #expect(model.songColor == nil)
     }
+
+    @Test func aSongChangeIsToldButNotTheFirstSong() async throws {
+        let standIn = StandIn(songs: ["Old", "New"])
+        let model = NowPlayingModel(source: standIn.source)
+        var told: [String] = []
+        model.onSongChange = { told.append($0.title) }
+        model.start()
+        defer { model.stop() }
+
+        try await Task.sleep(for: .seconds(0.5))   // "Old": the music started
+        #expect(told.isEmpty)
+        model.refreshAll()                          // "New"
+        try await Task.sleep(for: .seconds(0.5))
+        #expect(told == ["New"])
+    }
 }

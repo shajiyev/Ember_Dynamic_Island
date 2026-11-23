@@ -6,11 +6,13 @@ struct EmberApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
-        MenuBarExtra {
+        // Settings → General → Show the menu bar icon.
+        MenuBarExtra(isInserted: Binding(get: { appDelegate.settings.showsMenuBarIcon },
+                                         set: { appDelegate.settings.showsMenuBarIcon = $0 })) {
             PillMenu(controller: appDelegate.controller, settingsWindow: appDelegate.settingsWindow,
-                     settings: appDelegate.settings, levels: appDelegate.levels)
+                     settings: appDelegate.settings, levels: appDelegate.levels, keepAwake: appDelegate.keepAwake)
         } label: {
-            Image("MenuBarIcon")
+            Image(nsImage: MenuBarIcon.image(keepingAwake: appDelegate.keepAwake.session != nil))
         }
     }
 }
@@ -25,12 +27,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let panelSelection = PanelSelection()
     let levels = LevelModel(volume: SystemVolume(), brightness: BuiltInBrightness())
     let mediaKeys = MediaKeyTap()
+    let keepAwake = KeepAwakeModel()
     let settings = AppSettings()
     let shelf = ShelfModel()
     let screenshots = ScreenshotWatcher()
     /// The keyboard shortcut that opens and closes the panel (Settings → General).
     lazy var panelHotKey = GlobalHotKey { [weak self] in self?.controller.shortcutPressed() }
-    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, hotKey: panelHotKey,
+    lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, keepAwake: keepAwake,
+                                             hotKey: panelHotKey,
                                              notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
                                              showExample: { [weak self] in self?.controller.show($0) })
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
@@ -54,6 +58,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.musicActivity = activity
             self?.showLastingActivity()
         }
+        nowPlaying.onSongChange = { [weak self] song in
+            guard let self, settings.showsSongOnChange else { return }
+            controller.showSong(song)
+        }
         // Only "Time's up" ends when seen. Once seen, it rings no more, the panel opens on
         // the Timer tab, and the wings go back to the lasting choice.
         controller.onActivitySeen = { [weak self] in
@@ -76,17 +84,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         levels.onSwitchChange = { [mediaKeys] on in
             if on { mediaKeys.start(askForAccess: true) } else { mediaKeys.stop() }
         }
-        if levels.isOn { mediaKeys.start(askForAccess: false) }
+        if levels.takesAnyKey { mediaKeys.start(askForAccess: false) }
         // Starts the features that are on; later changes in Settings apply at once.
         controller.onFileDrop = { [weak self] urls, position in self?.receiveFiles(urls, at: position) }
         controller.onFileDragEntered = { [weak self] in self?.panelSelection.holdShelfForDrag() }
         screenshots.onScreenshot = { [weak self] url in self?.receiveScreenshot(url) }
         settings.onChange = { [weak self] in self?.applySettings() }
         applySettings()
+        keepAwake.checkAfterRestart()
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
                                                  calendar: calendar, selection: panelSelection,
-                                                 settings: settings, shelf: shelf,
+                                                 settings: settings, shelf: shelf, keepAwake: keepAwake,
                                                  openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }))
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        keepAwake.endOnQuit()
+    }
+
+    /// Ember opened again while running (from Finder, Spotlight or Launchpad): without the
+    /// menu bar icon, this is the way back to Settings.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !settings.showsMenuBarIcon { settingsWindow.show() }
+        return true
     }
 
     func showLastingActivity() {
@@ -120,6 +140,7 @@ struct PillMenu: View {
     let settingsWindow: SettingsWindow
     @Bindable var settings: AppSettings
     let levels: LevelModel
+    let keepAwake: KeepAwakeModel
 
     var body: some View {
         if !controller.hasNotchDisplay {
@@ -133,7 +154,14 @@ struct PillMenu: View {
             Toggle(SettingsItem.calendar.title, isOn: $settings.calendarOn)
             Toggle(SettingsItem.shelf.title, isOn: $settings.shelfOn)
             Toggle(SettingsItem.batteryAlerts.title, isOn: $settings.batteryAlertsOn)
-            Toggle(SettingsPage.levels.title, isOn: Binding(get: { levels.isOn }, set: { levels.turn(on: $0) }))
+            ForEach(LevelKind.allCases, id: \.self) { kind in
+                Toggle(kind.title, isOn: Binding(get: { levels.isOn(kind) }, set: { levels.turn(kind, on: $0) }))
+            }
+        }
+        if settings.keepAwakeOn {
+            Menu(SettingsItem.keepAwake.title) {
+                KeepAwakeMenuItems(model: keepAwake, settings: settings)
+            }
         }
         Divider()
         Button("Settings…") { settingsWindow.show() }

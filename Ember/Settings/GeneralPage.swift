@@ -23,6 +23,13 @@ struct GeneralPage: View {
                         Button("Open Login Items") { LaunchAtLogin.openLoginItems() }
                     }
                 }
+                Toggle(SettingsItem.showsMenuBarIcon.title, isOn: $settings.showsMenuBarIcon)
+                    .settingsItem(.showsMenuBarIcon)
+                if !settings.showsMenuBarIcon {
+                    Text("To come back to Settings, open Ember again from Finder, Spotlight or Launchpad, or use the gear in the open panel.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
             }
             Section {
                 Toggle(SettingsItem.opensOnHover.title, isOn: $settings.opensOnHover)
@@ -44,6 +51,8 @@ struct GeneralPage: View {
                 if settings.opensOnTab == nil {
                     CooldownRow(item: .tabCooldown, seconds: $settings.tabCooldown)
                 }
+                Toggle(SettingsItem.tapsTrackpadOnOpen.title, isOn: $settings.tapsTrackpadOnOpen)
+                    .settingsItem(.tapsTrackpadOnOpen)
             } header: {
                 Text("Opening the panel")
             } footer: {

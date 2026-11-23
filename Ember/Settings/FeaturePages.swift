@@ -15,14 +15,19 @@ struct MusicPage: View {
                 Text("The Music tab and the song in the wings. Works with Apple Music and Spotify. Off, Ember never contacts either player.")
             }
             Section {
-                Toggle(SettingsItem.showsShuffle.title, isOn: $settings.showsShuffle)
-                    .settingsItem(.showsShuffle)
-                Toggle(SettingsItem.showsRepeat.title, isOn: $settings.showsRepeat)
-                    .settingsItem(.showsRepeat)
-            } header: {
-                Text("In the Music tab")
+                Toggle(SettingsItem.songOnChange.title, isOn: $settings.showsSongOnChange)
+                    .settingsItem(.songOnChange)
             } footer: {
-                Text("Shuffle sits at the left end of the buttons, repeat at the right. Each switches the player's own setting; repeat plays the whole list again.")
+                Text("When another song starts, the pill grows down for a moment to show its name and artist. Not when the music starts or resumes, or while the panel is open. A volume or brightness change takes its place.")
+            }
+            .disabled(!settings.musicOn)
+            Section {
+                MusicButtonsEditor(row: $settings.musicButtons)
+                    .settingsItem(.musicButtons)
+            } header: {
+                Text(SettingsItem.musicButtons.title)
+            } footer: {
+                Text("The Music tab's buttons. Drag one onto another place to swap them, or down to Spare to take it out; drag a spare one up to add it. Play/pause stays in the middle. Shuffle and repeat switch the player's own setting; repeat goes from the whole list to one song (Apple Music only).")
             }
             .disabled(!settings.musicOn)
             Section {
@@ -106,16 +111,18 @@ struct TimerPage: View {
     }
 }
 
-/// A preset's minutes: a small number field with arrows.
-private struct PresetField: View {
+/// A preset's minutes: a small number field with arrows (the Timer presets, Keep awake's
+/// times).
+struct PresetField: View {
     @Binding var minutes: Int
+    var range = TimerLook.presetRange
 
     var body: some View {
         HStack(spacing: 2) {
             TextField("", value: $minutes, format: .number)
                 .frame(width: 40)
                 .multilineTextAlignment(.trailing)
-            Stepper("", value: $minutes, in: TimerLook.presetRange)
+            Stepper("", value: $minutes, in: range)
                 .labelsHidden()
         }
         .accessibilityElement(children: .combine)
@@ -316,10 +323,14 @@ struct LevelsPage: View {
     var body: some View {
         Form {
             Section {
-                Toggle(SettingsItem.levels.title, isOn: Binding(get: { levels.isOn }, set: { levels.turn(on: $0) }))
-                    .settingsItem(.levels)
+                Toggle(SettingsItem.volumeInPill.title, isOn: Binding(get: { levels.isOn(.volume) },
+                                                                      set: { levels.turn(.volume, on: $0) }))
+                    .settingsItem(.volumeInPill)
+                Toggle(SettingsItem.brightnessInPill.title, isOn: Binding(get: { levels.isOn(.brightness) },
+                                                                          set: { levels.turn(.brightness, on: $0) }))
+                    .settingsItem(.brightnessInPill)
             } footer: {
-                Text("Shows the volume and the built-in screen's brightness in the pill instead of macOS's own indicator. Needs Accessibility, which Ember asks for when you turn it on.")
+                Text("Shows the volume, or the built-in screen's brightness, in the pill instead of macOS's own indicator; the other keeps macOS's. Needs Accessibility, which Ember asks for when you turn the first one on.")
             }
         }
     }
