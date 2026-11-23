@@ -642,9 +642,12 @@ System Settings page).
 
 ## Feedback
 
-A Share Feedback button, greyed out, and the line "Coming soon". Where feedback goes is
-not decided yet; choosing it later means filling in one value (`Feedback.swift`), which
-also enables the menu's Share Feedback.
+A Share Feedback button (and the menu's Share Feedback…). Decided 2026-11-23: it opens a
+new email in the user's own mail app to **ember.share.feedback@gmail.com**, an address made
+for Ember so the author's own stays private, with the subject "Ember feedback" and the
+Ember and macOS versions at the bottom of the body (`Feedback.mailURL`). A `mailto:` link,
+not Gmail's website, so it works whatever mail app the user has. (Until then the button
+was greyed out with "Coming soon".)
 
 ---
 

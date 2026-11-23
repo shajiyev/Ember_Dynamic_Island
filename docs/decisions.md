@@ -1332,3 +1332,20 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   while pressing the volume keys) and the Music tab compiling its AppleScript at every
   2-second read (2.9 % while the tab shows). **Why:** both last only seconds at a time; the
   lasting states (rest, a song, a timer, Keep awake) are all near zero.
+
+## 2026-11-23 — The first release is 1.0, not a 0.9 beta
+- **Decision:** Ember's first public release is 1.0 (a 0.9 public beta was chosen earlier
+  the same day). Released through GitHub Releases before the landing page's rework, as
+  agreed for the beta. **Why:** the user's choice; nothing had been published yet, so only
+  the docs and the release notes change.
+
+## 2026-11-23 — Share Feedback goes to Ember's own email address
+- **Decision:** Share Feedback opens a new email in the user's mail app to
+  ember.share.feedback@gmail.com, with the subject and the Ember and macOS versions filled
+  in. **Why:** the user wants feedback by email; the address is one made for Ember, so the
+  author's personal address does not end up in the public code (the repository's rule on
+  personal data), and spam reaches only this inbox. A `mailto:` link works with any mail
+  app, where a Gmail web link would need the user to have Gmail.
+- **Decision:** the README's building-from-source section is marked as for developers only
+  and moved to the end. **Why:** users download the DMG and need nothing else; the section
+  read as if everyone needed Xcode.

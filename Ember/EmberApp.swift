@@ -195,8 +195,7 @@ struct PillMenu: View {
             .keyboardShortcut(",")
         Button(SettingsItem.checkForUpdates.title + "…") { updater.checkForUpdates() }
             .disabled(!updater.canCheck)
-        Button(SettingsItem.shareFeedback.title) { Feedback.open() }
-            .disabled(Feedback.url == nil)
+        Button(SettingsItem.shareFeedback.title + "…") { Feedback.open() }
         Divider()
         #if DEBUG
         Menu("Simulate Battery Alert") {

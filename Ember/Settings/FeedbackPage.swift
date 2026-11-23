@@ -1,19 +1,16 @@
 import SwiftUI
 
-/// Settings → Feedback. The button stays greyed out until a destination is chosen.
+/// Settings → Feedback: a new email to Ember's feedback address.
 struct FeedbackPage: View {
     var body: some View {
         Form {
             Section {
                 LabeledContent(SettingsItem.shareFeedback.title) {
                     Button("Share Feedback…") { Feedback.open() }
-                        .disabled(Feedback.url == nil)
                 }
                 .settingsItem(.shareFeedback)
             } footer: {
-                if Feedback.url == nil {
-                    Text("Coming soon.")
-                }
+                Text("Opens a new email to \(Feedback.address) in your mail app, with your Ember and macOS versions at the bottom. Bugs and ideas are both welcome.")
             }
         }
     }
