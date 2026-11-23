@@ -16,6 +16,7 @@ struct SettingsView: View {
     let calendar: CalendarModel
     let levels: LevelModel
     let keepAwake: KeepAwakeModel
+    let updater: Updater
     let hotKey: GlobalHotKey
     /// The notch's width, for drawings of the panel.
     let notchWidth: CGFloat
@@ -82,7 +83,7 @@ struct SettingsView: View {
         case .keepAwake: KeepAwakePage(settings: settings, keepAwake: keepAwake)
         case .permissions: PermissionsPage()
         case .feedback: FeedbackPage()
-        case .about: AboutPage(showWelcome: showWelcome)
+        case .about: AboutPage(updater: updater, showWelcome: showWelcome)
         }
     }
 }

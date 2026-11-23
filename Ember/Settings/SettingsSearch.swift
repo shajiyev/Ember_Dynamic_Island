@@ -86,6 +86,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case shareFeedback
     case aboutEmber
     case showWelcome
+    case checkForUpdates
+    case checksForUpdates
 
     var page: SettingsPage {
         switch self {
@@ -107,7 +109,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .volumeInPill, .brightnessInPill: return .levels
         case .keepAwake, .keepAwakeTimes, .keepAwakeLidClosed, .keepAwakeWithoutPassword: return .keepAwake
         case .shareFeedback: return .feedback
-        case .aboutEmber, .showWelcome: return .about
+        case .aboutEmber, .showWelcome, .checkForUpdates, .checksForUpdates: return .about
         case .permissionsList: return .permissions
         }
     }
@@ -180,6 +182,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .shareFeedback: return "Share Feedback"
         case .aboutEmber: return "Ember"
         case .showWelcome: return "Show Welcome Again"
+        case .checkForUpdates: return "Check for Updates"
+        case .checksForUpdates: return "Check for updates automatically"
         case .permissionsList: return "Permissions"
         }
     }
@@ -262,6 +266,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .shareFeedback: return ["bug", "report", "idea", "contact"]
         case .aboutEmber: return ["version", "license", "GitHub", "website", "credits"]
         case .showWelcome: return ["onboarding", "hello", "introduction", "tour", "first time"]
+        case .checkForUpdates: return ["update", "new version", "Sparkle", "upgrade"]
+        case .checksForUpdates: return ["update", "daily", "automatic"]
         case .permissionsList: return ["privacy", "allowed", "automation", "System Settings"]
         }
     }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Sparkle's settings (docs/specs/auto-updates.md), merged with the Info.plist Xcode makes. -->
+<plist version="1.0">
+<dict>
+	<key>SUFeedURL</key>
+	<string>https://www.getember.online/appcast.xml</string>
+	<!-- The public half of the key that signs every update; the private half never leaves the release Mac. -->
+	<key>SUPublicEDKey</key>
+	<string>4YCdKq/PJrp/VW3U91H9CSWPZVjxaz/2KSWT07vE0L4=</string>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+</dict>
+</plist>

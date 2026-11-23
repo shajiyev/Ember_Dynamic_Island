@@ -18,6 +18,7 @@ nonisolated enum AboutInfo {
 /// Settings → About: the icon, name and version, the website, the code and the licence, and
 /// the credit to the projects some code is adapted from (as in the README).
 struct AboutPage: View {
+    @Bindable var updater: Updater
     let showWelcome: () -> Void
 
     var body: some View {
@@ -37,6 +38,19 @@ struct AboutPage: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
                 .settingsItem(.aboutEmber)
+            }
+            Section {
+                LabeledContent("Updates are signed, and install only when you choose.") {
+                    Button(SettingsItem.checkForUpdates.title + "…", action: updater.checkForUpdates)
+                        .disabled(!updater.canCheck)
+                }
+                .settingsItem(.checkForUpdates)
+                Toggle(SettingsItem.checksForUpdates.title, isOn: $updater.checksAutomatically)
+                    .settingsItem(.checksForUpdates)
+            } header: {
+                Text("Updates")
+            } footer: {
+                Text("Once a day Ember looks for a newer version on its website. The check sends nothing about your Mac.")
             }
             Section {
                 Link("Website", destination: AboutInfo.website)

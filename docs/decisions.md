@@ -1280,3 +1280,18 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   website's promise that each permission belongs to a feature the user turns on.
 - **Noted:** a real first run (fresh account or reset settings and permissions) is on the
   release checklist; replaying onboarding on a used Mac cannot show macOS's first prompts.
+
+## 2026-11-23 — Auto-updates with Sparkle (#27)
+- **Decision:** Sparkle 2 (MIT), the appcast on Ember's own website
+  (`www.getember.online/appcast.xml`), the update files on GitHub Releases, a daily check
+  that asks before installing, and no system profile. **Why:** the user chose the
+  recommended options: one-click signed updates, an address Ember controls, and no
+  surprise restarts; the check stays the one network call the website promises.
+- **Decision:** releases are signed with the same self-made certificate as every build
+  (Ember Code Signing), so macOS keeps users' permissions across updates; the update files
+  are signed with an EdDSA key in the release Mac's keychain. Both are backed up outside
+  the repository. Releases are made on that Mac with `scripts/release.sh`, never on
+  GitHub's servers (the keys would have to go there).
+- **Decision:** release builds are universal (Apple silicon and Intel), although every
+  Mac with a notch has Apple silicon. **Why:** the floating pill for other screens (#28)
+  will reach Intel Macs; the cost is a slightly larger download.

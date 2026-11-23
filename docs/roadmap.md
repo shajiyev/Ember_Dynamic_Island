@@ -242,10 +242,17 @@
   login). Music and Volume & Brightness stay off until chosen there, so no permission is
   asked unasked; Settings → About → Show Welcome Again replays it. 561 tests pass; checked
   on screen by the user on macOS 26.6.2 (replayed, not yet as a fresh install).
-- **Next:** auto-updates (Sparkle), then "Ship it".
+- **Done:** auto-updates (#27, 2026-11-23) with Sparkle 2.10: a daily check (once the user
+  allows it) of `https://www.getember.online/appcast.xml`, Sparkle's window to install,
+  Check for Updates… in the menu bar menu and Settings → About, updates signed with an
+  EdDSA key kept in the release Mac's keychain, the app signed with Ember Code Signing so
+  permissions survive updates, and `scripts/release.sh` (checked with a dry run). 565
+  tests pass; checked on screen by the user on macOS 26.6.2. Spec
+  docs/specs/auto-updates.md.
+- **Next:** "Ship it" (milestone 3).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
-- **Next:** the rest of the v1 list: auto-updates (Sparkle), then "Ship it" (milestone 3).
+- **Next:** "Ship it" (milestone 3).
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything
@@ -268,6 +275,10 @@
    instructions for the Gatekeeper warning. Investigate a stable self-signed certificate
    so permissions survive updates.
    Before each public release: smoke-test on macOS 15 (virtual machine or external boot disk).
+   **Before the first release: a real update** (2026-11-23): install version N on a test
+   account, publish N+1 with `scripts/release.sh`, update from the app, and check that the
+   permissions are kept. And the backups of the Sparkle key and the certificate exist
+   (docs/specs/auto-updates.md, "Trust").
    **Before the first release: a real first run** (asked 2026-11-23): download the DMG into a
    new user account (or, on one's own, `defaults delete io.github.shajiyev.Ember` and
    `tccutil reset All io.github.shajiyev.Ember` first) and go through onboarding as a new

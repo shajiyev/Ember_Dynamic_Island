@@ -13,7 +13,12 @@
   `Ember_logo.svg` is the logo master; `Ember_logo.png` is exported from it.
 - `docs/` — planning documents.
 - `scripts/` — helper scripts. `make-app-icon.swift` regenerates the app icon from the logo;
-  `serve-site.py` serves the website locally without caching.
+  `serve-site.py` serves the website locally without caching; `make-signing-certificate.sh`
+  makes Ember Code Signing once per Mac; `release.sh` makes a release (docs/specs/auto-updates.md).
+- `Config/Info.plist` — Sparkle's keys (feed, public key, no system profile), merged with the
+  Info.plist Xcode makes. Outside `Ember/`, so the synced folder does not copy it.
+- Swift packages: Sparkle (auto-updates), pinned in
+  `Ember.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
 - `site/` — the website (see Website below). Not part of the app.
 
 ## Modules
@@ -160,6 +165,8 @@
   - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
     Calendar tab. `.opensApp(for:model:)` makes the month and the list headings open
     their app and close the panel.
+- `Ember/Updates/Updater.swift` — Sparkle's standard updater: started at launch (never in
+  the tests), Check for Updates, and the automatic check switch (#27).
 - `Ember/Onboarding/` — onboarding (#0).
   - `OnboardingPage.swift`, `HelloPath.swift`: the pure parts: the pages in order, and the
     word "hello" as one line of curves (`HelloShape`), written on with `trim`.

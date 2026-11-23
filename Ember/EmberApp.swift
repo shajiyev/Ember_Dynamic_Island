@@ -10,7 +10,8 @@ struct EmberApp: App {
         MenuBarExtra(isInserted: Binding(get: { appDelegate.settings.showsMenuBarIcon },
                                          set: { appDelegate.settings.showsMenuBarIcon = $0 })) {
             PillMenu(controller: appDelegate.controller, settingsWindow: appDelegate.settingsWindow,
-                     settings: appDelegate.settings, levels: appDelegate.levels, keepAwake: appDelegate.keepAwake)
+                     settings: appDelegate.settings, levels: appDelegate.levels, keepAwake: appDelegate.keepAwake,
+                     updater: appDelegate.updater)
         } label: {
             Image(nsImage: MenuBarIcon.image(keepingAwake: appDelegate.keepAwake.session != nil))
         }
@@ -28,6 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let levels = LevelModel(volume: SystemVolume(), brightness: BuiltInBrightness())
     let mediaKeys = MediaKeyTap()
     let keepAwake = KeepAwakeModel()
+    let updater = Updater()
     let settings = AppSettings()
     let shelf = ShelfModel()
     let screenshots = ScreenshotWatcher()
@@ -36,6 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var onboardingWindow = OnboardingWindow(settings: settings, calendar: calendar, levels: levels,
                                                  askAccessibility: { [weak self] in self?.mediaKeys.start(askForAccess: true) })
     lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, keepAwake: keepAwake,
+                                             updater: updater,
                                              hotKey: panelHotKey,
                                              notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
                                              showExample: { [weak self] in self?.controller.show($0) },
@@ -100,6 +103,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settings.onChange = { [weak self] in self?.applySettings() }
         applySettings()
         keepAwake.checkAfterRestart()
+        updater.start()
         controller.start(panelContent: PanelView(battery: battery, timer: timer, nowPlaying: nowPlaying,
                                                  calendar: calendar, selection: panelSelection,
                                                  settings: settings, shelf: shelf, keepAwake: keepAwake,
@@ -163,6 +167,7 @@ struct PillMenu: View {
     @Bindable var settings: AppSettings
     let levels: LevelModel
     let keepAwake: KeepAwakeModel
+    let updater: Updater
 
     var body: some View {
         if !controller.hasNotchDisplay {
@@ -188,6 +193,8 @@ struct PillMenu: View {
         Divider()
         Button("Settings…") { settingsWindow.show() }
             .keyboardShortcut(",")
+        Button(SettingsItem.checkForUpdates.title + "…") { updater.checkForUpdates() }
+            .disabled(!updater.canCheck)
         Button(SettingsItem.shareFeedback.title) { Feedback.open() }
             .disabled(Feedback.url == nil)
         Divider()

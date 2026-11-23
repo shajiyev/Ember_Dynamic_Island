@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ember's update feed for Sparkle (docs/specs/auto-updates.md). scripts/release.sh adds each
+     version just before </channel>; Sparkle offers the highest one. -->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Ember</title>
+    <link>https://www.getember.online/appcast.xml</link>
+    <description>Ember's versions.</description>
+    <language>en</language>
+  </channel>
+</rss>

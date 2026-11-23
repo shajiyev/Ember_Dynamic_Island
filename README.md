@@ -21,7 +21,8 @@ activities and quick tools.
 - Timers
 - Calendar and reminders preview
 - File shelf: drop files on the notch
-- Auto-updates
+- Auto-updates: Ember checks its website once a day (if you allow it) and offers new
+  versions; nothing installs without your click, and the check sends nothing about your Mac
 
 The full list, including what comes later, is in [docs/features.md](docs/features.md).
 
