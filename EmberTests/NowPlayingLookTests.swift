@@ -54,4 +54,11 @@ struct NowPlayingLookTests {
         #expect(NowPlayingLook.songReadout(for: song("Ultraviolence"))
                 == SongReadout(title: "Ultraviolence", artist: "Artist", duration: 2.5))
     }
+
+    @Test func aTenSecondJumpStaysWithinTheSong() {
+        #expect(NowPlayingLook.jumpTarget(from: 100, by: -10, length: 200) == 90)
+        #expect(NowPlayingLook.jumpTarget(from: 100, by: 10, length: 200) == 110)
+        #expect(NowPlayingLook.jumpTarget(from: 4, by: -10, length: 200) == 0)
+        #expect(NowPlayingLook.jumpTarget(from: 195, by: 10, length: 200) == 200)
+    }
 }

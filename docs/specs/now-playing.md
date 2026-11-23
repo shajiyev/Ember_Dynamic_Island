@@ -165,15 +165,20 @@ Ember's own. In Settings → Music, **Buttons** replaces Show shuffle and Show r
   it down to Spare takes it out; dragging a spare one up adds it where it is dropped.
 - Play/pause stays in the middle and cannot be removed.
 - Spare starts with Shuffle and Repeat, so the default row is today's. Back and forward
-  10 seconds (#33) and the favourite star (#40) join Spare when they are built.
+  10 seconds (#46, built 2026-11-23) joined Spare: ⟲10 and 10⟳ jump back or forward 10
+  seconds from where the song is, never past its start or end (`NowPlayingLook.jumpTarget`),
+  through the same seek as the bar. The favourite star (#40) joins when it is built.
 - Reset to Defaults on the Music page brings back the default row.
 - **Agreed 2026-11-23:** two places on each side of play/pause: the inner ones next to it,
   the outer ones at the panel's edges (where shuffle and repeat sat). An empty place stays
-  empty, so play/pause never moves. Dropping a button on a place that has one swaps the
+  empty, so play/pause never moves. **Changed the same day:** three places on each side, so
+  every button (Previous, Next, Shuffle, Repeat, ⟲10, 10⟳) can be in the row at once; the
+  seven places are spread evenly across the width, in the tab and the preview
+  (`MusicButtonLayout`). A row saved with four places keeps its buttons on their sides. Dropping a button on a place that has one swaps the
   two (a spare one dropped there sends the other to Spare). The preview looks like the
   Music tab: a small black strip with the white buttons and the white play/pause circle;
   an empty place shows a faint dashed circle. Spare is a row of the same icons below it.
-  Previous and Next can go to Spare too. Saved under `musicButtons` (four places, left to
+  Previous and Next can go to Spare too. Saved under `musicButtons` (six places, left to
   right; empty is ""), `MusicButtonRow`. Show shuffle and Show repeat (`showsShuffle`,
   `showsRepeat`) are gone and not carried over.
 

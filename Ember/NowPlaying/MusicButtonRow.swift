@@ -6,6 +6,8 @@ nonisolated enum MusicButton: String, CaseIterable {
     case previous
     case next
     case repeatMode = "repeat"
+    case back10
+    case forward10
 
     var title: String {
         switch self {
@@ -13,6 +15,8 @@ nonisolated enum MusicButton: String, CaseIterable {
         case .previous: return "Previous"
         case .next: return "Next"
         case .repeatMode: return "Repeat"
+        case .back10: return "Back 10 Seconds"
+        case .forward10: return "Forward 10 Seconds"
         }
     }
 
@@ -23,18 +27,21 @@ nonisolated enum MusicButton: String, CaseIterable {
         case .previous: return "backward.end.fill"
         case .next: return "forward.end.fill"
         case .repeatMode: return "repeat"
+        case .back10: return "gobackward.10"
+        case .forward10: return "goforward.10"
         }
     }
 }
 
-/// The Music tab's buttons (Settings → Music → Buttons): four places around play/pause,
-/// left to right: the left edge, next to play/pause on the left, next to it on the right,
-/// the right edge. An empty place stays empty, so play/pause never moves. The buttons in
-/// no place are spare.
+/// The Music tab's buttons (Settings → Music → Buttons): six places around play/pause, room
+/// for every button at once, left to right: three on its left (from the edge in), three on
+/// its right (from play/pause out). An empty place keeps its room, so nothing moves. The
+/// buttons in no place are spare.
 nonisolated struct MusicButtonRow: Equatable {
-    static let placeCount = 4
-    /// Today's row: previous and next by play/pause; shuffle and repeat spare.
-    static let standard = MusicButtonRow(places: [nil, .previous, .next, nil])
+    static let placeCount = 6
+    /// Today's row: previous and next by play/pause; shuffle, repeat and the 10-second jumps
+    /// spare.
+    static let standard = MusicButtonRow(places: [nil, nil, .previous, .next, nil, nil])
 
     private(set) var places: [MusicButton?]
 
@@ -45,11 +52,13 @@ nonisolated struct MusicButtonRow: Equatable {
         self.places = padded.map { button in button.flatMap { seen.insert($0).inserted ? $0 : nil } }
     }
 
-    /// Reads the saved names ("" for an empty place); a list of the wrong length gives the
-    /// standard row, an unknown name an empty place.
+    /// Reads the saved names ("" for an empty place); an unknown name gives an empty place, a
+    /// list of another length the standard row. A row saved with four places (until
+    /// 2026-11-23: edge, by play/pause, by play/pause, edge) keeps its buttons on their sides.
     init(saved: [String]) {
-        guard saved.count == Self.placeCount else { self = .standard; return }
-        self.init(places: saved.map(MusicButton.init(rawValue:)))
+        let names = saved.count == 4 ? [saved[0], "", saved[1], saved[2], "", saved[3]] : saved
+        guard names.count == Self.placeCount else { self = .standard; return }
+        self.init(places: names.map(MusicButton.init(rawValue:)))
     }
 
     var saved: [String] { places.map { $0?.rawValue ?? "" } }

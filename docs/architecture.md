@@ -147,8 +147,9 @@
     `SongArtist`, `SongBar` (a `CapsuleBar` scrubber whose length can be clicked to show
     the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (play/pause
     with the saved row around it) and `PlayerToggleButton`.
-  - `MusicButtonRow.swift`: `MusicButton` and `MusicButtonRow`, the four places around
-    play/pause and Spare, with the drop rules (swap, take out). Pure. Arranged in Settings
+  - `MusicButtonRow.swift`: `MusicButton` and `MusicButtonRow`, the six places around
+    play/pause (three a side, laid out evenly by `MusicButtonLayout` in `NowPlayingParts.swift`)
+    and Spare, with the drop rules (swap, take out). Pure. Arranged in Settings
     with `MusicButtonsEditor.swift`.
 - `Ember/Calendar/` — calendar & reminders (#14).
   - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `HeadsUpTimes.swift`,
@@ -278,6 +279,8 @@
   Settings) and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
   `applySettings()`. `AppDelegate+Shelf.swift`: dropped files and screenshots to the shelf
   or AirDrop.
+- `Ember/NSWindow+Front.swift` — `showInFront()`: Ember's windows (Settings, onboarding) open
+  in front of every app, then Ember asks to become active (since macOS 14 only a request).
 - `Ember/DistributedNotificationCenter+Immediate.swift` — `addImmediateObserver`: other
   apps' notices (the players', the screen lock) heard at once, even while macOS suspends
   them for Ember. Every distributed notice listener uses it.

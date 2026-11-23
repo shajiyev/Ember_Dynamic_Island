@@ -21,10 +21,8 @@ final class OnboardingWindow: NSObject, NSWindowDelegate {
 
     func show() {
         let window = self.window ?? makeWindow()
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
         window.center()
-        window.makeKeyAndOrderFront(nil)
+        window.showInFront()
     }
 
     private func makeWindow() -> NSWindow {

@@ -229,7 +229,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelGlowFade: return ["sides", "top", "shadow", "gradient", "open panel"]
         case .music: return ["Apple Music", "Spotify", "now playing", "song"]
         case .songOnChange: return ["skip", "next", "track", "title", "artist"]
-        case .musicButtons: return ["shuffle", "repeat", "previous", "next", "controls", "random", "loop"]
+        case .musicButtons: return ["shuffle", "repeat", "previous", "next", "controls", "random", "loop",
+                                    "10 seconds", "rewind", "fast forward"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
         case .timerPresets: return ["minutes", "5m", "25m", "45m"]
         case .timerInWings: return ["wings", "hide", "running"]

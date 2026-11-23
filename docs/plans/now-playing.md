@@ -1782,3 +1782,16 @@ with the user first.
   saved row (`MusicControls`). CLEAN, TEST, BUILD (Debug and Release, no warnings): 535
   tests pass.
 - [x] The user checked on screen (2026-11-23). Checkpoint and commit.
+
+## Part 4: Back / forward 10 seconds (#46)
+
+Asked 2026-11-23: two more buttons for the Buttons row, like Shuffle and Repeat.
+
+- [x] Tests first: both start in Spare and go into a place like any button, saved by name;
+  a jump stays within the song (`NowPlayingLook.jumpTarget`).
+- [x] `MusicButton.back10` and `.forward10`, `NowPlayingModel.jump(by:)`, drawn in the
+  Music tab and the preview. CLEAN, TEST, BUILD (Debug and Release, no warnings): 567 tests
+  pass.
+- [x] Asked after the first look: room for every button at once, three places a side spread
+  evenly (`MusicButtonLayout`); four-place rows keep their buttons. 569 tests pass.
+- [x] The user checks on screen. Checkpoint and commit.

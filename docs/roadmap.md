@@ -249,6 +249,11 @@
   permissions survive updates, and `scripts/release.sh` (checked with a dry run). 565
   tests pass; checked on screen by the user on macOS 26.6.2. Spec
   docs/specs/auto-updates.md.
+- **Done:** v1's features complete (2026-11-23): minimal mode and animation styles dropped,
+  the calendar inside the Music tab dropped; back / forward 10 seconds (#46) built, and the
+  Music tab's Buttons row has six places, room for every button. Settings and onboarding
+  now open in front of other apps (`NSWindow.showInFront()`). 569 tests pass; checked on
+  screen by the user on macOS 26.6.2.
 - **Next:** "Ship it" (milestone 3).
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.

@@ -168,7 +168,7 @@ struct AppSettingsTests {
         settings.musicButtons = MusicButtonRow.standard.placing(.shuffle, at: 0)
         let relaunched = AppSettings(defaults: defaults)
         #expect(relaunched.panelLayout == .wide)
-        #expect(relaunched.musicButtons.places == [.shuffle, .previous, .next, nil])
+        #expect(relaunched.musicButtons.places == [.shuffle, nil, .previous, .next, nil, nil])
         relaunched.reset(.music)
         #expect(relaunched.musicButtons == .standard)
     }

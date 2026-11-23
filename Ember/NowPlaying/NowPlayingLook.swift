@@ -14,6 +14,12 @@ nonisolated enum NowPlayingLook {
             != (previous.player, previous.title, previous.artist, previous.album)
     }
 
+    /// Where a 10-second jump (Back 10 Seconds, Forward 10 Seconds) lands: never before the
+    /// start or past the end of the song.
+    static func jumpTarget(from position: TimeInterval, by seconds: TimeInterval, length: TimeInterval) -> TimeInterval {
+        min(max(position + seconds, 0), length)
+    }
+
     static func songReadout(for track: Track) -> SongReadout {
         SongReadout(title: track.title, artist: track.artist, duration: songStripDuration)
     }

@@ -97,6 +97,12 @@ final class NowPlayingModel {
 
     /// Seeks the shown player. The new position shows at once; the player's own reading
     /// follows once it settles.
+    /// Back or forward `seconds` from where the song is now.
+    func jump(by seconds: TimeInterval) {
+        guard let track = current else { return }
+        seek(to: NowPlayingLook.jumpTarget(from: track.position(at: Date()), by: seconds, length: track.length))
+    }
+
     func seek(to position: TimeInterval) {
         if let player = current?.player, let report = reports[player] {
             reports[player]?.track = report.track.seeked(to: position, at: Date())

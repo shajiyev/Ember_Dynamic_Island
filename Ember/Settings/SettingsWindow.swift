@@ -42,9 +42,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     func show(page: SettingsPage? = nil) {
         let window = self.window ?? makeWindow()
         if let page { navigation.page = page }
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
-        window.makeKeyAndOrderFront(nil)
+        window.showInFront()
     }
 
     private func makeWindow() -> NSWindow {

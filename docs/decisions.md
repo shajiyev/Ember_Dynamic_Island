@@ -1295,3 +1295,30 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Decision:** release builds are universal (Apple silicon and Intel), although every
   Mac with a notch has Apple silicon. **Why:** the floating pill for other screens (#28)
   will reach Intel Macs; the cost is a slightly larger download.
+
+## 2026-11-23 — v1's features are complete; two ideas dropped
+- **Decision:** minimal mode and animation styles (parts of #26b) are dropped (#44, #45).
+  **Why:** the user found both useless for Ember: its purpose is several features
+  together, and turning features off in Settings already makes it smaller; the open and
+  close speeds can be set, and more motion styles would mostly add settings.
+- **Decision:** #26b, #33 and #38 are done for v1; their leftovers become their own later
+  features: back / forward 10 seconds (#46) and the calendar inside the Music tab (#47).
+  Every v1 feature is now done; what remains for v1 is the release ("Ship it").
+
+## 2026-11-23 — No calendar inside the Music tab; back / forward 10 seconds join v1
+- **Dropped:** the calendar inside the Music tab (#47). **Why:** the user wants the Music
+  tab kept clean; in the Wide layout the whole calendar would also have made the panel
+  about 1,000 points wide.
+- **Decision:** back / forward 10 seconds (#46) are built for v1 as two more buttons of the
+  Buttons row, starting in Spare like Shuffle and Repeat.
+
+## 2026-11-23 — Every button in the Music row; Settings opens in front
+- **Decision:** the Buttons row has six places, three on each side of play/pause, spread
+  evenly, so Previous, Next, Shuffle, Repeat and the 10-second jumps can all be in it at
+  once, wherever the user puts them (was four places that morning). **Why:** the user wants
+  every button available, not a choice between them.
+- **Fixed:** Settings (and onboarding) opened behind the app in front, since Ember's first
+  version. Ember has no Dock icon until a window opens, and since macOS 14 `NSApp.activate()`
+  is only a request the app in front can refuse. Windows now order themselves in front of
+  every app and ask to activate a moment later, once the menu or panel has closed.
+  Checked by the user from the menu, the panel's gear and a reopen.

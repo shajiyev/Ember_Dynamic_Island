@@ -15,10 +15,10 @@ struct MusicButtonsEditor: View {
         .animation(.snappy, value: row)
     }
 
-    /// The row, laid out like `MusicControls`: inner places by play/pause, outer at the edges.
+    /// The row, laid out like `MusicControls`: three places on each side of play/pause.
     private var preview: some View {
-        HStack(spacing: 26) {
-            place(1)
+        MusicButtonLayout {
+            ForEach(0..<3, id: \.self) { place($0) }
             Image(systemName: "play.fill")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.black)
@@ -26,18 +26,10 @@ struct MusicButtonsEditor: View {
                 .background(Circle().fill(.white))
                 .help("Play/pause stays in the middle")
                 .accessibilityLabel("Play/pause, fixed in the middle")
-            place(2)
+            ForEach(3..<6, id: \.self) { place($0) }
         }
-        .frame(maxWidth: .infinity)
-        .overlay {
-            HStack {
-                place(0)
-                Spacer()
-                place(3)
-            }
-            .padding(.horizontal, 20)
-        }
-        .frame(width: 300, height: 52)
+        .padding(.horizontal, 20)
+        .frame(width: 360, height: 52)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(.black))
         .frame(maxWidth: .infinity)
     }

@@ -105,28 +105,20 @@ struct SongBar: View {
     }
 }
 
-/// Play/pause, centred, with the row chosen in Settings → Music → Buttons around it: a
-/// place on each side next to it and one at each edge. An empty place keeps its room, so
-/// play/pause and the inner buttons never move.
+/// Play/pause, centred, with the row chosen in Settings → Music → Buttons around it: three
+/// places on each side, spread evenly across the width. An empty place keeps its room, so
+/// play/pause and the other buttons never move.
 struct MusicControls: View {
     let track: Track
     let model: NowPlayingModel
     let buttons: MusicButtonRow
 
     var body: some View {
-        HStack(spacing: 26) {
-            place(1)
+        MusicButtonLayout {
+            ForEach(0..<3, id: \.self) { place($0) }
             CircleButton(symbolName: track.isPlaying ? "pause.fill" : "play.fill",
                          title: track.isPlaying ? "Pause" : "Play", action: model.playPause)
-            place(2)
-        }
-        .frame(maxWidth: .infinity)
-        .overlay {
-            HStack {
-                place(0)
-                Spacer()
-                place(3)
-            }
+            ForEach(3..<6, id: \.self) { place($0) }
         }
     }
 
@@ -136,6 +128,10 @@ struct MusicControls: View {
             PlainButton(symbolName: "backward.end.fill", title: "Previous", action: model.previous)
         case .next:
             PlainButton(symbolName: "forward.end.fill", title: "Next", action: model.next)
+        case .back10:
+            PlainButton(symbolName: "gobackward.10", title: "Back 10 seconds") { model.jump(by: -10) }
+        case .forward10:
+            PlainButton(symbolName: "goforward.10", title: "Forward 10 seconds") { model.jump(by: 10) }
         case .shuffle:
             PlayerToggleButton(symbolName: "shuffle", title: "Shuffle", isOn: track.isShuffling,
                                action: model.toggleShuffle)
@@ -184,5 +180,23 @@ struct PlayerToggleButton: View {
 private struct UndimmedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+    }
+}
+
+/// The Music row's seven places, play/pause in the middle, spread evenly across the width:
+/// the Music tab and Settings' preview lay them out alike.
+struct MusicButtonLayout<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Group(subviews: content) { places in
+                ForEach(Array(places.enumerated()), id: \.offset) { index, place in
+                    if index > 0 { Spacer(minLength: 8) }
+                    place
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
