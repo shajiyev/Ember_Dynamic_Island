@@ -16,11 +16,11 @@ nonisolated enum CalendarLook {
     /// Pale rose, #F2A496: the big day number.
     static let paleRose = Color(red: 0xF2 / 255, green: 0xA4 / 255, blue: 0x96 / 255)
 
-    /// The minutes until the start, rounded up, such as "5 min", or "1 hour" for the
+    /// The minutes until the start, rounded up, such as "5 min", or "1h" for the
     /// hour-before heads-up. Never below 1 minute.
     static func minutesLeftText(until start: Date, now: Date) -> String {
         let minutes = max(1, Int((start.timeIntervalSince(now) / 60).rounded(.up)))
-        return minutes == 60 ? "1 hour" : "\(minutes) min"
+        return minutes == 60 ? "1h" : "\(minutes) min"
     }
 
     /// The heads-up in the event's calendar colour, or the colour chosen in Settings → Calendar.

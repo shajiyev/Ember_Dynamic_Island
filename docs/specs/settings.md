@@ -550,7 +550,7 @@ Details: docs/specs/timers.md.
 | Heads-ups | one, 5 minutes before | Up to three heads-ups before each event. Each is a row with a minutes menu (1, 2, 5, 10, 15, 30, 60) and a − button; the last one left has no −. "+ Add a heads-up" adds one, up to three. A time already used is left out of the other rows' menus. A heads-up whose time has already passed when the event is found (the event was just added, or the Mac woke after it) is not shown; only those still to come are. "+ Add a heads-up" adds the next time after the longest (5 → 10 → 15), or the longest one left. Saved under `headsUpMinutes` (`HeadsUpTimes`). |
 | Colour | The calendar's colour | The heads-up's symbol and glow: the event's calendar colour (today's look), or one colour. See "Each feature's colour". |
 | Sound | Ping | From the alert sounds (see Timer). Saved under `headsUpSound`. |
-| (wing text) | — | The heads-up says "5 min", or "1 hour" for the hour-before heads-up (asked 2026-11-23; was "60 min"). |
+| (wing text) | — | The heads-up says "5 min", or "1h" for the hour-before heads-up (asked 2026-11-23; was "60 min", then "1 hour"). |
 | Show an example | — | A button: a heads-up for an example event 5 minutes away ("5 min") plays in the notch, as it really looks, with its sound, and leaves after 5 s. Works while Calendar is off. |
 
 The Heads-up section holds, in order: the heads-up rows, Colour, Sound, Show an example.

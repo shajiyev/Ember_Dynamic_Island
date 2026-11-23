@@ -15,8 +15,8 @@ struct CalendarLookTests {
     }
 
     @Test func anHourAwayReadsOneHour() {
-        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3600), now: now) == "1 hour")
-        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3599.5), now: now) == "1 hour")
+        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3600), now: now) == "1h")
+        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3599.5), now: now) == "1h")
         #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(59 * 60), now: now) == "59 min")
     }
 
