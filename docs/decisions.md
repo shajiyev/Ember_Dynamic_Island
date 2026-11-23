@@ -1184,3 +1184,34 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Back on the later list:** a two-finger swipe between tabs (#3, only that gesture) and
   downloads landing on the shelf (#9). **Still dropped:** a visualizer that moves with the
   real sound (#2): it needs the Screen & System Audio Recording permission.
+
+## 2026-11-23 — Each feature's colour
+- **Decision:** a feature's chosen colour paints both its symbol and its glow (the
+  equalizer, the countdown, Time's up, the heads-up), and also the Timer tab's ring, each
+  tab's panel glow and the shelf's drop outline. With none chosen, each keeps its own: the
+  song's cover, Timer orange, amber, the calendar's colour, the Glow page's colour.
+  **Why:** the user asked for a colour separate from Off/Shared/Custom and from Strength,
+  Spread and Fade; one colour per feature keeps the wings and the panel matching.
+
+## 2026-11-23 — Time's up's sound and example
+- **Decision:** Time's up's example leaves after 5 s like the other examples, not when
+  hovered. **Why:** hovering opens the panel over it anyway; ending a brief activity on
+  hover would need a new kind of activity in the pill, for a button in Settings.
+- **Decision:** with the sound set to None, Time's up rings nothing and nothing repeats;
+  Glass and Ping repeat as Glass did. **Why:** None means a silent alert.
+
+## 2026-11-23 — A switch, a colour and a sound for the battery alerts
+- **Decision:** each battery alert has its own switch, and its own Colour row shown only
+  while it is on (asked by the user after the switches were built). With Very low off, a
+  drop past 20% and 10% at once gives Low. **Why:** someone who turns off Very low still
+  expects to hear about a low battery.
+- **Decision:** the low alerts now ring Ping by default (before: silent). **Why:** the
+  user chose a low battery sound; None keeps them silent.
+
+## 2026-11-23 — Up to three calendar heads-ups
+- **Decision:** a heads-up whose moment passed before Ember found the event (just added,
+  or the Mac woke after it) is skipped, even the only one; before, a late event got its
+  heads-up at once. "+ Add a heads-up" adds the next time after the longest. **Why:** the
+  user wants only heads-ups still to come; the next time up is the likeliest second one.
+- **Decision:** Hide completed reminders stops Ember reading them at all. **Why:** nothing
+  shows them then.

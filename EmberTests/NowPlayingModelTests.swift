@@ -119,4 +119,21 @@ import Testing
         #expect(activity?.glowColor == .green)
         #expect(activity?.symbolColor == .green)
     }
+
+    @Test func aChosenColourReplacesTheSongsColourAtOnce() async throws {
+        let standIn = StandIn(songs: ["Song"])
+        let model = NowPlayingModel(source: standIn.source)
+        var activity: LiveActivity?
+        model.onActivity = { activity = $0 }
+        model.start()
+        defer { model.stop() }
+
+        try await Task.sleep(for: .seconds(0.5))   // read
+        model.chosenColor = .blue
+        #expect(activity?.glowColor == .blue && activity?.symbolColor == .blue)
+        #expect(model.songColor == .blue)          // the Music tab's panel glow
+        model.chosenColor = nil
+        #expect(activity?.glowColor == PillStyle.glowColor)   // no cover: Ember's glow colour
+        #expect(model.songColor == nil)
+    }
 }

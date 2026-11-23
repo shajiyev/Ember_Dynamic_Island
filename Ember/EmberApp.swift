@@ -41,8 +41,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The unit tests launch the app as their host. They must not put a pill on screen.
         guard NSClassFromString("XCTestCase") == nil else { return }
-        battery.onAlert = { [weak self] activity in
+        battery.onAlert = { [weak self] alert, activity in
             guard let self, settings.batteryAlertsOn else { return }
+            if alert.playsLowBatterySound { settings.lowBatterySound.play() }
             controller.show(activity)
         }
         timer.onActivity = { [weak self] activity in
@@ -92,6 +93,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let shown = LastingChoice.choose(timer: timerActivity, music: musicActivity,
                                          musicTabChosen: panelSelection.tab == .music,
                                          timerInWings: settings.timerInWings,
+                                         timerIsPaused: timer.countdown.isPaused,
+                                         hidesPausedTimer: settings.hidesPausedTimer,
                                          priority: settings.lastingPriority)
         controller.setOngoing(shown)
         panelSelection.openingTab = shown == nil ? nil : shown == musicActivity ? .music : .timer
@@ -141,7 +144,7 @@ struct PillMenu: View {
         #if DEBUG
         Menu("Simulate Battery Alert") {
             ForEach(BatteryAlert.allCases, id: \.self) { alert in
-                Button(alert.title) { controller.show(alert.exampleActivity) }
+                Button(alert.title) { controller.show(alert.exampleActivity()) }
             }
         }
         Button("Simulate Volume Change") {

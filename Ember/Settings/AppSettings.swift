@@ -145,9 +145,25 @@ final class AppSettings {
     }
     /// A running or paused timer shows in the wings ("Time's up" always does).
     var timerInWings: Bool { didSet { save(timerInWings, Key.timerInWings) } }
+    /// A paused timer leaves the wings (the Timer tab still shows it).
+    var hidesPausedTimer: Bool { didSet { save(hidesPausedTimer, Key.hidesPausedTimer) } }
+    /// The sound "Time's up" rings with.
+    var timesUpSound: AlertSound { didSet { save(timesUpSound.rawValue, Key.timesUpSound) } }
     /// Which lasting activity the notch shows first when a timer and a song are both going.
     var lastingPriority: LastingPriority { didSet { save(lastingPriority.rawValue, Key.lastingPriority) } }
     var calendarOn: Bool { didSet { save(calendarOn, Key.calendarOn) } }
+    /// How many minutes before an event its heads-ups come: one to three times from the menu.
+    var headsUpMinutes: [Int] {
+        didSet {
+            let clamped = HeadsUpTimes.clamped(headsUpMinutes)
+            guard clamped == headsUpMinutes else { headsUpMinutes = clamped; return }
+            save(headsUpMinutes, Key.headsUpMinutes)
+        }
+    }
+    var headsUpSound: AlertSound { didSet { save(headsUpSound.rawValue, Key.headsUpSound) } }
+    /// Left out of the Calendar tab's day list.
+    var hidesAllDayEvents: Bool { didSet { save(hidesAllDayEvents, Key.hidesAllDayEvents) } }
+    var hidesCompletedReminders: Bool { didSet { save(hidesCompletedReminders, Key.hidesCompletedReminders) } }
     var shelfOn: Bool { didSet { save(shelfOn, Key.shelfOn) } }
     /// The tab the panel always opens on; nil opens it on the last tab (the tab of what the
     /// wings show, or the tab it closed on during `tabCooldown`).
@@ -171,6 +187,12 @@ final class AppSettings {
     var screenshotsToShelf: Bool { didSet { save(screenshotsToShelf, Key.screenshotsToShelf) } }
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
+    /// The battery alerts switched on, under Battery alerts.
+    var shownBatteryAlerts: Set<BatteryAlert> {
+        didSet { save(BatteryAlert.allCases.filter(shownBatteryAlerts.contains).map(\.rawValue), Key.shownBatteryAlerts) }
+    }
+    /// The sound Low and Very low play.
+    var lowBatterySound: AlertSound { didSet { save(lowBatterySound.rawValue, Key.lowBatterySound) } }
     var panelLayout: PanelLayout { didSet { save(panelLayout.rawValue, Key.panelLayout) } }
     /// Each layout's own width (Settings → General → Width), held to its range.
     var compactWidth: Double {
@@ -192,6 +214,20 @@ final class AppSettings {
         didSet {
             defaults.set(tabArrangement.left.map(\.rawValue), forKey: Key.tabsLeft)
             save(tabArrangement.right.map(\.rawValue), Key.tabsRight)
+        }
+    }
+    /// The colours chosen on the feature pages, saved as hex codes; a feature with none
+    /// keeps its own (`FeatureColor`).
+    var featureColors: [FeatureColor: Color] {
+        didSet {
+            for slot in FeatureColor.allCases where featureColors[slot] != oldValue[slot] {
+                if let color = featureColors[slot] {
+                    defaults.set(GlowColors.hex(of: color), forKey: Key.color(slot))
+                } else {
+                    defaults.removeObject(forKey: Key.color(slot))
+                }
+            }
+            onChange?()
         }
     }
     var showsShuffle: Bool { didSet { save(showsShuffle, Key.showsShuffle) } }
@@ -224,15 +260,23 @@ final class AppSettings {
         static let panelGlowFade = "panelGlowFade"
         /// A feature's live activity glow: "musicGlow", "timerGlow", …
         static func glow(_ feature: GlowFeature) -> String { feature.rawValue + "Glow" }
+        /// A feature's chosen colour: "musicColor", "timesUpColor", …
+        static func color(_ slot: FeatureColor) -> String { slot.rawValue + "Color" }
         static let panelGlowOn = "panelGlowOn"
         static let panelGlowStrength = "panelGlowStrength"
         static let panelGlowSpread = "panelGlowSpread"
         static let musicOn = "musicOn"
         static let timerOn = "timerOn"
         static let timerInWings = "timerInWings"
+        static let hidesPausedTimer = "hidesPausedTimer"
+        static let timesUpSound = "timesUpSound"
         static let timerPresets = "timerPresets"
         static let lastingPriority = "lastingPriority"
         static let calendarOn = "calendarOn"
+        static let headsUpMinutes = "headsUpMinutes"
+        static let headsUpSound = "headsUpSound"
+        static let hidesAllDayEvents = "hidesAllDayEvents"
+        static let hidesCompletedReminders = "hidesCompletedReminders"
         static let shelfOn = "shelfOn"
         static let opensOnTab = "opensOnTab"
         static let tabCooldown = "tabCooldown"
@@ -240,6 +284,8 @@ final class AppSettings {
         static let screenshotsToShelf = "screenshotsToShelf"
         static let batteryAlertsOn = "batteryAlertsOn"
         static let batteryInPanelOn = "batteryInPanelOn"
+        static let shownBatteryAlerts = "shownBatteryAlerts"
+        static let lowBatterySound = "lowBatterySound"
         static let panelLayout = "panelLayout"
         static let tabsLeft = "tabsLeft"
         static let compactWidth = "compactWidth"
@@ -282,6 +328,9 @@ final class AppSettings {
         featureGlows = Dictionary(uniqueKeysWithValues: GlowFeature.allCases.map { feature in
             (feature, Self.clampedGlow(Self.featureGlow(saved: defaults.dictionary(forKey: Key.glow(feature)))))
         })
+        featureColors = FeatureColor.allCases.reduce(into: [:]) { colors, slot in
+            colors[slot] = defaults.string(forKey: Key.color(slot)).flatMap(GlowColors.color(hex:))
+        }
         panelGlowOn = bool(Key.panelGlowOn)
         panelGlowStrength = strength(Key.panelGlowStrength, GlowSettings().panelStrength)
         panelGlowSpread = Self.clampedSpread(defaults.object(forKey: Key.panelGlowSpread) as? Double
@@ -295,9 +344,15 @@ final class AppSettings {
         musicOn = bool(Key.musicOn)
         timerOn = bool(Key.timerOn)
         timerInWings = bool(Key.timerInWings)
+        hidesPausedTimer = defaults.object(forKey: Key.hidesPausedTimer) as? Bool ?? false
+        timesUpSound = defaults.string(forKey: Key.timesUpSound).flatMap(AlertSound.init(rawValue:)) ?? .glass
         timerPresets = (defaults.array(forKey: Key.timerPresets) as? [Int]).map { Self.clampedPresets($0) } ?? TimerLook.presetMinutes
         lastingPriority = defaults.string(forKey: Key.lastingPriority).flatMap(LastingPriority.init(rawValue:)) ?? .lastTab
         calendarOn = bool(Key.calendarOn)
+        headsUpMinutes = HeadsUpTimes.clamped(defaults.array(forKey: Key.headsUpMinutes) as? [Int] ?? [])
+        headsUpSound = defaults.string(forKey: Key.headsUpSound).flatMap(AlertSound.init(rawValue:)) ?? .ping
+        hidesAllDayEvents = defaults.object(forKey: Key.hidesAllDayEvents) as? Bool ?? false
+        hidesCompletedReminders = defaults.object(forKey: Key.hidesCompletedReminders) as? Bool ?? false
         shelfOn = bool(Key.shelfOn)
         opensOnTab = defaults.string(forKey: Key.opensOnTab).flatMap(PanelTab.init(rawValue:))
         tabCooldown = Self.clampedCooldown(defaults.object(forKey: Key.tabCooldown) as? Double ?? 5)
@@ -305,6 +360,9 @@ final class AppSettings {
         screenshotsToShelf = bool(Key.screenshotsToShelf)
         batteryAlertsOn = bool(Key.batteryAlertsOn)
         batteryInPanelOn = bool(Key.batteryInPanelOn)
+        shownBatteryAlerts = (defaults.stringArray(forKey: Key.shownBatteryAlerts)?.compactMap(BatteryAlert.init(rawValue:)))
+            .map(Set.init) ?? Set(BatteryAlert.allCases)
+        lowBatterySound = defaults.string(forKey: Key.lowBatterySound).flatMap(AlertSound.init(rawValue:)) ?? .ping
         panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
         compactWidth = Self.clamped(defaults.object(forKey: Key.compactWidth) as? Double ?? PanelLayout.compact.size.width,
                                     to: .compact)
@@ -392,21 +450,35 @@ final class AppSettings {
             showsShuffle = fresh.showsShuffle
             showsRepeat = fresh.showsRepeat
             featureGlows[.music] = fresh.featureGlows[.music]
+            featureColors[.music] = nil
         case .timer:
             timerOn = fresh.timerOn
             timerPresets = fresh.timerPresets
             timerInWings = fresh.timerInWings
+            hidesPausedTimer = fresh.hidesPausedTimer
+            timesUpSound = fresh.timesUpSound
             featureGlows[.timer] = fresh.featureGlows[.timer]
+            featureColors[.timer] = nil
+            featureColors[.timesUp] = nil
         case .calendar:
             calendarOn = fresh.calendarOn
+            headsUpMinutes = fresh.headsUpMinutes
+            headsUpSound = fresh.headsUpSound
+            hidesAllDayEvents = fresh.hidesAllDayEvents
+            hidesCompletedReminders = fresh.hidesCompletedReminders
             featureGlows[.calendar] = fresh.featureGlows[.calendar]
+            featureColors[.calendar] = nil
         case .shelf:
             shelfOn = fresh.shelfOn
             screenshotsToShelf = fresh.screenshotsToShelf
             shelfCooldown = fresh.shelfCooldown
+            featureColors[.shelf] = nil
         case .battery:
             batteryAlertsOn = fresh.batteryAlertsOn
             batteryInPanelOn = fresh.batteryInPanelOn
+            shownBatteryAlerts = fresh.shownBatteryAlerts
+            for alert in BatteryAlert.allCases { featureColors[alert.colorSlot] = nil }
+            lowBatterySound = fresh.lowBatterySound
             featureGlows[.battery] = fresh.featureGlows[.battery]
         case .levels, .permissions, .feedback, .about:
             break
@@ -425,11 +497,14 @@ final class AppSettings {
             return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
                     Key.activityGlowOn, Key.activityGlowStrength, Key.activityGlowSpread, Key.activityGlowFade,
                     Key.panelGlowOn, Key.panelGlowStrength, Key.panelGlowSpread, Key.panelGlowFade]
-        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat, Key.glow(.music)]
-        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings, Key.glow(.timer)]
-        case .calendar: return [Key.calendarOn, Key.glow(.calendar)]
-        case .shelf: return [Key.shelfOn, Key.screenshotsToShelf, Key.shelfCooldown]
-        case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn, Key.glow(.battery)]
+        case .music: return [Key.musicOn, Key.showsShuffle, Key.showsRepeat, Key.glow(.music), Key.color(.music)]
+        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings, Key.hidesPausedTimer, Key.glow(.timer),
+                             Key.color(.timer), Key.color(.timesUp), Key.timesUpSound]
+        case .calendar: return [Key.calendarOn, Key.headsUpMinutes, Key.headsUpSound, Key.hidesAllDayEvents,
+                                Key.hidesCompletedReminders, Key.glow(.calendar), Key.color(.calendar)]
+        case .shelf: return [Key.shelfOn, Key.screenshotsToShelf, Key.shelfCooldown, Key.color(.shelf)]
+        case .battery: return [Key.batteryAlertsOn, Key.batteryInPanelOn, Key.shownBatteryAlerts, Key.lowBatterySound,
+                               Key.glow(.battery)] + BatteryAlert.allCases.map { Key.color($0.colorSlot) }
         case .levels, .permissions, .feedback, .about: return []
         }
     }

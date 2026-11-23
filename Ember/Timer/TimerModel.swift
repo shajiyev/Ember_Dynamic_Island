@@ -11,6 +11,15 @@ final class TimerModel {
     /// The clock time of the last update. The time left shown in the panel is worked out
     /// from it, so the panel changes when this does.
     private(set) var now = Date()
+    /// The countdown's colour (Settings → Timer → Colour): the wings, its glow, the Timer
+    /// tab. A change reaches the wings at once.
+    var color = TimerLook.color {
+        didSet { if color != oldValue { showCountdown() } }
+    }
+    /// Time's up's colour (Settings → Timer → When time's up).
+    @ObservationIgnored var timesUpColor = TimerLook.timesUpColor
+    /// Time's up's sound (Settings → Timer → When time's up); None rings silently.
+    @ObservationIgnored var sound = AlertSound.glass
     /// Called with what the pill should show for the timer, or nil for nothing.
     @ObservationIgnored var onActivity: ((LiveActivity?) -> Void)?
     @ObservationIgnored private var ticker: Task<Void, Never>?
@@ -85,31 +94,34 @@ final class TimerModel {
             ring(repeating: TimerLook.repeatsSound(finishedLateBy: now.timeIntervalSince(endDate),
                                                    screenInUse: screenInUse))
             // After ringing, so that if the panel is open, "seen at once" stops the repeats.
-            onActivity?(TimerLook.timesUp)
+            onActivity?(TimerLook.timesUp(color: timesUpColor))
             return
         }
+        if countdown.isStopped { onActivity?(nil) } else { showCountdown() }
+    }
+
+    /// Tells the pill the running or paused countdown; nothing while stopped.
+    private func showCountdown() {
         switch countdown.phase {
-        case .stopped:
-            onActivity?(nil)
-        case .running:
-            onActivity?(TimerLook.running(secondsLeft: secondsLeft))
-        case .paused:
-            onActivity?(TimerLook.paused(secondsLeft: secondsLeft))
+        case .stopped: break
+        case .running: onActivity?(TimerLook.running(secondsLeft: secondsLeft, color: color))
+        case .paused: onActivity?(TimerLook.paused(secondsLeft: secondsLeft, color: color))
         }
     }
 
     /// Plays the sound and, if asked, again every few seconds until "Time's up" is seen or
-    /// the repeat limit is reached.
+    /// the repeat limit is reached. Nothing with no sound chosen.
     private func ring(repeating: Bool) {
-        NSSound(named: TimerLook.soundName)?.play()
         alarm?.cancel()
+        guard sound != .none else { return }
+        sound.play()
         guard repeating else { return }
         alarm = Task {
             var elapsed: TimeInterval = 0
             while elapsed + TimerLook.soundRepeatInterval <= TimerLook.soundRepeatLimit {
                 try? await Task.sleep(for: .seconds(TimerLook.soundRepeatInterval))
                 guard !Task.isCancelled else { return }
-                NSSound(named: TimerLook.soundName)?.play()
+                self.sound.play()
                 elapsed += TimerLook.soundRepeatInterval
             }
         }

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Settings → a feature's Live activity glow → Preview: the feature's activity, shown in the
 /// notch for a few seconds so its glow can be seen. It changes nothing in the feature.
@@ -7,23 +8,24 @@ nonisolated enum GlowExample {
 }
 
 extension GlowFeature {
-    /// An example of what the feature shows in the wings, as a brief activity.
-    nonisolated func exampleActivity(now: Date) -> LiveActivity {
+    /// An example of what the feature shows in the wings, as a brief activity, in the
+    /// feature's chosen colour (nil keeps its own).
+    nonisolated func exampleActivity(now: Date, color: Color? = nil) -> LiveActivity {
         var example: LiveActivity
         switch self {
         case .music:
             let track = Track(player: .music, title: "", artist: "", album: "", length: 0, position: 0,
                               readAt: now, isPlaying: true)
-            example = NowPlayingLook.activity(for: track, glow: nil, defaultGlow: PillStyle.glowColor)
+            example = NowPlayingLook.activity(for: track, glow: color, defaultGlow: PillStyle.glowColor)
         case .timer:
-            example = TimerLook.running(secondsLeft: 24 * 60 + 59)
+            example = TimerLook.running(secondsLeft: 24 * 60 + 59, color: color ?? TimerLook.color)
         case .battery:
-            example = BatteryAlert.pluggedIn.exampleActivity
+            example = BatteryAlert.pluggedIn.exampleActivity(color: color)
         case .calendar:
             let start = now.addingTimeInterval(CalendarLook.leadTime)
             let event = DayEvent(id: "example", title: "", start: start, end: start.addingTimeInterval(3600),
                                  isAllDay: false, color: CalendarLook.rose)
-            example = CalendarLook.headsUp(for: event, now: now)
+            example = CalendarLook.headsUp(for: event, now: now, color: color)
         }
         example.duration = GlowExample.duration
         return example

@@ -33,6 +33,11 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case timerGlow
     case batteryGlow
     case calendarGlow
+    case musicColor
+    case timerColor
+    case timesUpColor
+    case calendarColor
+    case shelfColor
     case panelGlow
     case panelGlowStrength
     case panelGlowSpread
@@ -43,15 +48,32 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case timer
     case timerPresets
     case timerInWings
+    case hidesPausedTimer
+    case timesUpSound
+    case timesUpExample
     case calendar
     case calendarEvents
     case reminders
+    case hidesAllDayEvents
+    case hidesCompletedReminders
+    case headsUps
+    case headsUpSound
+    case headsUpExample
     case shelf
     case screenshotsToShelf
     case shelfCooldown
     case batteryAlerts
     case batteryInPanel
     case batteryExample
+    case pluggedInAlert
+    case unpluggedAlert
+    case lowAlert
+    case veryLowAlert
+    case lowBatterySound
+    case pluggedInColor
+    case unpluggedColor
+    case lowColor
+    case veryLowColor
     case levels
     case permissionsList
     case shareFeedback
@@ -65,11 +87,15 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .panelGlow, .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
-        case .music, .showsShuffle, .showsRepeat, .musicGlow: return .music
-        case .timer, .timerPresets, .timerInWings, .timerGlow: return .timer
-        case .calendar, .calendarEvents, .reminders, .calendarGlow: return .calendar
-        case .shelf, .screenshotsToShelf, .shelfCooldown: return .shelf
-        case .batteryAlerts, .batteryInPanel, .batteryExample, .batteryGlow: return .battery
+        case .music, .showsShuffle, .showsRepeat, .musicGlow, .musicColor: return .music
+        case .timer, .timerPresets, .timerInWings, .hidesPausedTimer, .timerGlow, .timerColor, .timesUpColor,
+             .timesUpSound, .timesUpExample: return .timer
+        case .calendar, .calendarEvents, .reminders, .calendarGlow, .calendarColor, .hidesAllDayEvents,
+             .hidesCompletedReminders, .headsUps, .headsUpSound, .headsUpExample: return .calendar
+        case .shelf, .screenshotsToShelf, .shelfCooldown, .shelfColor: return .shelf
+        case .batteryAlerts, .batteryInPanel, .batteryExample, .batteryGlow, .pluggedInAlert, .unpluggedAlert,
+             .lowAlert, .veryLowAlert, .lowBatterySound, .pluggedInColor, .unpluggedColor, .lowColor,
+             .veryLowColor: return .battery
         case .levels: return .levels
         case .shareFeedback: return .feedback
         case .aboutEmber: return .about
@@ -103,6 +129,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .restGlowSpread, .activityGlowSpread, .panelGlowSpread: return "Spread"
         case .restGlowFade, .activityGlowFade, .panelGlowFade: return "Fade"
         case .musicGlow, .timerGlow, .batteryGlow, .calendarGlow: return "Live activity glow"
+        case .musicColor, .timerColor, .timesUpColor, .calendarColor, .shelfColor, .pluggedInColor, .unpluggedColor,
+             .lowColor, .veryLowColor: return "Colour"
         case .panelGlow: return "Open panel glow"
         case .music: return "Music"
         case .showsShuffle: return "Show shuffle"
@@ -110,15 +138,28 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .timer: return "Timer"
         case .timerPresets: return "Presets"
         case .timerInWings: return "Show the countdown in the notch"
+        case .hidesPausedTimer: return "Hide the timer when paused"
+        case .timesUpSound: return "Sound"
+        case .timesUpExample: return "Show an example"
         case .calendar: return "Calendar"
         case .calendarEvents: return CalendarLook.switchTitle(.events)
         case .reminders: return CalendarLook.switchTitle(.reminders)
+        case .hidesAllDayEvents: return "Hide all-day events"
+        case .hidesCompletedReminders: return "Hide completed reminders"
+        case .headsUps: return "Heads-ups"
+        case .headsUpSound: return "Sound"
+        case .headsUpExample: return "Show an example"
         case .shelf: return "Shelf"
         case .screenshotsToShelf: return "Add screenshots to the shelf"
         case .shelfCooldown: return "Stay on the Shelf tab for"
         case .batteryAlerts: return "Battery alerts"
         case .batteryInPanel: return "Battery in the panel"
         case .batteryExample: return "Show an example"
+        case .pluggedInAlert: return BatteryAlert.pluggedIn.title
+        case .unpluggedAlert: return BatteryAlert.unplugged.title
+        case .lowAlert: return BatteryAlert.low.title
+        case .veryLowAlert: return BatteryAlert.veryLow.title
+        case .lowBatterySound: return "Low battery sound"
         case .levels: return LevelLook.switchTitle
         case .shareFeedback: return "Share Feedback"
         case .aboutEmber: return "Ember"
@@ -152,6 +193,11 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .activityGlowStrength: return ["intensity", "opacity", "live activity"]
         case .musicGlow, .timerGlow, .batteryGlow, .calendarGlow: return ["strength", "spread", "fade", "custom", "wings"]
         case .panelGlow: return []
+        case .musicColor: return ["color", "song", "cover"]
+        case .timerColor: return ["color", "countdown"]
+        case .timesUpColor: return ["color", "Time's up", "alert"]
+        case .calendarColor: return ["color", "heads-up", "alert"]
+        case .shelfColor: return ["color", "drop"]
         case .panelGlowStrength: return ["intensity", "opacity", "open panel"]
         case .activityGlowSpread: return ["distance", "reach", "size", "radius", "live activity"]
         case .panelGlowSpread: return ["distance", "reach", "size", "radius", "open panel"]
@@ -164,8 +210,16 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .timer: return ["countdown", "alarm", "stopwatch"]
         case .timerPresets: return ["minutes", "5m", "25m", "45m"]
         case .timerInWings: return ["wings", "hide", "running"]
+        case .hidesPausedTimer: return ["wings", "pause"]
+        case .timesUpSound: return ["Time's up", "alert", "Glass", "alarm"]
+        case .timesUpExample: return ["demo", "try", "Time's up"]
         case .calendar: return ["heads-up", "month", "date"]
         case .calendarEvents: return ["permission", "privacy"]
+        case .hidesAllDayEvents: return ["list", "holiday", "birthday"]
+        case .hidesCompletedReminders: return ["done", "ticked", "list"]
+        case .headsUps: return ["minutes before", "alert", "notice", "early"]
+        case .headsUpSound: return ["heads-up", "alert", "Ping"]
+        case .headsUpExample: return ["demo", "try", "heads-up"]
         case .reminders: return ["to-do", "permission", "privacy"]
         case .shelf: return ["files", "drop", "drag", "AirDrop"]
         case .screenshotsToShelf: return ["screen capture"]
@@ -173,6 +227,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .batteryAlerts: return ["charging", "low battery", "plug"]
         case .batteryInPanel: return ["percentage", "charge"]
         case .batteryExample: return ["demo", "try", "preview"]
+        case .pluggedInAlert: return ["charger", "charging", "alert"]
+        case .unpluggedAlert: return ["charger", "alert"]
+        case .lowAlert, .veryLowAlert: return ["battery", "alert", "red"]
+        case .lowBatterySound: return ["alert", "Ping"]
+        case .pluggedInColor: return ["color", "charger", "green"]
+        case .unpluggedColor: return ["color", "charger", "yellow"]
+        case .lowColor, .veryLowColor: return ["color", "low battery", "red"]
         case .levels: return ["volume", "brightness", "sound", "mute", "Accessibility"]
         case .shareFeedback: return ["bug", "report", "idea", "contact"]
         case .aboutEmber: return ["version", "license", "GitHub", "website", "credits"]

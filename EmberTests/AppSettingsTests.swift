@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Testing
 @testable import Ember
 
@@ -392,6 +393,41 @@ struct AppSettingsTests {
         #expect(relaunched.glow.features[.timer]?.custom?.spread == 14)
     }
 
+    private func hex(_ color: Color?) -> String? { color.map(GlowColors.hex(of:)) }
+
+    @Test func eachFeaturesColourFollowsItsDefaultUntilChosenAndSurvivesARelaunch() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.featureColors.isEmpty)   // every feature follows its own default
+        settings.featureColors[.timer] = .blue
+        settings.featureColors[.shelf] = GlowColors.presets[2].color
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(hex(relaunched.featureColors[.timer]) == GlowColors.hex(of: .blue))
+        #expect(hex(relaunched.featureColors[.shelf]) == GlowColors.hex(of: GlowColors.presets[2].color))
+        #expect(relaunched.featureColors[.music] == nil)
+        relaunched.featureColors[.timer] = nil   // back to the timer's orange
+        #expect(AppSettings(defaults: defaults).featureColors[.timer] == nil)
+    }
+
+    @Test func eachFeaturesColourIsResetWithItsOwnPage() {
+        let settings = AppSettings(defaults: freshDefaults())
+        for slot in FeatureColor.allCases { settings.featureColors[slot] = .blue }
+        settings.reset(.glow)
+        #expect(settings.featureColors.count == FeatureColor.allCases.count)
+        settings.reset(.music)
+        #expect(settings.featureColors[.music] == nil)
+        settings.reset(.timer)
+        #expect(settings.featureColors[.timer] == nil && settings.featureColors[.timesUp] == nil)
+        settings.reset(.calendar)
+        #expect(settings.featureColors[.calendar] == nil)
+        #expect(settings.featureColors[.shelf] != nil)
+        settings.reset(.shelf)
+        #expect(settings.featureColors[.shelf] == nil && settings.featureColors[.batteryLow] != nil)
+        settings.reset(.battery)
+        #expect(settings.featureColors.isEmpty)
+    }
+
     @Test func aFeaturesOwnValuesStayInTheGlowRanges() {
         let defaults = freshDefaults()
         let settings = AppSettings(defaults: defaults)
@@ -411,5 +447,52 @@ struct AppSettingsTests {
         settings.alertsInFullScreen = false
         let relaunched = AppSettings(defaults: defaults)
         #expect(!relaunched.hidesInCaptures && relaunched.hidesInFullScreen && !relaunched.alertsInFullScreen)
+    }
+
+    @Test func timesUpRingsGlassAndAPausedTimerStaysByDefaultAndBothAreSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.timesUpSound == .glass && !settings.hidesPausedTimer)
+        settings.timesUpSound = .none
+        settings.hidesPausedTimer = true
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.timesUpSound == .none && relaunched.hidesPausedTimer)
+        relaunched.reset(.timer)
+        #expect(relaunched.timesUpSound == .glass && !relaunched.hidesPausedTimer)
+        #expect(AppSettings(defaults: defaults).timesUpSound == .glass)
+    }
+
+    @Test func everyBatteryAlertIsOnAndPingsWhenLowByDefaultAndBothAreSaved() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.shownBatteryAlerts == Set(BatteryAlert.allCases) && settings.lowBatterySound == .ping)
+        settings.shownBatteryAlerts.remove(.unplugged)
+        settings.lowBatterySound = .none
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.shownBatteryAlerts == [.pluggedIn, .low, .veryLow] && relaunched.lowBatterySound == .none)
+        relaunched.shownBatteryAlerts = []
+        #expect(AppSettings(defaults: defaults).shownBatteryAlerts.isEmpty)   // all off is kept, not read as "never set"
+        relaunched.reset(.battery)
+        #expect(relaunched.shownBatteryAlerts == Set(BatteryAlert.allCases) && relaunched.lowBatterySound == .ping)
+        #expect(AppSettings(defaults: defaults).shownBatteryAlerts == Set(BatteryAlert.allCases))
+    }
+
+    @Test func theHeadsUpsListsAndSoundAreSavedWithTheirDefaultsAndResetWithCalendar() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.headsUpMinutes == [5] && settings.headsUpSound == .ping)
+        #expect(!settings.hidesAllDayEvents && !settings.hidesCompletedReminders)
+        settings.headsUpMinutes = [15, 15, 7, 5]
+        #expect(settings.headsUpMinutes == [15, 5])
+        settings.headsUpSound = .glass
+        settings.hidesAllDayEvents = true
+        settings.hidesCompletedReminders = true
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.headsUpMinutes == [15, 5] && relaunched.headsUpSound == .glass)
+        #expect(relaunched.hidesAllDayEvents && relaunched.hidesCompletedReminders)
+        relaunched.reset(.calendar)
+        #expect(relaunched.headsUpMinutes == [5] && relaunched.headsUpSound == .ping)
+        #expect(!relaunched.hidesAllDayEvents && !relaunched.hidesCompletedReminders)
+        #expect(AppSettings(defaults: defaults).headsUpMinutes == [5])
     }
 }

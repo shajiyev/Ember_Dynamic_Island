@@ -13,18 +13,42 @@ struct HeadsUpScheduleTests {
                         isAllDay: allDay, color: .blue)
     }
 
-    private func next(_ events: [DayEvent], announced: Set<Date> = []) -> HeadsUp? {
-        HeadsUpSchedule.next(events: events, now: now, leadTime: lead, announcedStarts: announced)
+    private func next(_ events: [DayEvent], leads: [TimeInterval]? = nil,
+                      announced: Set<HeadsUpMoment> = []) -> HeadsUp? {
+        HeadsUpSchedule.next(events: events, now: now, leadTimes: leads ?? [lead], announced: announced)
+    }
+
+    private func announced(_ event: DayEvent, _ lead: TimeInterval) -> HeadsUpMoment {
+        HeadsUpMoment(start: event.start, leadTime: lead)
     }
 
     @Test func anEventInTenMinutesGetsAHeadsUpInFive() {
         let standup = event(in: 10)
-        #expect(next([standup]) == HeadsUp(event: standup, date: now.addingTimeInterval(5 * 60)))
+        #expect(next([standup]) == HeadsUp(event: standup, date: now.addingTimeInterval(5 * 60), leadTime: lead))
     }
 
-    @Test func anEventInsideTheLeadTimeGetsAHeadsUpAtOnce() {
-        let standup = event(in: 3)
-        #expect(next([standup]) == HeadsUp(event: standup, date: now))
+    @Test func aHeadsUpWhoseTimeHasPassedIsNotShown() {
+        #expect(next([event(in: 3)]) == nil)
+    }
+
+    @Test func aHeadsUpDueThisMomentIsShown() {
+        let standup = event(in: 5)
+        #expect(next([standup]) == HeadsUp(event: standup, date: now, leadTime: lead))
+    }
+
+    @Test func eachLeadTimeGivesItsOwnHeadsUpEarliestFirst() {
+        let standup = event(in: 20)
+        let leads: [TimeInterval] = [5 * 60, 15 * 60]
+        #expect(next([standup], leads: leads) == HeadsUp(event: standup, date: now.addingTimeInterval(5 * 60), leadTime: 15 * 60))
+        #expect(next([standup], leads: leads, announced: [announced(standup, 15 * 60)])
+                == HeadsUp(event: standup, date: now.addingTimeInterval(15 * 60), leadTime: 5 * 60))
+        #expect(next([standup], leads: leads, announced: [announced(standup, 15 * 60), announced(standup, 5 * 60)]) == nil)
+    }
+
+    @Test func onlyTheHeadsUpsStillToComeAreShown() {
+        let standup = event(in: 10)   // found 10 minutes before: the 15-minute heads-up has passed
+        #expect(next([standup], leads: [15 * 60, 5 * 60]) == HeadsUp(event: standup, date: now.addingTimeInterval(5 * 60),
+                                                                      leadTime: 5 * 60))
     }
 
     @Test func allDayEventsGetNone() {
@@ -46,13 +70,13 @@ struct HeadsUpScheduleTests {
         let b = event("B", in: 10)
         let a = event("A", in: 10)
         #expect(next([b, a])?.event == a)
-        #expect(next([b, a], announced: [a.start]) == nil)
+        #expect(next([b, a], announced: [announced(a, lead)]) == nil)
     }
 
     @Test func announcedStartsAreSkipped() {
         let first = event("Standup", in: 10)
         let second = event("Review", in: 30)
-        #expect(next([first, second], announced: [first.start])?.event == second)
+        #expect(next([first, second], announced: [announced(first, lead)])?.event == second)
     }
 
     @Test func nothingComingGetsNone() {

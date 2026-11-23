@@ -11,15 +11,17 @@ enum ShelfLook {
 
 /// A dashed rounded frame around one of the Shelf tab's areas, its content clipped inside.
 /// With a colour (AirDrop) the outline is tinted in it; without one it is grey. While files
-/// are dragged over it, it lights up: a solid outline in its colour, or Ember rose.
+/// are dragged over it, it lights up: a solid outline in its colour, or in `litColor`.
 struct ShelfDropFrame<Content: View>: View {
     let color: Color?
+    /// The light without a colour of its own: the shelf's colour (Settings → Shelf).
+    var litColor = PillStyle.glowColor
     let isTargeted: Bool
     @ViewBuilder let content: Content
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
-        let accent = color ?? PillStyle.glowColor
+        let accent = color ?? litColor
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(shape.fill(accent.opacity(isTargeted ? 0.12 : 0)))

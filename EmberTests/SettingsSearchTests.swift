@@ -22,7 +22,8 @@ struct SettingsSearchTests {
         // the notch", "Show Calendar Events", "Show Reminders", "Show an example", "Show
         // Volume & Brightness in the Pill".
         #expect(SettingsSearch.matches("show") == [.alertsInFullScreen, .lastingPriority, .showsShuffle, .showsRepeat, .timerInWings,
-                                                   .calendarEvents, .reminders, .batteryExample, .levels])
+                                                   .timesUpExample, .calendarEvents, .reminders, .headsUpExample,
+                                                   .batteryExample, .levels])
         #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels])
     }
 
@@ -59,6 +60,16 @@ struct SettingsSearchTests {
         #expect(groups == groups.sorted { order.firstIndex(of: $0)! < order.firstIndex(of: $1)! })
     }
 
+    @Test func eachFeaturesColourIsOnItsOwnPage() {
+        #expect(SettingsItem.musicColor.page == .music)
+        #expect(SettingsItem.timerColor.page == .timer && SettingsItem.timesUpColor.page == .timer)
+        #expect(SettingsItem.calendarColor.page == .calendar)
+        #expect(SettingsItem.shelfColor.page == .shelf)
+        for item in [SettingsItem.pluggedInColor, .unpluggedColor, .lowColor, .veryLowColor] {
+            #expect(item.page == .battery)
+        }
+    }
+
     @Test func thePanelsTabsShareOneHeader() {
         #expect(SettingsPage.allCases.filter { $0.group == .tabs } == [.music, .timer, .calendar, .shelf])
         #expect(SettingsGroup.tabs.title == "Tabs")
@@ -91,8 +102,10 @@ struct SettingsSearchTests {
     }
 
     @Test func theGlowSwitchAndColourAreFound() {
-        #expect(SettingsSearch.matches("colour") == [.glowColor])
-        #expect(SettingsSearch.matches("color") == [.glowColor])
+        let colours: Set<SettingsItem> = [.glowColor, .musicColor, .timerColor, .timesUpColor, .calendarColor, .shelfColor,
+                                          .pluggedInColor, .unpluggedColor, .lowColor, .veryLowColor]
+        #expect(SettingsSearch.matches("colour") == colours)
+        #expect(SettingsSearch.matches("color") == colours)
         #expect(SettingsSearch.matches("no glow") == [.glowOn])
     }
 
@@ -106,8 +119,14 @@ struct SettingsSearchTests {
     }
 
     @Test func theCountdownSwitchAndTheBatteryExampleAreFound() {
-        #expect(SettingsSearch.matches("countdown") == [.timer, .timerInWings])
-        #expect(SettingsSearch.matches("demo") == [.batteryExample])
+        #expect(SettingsSearch.matches("countdown") == [.timer, .timerInWings, .timerColor])
+        #expect(SettingsSearch.matches("demo") == [.timesUpExample, .headsUpExample, .batteryExample])
+    }
+
+    @Test func timesUpsSoundAndHidingAPausedTimerAreFound() {
+        #expect(SettingsSearch.matches("sound").isSuperset(of: [.timesUpSound]))
+        #expect(SettingsSearch.matches("paused") == [.hidesPausedTimer])
+        #expect(SettingsItem.timesUpSound.page == .timer && SettingsItem.timesUpExample.page == .timer)
     }
 
     @Test func theLiveActivityPriorityIsFound() {
@@ -136,5 +155,23 @@ struct SettingsSearchTests {
     @Test func thePrivacyAndFullScreenSwitchesAreFound() {
         #expect(SettingsSearch.matches("screen sharing") == [.hidesInCaptures])
         #expect(SettingsSearch.matches("full-screen") == [.hidesInFullScreen, .alertsInFullScreen])
+    }
+
+    @Test func eachBatteryAlertsSwitchAndTheLowBatterySoundAreFound() {
+        #expect(SettingsSearch.matches("unplugged") == [.unpluggedAlert])
+        #expect(SettingsSearch.matches("very low") == [.veryLowAlert])
+        #expect(SettingsSearch.matches("low battery sound") == [.lowBatterySound])
+        for item in [SettingsItem.pluggedInAlert, .unpluggedAlert, .lowAlert, .veryLowAlert, .lowBatterySound] {
+            #expect(item.page == .battery)
+        }
+    }
+
+    @Test func theHeadsUpsAndTheListsHidingAreFound() {
+        #expect(SettingsSearch.matches("all-day") == [.hidesAllDayEvents])
+        #expect(SettingsSearch.matches("completed") == [.hidesCompletedReminders])
+        #expect(SettingsSearch.matches("minutes before") == [.headsUps])
+        for item in [SettingsItem.headsUps, .headsUpSound, .headsUpExample, .hidesAllDayEvents, .hidesCompletedReminders] {
+            #expect(item.page == .calendar)
+        }
     }
 }

@@ -12,6 +12,12 @@ struct GlowExampleTests {
         }
     }
 
+    @Test func theExampleWearsTheFeaturesChosenColour() {
+        for feature in GlowFeature.allCases {
+            #expect(feature.exampleActivity(now: Date(), color: .blue).glowColor == .blue)
+        }
+    }
+
     @Test func theExamplesLookLikeTheRealOnes() {
         let now = Date()
         #expect(GlowFeature.music.exampleActivity(now: now).showsEqualizer)

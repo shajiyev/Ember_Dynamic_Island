@@ -14,7 +14,8 @@ struct CompactTimerView: View {
         VStack(spacing: 0) {
             ZStack {
                 TimerRing(fractionGone: countdown.fractionGone(at: timer.now),
-                          centerText: isStopped ? nil : NowPlayingLook.timeText(TimeInterval(timer.secondsLeft)))
+                          centerText: isStopped ? nil : NowPlayingLook.timeText(TimeInterval(timer.secondsLeft)),
+                          color: timer.color)
                     .frame(maxWidth: .infinity, alignment: isStopped ? .leading : .center)
                 if isStopped {
                     TimerSetter(timer: timer)

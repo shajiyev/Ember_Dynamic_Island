@@ -60,4 +60,15 @@ struct LastingChoiceTests {
             #expect(LastingChoice.choose(timer: timesUp, music: music, musicTabChosen: true, priority: priority) == timesUp)
         }
     }
+
+    @Test func aPausedTimerLeavesTheWingsWhenItIsHidden() {
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false,
+                                     timerIsPaused: true, hidesPausedTimer: true) == music)
+        #expect(LastingChoice.choose(timer: timer, music: nil, musicTabChosen: false,
+                                     timerIsPaused: true, hidesPausedTimer: true) == nil)
+        // Not hidden, or running: as before.
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false, timerIsPaused: true) == timer)
+        #expect(LastingChoice.choose(timer: timer, music: music, musicTabChosen: false,
+                                     timerIsPaused: false, hidesPausedTimer: true) == timer)
+    }
 }

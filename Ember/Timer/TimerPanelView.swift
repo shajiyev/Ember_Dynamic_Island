@@ -18,7 +18,7 @@ struct TimerPanelView: View {
 
     private var wide: some View {
         HStack(spacing: 18) {
-            TimerRing(fractionGone: timer.countdown.fractionGone(at: timer.now))
+            TimerRing(fractionGone: timer.countdown.fractionGone(at: timer.now), color: timer.color)
             VStack(alignment: .leading, spacing: 6) {
                 if timer.countdown.isStopped {
                     setup

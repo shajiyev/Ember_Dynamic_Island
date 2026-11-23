@@ -12,7 +12,13 @@ struct BatteryAlertsTests {
 
     /// Feeds the readings to fresh rules, in order, and collects what each one gave.
     private func alerts(_ readings: BatteryReading...) -> [BatteryAlert?] {
+        alerts(shown: Set(BatteryAlert.allCases), readings)
+    }
+
+    /// The same, with only the `shown` alerts switched on (Settings → Battery).
+    private func alerts(shown: Set<BatteryAlert>, _ readings: [BatteryReading]) -> [BatteryAlert?] {
         var rules = BatteryAlertRules()
+        rules.shown = shown
         return readings.map { rules.alert(for: $0) }
     }
 
@@ -81,5 +87,35 @@ struct BatteryAlertsTests {
         #expect(BatteryAlert.low.exampleReading == BatteryReading(percentage: 20, isPluggedIn: false))
         #expect(BatteryAlert.veryLow.exampleReading == BatteryReading(percentage: 10, isPluggedIn: false))
         #expect(BatteryAlert.allCases.map(\.title) == ["Plugged in", "Unplugged", "Low (20%)", "Very low (10%)"])
+    }
+
+    @Test func anAlertSwitchedOffGivesNothingAndLeavesTheOthers() {
+        let noUnplugged = Set(BatteryAlert.allCases).subtracting([.unplugged])
+        #expect(alerts(shown: noUnplugged, [pluggedIn(50), onBattery(50), pluggedIn(50)]) == [nil, nil, .pluggedIn])
+        #expect(alerts(shown: [], [pluggedIn(21), onBattery(21), onBattery(20), onBattery(10)]) == [nil, nil, nil, nil])
+    }
+
+    @Test func withLowOffVeryLowStillComes() {
+        #expect(alerts(shown: [.veryLow], [onBattery(21), onBattery(20), onBattery(10)]) == [nil, nil, .veryLow])
+    }
+
+    @Test func withVeryLowOffADropPastBothGivesLowOnce() {
+        #expect(alerts(shown: [.low], [onBattery(25), onBattery(9)]) == [nil, .low])
+        #expect(alerts(shown: [.low], [onBattery(21), onBattery(20), onBattery(10)]) == [nil, .low, nil])
+    }
+
+    @Test func onlyTheLowAlertsPlayTheLowBatterySound() {
+        #expect(BatteryAlert.allCases.filter(\.playsLowBatterySound) == [.low, .veryLow])
+    }
+
+    @Test func aChosenColourPaintsTheAlertsSymbolAndGlow() {
+        let low = BatteryAlert.low.liveActivity(for: onBattery(20), color: .blue)
+        #expect(low.symbolColor == .blue && low.glowColor == .blue)
+        #expect(BatteryAlert.low.exampleActivity(color: .blue) == low)
+        #expect(BatteryAlert.low.exampleActivity().glowColor == BatteryAlert.red)   // none chosen: its own red
+    }
+
+    @Test func eachAlertHasItsOwnColour() {
+        #expect(BatteryAlert.allCases.map(\.colorSlot) == [.batteryPluggedIn, .batteryUnplugged, .batteryLow, .batteryVeryLow])
     }
 }

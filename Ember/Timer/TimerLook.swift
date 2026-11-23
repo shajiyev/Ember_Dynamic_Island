@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// How the timer looks on the pill, plus its presets and sound. All timer symbols, colours
+/// How the timer looks on the pill, plus its presets and how its sound repeats. All timer symbols, colours
 /// and the glow-while-running choice are defined here.
 nonisolated enum TimerLook {
     /// The presets until the user sets their own (Settings → Timer → Presets).
@@ -15,18 +15,14 @@ nonisolated enum TimerLook {
         let rest = minutes % 60
         return "\(minutes / 60)h" + (rest == 0 ? "" : String(format: "%02d", rest))
     }
-    /// A macOS system sound.
-    static let soundName = "Glass"
     /// At zero the sound repeats this often until "Time's up" is seen, for at most
     /// `soundRepeatLimit` seconds.
     static let soundRepeatInterval: TimeInterval = 2
     static let soundRepeatLimit: TimeInterval = 60
     /// The timer's own orange, #FF7A1E, not Ember rose: people know timers as orange from
     /// Apple's Clock app. Used for the timer symbol, a running or paused timer's glow and
-    /// the Timer tab's glow.
+    /// the Timer tab, unless another is chosen in Settings → Timer.
     static let color = Color(red: 0xFF / 255, green: 0x7A / 255, blue: 0x1E / 255)
-    /// The glow while a timer runs or is paused.
-    static let runningGlowColor: Color? = color
     /// "Time's up": a brighter amber, #FFA826, between the timer's orange and the unplugged yellow.
     static let timesUpColor = Color(red: 0xFF / 255, green: 0xA8 / 255, blue: 0x26 / 255)
 
@@ -37,20 +33,31 @@ nonisolated enum TimerLook {
         lateness <= 2 && screenInUse
     }
 
-    static func running(secondsLeft: Int) -> LiveActivity {
+    /// The countdown in the wings, in the timer's colour (Settings → Timer → Colour).
+    static func running(secondsLeft: Int, color: Color = TimerLook.color) -> LiveActivity {
         LiveActivity(symbolName: "timer", symbolColor: color,
-                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor, feature: .timer)
+                     text: wingText(secondsLeft: secondsLeft), glowColor: color, feature: .timer)
     }
 
-    static func paused(secondsLeft: Int) -> LiveActivity {
+    static func paused(secondsLeft: Int, color: Color = TimerLook.color) -> LiveActivity {
         LiveActivity(symbolName: "pause.fill", symbolColor: color,
-                     text: wingText(secondsLeft: secondsLeft), glowColor: runningGlowColor, feature: .timer)
+                     text: wingText(secondsLeft: secondsLeft), glowColor: color, feature: .timer)
     }
 
     /// "Time's up": glows, and stays until the user hovers over or clicks the pill.
-    static let timesUp = LiveActivity(symbolName: "bell.fill", symbolColor: timesUpColor,
-                                      text: "0:00", glowColor: timesUpColor, endsWhenSeen: true,
-                                      feature: .timer)
+    static func timesUp(color: Color = TimerLook.timesUpColor) -> LiveActivity {
+        LiveActivity(symbolName: "bell.fill", symbolColor: color, text: "0:00", glowColor: color,
+                     endsWhenSeen: true, feature: .timer)
+    }
+
+    /// Settings → Timer → Show an example: "Time's up" as it looks, leaving after a few
+    /// seconds like the other examples instead of waiting to be seen.
+    static func timesUpExample(color: Color = TimerLook.timesUpColor) -> LiveActivity {
+        var example = timesUp(color: color)
+        example.endsWhenSeen = false
+        example.duration = GlowExample.duration
+        return example
+    }
 
     /// Short enough for a 42-point wing: "24:59" under an hour, "1h25" from an hour up.
     static func wingText(secondsLeft: Int) -> String {

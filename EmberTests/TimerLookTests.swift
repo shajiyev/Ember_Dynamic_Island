@@ -19,17 +19,17 @@ struct TimerLookTests {
     @Test func runningShowsTheTimerSymbolAndTimeLeft() {
         #expect(TimerLook.running(secondsLeft: 299) == LiveActivity(
             symbolName: "timer", symbolColor: TimerLook.color, text: "4:59",
-            glowColor: TimerLook.runningGlowColor, feature: .timer))
+            glowColor: TimerLook.color, feature: .timer))
     }
 
     @Test func pausedShowsThePauseSymbolAndTimeLeft() {
         #expect(TimerLook.paused(secondsLeft: 299) == LiveActivity(
             symbolName: "pause.fill", symbolColor: TimerLook.color, text: "4:59",
-            glowColor: TimerLook.runningGlowColor, feature: .timer))
+            glowColor: TimerLook.color, feature: .timer))
     }
 
     @Test func timesUpGlowsAndEndsWhenSeen() {
-        #expect(TimerLook.timesUp == LiveActivity(
+        #expect(TimerLook.timesUp() == LiveActivity(
             symbolName: "bell.fill", symbolColor: TimerLook.timesUpColor, text: "0:00",
             glowColor: TimerLook.timesUpColor, endsWhenSeen: true, feature: .timer))
     }
@@ -39,8 +39,13 @@ struct TimerLookTests {
         #expect(TimerLook.color != PillStyle.glowColor)
     }
 
-    @Test func aRunningTimerGlowsTimerOrange() {
-        #expect(TimerLook.runningGlowColor == TimerLook.color)
+    @Test func aChosenColourPaintsTheSymbolAndTheGlow() {
+        let running = TimerLook.running(secondsLeft: 299, color: .blue)
+        #expect(running.symbolColor == .blue && running.glowColor == .blue)
+        let paused = TimerLook.paused(secondsLeft: 299, color: .blue)
+        #expect(paused.symbolColor == .blue && paused.glowColor == .blue)
+        let timesUp = TimerLook.timesUp(color: .green)
+        #expect(timesUp.symbolColor == .green && timesUp.glowColor == .green)
     }
 
     @Test func timesUpStandsApartFromTimerOrangeAndTheLowBatteryYellow() {
@@ -103,5 +108,13 @@ struct TimerLookTests {
         #expect(running?.value == end.formatted(date: .omitted, time: .shortened))
         #expect(TimerLook.sideStatus(for: .paused(timeLeft: 60))?.value == "Paused")
         #expect(TimerLook.sideStatus(for: .stopped) == nil)
+    }
+
+    @Test func timesUpsExampleLooksTheSameButLeavesOnItsOwn() {
+        let example = TimerLook.timesUpExample(color: .blue)
+        var real = TimerLook.timesUp(color: .blue)
+        real.endsWhenSeen = false
+        real.duration = GlowExample.duration
+        #expect(example == real)
     }
 }

@@ -3,13 +3,11 @@ import SwiftUI
 
 /// Every calendar value in one place: timings, colours, texts and the heads-up activity.
 nonisolated enum CalendarLook {
-    /// How long before an event its heads-up shows. A Settings option later.
+    /// How long before an event the example heads-up's event starts (Settings → Calendar,
+    /// Show an example and the glow's Preview).
     static let leadTime: TimeInterval = 5 * 60
     /// Seconds the heads-up stays on the pill.
     static let headsUpDuration: TimeInterval = 6
-    /// A macOS system sound, played once with each heads-up. Not the timer's, so the two
-    /// can be told apart by ear.
-    static let soundName = "Ping"
     /// Seconds a ticked-off reminder stays, filled, before it moves to the end of the list.
     static let completedReminderDelay: TimeInterval = 1
     static let symbolName = "calendar"
@@ -18,16 +16,19 @@ nonisolated enum CalendarLook {
     /// Pale rose, #F2A496: the big day number.
     static let paleRose = Color(red: 0xF2 / 255, green: 0xA4 / 255, blue: 0x96 / 255)
 
-    /// The minutes until the start, rounded up, such as "5 min". Never below 1.
+    /// The minutes until the start, rounded up, such as "5 min", or "1 hour" for the
+    /// hour-before heads-up. Never below 1 minute.
     static func minutesLeftText(until start: Date, now: Date) -> String {
         let minutes = max(1, Int((start.timeIntervalSince(now) / 60).rounded(.up)))
-        return "\(minutes) min"
+        return minutes == 60 ? "1 hour" : "\(minutes) min"
     }
 
-    static func headsUp(for event: DayEvent, now: Date) -> LiveActivity {
-        LiveActivity(symbolName: symbolName, symbolColor: event.color,
-                     text: minutesLeftText(until: event.start, now: now),
-                     glowColor: event.color, duration: headsUpDuration, feature: .calendar)
+    /// The heads-up in the event's calendar colour, or the colour chosen in Settings → Calendar.
+    static func headsUp(for event: DayEvent, now: Date, color chosen: Color? = nil) -> LiveActivity {
+        let color = chosen ?? event.color
+        return LiveActivity(symbolName: symbolName, symbolColor: color,
+                            text: minutesLeftText(until: event.start, now: now),
+                            glowColor: color, duration: headsUpDuration, feature: .calendar)
     }
 
     /// The ISO week number, as in "week 46".

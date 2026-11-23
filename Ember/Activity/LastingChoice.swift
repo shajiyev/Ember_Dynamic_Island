@@ -19,12 +19,15 @@ nonisolated enum LastingPriority: String, CaseIterable {
 /// - "Time's up" (an activity that ends when seen) always wins: it is an alert.
 /// - With the countdown kept out of the notch (`timerInWings` false, Settings → Timer), only
 ///   "Time's up" shows of the timer.
+/// - A paused timer stays out of the wings too while `hidesPausedTimer` is on (Settings →
+///   Timer → Hide the timer when paused).
 /// - Otherwise `priority` decides; the other shows when the first has nothing to show.
 nonisolated enum LastingChoice {
     static func choose(timer: LiveActivity?, music: LiveActivity?, musicTabChosen: Bool,
-                       timerInWings: Bool = true, priority: LastingPriority = .lastTab) -> LiveActivity? {
+                       timerInWings: Bool = true, timerIsPaused: Bool = false, hidesPausedTimer: Bool = false,
+                       priority: LastingPriority = .lastTab) -> LiveActivity? {
         if let timer, timer.endsWhenSeen { return timer }
-        guard timerInWings else { return music }
+        guard timerInWings, !(timerIsPaused && hidesPausedTimer) else { return music }
         switch priority {
         case .timer: return timer ?? music
         case .music: return music ?? timer

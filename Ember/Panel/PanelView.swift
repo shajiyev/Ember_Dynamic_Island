@@ -48,7 +48,7 @@ struct PanelView: View {
                                                  showsRepeat: settings.showsRepeat)
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
-                case .shelf: ShelfPanelView(model: shelf)
+                case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor)
                 case nil: AllFeaturesOffView { openSettings(.music) }
                 }
             }
@@ -58,8 +58,11 @@ struct PanelView: View {
         .environment(\.colorScheme, .dark)   // the panel is always black
         .environment(\.panelLayout, settings.panelLayout)
         .environment(\.timerPresets, settings.timerPresets)
-        // The panel glows in the song's colour on the Music tab, the timer's orange on Timer.
-        .preference(key: PanelGlowColorKey.self, value: shownTab?.glowColor(songGlow: nowPlaying.glow))
+        // The panel glows in the song's colour on the Music tab, the timer's on Timer, and the
+        // shelf's chosen one on Shelf.
+        .preference(key: PanelGlowColorKey.self,
+                    value: shownTab?.glowColor(PanelTabColors(song: nowPlaying.songColor, timer: timer.color,
+                                                              shelf: settings.featureColors[.shelf])))
         // The panel's content appears each time it opens.
         .onAppear { selection.panelOpened() }
         .onDisappear { selection.panelClosed(showing: shownTab) }

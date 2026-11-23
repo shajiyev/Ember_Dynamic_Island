@@ -8,6 +8,17 @@ extension AppDelegate {
         controller.opensOnHover = settings.opensOnHover
         controller.glow = settings.glow
         nowPlaying.defaultGlow = settings.glowColor
+        nowPlaying.chosenColor = settings.featureColors[.music]
+        timer.color = settings.featureColors[.timer] ?? TimerLook.color
+        timer.timesUpColor = settings.featureColors[.timesUp] ?? TimerLook.timesUpColor
+        timer.sound = settings.timesUpSound
+        calendar.headsUpColor = settings.featureColors[.calendar]
+        calendar.headsUpSound = settings.headsUpSound
+        calendar.headsUpMinutes = settings.headsUpMinutes
+        calendar.hidesAllDayEvents = settings.hidesAllDayEvents
+        calendar.hidesCompletedReminders = settings.hidesCompletedReminders
+        battery.shownAlerts = settings.shownBatteryAlerts
+        battery.alertColors = BatteryAlert.allCases.reduce(into: [:]) { $0[$1] = settings.featureColors[$1.colorSlot] }
         controller.openSize = settings.panelSize
         controller.openSideRoom = settings.openSideRoom
         panelHotKey.register(settings.panelShortcut)

@@ -17,6 +17,14 @@ final class NowPlayingModel {
     @ObservationIgnored var defaultGlow = PillStyle.glowColor {
         didSet { if defaultGlow != oldValue { publish() } }
     }
+    /// The colour chosen in Settings → Music; nil keeps the song's own. A change reaches the
+    /// wings at once.
+    var chosenColor: Color? {
+        didSet { if chosenColor != oldValue { publish() } }
+    }
+    /// The song's colour in the wings and the Music tab's panel glow: the chosen one, else
+    /// the cover's; nil without either (the pill's own glow).
+    var songColor: Color? { chosenColor ?? glow }
     /// The players installed on this Mac, for the Open buttons.
     let installed = Player.allCases.filter { $0.appURL != nil }
     @ObservationIgnored var onActivity: ((LiveActivity?) -> Void)?
@@ -161,7 +169,7 @@ final class NowPlayingModel {
         }
         current = chosen
         if let chosen, chosen.isPlaying {
-            onActivity?(NowPlayingLook.activity(for: chosen, glow: glow, defaultGlow: defaultGlow))
+            onActivity?(NowPlayingLook.activity(for: chosen, glow: songColor, defaultGlow: defaultGlow))
         } else {
             onActivity?(nil)
         }

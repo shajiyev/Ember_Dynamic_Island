@@ -2703,50 +2703,58 @@ Fade).
 Asked 2026-11-22. Spec: docs/specs/settings.md, "Each feature's colour".
 
 ### Task 41: The colours
-- [ ] Tests first: `FeatureColor` (the feature's own default, or one colour) saved for
+- [x] Tests first: `FeatureColor` (the feature's own default, or one colour) saved for
   Music, Timer, Time's up, Calendar and Shelf, with defaults, reset with their page; the
   song's activity, the countdown, Time's up, the heads-up and the panel tabs' glow take
   the chosen colour or their default (a new cover, a calendar's colour, the Glow colour).
-- [ ] The Colour row (a menu: the default, the six colours, Custom; the Glow colour's
-  menu) on Music, Timer (two), Calendar and Shelf; the shelf's drop outline follows.
-  CLEAN, TEST, BUILD (Debug and Release, no warnings).
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] The Colour row (`FeatureColorRow`: the feature's own circle, then the Glow colour's
+  circles and Custom) on Music, Timer (two), Calendar and Shelf; the shelf's drop outline,
+  the Timer tab's ring and each tab's panel glow follow; Preview uses the colour. CLEAN,
+  TEST, BUILD (Debug and Release, no warnings): 482 tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 15: Timer — Time's up's sound and example, hiding when paused
 
 Spec: docs/specs/settings.md, Timer ("When time's up", "Alert sounds").
 
 ### Task 42: Alert sounds, the example, hiding when paused
-- [ ] Tests first: `AlertSound` (None, Glass, Ping; None has no sound); Time's up's sound
+- [x] Tests first: `AlertSound` (None, Glass, Ping; None has no sound); Time's up's sound
   and Hide the timer when paused saved with their defaults and reset with the Timer page;
   a paused timer gives no activity to the wings when hidden (`LastingChoice`).
-- [ ] The rows and Show an example (Time's up once, its sound once, leaves after 5 s or on
-  hover). CLEAN, TEST, BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] The rows (`AlertSoundPicker` plays each sound as it is picked) and Show an example
+  (`TimerLook.timesUpExample`: Time's up once, its sound once, leaves after 5 s). CLEAN,
+  TEST, BUILD (Debug and Release, no warnings): 488 tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 16: Battery — a switch per alert, and the low battery sound
 
 ### Task 43
-- [ ] Tests first: each of the four alerts can be off on its own (`BatteryAlertRules`);
-  the switches and Low battery sound are saved, reset with the Battery page, and greyed
-  out while Battery alerts is off.
-- [ ] The four switches and the sound row; Low and Very low play the sound. CLEAN, TEST,
-  BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] Tests first: each of the four alerts can be off on its own (`BatteryAlertRules.shown`;
+  with Very low off, a drop past both gives Low); the switches and Low battery sound are
+  saved, reset with the Battery page, and greyed out while Battery alerts is off.
+- [x] The four switches and the sound row; Low and Very low play the sound, and so do their
+  examples. CLEAN, TEST, BUILD (Debug and Release, no warnings): 494 tests pass.
+- [x] Asked after the check (2026-11-23): a Colour row under each alert's switch, shown while
+  it is on (`BatteryAlert.colorSlot`, four more `FeatureColor`s), reset with the page.
+  CLEAN, TEST, BUILD (Debug and Release, no warnings): 496 tests pass.
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 17: Calendar — heads-ups, their sound and example, and the tab's list
 
 ### Task 44: Up to three heads-ups
-- [ ] Tests first (`HeadsUpSchedule`): several lead times give a heads-up at each; a heads-up
-  whose time passed before the event was found is not shown; two rows never share a time.
-- [ ] The Heads-ups rows (minutes menu, −, + Add a heads-up, up to three), saved and reset
+- [x] Tests first (`HeadsUpSchedule`): several lead times give a heads-up at each; a heads-up
+  whose time passed before the event was found is not shown; two rows never share a time
+  (`HeadsUpTimes`).
+- [x] The Heads-ups rows (minutes menu, −, + Add a heads-up, up to three), saved and reset
   with the Calendar page.
 
 ### Task 45: Sound, example, and hiding in the list
-- [ ] Tests first: Hide all-day events and Hide completed reminders leave them out of the
+- [x] Tests first: Hide all-day events and Hide completed reminders leave them out of the
   day's list; the heads-up's sound is saved and reset.
-- [ ] The rows and Show an example. CLEAN, TEST, BUILD.
-- [ ] The user checks on screen. Checkpoint and commit.
+- [x] The rows and Show an example. CLEAN, TEST, BUILD (Debug and Release, no warnings):
+  506 tests pass.
+- [x] Asked after the check: an hour before reads "1 hour" (was "60 min").
+- [x] The user checked on screen (2026-11-23). Checkpoint and commit.
 
 ## Part 18: Volume & Brightness — two switches
 

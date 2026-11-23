@@ -1,6 +1,7 @@
 import CoreFoundation
 import IOKit.ps
 import Observation
+import SwiftUI
 
 /// Watches the internal battery. Publishes the current reading for the panel and hands
 /// each alert, as a live activity, to `onAlert`.
@@ -8,9 +9,16 @@ import Observation
 final class BatteryMonitor {
     /// Nil before `start()`, and on a Mac without a battery.
     private(set) var reading: BatteryReading?
-    /// Called with the live activity for each battery alert.
-    @ObservationIgnored var onAlert: ((LiveActivity) -> Void)?
+    /// Called with each battery alert and its live activity.
+    @ObservationIgnored var onAlert: ((BatteryAlert, LiveActivity) -> Void)?
     @ObservationIgnored private var rules = BatteryAlertRules()
+    /// The colours chosen in Settings → Battery; an alert missing here keeps its own.
+    @ObservationIgnored var alertColors: [BatteryAlert: Color] = [:]
+    /// The alerts switched on in Settings → Battery.
+    @ObservationIgnored var shownAlerts: Set<BatteryAlert> {
+        get { rules.shown }
+        set { rules.shown = newValue }
+    }
     /// IOKit's change notices, while listening.
     @ObservationIgnored private var source: CFRunLoopSource?
 
@@ -32,7 +40,9 @@ final class BatteryMonitor {
         CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
         self.source = nil
         reading = nil
+        let shown = rules.shown
         rules = BatteryAlertRules()   // a later start must not compare with a reading from before the stop
+        rules.shown = shown
     }
 
     fileprivate func refresh() {
@@ -40,7 +50,7 @@ final class BatteryMonitor {
         guard newReading != reading else { return }   // IOKit also reports changes we ignore
         reading = newReading
         guard let newReading, let alert = rules.alert(for: newReading) else { return }
-        onAlert?(alert.liveActivity(for: newReading))
+        onAlert?(alert, alert.liveActivity(for: newReading, color: alertColors[alert]))
     }
 }
 

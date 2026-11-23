@@ -10,6 +10,8 @@ struct TimerRing: View {
     let fractionGone: Double
     /// The time left, shown in the centre instead of the symbol; nil shows the symbol.
     var centerText: String? = nil
+    /// The timer's colour (Settings → Timer → Colour).
+    var color = TimerLook.color
 
     var body: some View {
         ZStack {
@@ -17,7 +19,7 @@ struct TimerRing: View {
             if fractionGone > 0 {
                 Circle()
                     .trim(from: 0, to: min(fractionGone, 1))
-                    .stroke(TimerLook.color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .stroke(color, style: StrokeStyle(lineWidth: 6, lineCap: .round))
                     .rotationEffect(.degrees(-90))
             }
             if let centerText {
@@ -31,7 +33,7 @@ struct TimerRing: View {
             } else {
                 Image(systemName: "timer")
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(TimerLook.color)
+                    .foregroundStyle(color)
             }
         }
         .padding(13)

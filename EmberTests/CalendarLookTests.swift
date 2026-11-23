@@ -14,6 +14,12 @@ struct CalendarLookTests {
         #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(20), now: now) == "1 min")
     }
 
+    @Test func anHourAwayReadsOneHour() {
+        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3600), now: now) == "1 hour")
+        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(3599.5), now: now) == "1 hour")
+        #expect(CalendarLook.minutesLeftText(until: now.addingTimeInterval(59 * 60), now: now) == "59 min")
+    }
+
     @Test func theHeadsUpGlowsInTheCalendarsColour() {
         let start = now.addingTimeInterval(300)
         let event = DayEvent(id: "1", title: "Standup", start: start, end: start.addingTimeInterval(900),
@@ -25,6 +31,15 @@ struct CalendarLookTests {
         #expect(activity.text == "5 min")
         #expect(activity.duration == CalendarLook.headsUpDuration)
         #expect(activity.feature == .calendar)
+    }
+
+    @Test func aChosenColourReplacesTheCalendarsColour() {
+        let start = now.addingTimeInterval(300)
+        let event = DayEvent(id: "1", title: "Standup", start: start, end: start.addingTimeInterval(900),
+                             isAllDay: false, color: .green)
+        let chosen = CalendarLook.headsUp(for: event, now: now, color: .blue)
+        #expect(chosen.symbolColor == .blue && chosen.glowColor == .blue)
+        #expect(CalendarLook.headsUp(for: event, now: now, color: nil).glowColor == .green)
     }
 
     @Test func weekNumbersAreISOWeeks() {

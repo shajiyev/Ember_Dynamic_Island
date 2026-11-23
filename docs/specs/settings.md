@@ -499,7 +499,7 @@ as it is picked. Its answers are these two settings; Settings → Glow changes t
 | Show shuffle | off | *In the Music tab.* A shuffle button at the left end of the controls; it switches the player's own setting. Greyed out while Music is off. |
 | Show repeat | off | *In the Music tab.* A repeat button at the right end; repeat plays the whole list again. Greyed out while Music is off. |
 | Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the song's glow in the wings: see Glow, "Each feature's own live activity glow". |
-| Colour | The song's colour | *Planned 2026-11-22.* The colour of the song in the wings (equalizer and glow) and of the Music tab's panel glow: the cover's colour (today's look), or one colour from the colour menu. See "Each feature's colour" below. Greyed out while Music is off. |
+| Colour | The song's colour | (2026-11-22.) The colour of the song in the wings (equalizer and glow) and of the Music tab's panel glow: the cover's colour (today's look), or one colour from the colour menu. See "Each feature's colour" below. Greyed out while Music is off. |
 | Show the song when it changes | on | *Planned 2026-11-22, built with the feature.* When the song changes, the pill grows down by a strip, like the volume's, with the new song's name. Greyed out while Music is off. Details: docs/specs/now-playing.md, "The song when it changes". |
 | Buttons | Previous, Play/Pause, Next | *Planned 2026-11-22, built with the feature.* The Music tab's buttons, arranged by dragging on a preview of the row; it replaces Show shuffle and Show repeat. Details: docs/specs/now-playing.md, "Arranging the buttons". |
 
@@ -514,19 +514,19 @@ Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 | Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
 | Presets | 5, 25, 45 min | (2026-11-18.) The Timer tab's three preset buttons: each a number box with arrows, 1–180 minutes. The buttons show "5m", "25m", or "1h30" from an hour up. |
 | Show the countdown in the notch | on | (2026-11-18) Off: a running or paused timer stays out of the wings and is seen only in the Timer tab; a playing song keeps the wings instead. "Time's up" still shows in the wings, with its sound: it is the alert that the timer finished. Greyed out while Timer is off. |
-| Colour | Orange, #FF7A1E | *Planned 2026-11-22.* The countdown's colour wherever the timer is orange today: its symbol and its glow in the wings, and the Timer tab with its panel glow. See "Each feature's colour" below. Greyed out while Timer is off. |
-| Hide the timer when paused | off | *Planned 2026-11-22.* On: a paused timer leaves the wings and the pill goes back to rest (or a playing song takes the wings); resuming brings it back. The Timer tab still shows it. Greyed out while Timer or Show the countdown in the notch is off. |
+| Colour | Orange, #FF7A1E | (2026-11-22.) The countdown's colour wherever the timer is orange today: its symbol and its glow in the wings, and the Timer tab with its panel glow. See "Each feature's colour" below. Greyed out while Timer is off. |
+| Hide the timer when paused | off | (Built 2026-11-23.) On: a paused timer leaves the wings and the pill goes back to rest (or a playing song takes the wings); resuming brings it back. The Timer tab still shows it. Greyed out while Timer or Show the countdown in the notch is off. Saved under `hidesPausedTimer`. |
 | Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the countdown's and Time's up's glow: see Glow, "Each feature's own live activity glow". |
 
-**When time's up** (*planned 2026-11-22*), its own section:
+**When time's up** (built 2026-11-23), its own section:
 
 | Setting | Default | What it does |
 |---|---|---|
 | Colour | Amber, #FFA826 | Time's up's symbol and glow. See "Each feature's colour". |
-| Sound | Glass | From the alert sounds (see below). None: Time's up shows without a sound. |
-| Show an example | — | A button: Time's up plays in the notch as it really looks, its sound once, and leaves after 5 s or when hovered. It does not touch a timer that is running, and works while Timer is off. |
+| Sound | Glass | From the alert sounds (see below). None: Time's up shows without a sound. Saved under `timesUpSound`. |
+| Show an example | — | A button: Time's up plays in the notch as it really looks, its sound once, and leaves after 5 s like the other examples (hovering opens the panel over it). It does not touch a timer that is running, and works while Timer is off. |
 
-**Alert sounds** (*planned 2026-11-22*): Timer, Calendar and Battery choose from one list:
+**Alert sounds** (built 2026-11-23 with Timer, `AlertSound`): Timer, Calendar and Battery choose from one list:
 None, Glass and Ping, the two sounds Ember plays today. More sounds are chosen later with
 the user. The list plays the sound when a sound is picked.
 
@@ -543,16 +543,19 @@ Details: docs/specs/timers.md.
 | Show Reminders | off | *In the Calendar tab.* The day's reminders, with the same rules and its own permission. Saved under `showsReminders`. |
 | Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the heads-up's glow: see Glow, "Each feature's own live activity glow". With it came a Reset to Defaults (Calendar and its glow). |
 
-*Planned 2026-11-22:*
+*Planned 2026-11-22, built 2026-11-23:*
 
 | Setting | Default | What it does |
 |---|---|---|
-| Hide all-day events | off | *In the Calendar tab.* All-day events leave the day's list. Greyed out while Show Calendar Events is off. |
-| Hide completed reminders | off | *In the Calendar tab.* Reminders completed that day leave the end of the day's list. Greyed out while Show Reminders is off. |
-| Heads-ups | one, 5 minutes before | Up to three heads-ups before each event. Each is a row with a minutes menu (1, 2, 5, 10, 15, 30, 60) and a − button; the last one left has no −. "+ Add a heads-up" adds one, up to three. A time already used is left out of the other rows' menus. A heads-up whose time has already passed when the event is found (the event was just added) is not shown; only those still to come are. |
+| Hide all-day events | off | *In the Calendar tab*, under Show Calendar Events. All-day events leave the day's list. Greyed out while Show Calendar Events is off. Saved under `hidesAllDayEvents`. |
+| Hide completed reminders | off | *In the Calendar tab*, under Show Reminders. Reminders completed that day leave the end of the day's list (Ember does not read them). Greyed out while Show Reminders is off. Saved under `hidesCompletedReminders`. |
+| Heads-ups | one, 5 minutes before | Up to three heads-ups before each event. Each is a row with a minutes menu (1, 2, 5, 10, 15, 30, 60) and a − button; the last one left has no −. "+ Add a heads-up" adds one, up to three. A time already used is left out of the other rows' menus. A heads-up whose time has already passed when the event is found (the event was just added, or the Mac woke after it) is not shown; only those still to come are. "+ Add a heads-up" adds the next time after the longest (5 → 10 → 15), or the longest one left. Saved under `headsUpMinutes` (`HeadsUpTimes`). |
 | Colour | The calendar's colour | The heads-up's symbol and glow: the event's calendar colour (today's look), or one colour. See "Each feature's colour". |
-| Sound | Ping | From the alert sounds (see Timer). |
-| Show an example | — | A button: a heads-up for an example event plays in the notch, as it really looks, with its sound. Works while Calendar is off. |
+| Sound | Ping | From the alert sounds (see Timer). Saved under `headsUpSound`. |
+| (wing text) | — | The heads-up says "5 min", or "1 hour" for the hour-before heads-up (asked 2026-11-23; was "60 min"). |
+| Show an example | — | A button: a heads-up for an example event 5 minutes away ("5 min") plays in the notch, as it really looks, with its sound, and leaves after 5 s. Works while Calendar is off. |
+
+The Heads-up section holds, in order: the heads-up rows, Colour, Sound, Show an example.
 
 The heads-up settings, except Show an example, are greyed out while Calendar is off. Details: docs/specs/calendar.md.
 
@@ -564,7 +567,7 @@ The heads-up settings, except Show an example, are greyed out while Calendar is 
 |---|---|---|
 | Shelf | on | The Shelf tab: files dropped on the notch are kept there as links, and can be sent with AirDrop. |
 | Add screenshots to the shelf | on | A new screenshot goes first on the shelf. Greyed out while Shelf is off. |
-| Colour | The glow colour | *Planned 2026-11-22.* The Shelf tab's panel glow and the outline that lights up while files are dragged over the shelf: the Glow page's colour (the resting glow's), or one colour. See "Each feature's colour". Greyed out while Shelf is off. |
+| Colour | The glow colour | (2026-11-22.) The Shelf tab's panel glow and the outline that lights up while files are dragged over the shelf: the Glow page's colour (the resting glow's), or one colour. See "Each feature's colour". Greyed out while Shelf is off. |
 | Stay on the Shelf tab for | 5 s | After a screenshot or a drop, the panel opens on the Shelf tab for this long, whatever "Open the panel on" says. 1–20 s, whole seconds. Greyed out while Shelf is off. |
 
 A last section explains that macOS can open Mission Control when something is dragged to
@@ -578,9 +581,9 @@ docs/specs/file-shelf.md.
 | Setting | Default | What it does |
 |---|---|---|
 | Battery alerts | on | Alerts in the wings when the charger is plugged in or out, and at 20% and 10%. |
-| Plugged in · Unplugged · Low (20%) · Very low (10%) | all on | *Planned 2026-11-22.* A switch for each alert, under Battery alerts and greyed out while it is off. The two low alerts stay red and at 20% and 10%, as on Apple's own devices. |
-| Low battery sound | Ping | *Planned 2026-11-22.* Plays with the Low and Very low alerts; from the alert sounds (see Timer). None: silent, as today. |
-| Battery in the panel | on | The percentage at the top right of the open panel. |
+| Plugged in · Unplugged · Low (20%) · Very low (10%) | all on | (Built 2026-11-23.) A switch for each alert, under Battery alerts and greyed out while it is off. The two low alerts stay red and at 20% and 10%, as on Apple's own devices. With Very low off, a drop past both thresholds at once gives Low (if Low has not come yet). Saved under `shownBatteryAlerts` (the names of those on). |
+| Low battery sound | Ping | (Built 2026-11-23.) Plays with the Low and Very low alerts, and with their examples; from the alert sounds (see Timer). None: silent, as before. Saved under `lowBatterySound`. |
+| Battery in the panel | on | The percentage at the top right of the open panel. In its own section below the alerts since 2026-11-23. |
 | Live activity glow | Shared | (2026-11-21.) Off, Shared or Custom for the battery alerts' glow: see Glow, "Each feature's own live activity glow". Greyed out while Battery alerts is off. |
 
 **Show an example** (2026-11-18): a menu button right under Battery alerts with the four
@@ -735,7 +738,7 @@ activation-policy steps from its `SettingsWindowController.swift`. Written into 
 files with Ember's names; covered by the README credit. None of Atoll's identifiers,
 Sparkle wiring, search highlight coordinator or settings keys come along.
 
-## Each feature's colour (planned 2026-11-22)
+## Each feature's colour (built 2026-11-22)
 
 Asked 2026-11-22. Music, Timer (the countdown and Time's up), Calendar (the heads-up) and
 Shelf each get a **Colour** row on their own page. It is not part of the Live activity
@@ -743,10 +746,9 @@ glow section: it applies whether that is Off, Shared or Custom, and has nothing 
 Strength, Spread or Fade. With the glow Off, the colour still tints the symbol.
 
 ```
-Colour   ● Orange (Timer's own)  ▾
-         ─────────────
-         ● Rose  ● Amber  ● Mint  ● Blue  ● Lilac  ● White
-         Custom…
+Colour   (●) │ ● ● ● ● ● ●  ◌ Custom
+          ↑ the feature's own: Timer orange, Amber, the glow colour,
+            or a rainbow for one that changes (the song's, the calendar's)
 ```
 
 | Page | The menu's first choice (the default) | What the colour paints |
@@ -756,10 +758,18 @@ Colour   ● Orange (Timer's own)  ▾
 | Timer → When time's up → Colour | Amber, #FFA826 | Time's up's symbol and glow |
 | Calendar → Colour | The calendar's colour (each event's own) | The heads-up's symbol and glow |
 | Shelf → Colour | The glow colour (the Glow page's, as the resting glow) | The Shelf tab's panel glow; the drop outline (Ember rose today) |
+| Battery → under each alert's switch (added 2026-11-23) | Green (Plugged in), yellow (Unplugged), red (Low, Very low) | That alert's symbol and glow, and its example; Battery's glow Preview uses Plugged in's. Shown only while the alert's switch is on |
 
-- Every menu starts with the feature's own default, then the six colours offered for the
-  Glow colour, then Custom (the same menu as Glow colour). Choosing the first choice again
-  goes back to following it (a new song's cover, a calendar's colour, a new Glow colour).
+- Each row is the Glow colour's row with one circle in front: the feature's own colour
+  (its name on hover), then the six offered colours and Custom. Choosing the first circle
+  again goes back to following it (a new song's cover, a calendar's colour, a new Glow
+  colour). Each row has its own section and footer, and is greyed out while its feature
+  is off. Timer's Time's up colour sits under a "When time's up" header, Calendar's under
+  "Heads-up".
+- Saved under `musicColor`, `timerColor`, `timesUpColor`, `calendarColor`, `shelfColor`,
+  `batteryPluggedInColor`, `batteryUnpluggedColor`, `batteryLowColor`, `batteryVeryLowColor`
+  as hex codes (`AppSettings.featureColors`, `FeatureColor`); none saved is the feature's
+  own. A Preview on the feature's glow uses its colour.
 - The Calendar tab and "Nothing playing" keep the pill's own glow.
 - Each page's Reset to Defaults brings back its colours.
 

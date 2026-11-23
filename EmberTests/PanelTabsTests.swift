@@ -33,18 +33,24 @@ struct PanelTabsTests {
         #expect(selection.tab == .timer)
     }
 
+    private let colours = PanelTabColors(song: .blue, timer: .orange, shelf: nil)
+
     @Test func theMusicTabGlowsInTheSongsColour() {
-        #expect(PanelTab.music.glowColor(songGlow: .blue) == .blue)
-        #expect(PanelTab.music.glowColor(songGlow: nil) == nil)   // the pill's own glow
+        #expect(PanelTab.music.glowColor(colours) == .blue)
+        #expect(PanelTab.music.glowColor(PanelTabColors(song: nil, timer: .orange, shelf: nil)) == nil)   // the pill's own glow
     }
 
-    @Test func theTimerTabGlowsTimerOrange() {
-        #expect(PanelTab.timer.glowColor(songGlow: .blue) == TimerLook.color)
-        #expect(PanelTab.timer.glowColor(songGlow: nil) == TimerLook.color)
+    @Test func theTimerTabGlowsInTheTimersColour() {
+        #expect(PanelTab.timer.glowColor(colours) == .orange)
     }
 
     @Test func theCalendarTabKeepsThePillsGlow() {
-        #expect(PanelTab.calendar.glowColor(songGlow: .blue) == nil)
+        #expect(PanelTab.calendar.glowColor(colours) == nil)
+    }
+
+    @Test func theShelfTabGlowsInItsChosenColourOrThePills() {
+        #expect(PanelTab.shelf.glowColor(colours) == nil)
+        #expect(PanelTab.shelf.glowColor(PanelTabColors(song: nil, timer: .orange, shelf: .green)) == .green)
     }
 
     @Test func theChosenTabShowsWhileItIsOn() {

@@ -27,15 +27,25 @@ nonisolated enum PanelTab: String, CaseIterable {
         }
     }
 
-    /// The glow the open panel asks for on this tab: the song's colour on Music (nil keeps
-    /// the pill's own glow), the timer's orange on Timer, the pill's own glow on Calendar and Shelf.
-    func glowColor(songGlow: Color?) -> Color? {
+    /// The glow the open panel asks for on this tab: the song's colour on Music, the timer's
+    /// on Timer, the shelf's chosen one on Shelf; nil keeps the pill's own glow (Calendar).
+    func glowColor(_ colors: PanelTabColors) -> Color? {
         switch self {
-        case .music: return songGlow
-        case .timer: return TimerLook.color
-        case .calendar, .shelf: return nil
+        case .music: return colors.song
+        case .timer: return colors.timer
+        case .calendar: return nil
+        case .shelf: return colors.shelf
         }
     }
+}
+
+/// The colours the tabs glow in (Settings → each feature's Colour).
+nonisolated struct PanelTabColors {
+    /// The song's colour, nil without a cover or a chosen colour.
+    var song: Color?
+    var timer: Color
+    /// The shelf's chosen colour, nil for the pill's own glow.
+    var shelf: Color?
 }
 
 /// The panel's tab, remembered between openings (Music at launch). The tab the panel was

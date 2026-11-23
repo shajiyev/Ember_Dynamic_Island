@@ -73,4 +73,10 @@ struct CalendarItemsTests {
         }
         #expect(names == ["Calendar.app", "Reminders.app"])
     }
+
+    @Test func hidingAllDayEventsLeavesTheTimedOnes() {
+        let events = [event("Holiday", 0, allDay: true), event("Standup", 9)]
+        #expect(CalendarItems.shown(events, hidesAllDay: true).map(\.title) == ["Standup"])
+        #expect(CalendarItems.shown(events, hidesAllDay: false) == events)
+    }
 }

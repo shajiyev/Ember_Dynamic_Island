@@ -19,6 +19,7 @@ nonisolated struct Countdown: Equatable {
     private(set) var runSeconds = 0
 
     var isStopped: Bool { phase == .stopped }
+    var isPaused: Bool { if case .paused = phase { true } else { false } }
 
     mutating func stepUp(_ unit: TimerSetting.Unit) {
         if isStopped { setting.stepUp(unit) }

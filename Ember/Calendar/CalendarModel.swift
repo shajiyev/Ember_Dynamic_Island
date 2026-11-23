@@ -1,6 +1,7 @@
 import AppKit
 import Foundation
 import Observation
+import SwiftUI
 
 /// The Calendar tab's state: the month the grid shows, the selected day, the two switches,
 /// the selected day's events and reminders, and the one timer for the next heads-up. Each time
@@ -27,12 +28,27 @@ final class CalendarModel {
     @ObservationIgnored private let store = CalendarStore()
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var isPanelShown = false
-    /// Called with the heads-up activity 5 minutes before an event.
+    /// Called with each heads-up activity before an event.
     @ObservationIgnored var onHeadsUp: ((LiveActivity) -> Void)?
+    /// The heads-up's colour (Settings → Calendar → Colour); nil keeps each calendar's own.
+    @ObservationIgnored var headsUpColor: Color?
+    /// The heads-up's sound (Settings → Calendar → Sound).
+    @ObservationIgnored var headsUpSound = AlertSound.ping
+    /// How many minutes before an event its heads-ups come (Settings → Calendar → Heads-ups).
+    @ObservationIgnored var headsUpMinutes = HeadsUpTimes.standard {
+        didSet { if headsUpMinutes != oldValue { scheduleHeadsUp() } }
+    }
+    /// Settings → Calendar: all-day events and completed reminders left out of the day's list.
+    @ObservationIgnored var hidesAllDayEvents = false {
+        didSet { if hidesAllDayEvents != oldValue { refresh() } }
+    }
+    @ObservationIgnored var hidesCompletedReminders = false {
+        didSet { if hidesCompletedReminders != oldValue { refresh() } }
+    }
     /// The one timer, set for the next heads-up.
     @ObservationIgnored private var headsUpTimer: Task<Void, Never>?
-    /// Start times already announced, so an event is announced once.
-    @ObservationIgnored private var announcedStarts: Set<Date> = []
+    /// Heads-ups already shown, so each is shown once.
+    @ObservationIgnored private var announced: Set<HeadsUpMoment> = []
     @ObservationIgnored private var observers: [(NotificationCenter, NSObjectProtocol)] = []
     /// Counts refreshes, so an older answer from EventKit is dropped.
     @ObservationIgnored private var refreshCount = 0
@@ -182,7 +198,8 @@ final class CalendarModel {
         guard isPanelShown else { return }
         let day = calendar.startOfDay(for: selectedDay)
         let nextDay = calendar.date(byAdding: .day, value: 1, to: day)!
-        events = showsEvents ? CalendarItems.sorted(store.events(from: day, to: nextDay)) : []
+        events = showsEvents ? CalendarItems.shown(CalendarItems.sorted(store.events(from: day, to: nextDay)),
+                                                   hidesAllDay: hidesAllDayEvents) : []
         guard showsReminders else {
             reminders = []
             done = []
@@ -190,10 +207,11 @@ final class CalendarModel {
         }
         let today = self.today
         let count = refreshCount
+        let hidesCompleted = hidesCompletedReminders
         Task { [weak self] in
             guard let self else { return }
             let due = await store.incompleteReminders(dueBefore: nextDay)
-            let completed = await store.completedReminders(from: day, to: nextDay)
+            let completed = hidesCompleted ? [] : await store.completedReminders(from: day, to: nextDay)
             // A newer refresh (another day, a tick, the switch turned off) makes this answer stale.
             guard count == refreshCount else { return }
             reminders = CalendarItems.reminders(due, on: day, today: today, calendar: calendar)
@@ -211,27 +229,28 @@ final class CalendarModel {
         turnOffSwitchesWithoutAccess()
         guard showsEvents else { return }
         let now = Date()
-        announcedStarts = announcedStarts.filter { $0 > now }
+        announced = announced.filter { $0.start > now }
         let endOfTomorrow = calendar.date(byAdding: .day, value: 2, to: calendar.startOfDay(for: now))!
         guard let next = HeadsUpSchedule.next(events: store.events(from: now, to: endOfTomorrow), now: now,
-                                              leadTime: CalendarLook.leadTime,
-                                              announcedStarts: announcedStarts) else { return }
+                                              leadTimes: headsUpMinutes.map { TimeInterval($0 * 60) },
+                                              announced: announced) else { return }
         headsUpTimer = Task { [weak self] in
             try? await Task.sleep(for: .seconds(max(0, next.date.timeIntervalSinceNow)))
             guard !Task.isCancelled else { return }
-            self?.announce(next.event)
+            self?.announce(next)
         }
     }
 
     /// Shows the heads-up unless the event has started meanwhile (the Mac slept) or access was
     /// revoked, then sets the timer for the next one.
-    private func announce(_ event: DayEvent) {
+    private func announce(_ headsUp: HeadsUp) {
         let now = Date()
         turnOffSwitchesWithoutAccess()
-        if showsEvents, event.start > now {
-            announcedStarts.insert(event.start)
-            onHeadsUp?(CalendarLook.headsUp(for: event, now: now))
-            NSSound(named: CalendarLook.soundName)?.play()
+        // Marked either way, so it is never set again.
+        announced.insert(HeadsUpMoment(start: headsUp.event.start, leadTime: headsUp.leadTime))
+        if showsEvents, headsUp.event.start > now {
+            onHeadsUp?(CalendarLook.headsUp(for: headsUp.event, now: now, color: headsUpColor))
+            headsUpSound.play()
         }
         scheduleHeadsUp()
     }

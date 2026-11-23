@@ -56,7 +56,10 @@
     (`GlowFeature`) is Off, Shared or Custom (`FeatureGlow`, its own `GlowValues`), set on
     the feature's own Settings page (`FeatureGlowSection`), whose Preview plays
     `GlowFeature.exampleActivity` (`Ember/Activity/GlowExample.swift`) through the Settings
-    window's `showExample`.
+    window's `showExample`. Each feature's colour (`FeatureColor`: Music, Timer, Time's up,
+    Calendar, Shelf) is saved in `AppSettings.featureColors` (none chosen: the feature's
+    own) and handed to the models by `applySettings()`; the panel tabs' glow reads it
+    through `PanelTabColors`.
     `PillTiming` (in `PillController.swift`) holds the open and close delays and speeds;
     `PillStyle.animation(from:to:timing:)` and `panelTransition(timing:)` apply the speeds
     to opening and closing the panel (`PillController.previousState` tells a close apart).
@@ -81,16 +84,18 @@
   (status items on the right, the tab row on the left later) above the body.
 - `Ember/Battery/` — the battery feature (#4).
   - `BatteryReading.swift`: level and adapter state from IOKit, and the symbol for a reading.
-  - `BatteryAlerts.swift`: `BatteryAlertRules` (when to alert) and `BatteryAlert` (how each
-    alert looks). All battery colours, thresholds and durations live here.
+  - `BatteryAlerts.swift`: `BatteryAlertRules` (when to alert, only the alerts switched on in
+    `shown`) and `BatteryAlert` (how each alert looks, its colour slot, and whether it plays
+    the low battery sound). All battery colours, thresholds and durations live here.
   - `BatteryMonitor.swift`: listens for power-source changes, publishes the reading, and
-    sends alerts on.
+    sends each alert with its live activity (in the alert's chosen colour, `alertColors`)
+    to the app delegate, which plays the low battery sound.
   - `BatteryStatusView.swift`: percentage and icon for the panel's top row.
 - `Ember/Timer/` — the timer feature (#13).
   - `TimerSetting.swift`: hours, minutes and seconds that wrap inside their own unit.
   - `Countdown.swift`: the countdown's rules (stopped, running, paused), told the clock
     time from outside.
-  - `TimerLook.swift`: presets, sound and its repeat rule, wing text and the timer's live
+  - `TimerLook.swift`: presets, the sound's repeat rule, Time's up's example, wing text and the timer's live
     activities. All timer symbols and colours live here.
   - `TimerModel.swift`: owns the countdown, ticks while it runs, hands the pill an ongoing
     activity and rings at zero until "Time's up" is seen.
@@ -134,9 +139,11 @@
     the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (with shuffle
     and repeat at the ends when switched on) and `PlayerToggleButton`.
 - `Ember/Calendar/` — calendar & reminders (#14).
-  - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `CalendarLook.swift`:
-    the pure rules: the month's 42 days, a day's events and reminders and their order, the
-    next heads-up, and every calendar value (lead time, colours, texts).
+  - `MonthGrid.swift`, `CalendarItems.swift`, `HeadsUpSchedule.swift`, `HeadsUpTimes.swift`,
+    `CalendarLook.swift`: the pure rules: the month's 42 days, a day's events and reminders
+    and their order (all-day events hidden when asked), the next heads-up still to come
+    (one per lead time and event, `HeadsUpMoment` once shown), the heads-up times offered in
+    Settings, and every calendar value (colours, texts).
   - `CalendarStore.swift`: the only EventKit code; access, events, due reminders and the
     day's done reminders, completing and reopening a reminder, change notices.
   - `CalendarModel.swift`: the shown month, the selected day, the two switches, the day's
@@ -156,8 +163,12 @@
     private, loaded at run time; built-in screen only): the only system code for each.
   - `LevelModel.swift`: the switch, and for each key whether Ember takes it; applies the
     step and hands a `LevelReadout` to the pill.
+- `Ember/Activity/AlertSound.swift` — `AlertSound`: the sounds an alert can play (None,
+  Glass, Ping), chosen in Settings with `AlertSoundPicker` (in `FeaturePages.swift`), which
+  plays each as it is picked.
 - `Ember/Activity/LastingChoice.swift` — which lasting activity the wings show: "Time's
-  up" always; the countdown only while Settings → Timer lets it in the notch; then the
+  up" always; the countdown only while Settings → Timer lets it in the notch (and not while
+  paused, with Hide the timer when paused on); then the
   `LastingPriority` chosen in Settings → General (the timer, the song, or the last tab
   used: the song if the panel was closed on the Music tab, otherwise the timer).
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
@@ -220,7 +231,8 @@
     shortcut's box, ⓧ, caution and refusal. `AboutPage.swift` (with `AboutInfo`: version
     and links) and `PermissionsPage.swift` with `Permissions.swift` (`AppPermission`: what
     uses each permission, its System Settings page, and its status read without asking).
-    `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles and the
+    `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles (and
+    `FeatureColorRow`, the same circles after the feature's own one) and the
     Custom popup (colour square, hue bar, hex field). `TabsPreview.swift`: the drawing of
     the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `LayoutCards.swift`: the clickable panel
     layout cards, each a small drawing of its layout.
@@ -269,7 +281,7 @@ keeps the selected day. The Calendar page's two switches call `CalendarModel.tur
 `CalendarStore` for the permission. While the tab shows, the model reads the selected
 day's events, due reminders and done reminders for the switches that are on, again after any
 `EKEventStoreChanged`. With events on, the model reads the coming events, asks
-`HeadsUpSchedule` for the next heads-up and sets one timer; it works this out again after a
+`HeadsUpSchedule` for the next heads-up at the minutes chosen in Settings and sets one timer; it works this out again after a
 store change, a wake, a clock or time zone change and midnight. The heads-up goes to the
 app delegate, which shows it with `PillController.show` and sets the panel's alert tab to
 Calendar while it shows, so the next opening shows Calendar.

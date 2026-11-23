@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-22)
+## Current status (2026-11-23)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -192,9 +192,26 @@
   part 13.
 - **Done:** Atoll's Settings compared page by page (2026-11-22); what Ember adds, and what
   not, is in docs/specs/settings.md, "Compared with Atoll".
-- **Next:** Settings, parts 14–19 (docs/plans/settings.md): each feature's colour; Timer's
-  Time's up sound and example and hiding when paused; a switch per battery alert and the
-  low battery sound; up to three calendar heads-ups with sound, example and list options;
+- **Done:** each feature's colour (2026-11-23): Music (the song's colour), Timer (orange),
+  Time's up (amber), Calendar's heads-up (the calendar's colour) and Shelf (the glow
+  colour) each have a Colour row on their own page, apart from the glow's strength; the
+  colour paints the symbol and the glow, the Timer tab's ring, each tab's panel glow and
+  the shelf's drop outline. 482 tests pass; checked on screen by the user on macOS 26.6.2.
+  Plan docs/plans/settings.md, part 14.
+- **Done:** Settings → Timer (2026-11-23): Time's up's sound (None, Glass or Ping, the
+  alert sounds Calendar and Battery will share), Show an example, and Hide the timer when
+  paused. 488 tests pass; checked on screen by the user on macOS 26.6.2. Plan
+  docs/plans/settings.md, part 15.
+- **Done:** Settings → Battery (2026-11-23): a switch for each of the four alerts, each with
+  its own Colour row while on, and a Low battery sound (Ping by default) for Low and Very
+  low; Battery in the panel moved to its own section. 496 tests pass; checked on screen by
+  the user on macOS 26.6.2. Plan docs/plans/settings.md, part 16.
+- **Done:** Settings → Calendar (2026-11-23): up to three heads-ups (1 minute to 1 hour
+  before; one whose time has passed when the event is found is skipped), the heads-up's
+  sound and example, Hide all-day events and Hide completed reminders; an hour before
+  reads "1 hour". 507 tests pass; checked on screen by the user on macOS 26.6.2. Plan
+  docs/plans/settings.md, part 17.
+- **Next:** Settings, parts 18–19 (docs/plans/settings.md):
   volume and brightness as two switches; the menu bar icon and the trackpad tap. Then
   Music: the song's name when it changes, and arranging the buttons
   (docs/plans/now-playing.md, parts 2–3).

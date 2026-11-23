@@ -7,6 +7,8 @@ import SwiftUI
 /// nothing else changes.
 struct ShelfPanelView: View {
     let model: ShelfModel
+    /// Lights the shelf's area while files are dragged over it (Settings → Shelf → Colour).
+    let color: Color
     @Environment(\.closePanel) private var closePanel
     @Environment(\.fileDragPosition) private var fileDragPosition
     /// The width of the shelf's row, so its empty space fills it.
@@ -30,7 +32,7 @@ struct ShelfPanelView: View {
                     }
                 }
                 .frame(width: (proxy.size.width - ShelfLook.spacing) * ShelfLook.airDropShare)
-                ShelfDropFrame(color: nil, isTargeted: target == .keep) {
+                ShelfDropFrame(color: nil, litColor: color, isTargeted: target == .keep) {
                     shelf
                 }
             }

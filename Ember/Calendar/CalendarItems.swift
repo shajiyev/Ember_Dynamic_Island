@@ -49,6 +49,12 @@ nonisolated struct DoneReminder: Equatable, Identifiable, Sendable {
 
 /// How a day's events and reminders are chosen and ordered.
 nonisolated enum CalendarItems {
+    /// The day's events in the Calendar tab, without the all-day ones when they are hidden
+    /// (Settings → Calendar).
+    static func shown(_ events: [DayEvent], hidesAllDay: Bool) -> [DayEvent] {
+        hidesAllDay ? events.filter { !$0.isAllDay } : events
+    }
+
     /// All-day events first, then by start time; the title breaks ties.
     static func sorted(_ events: [DayEvent]) -> [DayEvent] {
         events.sorted { a, b in

@@ -27,7 +27,7 @@ struct FeatureGlowSection: View {
                 SpreadRow(item: item, spread: value(\.spread), title: "Spread")
                 FadeRow(item: item, fade: value(\.fade), title: "Fade")
                 LabeledContent("See this glow on the pill in the notch.") {
-                    Button("Preview") { showExample(feature.exampleActivity(now: Date())) }
+                    Button("Preview") { showExample(feature.exampleActivity(now: Date(), color: chosenColor)) }
                 }
             }
         } footer: {
@@ -45,6 +45,16 @@ struct FeatureGlowSection: View {
         case .timer: return .timerGlow
         case .battery: return .batteryGlow
         case .calendar: return .calendarGlow
+        }
+    }
+
+    /// The feature's colour chosen on its page, for Preview; Battery has none.
+    private var chosenColor: Color? {
+        switch feature {
+        case .music: return settings.featureColors[.music]
+        case .timer: return settings.featureColors[.timer]
+        case .calendar: return settings.featureColors[.calendar]
+        case .battery: return settings.featureColors[.batteryPluggedIn]   // its Preview plays Plugged in
         }
     }
 

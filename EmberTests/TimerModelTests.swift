@@ -18,6 +18,21 @@ struct TimerModelTests {
         timer.cancel()
     }
 
+    @Test func aNewColourReachesTheWingsAtOnce() async throws {
+        let timer = try await setToTenSeconds()
+        var shown: LiveActivity?
+        timer.onActivity = { shown = $0 }
+        timer.color = .blue   // stopped: nothing in the wings to change
+        #expect(shown == nil)
+        timer.start()
+        timer.color = .green
+        #expect(shown?.symbolColor == .green && shown?.glowColor == .green)
+        timer.pause()
+        timer.color = .blue
+        #expect(shown?.symbolName == "pause.fill" && shown?.glowColor == .blue)
+        timer.cancel()
+    }
+
     @Test func resumeShowsTheTimeLeftAtOnce() async throws {
         let timer = try await setToTenSeconds()
         timer.start()
