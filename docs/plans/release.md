@@ -16,7 +16,9 @@ page's rework (docs/specs/landing-page.md, "Redesign after v1").
   animations still running while nothing shows. Numbers written down in
   docs/performance.md; anything that stands out fixed and measured again (2026-11-23: the
   equalizer, 6.5 % → 0 %, and the glow under a timer, 5.7 % → 0.2 %).
-- [ ] Memory after a long session compared with the first `leaks` (288 leaks, 14 KB).
+- [x] Memory after a long session compared with the first `leaks` (288 leaks, 14 KB): 290
+  leaks (19 KB) after 11 minutes of heavy use, none from Ember's code (Apple's App Intents,
+  once at launch). Task 1 done.
 
 ### Task 2: README for strangers
 - [x] Install: the DMG from GitHub Releases, drag to Applications. Gatekeeper: on macOS 15
@@ -29,8 +31,12 @@ page's rework (docs/specs/landing-page.md, "Redesign after v1").
   with the versions filled in. 571 tests pass.
 
 ### Task 3: A real update, kept local
-- [ ] Two test versions (for example 0.99.0 → 0.99.1, below 1.0) with a feed served from this Mac only; a copy
+- [x] Two test versions (for example 0.99.0 → 0.99.1, below 1.0) with a feed served from this Mac only; a copy
   pointed at it updates from the app; the permissions are kept. Nothing published.
+  Done 2026-11-23: 0.99.0 in Applications updated itself to 0.99.1 through Sparkle (feed
+  and zip from 127.0.0.1 only), stayed signed with Ember Code Signing, kept Accessibility
+  and Automation without a prompt (none of macOS's "Failed to match existing code
+  requirement"), and carries no quarantine flag. The test copy and feed were removed.
 
 ### Task 4: A real first run (the user)
 - [ ] The 1.0 DMG in a fresh user account: Gatekeeper's warning, "hello", onboarding,

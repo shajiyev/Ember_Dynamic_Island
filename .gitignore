@@ -32,3 +32,6 @@ sparkle_private_key*
 
 # Brainstorming mockups (local only)
 .superpowers/
+
+# Code coverage data written by instrumented runs
+*.profraw

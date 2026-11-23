@@ -20,8 +20,12 @@ per state; `leaks` and `footprint` for memory.
 | Volume keys, about one press every 2 s | 10.8 % (max 26 %) | 10.8 | 0 | Only while pressing (see below) |
 
 **Memory:** 20 MB footprint after launch; 64 MB after the panel, every tab and Settings
-had been opened. `leaks`: 288 small leaks, 14 KB in all, every one a framework `NSSet` or
-`NSArray` (no Ember type). To compare after a long session: the count must not grow.
+had been opened. **Leaks:** 288 small leaks (14 KB) after the first session and 290 (19 KB)
+after 11 minutes of heavy use (songs skipped, every tab, volume keys, a timer): they do not
+grow. Recorded with `MallocStackLogging`, none comes from Ember's code: they are one
+connection Apple's App Intents framework opens at launch to a Shortcuts service that is not
+running (`com.apple.linkd.autoShortcut`, "[no process]") and never cleans up. (A Debug
+build shows thousands more, from Debug's own bookkeeping; only Release counts.)
 
 ## Fixed during the audit
 
