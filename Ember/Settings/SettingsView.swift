@@ -21,6 +21,8 @@ struct SettingsView: View {
     let notchWidth: CGFloat
     /// Plays a brief activity in the notch, as an example.
     let showExample: (LiveActivity) -> Void
+    /// Plays onboarding again.
+    let showWelcome: () -> Void
     @State private var searchText = ""
 
     var body: some View {
@@ -80,7 +82,7 @@ struct SettingsView: View {
         case .keepAwake: KeepAwakePage(settings: settings, keepAwake: keepAwake)
         case .permissions: PermissionsPage()
         case .feedback: FeedbackPage()
-        case .about: AboutPage()
+        case .about: AboutPage(showWelcome: showWelcome)
         }
     }
 }

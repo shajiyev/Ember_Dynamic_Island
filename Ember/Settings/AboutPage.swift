@@ -18,6 +18,8 @@ nonisolated enum AboutInfo {
 /// Settings → About: the icon, name and version, the website, the code and the licence, and
 /// the credit to the projects some code is adapted from (as in the README).
 struct AboutPage: View {
+    let showWelcome: () -> Void
+
     var body: some View {
         Form {
             Section {
@@ -42,6 +44,12 @@ struct AboutPage: View {
                 Link("License: GPL-3.0", destination: AboutInfo.license)
             } footer: {
                 Text("Small portions of code are adapted from Atoll and Boring Notch (GPL-3.0).")
+            }
+            Section {
+                LabeledContent("The greeting in the notch and the first-launch questions.") {
+                    Button(SettingsItem.showWelcome.title, action: showWelcome)
+                }
+                .settingsItem(.showWelcome)
             }
         }
     }

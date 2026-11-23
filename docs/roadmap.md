@@ -236,12 +236,16 @@
   Ember gone), asking for the password or, after Allow Without Password, not. 551 tests
   pass; checked on screen by the user on macOS 26.6.2. Spec docs/specs/keep-awake.md, plan
   docs/plans/keep-awake.md.
-- **Next:** onboarding and permission requests (#0, with a Glow step: glow or not, and its
-  colour, with the notch changing live), then auto-updates (Sparkle), then "Ship it".
+- **Done:** onboarding (#0, 2026-11-23): on the first launch "hello" writes itself in the
+  notch (Ember's own lettering, rose to blue), then Get Started opens a six-page window:
+  Glow, Music, Calendar, Volume & Brightness, How to use, You're all set (with launch at
+  login). Music and Volume & Brightness stay off until chosen there, so no permission is
+  asked unasked; Settings → About → Show Welcome Again replays it. 561 tests pass; checked
+  on screen by the user on macOS 26.6.2 (replayed, not yet as a fresh install).
+- **Next:** auto-updates (Sparkle), then "Ship it".
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
-- **Next:** the rest of the v1 list: onboarding and permission requests (#0), then
-  auto-updates (Sparkle), then "Ship it" (milestone 3).
+- **Next:** the rest of the v1 list: auto-updates (Sparkle), then "Ship it" (milestone 3).
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything
@@ -264,6 +268,10 @@
    instructions for the Gatekeeper warning. Investigate a stable self-signed certificate
    so permissions survive updates.
    Before each public release: smoke-test on macOS 15 (virtual machine or external boot disk).
+   **Before the first release: a real first run** (asked 2026-11-23): download the DMG into a
+   new user account (or, on one's own, `defaults delete io.github.shajiyev.Ember` and
+   `tccutil reset All io.github.shajiyev.Ember` first) and go through onboarding as a new
+   user would, Gatekeeper's warning included.
    **Checkpoint before the first release: performance audit.** Go through the whole app and
    prove it does not slow the Mac down. Measure with Instruments and Activity Monitor:
    CPU and energy impact at rest (pill idle, always-on glow on), with each live activity

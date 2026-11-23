@@ -23,8 +23,8 @@ struct SettingsSearchTests {
         // Volume & Brightness in the Pill".
         #expect(SettingsSearch.matches("show") == [.showsMenuBarIcon, .alertsInFullScreen, .lastingPriority, .songOnChange, .timerInWings,
                                                    .timesUpExample, .calendarEvents, .reminders, .headsUpExample,
-                                                   .batteryExample, .volumeInPill, .brightnessInPill])
-        #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels])
+                                                   .batteryExample, .volumeInPill, .brightnessInPill, .showWelcome])
+        #expect(SettingsSearch.pages(for: "show") == [.general, .music, .timer, .calendar, .battery, .levels, .about])
     }
 
     @Test func theLayoutAndThePlayerButtonsAreFound() {
@@ -201,5 +201,10 @@ struct SettingsSearchTests {
         let pages = SettingsPage.allCases
         #expect(pages[pages.firstIndex(of: .levels)! + 1] == .keepAwake)
         #expect(SettingsPage.keepAwake.group == .system)
+    }
+
+    @Test func theWelcomeCanBeShownAgainFromAbout() {
+        #expect(SettingsSearch.matches("onboarding") == [.showWelcome])
+        #expect(SettingsItem.showWelcome.page == .about)
     }
 }

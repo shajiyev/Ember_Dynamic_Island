@@ -160,6 +160,15 @@
   - `CalendarPanelView.swift`, `MonthGridView.swift`, `CalendarListsView.swift`: the
     Calendar tab. `.opensApp(for:model:)` makes the month and the list headings open
     their app and close the panel.
+- `Ember/Onboarding/` — onboarding (#0).
+  - `OnboardingPage.swift`, `HelloPath.swift`: the pure parts: the pages in order, and the
+    word "hello" as one line of curves (`HelloShape`), written on with `trim`.
+  - `HelloView.swift`: the greeting shown in the open panel through
+    `PillController.showWelcome(_:)`, which holds the panel open (`PillEvent.held`) until
+    `endWelcome()`.
+  - `OnboardingWindow.swift`, `OnboardingView.swift`: the window and its six pages; closing
+    it sets `AppSettings.onboarded`. Before that, the app delegate turns Music and Volume &
+    Brightness off (`prepareForOnboarding()`) so no permission is asked unasked.
 - `Ember/KeepAwake/` — Keep awake (#18).
   - `KeepAwakeTimes.swift`, `KeepAwakeScript.swift`: the pure rules: the four times and
     their texts; the shell that turns lid-closed sleep off with a watcher that turns it back

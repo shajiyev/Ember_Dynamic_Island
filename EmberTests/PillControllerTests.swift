@@ -432,4 +432,15 @@ struct PillControllerTests {
         controller.send(.clicked)
         #expect(controller.song == nil)
     }
+
+    @Test func theWelcomeOpensThePanelAndGetStartedClosesIt() {
+        let controller = PillController(timing: fast)
+        controller.showWelcome(Text("hello"))
+        #expect(controller.state == .open && controller.isShowingWelcome)
+        controller.send(.pointerExited)
+        controller.send(.closeDelayElapsed)
+        #expect(controller.state == .open)
+        controller.endWelcome()
+        #expect(controller.state != .open)
+    }
 }

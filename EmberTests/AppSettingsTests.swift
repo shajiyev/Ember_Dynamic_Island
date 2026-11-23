@@ -541,4 +541,20 @@ struct AppSettingsTests {
         settings.keepAwakeOn = false
         #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: left, right: 0, showsBattery: true))
     }
+
+    @Test func onboardingIsNotDoneAtFirstAndNoResetUndoesIt() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(!settings.onboarded)
+        settings.onboarded = true
+        for page in AppSettings.resettablePages { settings.reset(page) }
+        #expect(settings.onboarded && AppSettings(defaults: defaults).onboarded)
+    }
+
+    @Test func beforeOnboardingMusicIsTurnedOffSoNothingAsksUnasked() {
+        let settings = AppSettings(defaults: freshDefaults())
+        #expect(settings.musicOn)
+        settings.prepareForOnboarding()
+        #expect(!settings.musicOn && settings.timerOn && settings.shelfOn && settings.calendarOn)
+    }
 }

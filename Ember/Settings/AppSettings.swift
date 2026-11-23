@@ -191,6 +191,8 @@ final class AppSettings {
     var screenshotsToShelf: Bool { didSet { save(screenshotsToShelf, Key.screenshotsToShelf) } }
     var batteryAlertsOn: Bool { didSet { save(batteryAlertsOn, Key.batteryAlertsOn) } }
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
+    /// Onboarding has run (the window was finished or closed). No Reset changes it.
+    var onboarded: Bool { didSet { save(onboarded, Key.onboarded) } }
     /// Keep awake's cup in the panel and its item in the menu bar menu.
     var keepAwakeOn: Bool { didSet { save(keepAwakeOn, Key.keepAwakeOn) } }
     /// Keep awake's four times, in minutes.
@@ -305,6 +307,7 @@ final class AppSettings {
         static let batteryAlertsOn = "batteryAlertsOn"
         static let batteryInPanelOn = "batteryInPanelOn"
         static let shownBatteryAlerts = "shownBatteryAlerts"
+        static let onboarded = "onboarded"
         static let keepAwakeOn = "keepAwakeOn"
         static let keepAwakeTimes = "keepAwakeTimes"
         static let keepAwakeLidClosed = "keepAwakeLidClosed"
@@ -388,6 +391,7 @@ final class AppSettings {
         shownBatteryAlerts = (defaults.stringArray(forKey: Key.shownBatteryAlerts)?.compactMap(BatteryAlert.init(rawValue:)))
             .map(Set.init) ?? Set(BatteryAlert.allCases)
         lowBatterySound = defaults.string(forKey: Key.lowBatterySound).flatMap(AlertSound.init(rawValue:)) ?? .ping
+        onboarded = defaults.object(forKey: Key.onboarded) as? Bool ?? false
         keepAwakeOn = bool(Key.keepAwakeOn)
         keepAwakeTimes = (defaults.array(forKey: Key.keepAwakeTimes) as? [Int]).map(KeepAwakeTimes.clamped) ?? KeepAwakeTimes.standard
         keepAwakeLidClosed = defaults.object(forKey: Key.keepAwakeLidClosed) as? Bool ?? false
@@ -429,6 +433,13 @@ final class AppSettings {
     /// The pages with a Reset to Defaults button. Launch at login, Show Calendar Events, Show
     /// Reminders and Volume & Brightness are not here: they are tied to macOS or a permission.
     static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .calendar, .shelf, .battery, .keepAwake]
+
+    /// Before the first onboarding: Music stays off until the user turns it on there, so
+    /// macOS's Automation prompt never comes unasked (Volume & Brightness are turned off in
+    /// `LevelModel`).
+    func prepareForOnboarding() {
+        musicOn = false
+    }
 
     /// Chooses Off, Shared or Custom for a feature's glow; Custom the first time starts from
     /// the shared live activity values.

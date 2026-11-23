@@ -271,7 +271,8 @@ Text, as agreed:
   from Spotify's artwork link; Music hands it over directly); each permission belongs to
   a feature the user turns on. Note: Now Playing currently asks for Automation the first
   time it talks to a player, not through onboarding; onboarding (#0) must make the
-  "only when you turn on the feature" promise true before release.
+  "only when you turn on the feature" promise true before release. (Done 2026-11-23: Music
+  and Volume & Brightness stay off until onboarding or Settings turns them on.)
 
 ## The pill demo
 

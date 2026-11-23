@@ -132,6 +132,9 @@ final class PillController {
     @ObservationIgnored private var window: PillWindow?
     @ObservationIgnored private var screenObserver: NSObjectProtocol?
     @ObservationIgnored private var panelContent = AnyView(EmptyView())
+    /// Onboarding's greeting, shown in the open panel instead of the tabs (`showWelcome`).
+    private(set) var welcome: AnyView?
+    var isShowingWelcome: Bool { welcome != nil }
 
     init(timing: PillTiming = PillTiming()) {
         self.timing = timing
@@ -223,6 +226,22 @@ final class PillController {
             ongoingActivity = activity
         }
         activityDidChange()
+    }
+
+    /// Opens the panel by itself with `content` (onboarding's greeting) instead of the tabs,
+    /// and keeps it open until `endWelcome()`.
+    func showWelcome(_ content: some View) {
+        welcome = AnyView(content)
+        send(.held(true))
+    }
+
+    /// Closes the greeting's panel; the tabs come back for the next opening.
+    func endWelcome() {
+        send(.closeRequested)
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(0.6))   // after the panel has closed
+            if self?.state != .open { self?.welcome = nil }
+        }
     }
 
     /// Shows a level in the strip below the pill for its duration. A newer level replaces it

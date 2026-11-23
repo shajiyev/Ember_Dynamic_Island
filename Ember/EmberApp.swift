@@ -33,10 +33,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let screenshots = ScreenshotWatcher()
     /// The keyboard shortcut that opens and closes the panel (Settings → General).
     lazy var panelHotKey = GlobalHotKey { [weak self] in self?.controller.shortcutPressed() }
+    lazy var onboardingWindow = OnboardingWindow(settings: settings, calendar: calendar, levels: levels,
+                                                 askAccessibility: { [weak self] in self?.mediaKeys.start(askForAccess: true) })
     lazy var settingsWindow = SettingsWindow(settings: settings, calendar: calendar, levels: levels, keepAwake: keepAwake,
                                              hotKey: panelHotKey,
                                              notchWidth: { [weak self] in self?.controller.geometry?.notchRect.width },
-                                             showExample: { [weak self] in self?.controller.show($0) })
+                                             showExample: { [weak self] in self?.controller.show($0) },
+                                             showWelcome: { [weak self] in self?.startOnboarding() })
     /// The timer's and the music's lasting activities; the wings show one (`LastingChoice`).
     var timerActivity: LiveActivity?
     private var musicActivity: LiveActivity?
@@ -84,6 +87,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         levels.onSwitchChange = { [mediaKeys] on in
             if on { mediaKeys.start(askForAccess: true) } else { mediaKeys.stop() }
         }
+        // Before the first onboarding, nothing that needs a permission runs: it asks first.
+        if !settings.onboarded {
+            settings.prepareForOnboarding()
+            for kind in LevelKind.allCases { levels.turn(kind, on: false) }
+        }
         if levels.takesAnyKey { mediaKeys.start(askForAccess: false) }
         // Starts the features that are on; later changes in Settings apply at once.
         controller.onFileDrop = { [weak self] urls, position in self?.receiveFiles(urls, at: position) }
@@ -96,10 +104,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                                                  calendar: calendar, selection: panelSelection,
                                                  settings: settings, shelf: shelf, keepAwake: keepAwake,
                                                  openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }))
+        if !settings.onboarded { startOnboarding() }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         keepAwake.endOnQuit()
+    }
+
+    /// Onboarding: "hello" in the notch, then the window from Get Started. Without a notch
+    /// display, straight to the window.
+    func startOnboarding() {
+        guard controller.hasNotchDisplay else {
+            onboardingWindow.show()
+            return
+        }
+        controller.showWelcome(HelloView { [weak self] in
+            self?.controller.endWelcome()
+            self?.onboardingWindow.show()
+        })
     }
 
     /// Ember opened again while running (from Finder, Spotlight or Launchpad): without the

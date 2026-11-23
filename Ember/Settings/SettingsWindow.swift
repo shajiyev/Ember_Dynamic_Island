@@ -15,12 +15,14 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let notchWidth: () -> CGFloat?
     /// Plays a brief activity in the notch: Battery → Show an example, a glow's Preview.
     private let showExample: (LiveActivity) -> Void
+    /// Plays onboarding again (About → Show Welcome Again).
+    private let showWelcome: () -> Void
     private let navigation = SettingsNavigation()
     private var window: NSWindow?
 
     init(settings: AppSettings, calendar: CalendarModel, levels: LevelModel, keepAwake: KeepAwakeModel, hotKey: GlobalHotKey,
          notchWidth: @escaping () -> CGFloat?,
-         showExample: @escaping (LiveActivity) -> Void) {
+         showExample: @escaping (LiveActivity) -> Void, showWelcome: @escaping () -> Void) {
         self.settings = settings
         self.calendar = calendar
         self.levels = levels
@@ -28,6 +30,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         self.hotKey = hotKey
         self.notchWidth = notchWidth
         self.showExample = showExample
+        self.showWelcome = showWelcome
         super.init()
     }
 
@@ -48,7 +51,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
                                                                  calendar: calendar, levels: levels, keepAwake: keepAwake,
                                                                  hotKey: hotKey,
                                                                  notchWidth: notchWidth() ?? 185,
-                                                                 showExample: showExample))
+                                                                 showExample: showExample, showWelcome: showWelcome))
         hosting.sceneBridgingOptions = [.title, .toolbars]
         let window = NSWindow(contentViewController: hosting)
         window.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]

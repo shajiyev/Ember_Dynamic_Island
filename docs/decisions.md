@@ -1267,3 +1267,16 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   desktop's. It now gets the same behaviour (`canJoinAllSpaces`, `fullScreenAuxiliary`)
   before opening. Checked on screen by the user on macOS 26.6.2 (Space and the right-click
   menu).
+
+## 2026-11-23 — Onboarding (#0)
+- **Decision:** the first launch greets the user in the notch: "hello" written on in
+  Ember's own joined lettering (rose to blue), "Welcome to Ember", Get Started. Get
+  Started closes the panel and opens a window with six short pages (Glow, Music, Calendar,
+  Volume & Brightness, How to use, You're all set with launch at login). **Why:** the user
+  chose the greeting in the notch and the steps in a window; pages are short so onboarding
+  does not tire the user before they start.
+- **Decision:** Music and Volume & Brightness stay off until onboarding or Settings turns
+  them on; closing the window early leaves the pages not reached off. **Why:** keeps the
+  website's promise that each permission belongs to a feature the user turns on.
+- **Noted:** a real first run (fresh account or reset settings and permissions) is on the
+  release checklist; replaying onboarding on a used Mac cannot show macOS's first prompts.

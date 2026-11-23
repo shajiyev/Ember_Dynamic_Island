@@ -25,6 +25,9 @@ nonisolated enum PillEvent: Equatable {
     case fileDropped
     /// The keyboard shortcut (Settings → General): opens the panel, or closes it if open.
     case shortcutPressed
+    /// The panel is held open (onboarding's greeting) or let go: while held, the pointer
+    /// leaving and the shortcut do nothing; a close request ends it.
+    case held(Bool)
 }
 
 /// What the owner of a `PillModel` must do after an event.
@@ -44,6 +47,7 @@ nonisolated struct PillModel {
     /// With hover off (Settings → General), only a click opens the panel.
     var opensOnHover = true
     private var isFileDragInside = false
+    private var isHeld = false
 
     var state: PillState {
         if isOpen { return .open }
@@ -60,7 +64,7 @@ nonisolated struct PillModel {
 
         case .pointerExited:
             isPointerInside = false
-            return isOpen ? .startCloseDelay : .cancelDelay
+            return isOpen && !isHeld ? .startCloseDelay : .cancelDelay
 
         case .clicked:
             guard !isOpen else { return nil }
@@ -73,7 +77,7 @@ nonisolated struct PillModel {
             return nil
 
         case .closeDelayElapsed:
-            if !isPointerInside && !isFileDragInside { isOpen = false }
+            if !isPointerInside && !isFileDragInside && !isHeld { isOpen = false }
             return nil
 
         case .activityChanged(let isActive):
@@ -82,6 +86,7 @@ nonisolated struct PillModel {
 
         case .closeRequested:
             // The pointer still rests where the panel was; it must enter again to reopen.
+            isHeld = false
             isOpen = false
             isPointerInside = false
             return .cancelDelay
@@ -105,8 +110,14 @@ nonisolated struct PillModel {
             // it stays open until the shortcut, Esc, a click outside (the controller sends a
             // close request) or the pointer coming and going. Closed, the pointer must enter
             // again to reopen, as after a close request.
+            guard !isHeld else { return nil }
             isOpen.toggle()
             if !isOpen { isPointerInside = false }
+            return .cancelDelay
+
+        case .held(let held):
+            isHeld = held
+            if held { isOpen = true }
             return .cancelDelay
         }
     }

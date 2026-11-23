@@ -216,4 +216,21 @@ struct PillModelTests {
         model.handle(.shortcutPressed)
         #expect(model.state == .rest)
     }
+
+    @Test func aHeldPanelStaysOpenUntilAClosingRequest() {
+        var model = PillModel()
+        model.handle(.held(true))
+        #expect(model.state == .open)
+        model.handle(.pointerEntered)
+        #expect(model.handle(.pointerExited) == .cancelDelay)   // no close delay
+        model.handle(.closeDelayElapsed)
+        model.handle(.shortcutPressed)
+        #expect(model.state == .open)
+        model.handle(.closeRequested)
+        #expect(model.state == .rest)
+        model.handle(.pointerEntered)
+        model.handle(.pointerExited)
+        model.handle(.closeDelayElapsed)
+        #expect(model.state == .rest)   // the hold is gone with the close
+    }
 }

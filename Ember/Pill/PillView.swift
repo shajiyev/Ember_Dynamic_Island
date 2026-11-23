@@ -79,7 +79,7 @@ struct PillView: View {
                                             : PillStyle.contentTransition)
                         }
                         if state == .open {
-                            panelContent
+                            (controller.welcome ?? panelContent)
                                 .environment(\.notchHeight, notchHeight)
                                 .environment(\.notchWidth, notchWidth)
                                 .environment(\.panelWidth, size.width)
