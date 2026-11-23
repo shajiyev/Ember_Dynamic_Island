@@ -161,6 +161,10 @@ previewed: Space and the menu item do nothing for it.
 - Quick Look is macOS's own preview window (`QLPreviewPanel`); Ember is its controller
   (`ShelfQuickLook`) and comes to the front so the window can take the keys. The panel may
   close behind it as usual; the preview stays until closed.
+- Over a full-screen app (fixed 2026-11-23): the preview window gets the pill window's
+  space behaviour (it may join any space, a full-screen app's too,
+  `ShelfQuickLook.spaceBehavior`). Without it, it opened on the desktop's space, out of
+  sight.
 - The files previewed are the selection's, in the shelf's order
   (`ShelfList.itemsForQuickLook(selection:)`), found again first, missing ones left out.
 

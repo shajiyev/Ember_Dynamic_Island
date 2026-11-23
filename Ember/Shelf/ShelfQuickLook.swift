@@ -6,6 +6,10 @@ import Quartz
 /// comes to the front so the window can take the keys.
 final class ShelfQuickLook: NSObject {
     static let shared = ShelfQuickLook()
+    /// Added to the window's own behaviour, as the pill's window has it: it may join any
+    /// space, a full-screen app's too. Without it, over a full-screen app it opened on the
+    /// desktop's space, out of sight.
+    static let spaceBehavior: NSWindow.CollectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
     private var urls: [URL] = []
 
     /// Opens Quick Look on `urls`, or closes it when it is open.
@@ -17,6 +21,7 @@ final class ShelfQuickLook: NSObject {
         }
         guard !urls.isEmpty else { return }
         self.urls = urls
+        panel.collectionBehavior.formUnion(Self.spaceBehavior)
         NSApp.activate()
         panel.dataSource = self
         panel.reloadData()

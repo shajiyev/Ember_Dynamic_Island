@@ -1260,3 +1260,10 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   Remove deletes it. **Why:** asking for the password at every start and stop was too much;
   a helper daemon would need a paid developer account. The cost: any app running as this
   account could switch lid-closed sleep without a password, and nothing else.
+
+## 2026-11-23 — Quick Look over full-screen apps
+- **Fixed:** the shelf's Quick Look did not show over a full-screen app. macOS's preview
+  window, unlike the pill's, could not join a full-screen app's space, so it opened on the
+  desktop's. It now gets the same behaviour (`canJoinAllSpaces`, `fullScreenAuxiliary`)
+  before opening. Checked on screen by the user on macOS 26.6.2 (Space and the right-click
+  menu).
