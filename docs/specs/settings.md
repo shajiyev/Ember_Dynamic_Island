@@ -50,6 +50,10 @@ observers, no timers, no Apple Events.
 - There is only ever one: choosing Settings… again brings it to the front. ⌘W closes it.
 - While it is open, Ember shows its icon in the Dock and in ⌘-Tab, so the window can be
   found again behind another app. Closing it removes the icon.
+- It opens in front, ready to use, from the gear and from the menu; over a full-screen app
+  macOS takes the user to the desktop it is on. For that it is built once just after
+  launch and only hidden when closed (about 37 MB; decisions 2026-11-24); each opening
+  starts on General with an empty search.
 
 ### The look (Atoll's settings style)
 

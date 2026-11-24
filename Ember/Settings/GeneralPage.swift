@@ -104,6 +104,9 @@ struct GeneralPage: View {
             ResetSection(page: .general, settings: settings)
         }
         .onAppear { loginStatus = LaunchAtLogin.status }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            loginStatus = LaunchAtLogin.status
+        }
     }
 }
 

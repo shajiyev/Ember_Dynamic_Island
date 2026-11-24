@@ -11,6 +11,8 @@ struct OnboardingView: View {
     let finish: () -> Void
 
     @State private var page = OnboardingPage.allCases[0]
+    /// Whether the last move was Back, so the pages slide the other way.
+    @State private var goingBack = false
     /// Volume & Brightness: the two choices before Turn on, and whether it was pressed.
     @State private var showsVolume = true
     @State private var showsBrightness = true
@@ -32,8 +34,8 @@ struct OnboardingView: View {
             .padding(.top, 44)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .id(page)
-            .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity),
-                                    removal: .move(edge: .leading).combined(with: .opacity)))
+            .transition(.asymmetric(insertion: .move(edge: goingBack ? .leading : .trailing).combined(with: .opacity),
+                                    removal: .move(edge: goingBack ? .trailing : .leading).combined(with: .opacity)))
             bottomBar
         }
         .frame(width: 520, height: 420)
@@ -112,7 +114,7 @@ struct OnboardingView: View {
     private var bottomBar: some View {
         HStack {
             if let previous = page.previous {
-                Button("‹ Back") { page = previous }
+                Button("‹ Back") { go(to: previous, back: true) }
                     .buttonStyle(.borderless)
             }
             Spacer()
@@ -164,7 +166,16 @@ struct OnboardingView: View {
     }
 
     private func moveOn() {
-        if let next = page.next { page = next } else { finish() }
+        if let next = page.next { go(to: next, back: false) } else { finish() }
+    }
+
+    /// Turns the page, sliding forward or back. The direction is set first and the page
+    /// changes a moment later: the page leaving keeps the slide it was last drawn with, so it
+    /// must be drawn once with the new direction before it goes.
+    private func go(to newPage: OnboardingPage, back: Bool) {
+        guard back != goingBack else { page = newPage; return }
+        goingBack = back
+        DispatchQueue.main.async { page = newPage }
     }
 }
 

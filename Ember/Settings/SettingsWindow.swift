@@ -1,9 +1,11 @@
 import AppKit
 import SwiftUI
 
-/// The Settings window. Made when it opens and dropped when it closes, so it costs nothing
-/// while closed. While it is open, Ember shows its icon in the Dock and ⌘-Tab, so the
-/// window can be found again behind other apps.
+/// The Settings window. Built once, shortly after launch (`prepare()`), and hidden when
+/// closed rather than dropped: building it holds the main thread for about 0.2 s, and to
+/// open in front, above all over a full-screen app, the window must already exist when
+/// Ember asks to come forward, during the user's click (docs/decisions.md, 2026-11-24).
+/// While it is open, Ember shows its icon in the Dock and ⌘-Tab.
 final class SettingsWindow: NSObject, NSWindowDelegate {
     private let settings: AppSettings
     private let calendar: CalendarModel
@@ -12,7 +14,7 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
     private let updater: Updater
     /// The panel's keyboard shortcut, for the recorder (paused while recording; taken or not).
     private let hotKey: GlobalHotKey
-    /// The notch's width on the pill's display, read each time the window opens.
+    /// The notch's width on the pill's display, read when the window is built.
     private let notchWidth: () -> CGFloat?
     /// Plays a brief activity in the notch: Battery → Show an example, a glow's Preview.
     private let showExample: (LiveActivity) -> Void
@@ -35,6 +37,11 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         self.showExample = showExample
         self.showWelcome = showWelcome
         super.init()
+    }
+
+    /// Builds the window, hidden, so the first opening is as quick as the others.
+    func prepare() {
+        if window == nil { _ = makeWindow() }
     }
 
     /// Opens the window on General, or on `page` when given, and brings it to the front.
@@ -65,8 +72,12 @@ final class SettingsWindow: NSObject, NSWindowDelegate {
         return window
     }
 
-    func windowWillClose(_ notification: Notification) {
-        window = nil
+    /// Closing hides the window, ready for next time on General with an empty search.
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        sender.orderOut(nil)
+        navigation.page = .general
+        navigation.searchText = ""
         NSApp.setActivationPolicy(.accessory)
+        return false
     }
 }

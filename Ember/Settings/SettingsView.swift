@@ -1,11 +1,12 @@
 import Observation
 import SwiftUI
 
-/// The page the Settings window shows, kept outside the view so the window can open on a
-/// given page.
+/// The page the Settings window shows and the search, kept outside the view so the window
+/// can open on a given page and start afresh each time.
 @Observable
 final class SettingsNavigation {
     var page = SettingsPage.general
+    var searchText = ""
 }
 
 /// The Settings window's content, styled after Atoll's settings: a sidebar with search and
@@ -24,10 +25,9 @@ struct SettingsView: View {
     let showExample: (LiveActivity) -> Void
     /// Plays onboarding again.
     let showWelcome: () -> Void
-    @State private var searchText = ""
 
     var body: some View {
-        let pages = SettingsSearch.pages(for: searchText)
+        let pages = SettingsSearch.pages(for: navigation.searchText)
         NavigationSplitView {
             List(selection: Binding<SettingsPage?>(get: { navigation.page },
                                                    set: { if let page = $0 { navigation.page = page } })) {
@@ -47,7 +47,7 @@ struct SettingsView: View {
             .listStyle(.sidebar)
             .environment(\.defaultMinListRowHeight, 36)
             .overlay {
-                if pages.isEmpty { ContentUnavailableView.search(text: searchText) }
+                if pages.isEmpty { ContentUnavailableView.search(text: navigation.searchText) }
             }
             .navigationSplitViewColumnWidth(210)
             .toolbar(removing: .sidebarToggle)
@@ -55,14 +55,14 @@ struct SettingsView: View {
             detail(for: navigation.page)
                 .formStyle(.grouped)
                 .toggleStyle(.switch)
-                .environment(\.settingsMatches, SettingsSearch.matches(searchText))
+                .environment(\.settingsMatches, SettingsSearch.matches(navigation.searchText))
                 .navigationTitle(navigation.page.title)
         }
-        .searchable(text: $searchText, placement: .sidebar, prompt: "Search")
+        .searchable(text: $navigation.searchText, placement: .sidebar, prompt: "Search")
         .frame(width: 700, height: 500)
         .background { SettingsBackground() }
-        .onChange(of: searchText) {
-            let pages = SettingsSearch.pages(for: searchText)
+        .onChange(of: navigation.searchText) {
+            let pages = SettingsSearch.pages(for: navigation.searchText)
             if !pages.contains(navigation.page), let first = pages.first {
                 navigation.page = first
             }

@@ -262,6 +262,10 @@
   page, Settings → Permissions lists the folder, and a switch turns macOS's screenshot
   thumbnail, which delays the shelf by about 5 s, on or off. 575 tests pass; checked by
   the user on macOS 26.6.2. Left: the macOS 15 smoke test and the release itself.
+  2026-11-24: Settings now opens in front, ready to use, from the gear and the menu, also
+  over full-screen apps (it is built at launch and kept: about 37 MB); the gear no longer
+  freezes the panel; onboarding's Back slides the other way. Checked by the user, also
+  in the fresh test account.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** "Ship it" (milestone 3).

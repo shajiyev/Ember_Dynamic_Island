@@ -20,7 +20,10 @@ per state; `leaks` and `footprint` for memory.
 | Volume keys, about one press every 2 s | 10.8 % (max 26 %) | 10.8 | 0 | Only while pressing (see below) |
 
 **Memory:** 20 MB footprint after launch; 64 MB after the panel, every tab and Settings
-had been opened. **Leaks:** 288 small leaks (14 KB) after the first session and 290 (19 KB)
+had been opened. Since 2026-11-24 the Settings window is built at launch and kept (so it
+opens in front at once; docs/decisions.md): 60 MB just after launch instead of 23 MB,
+about 37 MB, measured the same way on the same build with and without it. In the fresh
+test account, after using the panel and Settings, Activity Monitor showed 75 MB. **Leaks:** 288 small leaks (14 KB) after the first session and 290 (19 KB)
 after 11 minutes of heavy use (songs skipped, every tab, volume keys, a timer): they do not
 grow. Recorded with `MallocStackLogging`, none comes from Ember's code: they are one
 connection Apple's App Intents framework opens at launch to a Shortcuts service that is not

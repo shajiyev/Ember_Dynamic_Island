@@ -108,6 +108,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                                                  calendar: calendar, selection: panelSelection,
                                                  settings: settings, shelf: shelf, keepAwake: keepAwake,
                                                  openSettings: { [weak self] page in self?.settingsWindow.show(page: page) }))
+        settingsWindow.prepare()
         if !settings.onboarded { startOnboarding() }
     }
 

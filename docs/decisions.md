@@ -1376,3 +1376,29 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Changed 2026-11-24:** the button became a switch, **macOS screenshot thumbnail**, always
   shown there (on or off, read from macOS each time it appears). **Why:** the user found
   that the button vanished once pressed, leaving no way back inside Ember.
+
+## 2026-11-24 — Settings kept built, so it opens in front at once
+- **Found:** opened from the panel's gear, Settings often stayed behind the app in front
+  (logged: 5 of 13 gear openings), floated over full-screen apps instead of taking the
+  user to a desktop, and the gear froze the panel's closing for about 0.2 s.
+- **Measured (logged and timed):**
+  - macOS lets Ember come forward only if it asks while handling the user's click; asked
+    later (even 0.4 s after), it was refused, even over Chrome.
+  - over a full-screen app, macOS switches to the window's desktop only if the window
+    already exists when Ember asks;
+  - building the window holds the main thread about 0.2 s, mostly the General page (about
+    15 controls and three drawings; Feedback alone about 60 ms), so building it during the
+    click stuttered the panel.
+  Each half-fix (a stronger request, waiting for the panel to close, asking before or after
+  showing) solved one of these and broke another.
+- **Decision:** build the Settings window once, just after launch, and hide it on close
+  instead of dropping it (`SettingsWindow.prepare()`, `windowShouldClose`). The gear and the
+  menu then show it and ask to come forward during the click (3 ms). It reopens on General
+  with an empty search; General re-reads Start at login whenever Ember becomes active.
+  **Why:** the only way to meet all three; checked by the user on their account and in a
+  fresh account from the DMG, including from full-screen apps.
+- **Cost:** about 37 MB more memory at rest (Release, just after launch: 60 MB instead of
+  23 MB; docs/performance.md), accepted by the user. This replaces "made on open and
+  dropped on close" (2026-11-15).
+- **Seen only under Xcode:** while Xcode runs Ember under its debugger, Xcode in front still
+  refuses every request; run on its own, Ember came forward every time.

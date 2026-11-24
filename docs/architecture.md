@@ -259,8 +259,9 @@
   - `SettingsPage.swift`, `SettingsSearch.swift`: the pure rules: the pages and their
     sidebar groups, every setting once with its extra search words, and which pages and
     settings match a search.
-  - `SettingsWindow.swift`: the AppKit window, made on open and dropped on close; the Dock
-    icon (activation policy `.regular`) only while it is open.
+  - `SettingsWindow.swift`: the AppKit window, built once just after launch (`prepare()`)
+    and hidden on close, so it opens in front at once (decisions 2026-11-24); the Dock icon
+    (activation policy `.regular`) only while it is open.
   - `SettingsView.swift`: the sidebar (search, groups, icon squares) and the selected page,
     styled after Atoll's settings; glass on macOS 26.
   - `GeneralPage.swift`, `FeaturePages.swift`, `FeedbackPage.swift`, `SettingsRow.swift`:
@@ -282,8 +283,9 @@
   Settings) and menu (Settings…, Share Feedback, Quit). `AppDelegate+Settings.swift`:
   `applySettings()`. `AppDelegate+Shelf.swift`: dropped files and screenshots to the shelf
   or AirDrop.
-- `Ember/NSWindow+Front.swift` — `showInFront()`: Ember's windows (Settings, onboarding) open
-  in front of every app, then Ember asks to become active (since macOS 14 only a request).
+- `Ember/NSWindow+Front.swift` — `showInFront()`: Ember becomes a regular app, shows the
+  window and asks to become active, all during the user's click (since macOS 14 only a
+  request, granted then).
 - `Ember/DistributedNotificationCenter+Immediate.swift` — `addImmediateObserver`: other
   apps' notices (the players', the screen lock) heard at once, even while macOS suspends
   them for Ember. Every distributed notice listener uses it.

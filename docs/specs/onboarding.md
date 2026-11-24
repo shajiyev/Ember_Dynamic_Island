@@ -39,7 +39,8 @@ itself and shows:
 A window in the Settings window's style, centred, about 520 × 420 points. Each page has a
 symbol, a title, two or three lines, its controls, and at the bottom **‹ Back** (not on the
 first page), page dots, and the page's buttons on the right. Pages change with a short
-slide.
+slide: moving on, the next page comes in from the right; Back brings the earlier one in from
+the left.
 
 | Page | What it shows | Buttons |
 |---|---|---|
