@@ -100,6 +100,11 @@ Each one belongs to a feature you turn on, during the first launch or later in S
 - **Reminders:** only if you turn on Show Reminders. Ember reads reminders that are due and
   marks one completed when you tick it off (or not completed, when you untick it). It also
   reads the reminders completed that day, to list them at the end.
+- **Your screenshots folder:** only if you turn on Add screenshots to the shelf. macOS asks
+  once to let Ember see the folder screenshots are saved to (the Desktop, unless you chose
+  another in the Screenshot app), so Ember can put each new one on the shelf. It looks only
+  for new screenshots there. You can change it in System Settings → Privacy & Security →
+  Files & Folders.
 - **Accessibility:** for Show volume in the pill and Show brightness in the pill. Ember uses
   it to take the volume and mute keys, or the brightness keys, before macOS does, so the
   level shows in the pill instead of macOS's own indicator. Every other key goes on to

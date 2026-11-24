@@ -46,6 +46,7 @@ slide.
 | **Glow** | "A soft glow around the notch shows when something is happening." Glow: Yes / No (the **Glow** switch), and the colour circles with Custom (**Glow colour**) while Yes. The real notch glows above the window as they change. | Continue |
 | **Music** | "Show what's playing in Apple Music or Spotify, with its controls in the panel. macOS asks once to let Ember talk to each player." | Not now · **Turn on** |
 | **Calendar** | "Your day's events and reminders beside the month." Show Calendar Events and Show Reminders as switches, each asking for its own permission when switched on (as in Settings). The month needs none. | Continue |
+| **Shelf** (added 2026-11-23) | "Drag files onto the notch to keep them at hand. Ember can also put every new screenshot there; for that, macOS asks once to let Ember see the folder your screenshots go to." Turn on switches on Add screenshots to the shelf, which opens that folder once so macOS asks. Below, the **macOS screenshot thumbnail** switch, explaining that the thumbnail delays the screenshot by about 5 seconds. | Not now · **Turn on** |
 | **Volume & Brightness** | "Show the volume and the screen's brightness in the pill instead of macOS's own." Show volume and Show brightness, both ticked. "Needs Accessibility, so Ember can see those keys first." After Turn on, a line shows "Waiting for Accessibility…" until it is allowed, then "Allowed". | Not now · **Turn on** |
 | **How to use** | Hover the notch: the panel · Drag files onto the notch: the shelf · ☕: Keep awake · ⚙ or the menu bar icon: Settings | Continue |
 | **You're all set** | ☐ Start Ember when you log in (off) | **Done** |
@@ -59,8 +60,8 @@ slide.
 
 ## 3. Before and after
 
-- On the first launch, before the greeting, Music and both Volume & Brightness switches are
-  turned off, so nothing asks for a permission before the user chooses. Timer, Shelf,
+- On the first launch, before the greeting, Music, Add screenshots to the shelf and both
+  Volume & Brightness switches are turned off, so nothing asks for a permission before the user chooses. Timer, Shelf,
   Battery, Calendar's month and Keep awake work at once (they need none).
 - Onboarding is done once the window closes (Done or closed); saved under `onboarded`.
   Reset to Defaults on any page leaves it alone.

@@ -207,9 +207,12 @@ struct ShelfPage: View {
             Section {
                 Toggle(SettingsItem.screenshotsToShelf.title, isOn: $settings.screenshotsToShelf)
                     .settingsItem(.screenshotsToShelf)
+                if settings.screenshotsToShelf {
+                    ScreenshotThumbnailRow()
+                }
                 CooldownRow(item: .shelfCooldown, seconds: $settings.shelfCooldown)
             } footer: {
-                Text("A new screenshot goes first on the shelf. After a screenshot or a drop on the shelf, the panel opens on the Shelf tab for the time above, so the file is right there to drag out.")
+                Text("A new screenshot goes first on the shelf; macOS asks once to let Ember see the folder screenshots go to (the Desktop, unless you changed it). After a screenshot or a drop on the shelf, the panel opens on the Shelf tab for the time above, so the file is right there to drag out.")
             }
             .disabled(!settings.shelfOn)
             Section {
@@ -382,5 +385,24 @@ private struct HeadsUpRows: View {
             Button("+ Add a heads-up") { minutes = HeadsUpTimes.adding(to: minutes) }
                 .buttonStyle(.borderless)
         }
+    }
+}
+
+/// A switch for macOS's floating thumbnail, with why it delays the shelf: on, a screenshot
+/// reaches the shelf only when the thumbnail goes. Shown under Add screenshots to the shelf
+/// and on onboarding's Shelf page. It reads macOS's setting each time it appears, since
+/// ⇧⌘5 → Options changes it too.
+struct ScreenshotThumbnailRow: View {
+    @State private var isOn = ScreenshotThumbnail.isOn
+
+    var body: some View {
+        Toggle(isOn: Binding(get: { isOn }, set: { on in
+            ScreenshotThumbnail.set(on)
+            isOn = ScreenshotThumbnail.isOn
+        })) {
+            Text("macOS screenshot thumbnail")
+            Text("The preview that slides in after a screenshot. While it shows, the screenshot reaches the shelf only when it goes, after about 5 seconds; turned off, it arrives at once.")
+        }
+        .onAppear { isOn = ScreenshotThumbnail.isOn }
     }
 }

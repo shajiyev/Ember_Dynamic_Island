@@ -9,6 +9,8 @@ nonisolated enum PermissionStatus: Equatable {
     case notAllowed
     /// Automation can be checked only while the player is open.
     case unknown
+    /// macOS cannot be asked about a folder without asking the user, so the status is not read.
+    case askedWhenTurnedOn
 
     var title: String {
         switch self {
@@ -16,6 +18,7 @@ nonisolated enum PermissionStatus: Equatable {
         case .notAsked: return "Not asked yet"
         case .notAllowed: return "Not allowed"
         case .unknown: return "Open the player to check"
+        case .askedWhenTurnedOn: return "macOS asks when you turn it on"
         }
     }
 }
@@ -29,6 +32,8 @@ nonisolated enum AppPermission: CaseIterable {
     /// Automation: Apple Events to Music, and to Spotify.
     case music
     case spotify
+    /// The folder screenshots are saved to (the Desktop by default), for the shelf.
+    case screenshotFolder
 
     var title: String {
         switch self {
@@ -37,6 +42,7 @@ nonisolated enum AppPermission: CaseIterable {
         case .accessibility: return "Accessibility"
         case .music: return "Automation: Music"
         case .spotify: return "Automation: Spotify"
+        case .screenshotFolder: return "Files: Screenshots folder"
         }
     }
 
@@ -46,6 +52,7 @@ nonisolated enum AppPermission: CaseIterable {
         case .reminders: return CalendarLook.switchTitle(.reminders)
         case .accessibility: return SettingsPage.levels.title
         case .music, .spotify: return "The Music tab and the song in the notch"
+        case .screenshotFolder: return SettingsItem.screenshotsToShelf.title
         }
     }
 
@@ -57,6 +64,7 @@ nonisolated enum AppPermission: CaseIterable {
         case .reminders: pane = "Privacy_Reminders"
         case .accessibility: pane = "Privacy_Accessibility"
         case .music, .spotify: pane = "Privacy_Automation"
+        case .screenshotFolder: pane = "Privacy_FilesAndFolders"
         }
         return URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)")!
     }
@@ -66,7 +74,7 @@ nonisolated enum AppPermission: CaseIterable {
         switch self {
         case .music: return .music
         case .spotify: return .spotify
-        case .calendar, .reminders, .accessibility: return nil
+        case .calendar, .reminders, .accessibility, .screenshotFolder: return nil
         }
     }
 
@@ -95,6 +103,7 @@ nonisolated enum AppPermission: CaseIterable {
         case .reminders: return Self.status(calendar: EKEventStore.authorizationStatus(for: .reminder))
         case .accessibility: return AXIsProcessTrusted() ? .allowed : .notAllowed
         case .music, .spotify: return Self.status(automation: Self.automationAnswer(player?.bundleID ?? ""))
+        case .screenshotFolder: return .askedWhenTurnedOn
         }
     }
 

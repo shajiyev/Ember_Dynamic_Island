@@ -71,6 +71,12 @@ struct OnboardingView: View {
             .formStyle(.grouped)
             .scrollDisabled(true)
             .frame(height: 110)
+        case .shelf:
+            Lines("Drag files onto the notch to keep them at hand. Ember can also put every new screenshot there; for that, macOS asks once to let Ember see the folder your screenshots go to (the Desktop, unless you changed it).")
+            Form { ScreenshotThumbnailRow() }
+                .formStyle(.grouped)
+                .scrollDisabled(true)
+                .frame(height: 100)
         case .levels:
             Lines("Show the volume and the screen's brightness in the pill instead of macOS's own. Needs Accessibility, so Ember can see those keys first.")
             Form {
@@ -130,6 +136,10 @@ struct OnboardingView: View {
         case .music:
             Button("Not Now") { settings.musicOn = false; moveOn() }
             Button("Turn On") { settings.musicOn = true; moveOn() }
+                .keyboardShortcut(.defaultAction)
+        case .shelf:
+            Button("Not Now") { settings.screenshotsToShelf = false; moveOn() }
+            Button("Turn On") { settings.screenshotsToShelf = true; moveOn() }
                 .keyboardShortcut(.defaultAction)
         case .levels where !levelsTurnedOn:
             Button("Not Now") {

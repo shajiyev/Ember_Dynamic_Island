@@ -174,9 +174,10 @@
   - `HelloView.swift`: the greeting shown in the open panel through
     `PillController.showWelcome(_:)`, which holds the panel open (`PillEvent.held`) until
     `endWelcome()`.
-  - `OnboardingWindow.swift`, `OnboardingView.swift`: the window and its six pages; closing
-    it sets `AppSettings.onboarded`. Before that, the app delegate turns Music and Volume &
-    Brightness off (`prepareForOnboarding()`) so no permission is asked unasked.
+  - `OnboardingWindow.swift`, `OnboardingView.swift`: the window and its seven pages;
+    closing it sets `AppSettings.onboarded`. Before that, the app delegate turns Music, Add
+    screenshots to the shelf and Volume & Brightness off (`prepareForOnboarding()`) so no
+    permission is asked unasked.
 - `Ember/KeepAwake/` — Keep awake (#18).
   - `KeepAwakeTimes.swift`, `KeepAwakeScript.swift`: the pure rules: the four times and
     their texts; the shell that turns lid-closed sleep off with a watcher that turns it back
@@ -240,7 +241,9 @@
     `ShelfQuickLook.swift`: the Quick Look panel's controller and data source.
   - `ShelfPanelView.swift`, `ShelfDropFrame.swift`: the Shelf tab (AirDrop area and shelf).
     `ShelfItemInteraction.swift`: an item's AppKit side (clicks, menu, hover, drag source).
-  - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query.
+  - `ScreenshotWatcher.swift`: new screenshots, through a Spotlight query, started only
+    after the screenshots folder has been opened once (`ScreenshotFolder`), so macOS asks
+    for it. `ScreenshotThumbnail` reads and sets macOS's floating thumbnail.
 - `Ember/Shortcut/` — the keyboard shortcut that opens the panel. `KeyShortcut` (the key
   and modifiers, the text shown, saving), `ShortcutCheck` (fine, not recommended or
   refused, and why), `SystemShortcuts` (macOS's default shortcuts corrected by the Mac's

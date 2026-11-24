@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-23)
+## Current status (2026-11-24)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -254,7 +254,14 @@
   Music tab's Buttons row has six places, room for every button. Settings and onboarding
   now open in front of other apps (`NSWindow.showInFront()`). 569 tests pass; checked on
   screen by the user on macOS 26.6.2.
-- **Next:** "Ship it" (milestone 3).
+- **In progress:** "Ship it" (milestone 3), releasing 1.0 (docs/plans/release.md). Done:
+  the performance audit (docs/performance.md), the README for strangers, a real update kept
+  local, and a real first run in a fresh account (2026-11-24). The first run found that
+  screenshots never reached the shelf outside Xcode (macOS hid the Desktop from Ember
+  without asking): now the folder is opened once so macOS asks, onboarding has a Shelf
+  page, Settings → Permissions lists the folder, and a switch turns macOS's screenshot
+  thumbnail, which delays the shelf by about 5 s, on or off. 575 tests pass; checked by
+  the user on macOS 26.6.2. Left: the macOS 15 smoke test and the release itself.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
 - **Next:** "Ship it" (milestone 3).

@@ -633,6 +633,7 @@ time the page appears:
 | Reminders | Show Reminders | as above | (→ Reminders) |
 | Accessibility | Volume & Brightness | Allowed · Not allowed | (→ Accessibility) |
 | Automation | The Music tab (a row per installed player) | Allowed · Not asked yet · Not allowed · Open the player to check | (→ Automation) |
+| Files: Screenshots folder (added 2026-11-23) | Add screenshots to the shelf | "macOS asks when you turn it on" (macOS cannot be asked about a folder without asking the user) | (→ Files & Folders) |
 
 A footer says Ember asks for each only when its feature is turned on. Onboarding (#0) will
 use the same checks (`Permissions`, one small type that reads each status and knows each

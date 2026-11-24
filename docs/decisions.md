@@ -1349,3 +1349,30 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Decision:** the README's building-from-source section is marked as for developers only
   and moved to the end. **Why:** users download the DMG and need nothing else; the section
   read as if everyone needed Xcode.
+
+## 2026-11-23 — Screenshots on the shelf ask for the screenshot folder; the stopwatch's parts
+- **Fixed:** new screenshots did not reach the shelf unless Ember was run from Xcode (found
+  in the first-run test and on the author's account). Screenshots go to the Desktop, a
+  folder macOS protects, and Spotlight (`NSMetadataQuery`) leaves its files out for an app
+  without access, without asking anything; run from Xcode it worked because macOS counts
+  Xcode, which may see the Desktop, as responsible. Ember now opens the screenshot folder
+  once before watching (`ScreenshotFolder.requestAccess()`), which brings macOS's question.
+- **Decision:** onboarding has a Shelf page (Not now / Turn on for screenshots), and Add
+  screenshots to the shelf stays off until it is answered, like Music and Volume &
+  Brightness. **Why:** the user expects the shelf to ask at the start; it keeps the promise
+  that a permission belongs to a feature the user turns on.
+- **Fixed:** the Timer tab's Start button (a stopwatch) showed its crown and side button
+  inside the circle: they now start exactly at the rim, and the whole button fades as one
+  shape when dimmed.
+
+## 2026-11-23 — macOS's screenshot thumbnail delays the shelf; a switch for it
+- **Found** in the first-run test: with macOS's floating thumbnail on (its default), a
+  screenshot reaches the shelf only after the thumbnail slides away, because macOS writes
+  the file then. Catching it earlier would mean reading macOS's private temporary files.
+- **Decision:** while the thumbnail is on, Settings → Shelf and onboarding's Shelf page say
+  so and offer Turn Off Thumbnail, which writes macOS's own setting (as ⇧⌘5 → Options
+  would). **Why:** the user asked for the button; it changes nothing unless pressed, since
+  some people use the thumbnail to mark up screenshots.
+- **Changed 2026-11-24:** the button became a switch, **macOS screenshot thumbnail**, always
+  shown there (on or off, read from macOS each time it appears). **Why:** the user found
+  that the button vanished once pressed, leaving no way back inside Ember.

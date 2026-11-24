@@ -3,15 +3,15 @@ import Testing
 @testable import Ember
 
 struct OnboardingTests {
-    @Test func thePagesGoGlowMusicCalendarLevelsHowToDone() {
-        #expect(OnboardingPage.allCases == [.glow, .music, .calendar, .levels, .howTo, .done])
+    @Test func thePagesGoGlowMusicCalendarShelfLevelsHowToDone() {
+        #expect(OnboardingPage.allCases == [.glow, .music, .calendar, .shelf, .levels, .howTo, .done])
         #expect(OnboardingPage.glow.next == .music && OnboardingPage.howTo.next == .done)
         #expect(OnboardingPage.done.next == nil)
         #expect(OnboardingPage.music.previous == .glow && OnboardingPage.glow.previous == nil)
     }
 
-    @Test func onlyMusicAndVolumeAndBrightnessAskTurnOnOrNotNow() {
-        #expect(OnboardingPage.allCases.filter(\.asksTurnOn) == [.music, .levels])
+    @Test func theFeaturesNeedingAPermissionAskTurnOnOrNotNow() {
+        #expect(OnboardingPage.allCases.filter(\.asksTurnOn) == [.music, .shelf, .levels])
     }
 
     @Test func theHelloLineStaysInItsBox() {

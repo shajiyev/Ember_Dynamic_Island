@@ -5,6 +5,7 @@ nonisolated enum OnboardingPage: CaseIterable {
     case glow
     case music
     case calendar
+    case shelf
     case levels
     case howTo
     case done
@@ -16,13 +17,14 @@ nonisolated enum OnboardingPage: CaseIterable {
     }
 
     /// The pages that end with Not now and Turn on: their feature needs a permission.
-    var asksTurnOn: Bool { self == .music || self == .levels }
+    var asksTurnOn: Bool { self == .music || self == .shelf || self == .levels }
 
     var title: String {
         switch self {
         case .glow: return "Glow"
         case .music: return "Music"
         case .calendar: return "Calendar"
+        case .shelf: return "Shelf"
         case .levels: return "Volume & Brightness"
         case .howTo: return "How to use Ember"
         case .done: return "You're all set"
@@ -34,6 +36,7 @@ nonisolated enum OnboardingPage: CaseIterable {
         case .glow: return "sparkles"
         case .music: return "music.note"
         case .calendar: return "calendar"
+        case .shelf: return "tray.full"
         case .levels: return "speaker.wave.2.fill"
         case .howTo: return "hand.point.up.left.fill"
         case .done: return "checkmark.circle.fill"

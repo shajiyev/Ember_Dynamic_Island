@@ -555,6 +555,7 @@ struct AppSettingsTests {
         let settings = AppSettings(defaults: freshDefaults())
         #expect(settings.musicOn)
         settings.prepareForOnboarding()
-        #expect(!settings.musicOn && settings.timerOn && settings.shelfOn && settings.calendarOn)
+        #expect(!settings.musicOn && !settings.screenshotsToShelf)
+        #expect(settings.timerOn && settings.shelfOn && settings.calendarOn)   // need no permission
     }
 }

@@ -39,8 +39,25 @@ page's rework (docs/specs/landing-page.md, "Redesign after v1").
   requirement"), and carries no quarantine flag. The test copy and feed were removed.
 
 ### Task 4: A real first run (the user)
-- [ ] The 1.0 DMG in a fresh user account: Gatekeeper's warning, "hello", onboarding,
+- [x] The 1.0 DMG in a fresh user account: Gatekeeper's warning, "hello", onboarding,
   each permission prompt, Keep awake, the first update check.
+
+  Done 2026-11-23 in a new account ("Ember Test") with the DMG from the release script
+  (marked as downloaded with Safari): everything worked. Found there: the dimmed Start
+  button on the Timer tab showed its crown and side button through the circle; fixed
+  (`StopwatchButton` is composited before it fades).
+
+- [x] Again with a DMG made after the screenshot fix, in the same "Ember Test" account
+  (its Ember has never been allowed the Desktop): onboarding's Shelf page → Turn on brings
+  macOS's "would like to access files in your Desktop folder", and a screenshot lands on the
+  shelf. (On the author's account the fixed build caught screenshots outside Xcode with no
+  question: the permission was already given there.)
+
+  Done 2026-11-24: macOS asked for the Desktop and the screenshot landed. A screenshot
+  arrived about 5 s late and the panel lagged when opened just after: both from macOS's
+  floating thumbnail (the file is written once it goes). Settings → Shelf and onboarding's
+  Shelf page now have a switch for it; with it off, screenshots arrive at once and the lag
+  is gone.
 
 ### Task 5: macOS 15 smoke test (the user)
 - [ ] In a virtual machine (no notch: it launches, onboarding and Settings work, nothing

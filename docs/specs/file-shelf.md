@@ -123,8 +123,21 @@ Mocked up while designing (`.superpowers/brainstorm/`, not committed).
   out straight away.
 - **Settings → Shelf → Add screenshots to the shelf**, **on** by default; off while the shelf
   is off. Like any item, it is a link: the screenshot stays where macOS saved it.
-- Screenshots are saved on the Desktop by default. macOS did not ask for Desktop, Documents
-  or Downloads access in the checks (macOS 26.6.2), so no permission is needed.
+- Screenshots are saved on the Desktop by default. **A permission is needed (corrected
+  2026-11-23):** the 2026-11-16 checks ran from Xcode, and macOS then counts Xcode, which may
+  see the Desktop, as responsible for Ember, so nothing seemed to be needed. Run on its own,
+  Ember saw no screenshots: Spotlight leaves out a protected folder's files for an app
+  without access, without asking. Ember now opens the screenshot folder (the Desktop, or
+  the one chosen in the Screenshot app, `ScreenshotFolder`) once before watching, which
+  brings macOS's question; onboarding's Shelf page and the switch in Settings ask for it,
+  and the switch is off until onboarding has asked.
+- **macOS's floating thumbnail (added 2026-11-23):** while the thumbnail that slides in
+  after a screenshot shows (about 5 s), macOS has not written the file yet, so the
+  screenshot reaches the shelf only when it goes. Settings → Shelf (under Add screenshots
+  to the shelf) and onboarding's Shelf page have a switch, **macOS screenshot thumbnail**,
+  that says so and turns it on or off as ⇧⌘5 → Options would (`ScreenshotThumbnail`,
+  `com.apple.screencapture` `show-thumbnail`, on by default). It shows macOS's setting,
+  read each time it appears; nothing changes unless the user flips it.
 
 
 ### Changed after the checks (2026-11-16)

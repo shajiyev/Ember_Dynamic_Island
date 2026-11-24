@@ -31,5 +31,13 @@ struct PermissionsTests {
         #expect(PermissionStatus.notAsked.title == "Not asked yet")
         #expect(PermissionStatus.notAllowed.title == "Not allowed")
         #expect(PermissionStatus.unknown.title == "Open the player to check")
+        #expect(PermissionStatus.askedWhenTurnedOn.title == "macOS asks when you turn it on")
+    }
+
+    @Test func theScreenshotsFolderIsListedButCannotBeReadWithoutAsking() {
+        #expect(AppPermission.screenshotFolder.usedBy == "Add screenshots to the shelf")
+        #expect(AppPermission.screenshotFolder.currentStatus == .askedWhenTurnedOn)
+        #expect(AppPermission.screenshotFolder.settingsURL.absoluteString
+                == "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders")
     }
 }

@@ -434,11 +434,12 @@ final class AppSettings {
     /// Reminders and Volume & Brightness are not here: they are tied to macOS or a permission.
     static let resettablePages: [SettingsPage] = [.general, .glow, .music, .timer, .calendar, .shelf, .battery, .keepAwake]
 
-    /// Before the first onboarding: Music stays off until the user turns it on there, so
-    /// macOS's Automation prompt never comes unasked (Volume & Brightness are turned off in
-    /// `LevelModel`).
+    /// Before the first onboarding: Music and screenshots on the shelf stay off until the
+    /// user turns them on there, so macOS's Automation and Desktop prompts never come unasked
+    /// (Volume & Brightness are turned off in `LevelModel`).
     func prepareForOnboarding() {
         musicOn = false
+        screenshotsToShelf = false
     }
 
     /// Chooses Off, Shared or Custom for a feature's glow; Custom the first time starts from
