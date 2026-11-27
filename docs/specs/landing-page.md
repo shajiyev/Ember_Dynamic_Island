@@ -464,6 +464,8 @@ animations were judged not true enough to it.
   notch · macOS 15 or later), replacing the fact chips.
 - **Highlights:** the main features, each with a title, one sentence and its own live
   demo, replacing the features grid and the big screen demo.
+- **Words:** every word of the redesign comes from docs/specs/content.md (draft): who we
+  write for, the three beats, the moment cards and "Make it yours".
 - **Explore everything Ember does:** a button under the highlights that opens the full
   list, the main features included, grouped (for example Music / Your Mac / Productivity),
   with what is on the way marked.

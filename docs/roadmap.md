@@ -276,6 +276,12 @@
   then the page is left as it is, although it is out of date: Calendar and the file shelf
   still say "Planned", volume and brightness has no card, the permissions card leaves out
   Accessibility, and the demo shows the old Wide panel and Timer layout.
+  Website content: **paused 2026-11-27, to resume in a fresh session** once the app's
+  design and tab changes settle. Draft spec docs/specs/content.md: audience, core message,
+  hero and moment cards agreed; the rest of the page (Make it yours, Privacy, FAQ, What's
+  new, closing) shown but not yet confirmed. To resume: re-check the cards against
+  docs/features.md, confirm that part, then design the redesign's look and motion
+  (including the hero's live activity demo) in docs/specs/landing-page.md.
   Website: live at https://www.getember.online (the domain getember.online, which forwards
   to www; also https://ember-sigma-two.vercel.app; first deployed 2026-11-14; not
   announced). Still to do: the user's check in Safari on Mac and iPhone. Later for

@@ -1402,3 +1402,21 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   dropped on close" (2026-11-15).
 - **Seen only under Xcode:** while Xcode runs Ember under its debugger, Xcode in front still
   refuses every request; run on its own, Ember came forward every time.
+
+## 2026-11-18 — The website's words: written for newcomers, moments, and "Make it yours"
+- **Decision:** the redesigned page's words get their own spec, docs/specs/content.md,
+  which the page, README, "What's new" and later promo videos all draw from. It is written
+  for people new to notch apps, many not technical (the first wide release is through the
+  author's university). The page follows three beats: your notch can do things → what it
+  does in your day → it is yours. Main features get cards titled by a moment from someone's
+  day ("Study in 25-minute sprints."); small features share one "little things" card. A
+  "Make it yours" section after the cards says every feature and the glow can be turned
+  off. The headline stays "Every notch needs a spark." with its spark animation.
+  **Why:** the user wants the page to say what each feature adds, not list features, and
+  to make Ember's freedom (docs/vision.md) visible; non-technical visitors recognise a
+  moment before they recognise a feature name.
+- **Decision:** release notes live on our own site, `getember.online/updates`, opened in a
+  new tab from a "What's new" section (hidden until 1.0), and the in-app update window
+  shows the same page. **Why:** GitHub Releases looks technical to non-technical
+  visitors; one page means each release is written once.
+- 2026-11-27: paused while the app's design and tabs change; resumed in a later session.
