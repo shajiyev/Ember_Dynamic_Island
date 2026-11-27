@@ -105,13 +105,11 @@ struct GeneralPage: View {
                 }
             }
             Section {
-                LayoutCards(selection: $settings.panelLayout)
-                    .settingsItem(.panelLayout)
                 WidthRow(settings: settings, notchWidth: notchWidth)
             } header: {
-                Text(SettingsItem.panelLayout.title)
+                Text(SettingsItem.panelWidth.title)
             } footer: {
-                Text("Every tab uses the chosen layout and width; each layout keeps its own width. The panel never gets narrower than its tabs need: with more tabs on, the slider starts higher. A change shows the next time the panel opens.")
+                Text("One width for every tab. It never gets narrower than the tabs need: with more tabs on, the slider starts higher. Music and Timer each have a style on their own page; every style fits any width. A change shows the next time the panel opens.")
             }
             ResetSection(page: .general, settings: settings)
         }
@@ -181,16 +179,16 @@ struct GlowPage: View {
     }
 }
 
-/// General → Width: the chosen layout's width, from as narrow as the layout and the tabs
-/// allow up to the layout's widest, in 10 pt steps, with the chosen width beside it (without
+/// General → Width: the panel's width, from as narrow as the tabs allow
+/// up to the widest, in 10 pt steps, with the chosen width beside it (without
 /// the sidebar's rail).
 private struct WidthRow: View {
     @Bindable var settings: AppSettings
     let notchWidth: CGFloat
 
     var body: some View {
-        let lowest = settings.panelLayout.lowestWidth(sideRoom: settings.openSideRoom, notchWidth: notchWidth)
-        let widest = settings.panelLayout.widthRange.upperBound
+        let lowest = PanelLayout.lowestWidth(sideRoom: settings.openSideRoom, notchWidth: notchWidth)
+        let widest = PanelLayout.widthRange.upperBound
         let shown = max(settings.panelWidth, lowest)
         LabeledContent(SettingsItem.panelWidth.title) {
             HStack(spacing: 8) {

@@ -1455,3 +1455,19 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   starts, not a fixed share of the panel. **Why:** in Sidebar mode part of the AirDrop box
   kept files instead of sending them (found in the final review).
 
+## 2026-11-27 — One width, a style per tab, a lower panel
+- **Decision:** the panel layouts (Compact / Wide) are gone. One Width slider in General
+  (420–760 pt, 460 by default) sets the panel for every tab; Music and Timer each have a
+  Style A / B on their own page that never changes the width, and each style fits every
+  width. **Why:** the layouts changed only those two tabs yet chose the whole panel's width;
+  the user wants the width set once and each tab's look chosen on its own.
+- **Decision:** Music's Style A (the default) is the cover beside the title, bar and
+  buttons, lifted 7 pt above the middle; Style B is stacked. Timer's Style A is the ring in
+  the middle, B the ring beside. **Why:** the user prefers the cover beside for Music; it sat
+  so low that a pointer fitted between the notch and the title (10 pt was tried, 7 kept).
+- **Decision:** the panel is 187 pt tall (202 − 10 − 5). The rail then shows 6 tabs with
+  large icons and 7 with regular ones. **Why:** asked by the user at the first looks.
+- **Decision:** in Sidebar mode the content stays where it is: the panel's outline is
+  centred on the notch, and the content sits about 21 pt right of the notch's centre
+  because the rail takes the left side. **Why:** the user wanted only the outline even on
+  both sides, which it already is.

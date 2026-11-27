@@ -27,7 +27,7 @@ private struct PlacementSketch: View {
 
     var body: some View {
         let isSidebar = placement == .sidebar
-        let size = CGSize(width: PanelLayout.compact.size.width + (isSidebar ? RailLayout.panelRoom : 0),
+        let size = CGSize(width: PanelLayout.defaultWidth + (isSidebar ? RailLayout.panelRoom : 0),
                           height: PanelLayout.height)
         let contentLeading = isSidebar ? RailLayout.contentLeading : PanelLayout.contentInset
         ZStack(alignment: .topLeading) {

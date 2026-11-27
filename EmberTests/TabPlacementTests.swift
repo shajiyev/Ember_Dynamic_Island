@@ -21,20 +21,22 @@ struct TabPlacementTests {
     }
 
     @Test func theRailHasRoomForTheTabsBetweenItsPadding() {
-        #expect(RailLayout.tabRoom(panelHeight: PanelLayout.height) == 176)
+        #expect(RailLayout.tabRoom(panelHeight: PanelLayout.height) == 161)
     }
 
     @Test func fewTabsKeepLargeIconsAndTheWidestGaps() {
-        #expect(RailLayout.tabs(count: 5, panelHeight: PanelLayout.height) == RailTabs(size: .large, spacing: 4))
+        #expect(RailLayout.tabs(count: 6, panelHeight: PanelLayout.height) == RailTabs(size: .large, spacing: 4))
         #expect(RailLayout.tabs(count: 1, panelHeight: PanelLayout.height) == RailTabs(size: .large, spacing: 4))
     }
 
-    @Test func tabsThatJustFitAsLargeSpreadTheRoomLeft() {
-        #expect(RailLayout.tabs(count: 7, panelHeight: PanelLayout.height) == RailTabs(size: .large, spacing: (176 - 154) / 6))
+    @Test func tooManyTabsForLargeIconsGoRegularAndSpreadTheRoomLeft() {
+        // 6 large fit at this height; 7 go regular and share what is left.
+        #expect(RailLayout.tabs(count: 7, panelHeight: PanelLayout.height) == RailTabs(size: .regular, spacing: (161 - 140) / 6))
     }
 
-    @Test func tooManyTabsForLargeIconsGoRegular() {
-        #expect(RailLayout.tabs(count: 8, panelHeight: PanelLayout.height) == RailTabs(size: .regular, spacing: (176 - 160) / 7))
+    @Test func tabsThatNoLongerFitSitTight() {
+        // The rail holds 7 at this height: 8 no longer fit and sit tight, 2 pt apart.
+        #expect(RailLayout.tabs(count: 8, panelHeight: PanelLayout.height) == RailTabs(size: .regular, spacing: 2))
     }
 
     @Test func theNameSitsLevelWithTheFirstTab() {

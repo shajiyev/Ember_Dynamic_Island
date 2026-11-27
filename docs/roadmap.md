@@ -283,8 +283,13 @@
   in the fresh test account.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
-- **Next:** dropping the panel layouts for a look chosen per tab (Music, Timer) and one width
-  (asked 2026-11-27, being designed), then "Ship it" (milestone 3): the macOS 15 smoke test and the release.
+- **Done (2026-11-27):** the panel layouts (Compact / Wide) gave way to one Width slider in
+  General (420–760 pt, 460 by default) and a Style A / B chosen on the Music and Timer
+  pages, which never changes the width. Music's Style A is the cover beside (lifted 7 pt
+  toward the notch), Style B stacked; Timer's A the ring in the middle, B the ring beside.
+  The panel is 187 pt tall. Spec docs/specs/panel-layouts.md (top section). Tested on
+  macOS 26.6.2; checked on screen by the user.
+- **Next:** "Ship it" (milestone 3): the macOS 15 smoke test and the release.
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything

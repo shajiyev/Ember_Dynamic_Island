@@ -31,6 +31,15 @@ struct MusicPage: View {
             }
             .disabled(!settings.musicOn)
             Section {
+                MusicStyleCards(selection: $settings.musicStyle)
+                    .settingsItem(.musicStyle)
+            } header: {
+                Text(SettingsItem.musicStyle.title)
+            } footer: {
+                Text("How the Music tab is arranged. Style A puts the cover beside the title, bar and buttons; Style B stacks the cover and title above the bar. The panel's width stays as set in General.")
+            }
+            .disabled(!settings.musicOn)
+            Section {
                 FeatureColorRow(item: .musicColor, color: $settings.featureColors[.music],
                                 ownName: "The song's colour", ownColor: nil)
             } footer: {
@@ -67,6 +76,15 @@ struct TimerPage: View {
                 .settingsItem(.timerPresets)
             } footer: {
                 Text("The Timer tab's three buttons, in minutes, from 1 to 180.")
+            }
+            .disabled(!settings.timerOn)
+            Section {
+                TimerStyleCards(selection: $settings.timerStyle)
+                    .settingsItem(.timerStyle)
+            } header: {
+                Text(SettingsItem.timerStyle.title)
+            } footer: {
+                Text("How the Timer tab is arranged. Style A keeps the ring on the left and slides it to the middle while the timer runs; Style B keeps the ring beside the time. The panel's width stays as set in General.")
             }
             .disabled(!settings.timerOn)
             Section {

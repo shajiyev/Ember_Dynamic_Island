@@ -1379,3 +1379,338 @@ Added 2026-11-17 (spec: "Two layouts", Height). Built inline.
   layouts' new height; set it in `PanelLayout.size`; remove the slider and
   `tuningPanelHeight`. Adjust any tab that no longer fits (each fix noted in the spec).
   CLEAN, TEST and BUILD; the user checks every tab again.
+
+# Part 3: One width, a style per tab (2026-11-27)
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development
+> (recommended) or superpowers:executing-plans to implement this part task-by-task. Steps
+> use checkbox (`- [ ]`) syntax for tracking.
+
+**Spec:** docs/specs/panel-layouts.md, "Styles per tab, one width".
+
+**Goal:** remove the Compact / Wide layouts: one width for every tab (Settings → General →
+Width, 420–760 pt, default 460), a Style A / Style B choice on the Music and Timer pages
+that never changes the width, and the panel 192 pt tall.
+
+**Architecture:** `PanelLayout` becomes a caseless namespace of the panel's measures; a new
+`TabStyle` (`a`, `b`) is saved per tab in `AppSettings` (`musicStyle`, `timerStyle`) next
+to one `panelWidth`. Old saved layouts carry over once and their keys are removed.
+`PanelView` hands each tab its style and the Calendar its month grid width; the
+`panelLayout` environment value goes. Settings: the General page keeps only the Width
+slider; Music and Timer get style cards built on the shared `ChoiceCard`.
+
+**Tech Stack:** Swift, SwiftUI, Swift Testing.
+
+## Global Constraints (Part 3)
+
+- Minimum macOS 15.0. App and test targets use `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`;
+  pure value types are `nonisolated`. Every file imports each module it uses.
+- Width: 420–760 pt in 10 pt steps, default 460; its lowest point still follows the width
+  rule (`lowestWidth(sideRoom:notchWidth:)`). With the sidebar the panel is still wider by
+  `RailLayout.panelRoom`.
+- Styles: `TabStyle.a` (default) is today's Compact, `.b` today's Wide. Titles "Style A",
+  "Style B". Card lines: Music A "Stacked", B "Cover beside"; Timer A "Ring in the middle",
+  B "Ring beside". A style never changes the width; every style fits 420–760 pt.
+- Height 192 pt (`PanelLayout.height`, and `PillController.openSize`'s own copy).
+- Month grid: 176 pt below a 560 pt width (the slider's value), 190 pt from 560.
+- Carry-over, once: old `panelLayout` "wide" → both styles `.b`, width = old `wideWidth`
+  (620 if unset); otherwise `.a`, width = old `compactWidth` (460 if unset); then the old
+  keys `panelLayout`, `compactWidth`, `wideWidth` are removed.
+- Saved keys: `panelWidth`, `musicStyle`, `timerStyle`. Reset to Defaults: General resets
+  the width, Music the Music style, Timer the Timer style.
+- The pill module (`Ember/Pill/`) never refers to `Ember/Settings/` or `Ember/Panel/`.
+- No secrets or personal paths. The user makes every commit; implementers never run git
+  commands that change state. Build/test with `-derivedDataPath` in the scratchpad; CLEAN
+  before TEST after scripted edits.
+
+### Task 11: The measures, the style and the height
+
+**Files:**
+- Modify: `Ember/Panel/PanelLayout.swift`; Create: `Ember/Panel/TabStyle.swift`
+- Modify: `Ember/Pill/PillController.swift` (the height's copy: 192)
+- Test: `EmberTests/PanelLayoutTests.swift`, `EmberTests/TabPlacementTests.swift`
+
+**Interfaces — Produces:** `PanelLayout.height` (192), `.contentInset`, `.controlsBottomInset`,
+`.widthRange` (420...760), `.defaultWidth` (460), `static func lowestWidth(sideRoom:notchWidth:)`,
+`static func monthGridWidth(width:) -> CGFloat`; `TabStyle` (`a`, `b`, `title`).
+`PanelLayout`'s cases, `size`, `title`, `summary`, instance `widthRange`/`lowestWidth`/
+`monthGridWidth` are removed (callers are fixed in Tasks 12–13; this task may leave the
+app not building only if Task 12 follows at once — prefer keeping it building by updating
+the few callers' expressions mechanically).
+
+- [x] **Step 1: Tests first.** Replace the size / layout tests in `PanelLayoutTests` with:
+
+```swift
+    @Test func thePanelIs192PointsTall() {
+        #expect(PanelLayout.height == 192)
+    }
+
+    @Test func oneWidthFrom420To760StartingAt460() {
+        #expect(PanelLayout.widthRange == 420...760)
+        #expect(PanelLayout.defaultWidth == 460)
+    }
+
+    @Test func theMonthGridGrowsFrom560() {
+        #expect(PanelLayout.monthGridWidth(width: 559) == 176)
+        #expect(PanelLayout.monthGridWidth(width: 560) == 190)
+    }
+
+    @Test func eachTabHasStyleAAndStyleB() {
+        #expect(TabStyle.allCases == [.a, .b])
+        #expect(TabStyle.allCases.map(\.title) == ["Style A", "Style B"])
+    }
+```
+
+  Keep the `lowestWidth` tests, calling `PanelLayout.lowestWidth(...)` (static); the Wide
+  case (`== 560`) goes, the Compact ones keep their values. In `TabPlacementTests`, the
+  rail at 192 pt: `tabRoom` 166; 5 tabs `.large`, spacing 4; 7 tabs `.large`, spacing
+  `(166 - 154) / 6` (2); 8 tabs `.regular`, spacing 2 (they no longer fit: the rail holds 7).
+
+- [x] **Step 2: Implement.** `PanelLayout` becomes:
+
+```swift
+/// The open panel's measures, the same for every tab. (Until 2026-11-27 it was a choice of
+/// two layouts; now the width is set once and Music and Timer each have a `TabStyle`.)
+nonisolated enum PanelLayout {
+    /// The widths the user can choose (Settings → General → Width) and the first one.
+    static let widthRange: ClosedRange<CGFloat> = 420...760
+    static let defaultWidth: CGFloat = 460
+
+    /// The Width slider's lowest point: the range's, or what the top row needs beside a
+    /// notch `notchWidth` wide (`TopRowLayout.sideRoom`), whichever is larger.
+    static func lowestWidth(sideRoom: CGFloat, notchWidth: CGFloat) -> CGFloat {
+        max(widthRange.lowerBound, notchWidth + 2 * sideRoom)
+    }
+
+    /// The Calendar tab's month grid for the width chosen: larger from 560 pt.
+    static func monthGridWidth(width: CGFloat) -> CGFloat {
+        width < 560 ? 176 : 190
+    }
+
+    /// The open panel's height, chosen by the user on 2026-11-27 (202 − 10; 184 before
+    /// that day, 200 before 2026-11-17). Users do not change it.
+    static let height: CGFloat = 192
+```
+
+  then the existing `controlsBottomInset` and `contentInset`. In the environment extension
+  replace `@Entry var panelLayout: PanelLayout = .compact` with
+  `@Entry var monthGridWidth: CGFloat = 176` ("The Calendar tab's month grid width; `PanelView`
+  sets it from the width chosen."). Create `Ember/Panel/TabStyle.swift`:
+
+```swift
+/// How the Music or the Timer tab is arranged (Settings → Music / Timer → Style). A style
+/// never changes the panel's width; each fits any width the user sets.
+nonisolated enum TabStyle: String, CaseIterable {
+    /// Music: stacked; Timer: the ring in the middle. The default.
+    case a
+    /// Music: the cover beside; Timer: the ring beside.
+    case b
+
+    var title: String {
+        switch self {
+        case .a: return "Style A"
+        case .b: return "Style B"
+        }
+    }
+}
+```
+
+  `PillController.openSize`'s start value: height 192 (its comment already points at
+  `PanelLayout.height`; `PanelHeightTests` checks they match).
+
+- [x] **Step 3: TEST** (with Task 12 if the app does not build in between). Expected: the
+  new tests pass; report the count.
+
+### Task 12: Settings keep one width and two styles
+
+**Files:** Modify `Ember/Settings/AppSettings.swift`, `Ember/Settings/SettingsSearch.swift`;
+Test `EmberTests/AppSettingsTests.swift`, `EmberTests/SettingsSearchTests.swift`,
+`EmberTests/PanelTabsTests.swift` (line ~232: `PanelLayout.compact.size.width` →
+`PanelLayout.defaultWidth`).
+
+**Interfaces — Produces:** `AppSettings.panelWidth: Double` (stored, held to
+`PanelLayout.widthRange`), `musicStyle: TabStyle`, `timerStyle: TabStyle`;
+`SettingsItem.musicStyle` (page `.music`), `.timerStyle` (page `.timer`), both titled
+"Style"; `SettingsItem.panelLayout` removed. `panelSize` uses `panelWidth`.
+
+- [x] **Step 1: Tests first.** Replace the layout and per-layout width tests (around lines
+  161–171 and 304–315) with:
+
+```swift
+    @Test func oneWidthIsSavedAndHeldToItsRange() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelWidth == 460)
+        settings.panelWidth = 900
+        #expect(settings.panelWidth == 760)
+        settings.panelWidth = 100
+        #expect(settings.panelWidth == 420)
+        settings.panelWidth = 600
+        #expect(AppSettings(defaults: defaults).panelWidth == 600)
+        settings.reset(.general)
+        #expect(settings.panelWidth == 460)
+    }
+
+    @Test func musicAndTimerEachKeepTheirStyle() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.musicStyle == .a && settings.timerStyle == .a)
+        settings.musicStyle = .b
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.musicStyle == .b && relaunched.timerStyle == .a)
+        relaunched.timerStyle = .b
+        relaunched.reset(.music)
+        #expect(relaunched.musicStyle == .a && relaunched.timerStyle == .b)
+        relaunched.reset(.timer)
+        #expect(relaunched.timerStyle == .a)
+    }
+
+    @Test func theWideLayoutCarriesOverAsStyleBAndItsWidth() {
+        let defaults = freshDefaults()
+        defaults.set("wide", forKey: "panelLayout")
+        defaults.set(700.0, forKey: "wideWidth")
+        defaults.set(480.0, forKey: "compactWidth")
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelWidth == 700 && settings.musicStyle == .b && settings.timerStyle == .b)
+        #expect(defaults.object(forKey: "panelLayout") == nil && defaults.object(forKey: "wideWidth") == nil)
+        settings.reset(.music)   // the old layout is gone, so Reset gives Style A
+        #expect(settings.musicStyle == .a)
+    }
+
+    @Test func theCompactLayoutCarriesOverAsStyleAAndItsWidth() {
+        let defaults = freshDefaults()
+        defaults.set("compact", forKey: "panelLayout")
+        defaults.set(480.0, forKey: "compactWidth")
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelWidth == 480 && settings.musicStyle == .a && settings.timerStyle == .a)
+        #expect(defaults.object(forKey: "compactWidth") == nil)
+    }
+```
+
+  Update the other references: `settings.panelWidth == Double(PanelLayout.compact.size.width)`
+  → `== Double(PanelLayout.defaultWidth)`; any `panelSize == CGSize(width: 460, ...)` stays
+  true at the default. In `SettingsSearchTests.theLayoutAndThePlayerButtonsAreFound`:
+  `matches("compact") == [.musicStyle, .timerStyle]`, `matches("layout") == [.musicStyle, .timerStyle]`,
+  `SettingsItem.musicStyle.page == .music`, `SettingsItem.timerStyle.page == .timer`.
+
+- [x] **Step 2: Implement.**
+  - Keys: add `panelWidth`, `musicStyle`, `timerStyle`; keep `panelLayout`, `compactWidth`,
+    `wideWidth` only for the carry-over, with a comment saying so.
+  - Replace `panelLayout`, `compactWidth`, `wideWidth` and the computed `panelWidth` with:
+
+```swift
+    /// The panel's width for every tab (Settings → General → Width), held to its range.
+    var panelWidth: Double {
+        didSet {
+            let clamped = Self.clampedWidth(panelWidth)
+            guard clamped == panelWidth else { panelWidth = clamped; return }
+            save(panelWidth, Key.panelWidth)
+        }
+    }
+    /// How the Music and Timer tabs are arranged (Settings → Music / Timer → Style).
+    var musicStyle: TabStyle { didSet { save(musicStyle.rawValue, Key.musicStyle) } }
+    var timerStyle: TabStyle { didSet { save(timerStyle.rawValue, Key.timerStyle) } }
+```
+
+  - In `init`, before reading them, call `Self.carryOverLayout(in: defaults)`, then:
+
+```swift
+        panelWidth = Self.clampedWidth(defaults.object(forKey: Key.panelWidth) as? Double ?? PanelLayout.defaultWidth)
+        musicStyle = defaults.string(forKey: Key.musicStyle).flatMap(TabStyle.init(rawValue:)) ?? .a
+        timerStyle = defaults.string(forKey: Key.timerStyle).flatMap(TabStyle.init(rawValue:)) ?? .a
+```
+
+  and add:
+
+```swift
+    /// Once, after the layouts went (2026-11-27): a saved Wide layout becomes Style B on
+    /// Music and Timer with the Wide width, Compact becomes Style A with the Compact width;
+    /// the old keys are then removed, so Reset to Defaults gives Style A and 460 pt.
+    private static func carryOverLayout(in defaults: UserDefaults) {
+        let oldKeys = [Key.panelLayout, Key.compactWidth, Key.wideWidth]
+        guard oldKeys.contains(where: { defaults.object(forKey: $0) != nil }) else { return }
+        let isWide = defaults.string(forKey: Key.panelLayout) == "wide"
+        let style: TabStyle = isWide ? .b : .a
+        let width = defaults.object(forKey: isWide ? Key.wideWidth : Key.compactWidth) as? Double
+            ?? (isWide ? 620 : PanelLayout.defaultWidth)
+        if defaults.object(forKey: Key.panelWidth) == nil { defaults.set(width, forKey: Key.panelWidth) }
+        if defaults.object(forKey: Key.musicStyle) == nil { defaults.set(style.rawValue, forKey: Key.musicStyle) }
+        if defaults.object(forKey: Key.timerStyle) == nil { defaults.set(style.rawValue, forKey: Key.timerStyle) }
+        oldKeys.forEach(defaults.removeObject(forKey:))
+    }
+
+    private static func clampedWidth(_ width: Double) -> Double {
+        min(max(width, PanelLayout.widthRange.lowerBound), PanelLayout.widthRange.upperBound)
+    }
+```
+
+    (remove the old `clamped(_:to:)` for layouts).
+  - `reset(_:)`: General sets `panelWidth = fresh.panelWidth` (instead of the three layout
+    lines); Music adds `musicStyle = fresh.musicStyle`; Timer adds `timerStyle = fresh.timerStyle`.
+    `keys(on:)`: General lists `Key.panelWidth` (instead of the three); Music adds
+    `Key.musicStyle`; Timer adds `Key.timerStyle`.
+  - `panelSize`: `CGSize(width: panelWidth + rail, height: PanelLayout.height)` (unchanged
+    shape, now the stored width).
+  - `SettingsSearch`: remove `case panelLayout` (and its page, title and keywords); add
+    `case musicStyle` (after `musicButtons`) and `case timerStyle` (with the Timer items):
+    page `.music` / `.timer`, title "Style", keywords Music `["layout", "compact", "wide", "cover", "stacked"]`,
+    Timer `["layout", "compact", "wide", "ring"]`. Add `"layout"` nowhere else.
+- [x] **Step 3: TEST** (Tasks 11–12 together if needed): all pass; report the count.
+
+### Task 13: The tabs and the Settings pages
+
+**Files:** Modify `Ember/Panel/PanelView.swift`, `Ember/NowPlaying/NowPlayingPanelView.swift`,
+`Ember/Timer/TimerPanelView.swift`, `Ember/Calendar/MonthGridView.swift`,
+`Ember/Settings/GeneralPage.swift`, `Ember/Settings/FeaturePages.swift`,
+`Ember/Settings/TabPlacementCards.swift`; rename `Ember/Settings/LayoutCards.swift` →
+`Ember/Settings/StyleCards.swift`.
+
+- [x] **Step 1: The tabs.** `NowPlayingPanelView` and `TimerPanelView` take `let style: TabStyle`
+  instead of `@Environment(\.panelLayout)`: `.a` draws what `.compact` drew, `.b` what `.wide`
+  drew (update their doc comments: "in the style chosen in Settings"). `MonthGridView` reads
+  `@Environment(\.monthGridWidth)`. `PanelView` passes `style: settings.musicStyle` /
+  `style: settings.timerStyle` and sets `.environment(\.monthGridWidth,
+  PanelLayout.monthGridWidth(width: settings.panelWidth))` instead of `\.panelLayout`.
+- [x] **Step 2: Every style fits every width.** Read the Style B (old Wide) Music and Timer
+  views and the shared parts (`NowPlayingParts.swift`, `TimerParts.swift`): anything sized
+  for a 620 pt panel (fixed widths, minimum widths, fixed text widths, spacers) must let the
+  text, bar and controls share the room left beside the 96 pt cover or ring down to a 420 pt
+  panel (356 pt of content), with titles truncating ("…") rather than pushing. Change only
+  what blocks that; list each change and anything you could not judge without seeing it.
+- [x] **Step 3: Settings → General.** Remove the Panel layout section's `LayoutCards`; keep
+  `WidthRow` in a section headed `Text(SettingsItem.panelWidth.title)` with the footer "One
+  width for every tab. It never gets narrower than the tabs need: with more tabs on, the
+  slider starts higher. Music and Timer each have a style on their own page; every style fits
+  any width. A change shows the next time the panel opens." `WidthRow` uses
+  `PanelLayout.lowestWidth(...)` and `PanelLayout.widthRange.upperBound`.
+- [x] **Step 4: The style cards.** `StyleCards.swift` keeps `ChoiceCard` as it is, and holds:
+  `MusicStyleCards(selection: Binding<TabStyle>)` and `TimerStyleCards(selection:)`, each an
+  `HStack(spacing: 12)` of two `ChoiceCard`s (title `style.title`, line as in the Global
+  Constraints) with a drawing at three tenths, like the old `LayoutSketch`, both drawn at the
+  default 460 × 192 panel: Music A = the old compact marks; Music B = the old wide marks
+  refitted to 460 pt (cover 96 at x 32, text and bar from x 146 to 428, play under the bar's
+  middle); Timer A = ring 96 at the left, three preset chips at the right, setter and buttons
+  in the middle; Timer B = ring tile 96 at the left, the setter's digits and buttons beside it.
+  On `MusicPage` add a Section (after the Buttons section) with `MusicStyleCards` and
+  `.settingsItem(.musicStyle)`, header `Text(SettingsItem.musicStyle.title)`, footer "How the
+  Music tab is arranged. Style A stacks the cover and title above the bar; Style B puts the
+  cover beside them. The panel's width stays as set in General.", `.disabled(!settings.musicOn)`.
+  On `TimerPage`, the same after its presets section with `TimerStyleCards`, footer "How the
+  Timer tab is arranged. Style A keeps the ring on the left and slides it to the middle while
+  the timer runs; Style B keeps the ring beside the time. The panel's width stays as set in
+  General.", `.disabled(!settings.timerOn)`.
+- [x] **Step 5:** `TabPlacementCards`' drawing uses `PanelLayout.defaultWidth` (was
+  `PanelLayout.compact.size.width`). `grep -rn "panelLayout\|PanelLayout\.compact\|PanelLayout\.wide\|compactWidth\|wideWidth\|LayoutCards\|LayoutSketch" Ember EmberTests`
+  finds only the carry-over keys and its test.
+- [x] **Step 6: CLEAN, TEST, BUILD** (Debug and Release, no warnings).
+- [x] **Step 7: The user checks on screen** (macOS 26): each style of Music and Timer at 420,
+  460, 620 and 760 pt (nothing cut off or crowded; switch styles on their pages); Calendar on
+  both sides of 560; Settings → General shows only Width; the Style cards; the panel at
+  192 pt in both tab placements; an old Wide setting came over as Style B with its width.
+
+**As built (2026-11-27):** after the user's look, the height went to 187 pt, Music's styles
+swapped names (the cover beside is Style A and the default, lifted 7 pt toward the notch;
+stacked is Style B), and the carry-over sets Music and Timer each on its own (Wide → Music A,
+Timer B; Compact → Music B, Timer A). Timer's styles are unchanged.
+- [x] **Step 8: Checkpoint and commit** (roadmap, features #38/#31, architecture, specs'
+  Key files / Gotchas / Tests, decisions: the layouts replaced by styles and why).

@@ -18,7 +18,6 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case hidesInFullScreen
     case alertsInFullScreen
     case lastingPriority
-    case panelLayout
     case panelWidth
     case tabArrangement
     case tabPlacement
@@ -48,8 +47,10 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case music
     case songOnChange
     case musicButtons
+    case musicStyle
     case timer
     case timerPresets
+    case timerStyle
     case timerInWings
     case hidesPausedTimer
     case timesUpSound
@@ -93,13 +94,13 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var page: SettingsPage {
         switch self {
         case .launchAtLogin, .showsMenuBarIcon, .tapsTrackpadOnOpen, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
-             .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement, .tabPlacement:
+             .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelWidth, .tabArrangement, .tabPlacement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .panelGlow, .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
             return .glow
-        case .music, .songOnChange, .musicButtons, .musicGlow, .musicColor: return .music
-        case .timer, .timerPresets, .timerInWings, .hidesPausedTimer, .timerGlow, .timerColor, .timesUpColor,
+        case .music, .songOnChange, .musicButtons, .musicStyle, .musicGlow, .musicColor: return .music
+        case .timer, .timerPresets, .timerStyle, .timerInWings, .hidesPausedTimer, .timerGlow, .timerColor, .timesUpColor,
              .timesUpSound, .timesUpExample: return .timer
         case .calendar, .calendarEvents, .reminders, .calendarGlow, .calendarColor, .hidesAllDayEvents,
              .hidesCompletedReminders, .headsUps, .headsUpSound, .headsUpExample: return .calendar
@@ -132,7 +133,6 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .hidesInFullScreen: return "Hide in full-screen apps"
         case .alertsInFullScreen: return "Still show alerts"
         case .lastingPriority: return "In the notch, show first"
-        case .panelLayout: return "Panel layout"
         case .panelWidth: return "Width"
         case .tabArrangement: return "Tabs"
         case .tabPlacement: return "Tab position"
@@ -150,6 +150,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .music: return "Music"
         case .songOnChange: return "Show the song when it changes"
         case .musicButtons: return "Buttons"
+        case .musicStyle, .timerStyle: return "Style"
         case .timer: return "Timer"
         case .timerPresets: return "Presets"
         case .timerInWings: return "Show the countdown in the notch"
@@ -206,7 +207,6 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .hidesInFullScreen: return ["full-screen", "video", "game", "presentation"]
         case .alertsInFullScreen: return ["full-screen", "Time's up", "battery"]
         case .lastingPriority: return ["priority", "song", "both"]
-        case .panelLayout: return ["compact", "wide", "size", "panel"]
         case .panelWidth: return ["wider", "narrower", "size"]
         case .tabArrangement: return ["arrange", "drag", "top row", "side"]
         case .tabPlacement: return ["sidebar", "rail", "top row", "left"]
@@ -236,6 +236,8 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
                                     "10 seconds", "rewind", "fast forward"]
         case .timer: return ["countdown", "alarm", "stopwatch"]
         case .timerPresets: return ["minutes", "5m", "25m", "45m"]
+        case .musicStyle: return ["layout", "compact", "wide", "cover", "stacked"]
+        case .timerStyle: return ["layout", "compact", "wide", "ring"]
         case .timerInWings: return ["wings", "hide", "running"]
         case .hidesPausedTimer: return ["wings", "pause"]
         case .timesUpSound: return ["Time's up", "alert", "Glass", "alarm"]

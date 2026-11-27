@@ -156,19 +156,16 @@ struct AppSettingsTests {
         #expect(settings.pillTiming == PillTiming(openDelay: 0.4, closeDelay: 0.7))
     }
 
-    @Test func theCompactLayoutIsTheDefaultAndShuffleAndRepeatAreSpare() {
+    @Test func shuffleAndRepeatAreSpareByDefault() {
         let settings = AppSettings(defaults: freshDefaults())
-        #expect(settings.panelLayout == .compact)
         #expect(settings.musicButtons == .standard)
     }
 
-    @Test func layoutAndPlayerButtonsSurviveARelaunchAndTheButtonsReset() {
+    @Test func playerButtonsSurviveARelaunchAndReset() {
         let defaults = freshDefaults()
         let settings = AppSettings(defaults: defaults)
-        settings.panelLayout = .wide
         settings.musicButtons = MusicButtonRow.standard.placing(.shuffle, at: 0)
         let relaunched = AppSettings(defaults: defaults)
-        #expect(relaunched.panelLayout == .wide)
         #expect(relaunched.musicButtons.places == [.shuffle, nil, .previous, .next, nil, nil])
         relaunched.reset(.music)
         #expect(relaunched.musicButtons == .standard)
@@ -298,22 +295,54 @@ struct AppSettingsTests {
         #expect(AppSettings(defaults: defaults).lastingPriority == .music)
     }
 
-    @Test func eachLayoutKeepsItsOwnWidthHeldToItsRange() {
+    @Test func oneWidthIsSavedAndHeldToItsRange() {
         let defaults = freshDefaults()
         let settings = AppSettings(defaults: defaults)
-        #expect(settings.compactWidth == 460 && settings.wideWidth == 620)
-        #expect(settings.panelSize == CGSize(width: 460, height: PanelLayout.height))
-        settings.panelWidth = 520
-        settings.panelLayout = .wide
-        #expect(settings.panelWidth == 620)
+        #expect(settings.panelWidth == 460)
         settings.panelWidth = 900
-        #expect(settings.wideWidth == 760)
-        settings.compactWidth = 100
-        #expect(settings.compactWidth == 420)
+        #expect(settings.panelWidth == 760)
+        settings.panelWidth = 100
+        #expect(settings.panelWidth == 420)
+        settings.panelWidth = 600
+        #expect(AppSettings(defaults: defaults).panelWidth == 600)
+        settings.reset(.general)
+        #expect(settings.panelWidth == 460)
+    }
 
+    @Test func musicAndTimerEachKeepTheirStyle() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.musicStyle == .a && settings.timerStyle == .a)
+        settings.musicStyle = .b
         let relaunched = AppSettings(defaults: defaults)
-        #expect(relaunched.compactWidth == 420 && relaunched.wideWidth == 760)
-        #expect(relaunched.panelSize == CGSize(width: 760, height: PanelLayout.height))
+        #expect(relaunched.musicStyle == .b && relaunched.timerStyle == .a)
+        relaunched.timerStyle = .b
+        relaunched.reset(.music)
+        #expect(relaunched.musicStyle == .a && relaunched.timerStyle == .b)
+        relaunched.reset(.timer)
+        #expect(relaunched.timerStyle == .a)
+    }
+
+    // Music's Style A is the cover beside (the old Wide look), Timer's Style B the ring beside.
+    @Test func theWideLayoutCarriesOverAsTheCoverAndRingBesideAndItsWidth() {
+        let defaults = freshDefaults()
+        defaults.set("wide", forKey: "panelLayout")
+        defaults.set(700.0, forKey: "wideWidth")
+        defaults.set(480.0, forKey: "compactWidth")
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelWidth == 700 && settings.musicStyle == .a && settings.timerStyle == .b)
+        #expect(defaults.object(forKey: "panelLayout") == nil && defaults.object(forKey: "wideWidth") == nil)
+        settings.reset(.timer)   // the old layout is gone, so Reset gives Style A
+        #expect(settings.timerStyle == .a)
+    }
+
+    @Test func theCompactLayoutCarriesOverAsTheStackedMusicAndItsWidth() {
+        let defaults = freshDefaults()
+        defaults.set("compact", forKey: "panelLayout")
+        defaults.set(480.0, forKey: "compactWidth")
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.panelWidth == 480 && settings.musicStyle == .b && settings.timerStyle == .a)
+        #expect(defaults.object(forKey: "compactWidth") == nil)
     }
 
     @Test func theShortcutIsControlOptionNByDefaultAndCanBeClearedOrChanged() {
@@ -598,7 +627,7 @@ struct AppSettingsTests {
         let topRowWidth = settings.panelSize.width
         settings.tabPlacement = .sidebar
         #expect(settings.panelSize.width == topRowWidth + RailLayout.panelRoom)
-        #expect(settings.panelWidth == Double(PanelLayout.compact.size.width))   // the slider's width leaves the rail out
+        #expect(settings.panelWidth == Double(PanelLayout.defaultWidth))   // the slider's width leaves the rail out
         #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 0, right: 0, showsBattery: true))
     }
 }

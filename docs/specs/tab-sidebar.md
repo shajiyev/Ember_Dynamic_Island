@@ -66,9 +66,9 @@ smaller when the tabs do not fit (a scrolling rail with edge fades was built fir
 dropped).
 - **Large icons** (22 pt with the capsule) while they fit, with the room left spread between
   them from 2 to 4 pt; **regular icons** (20 pt) otherwise, 2 pt apart. In the 202 pt panel:
-  up to 7 tabs large, 8 regular.
+  up to 7 tabs large, 8 regular (from 2026-11-27 at 187 pt: 6 large, 7 regular).
 - The rail never scrolls; every tab is always in sight.
-- **Limit:** 8 tabs fit. The planned list has 9 (with Clipboard, Color picker, Webcam
+- **Limit:** 8 tabs fit (7 at 187 pt). The planned list has 9 (with Clipboard, Color picker, Webcam
   mirror and Claude Code usage); the 9th needs a decision when it comes (a smaller size, or
   fewer tabs).
 
@@ -150,7 +150,7 @@ today.
   split was wrong in Sidebar mode until it followed the content's leading inset.
 - `PillController.openSize` keeps its own copy of the panel's height (the pill module does
   not refer to the panel module); `PanelHeightTests` keeps the two in step.
-- 8 tabs fit in the rail; a 9th needs a decision (see "Many tabs").
+- 8 tabs fit in the rail (7 at 187 pt); a 9th needs a decision (see "Many tabs").
 - `shownTabs` decides the opening tab's fallback and the "first tab" order everywhere; in
   Sidebar mode it must follow the rail's order, not the top row's.
 - The top row's `TopRowLayout` must not count tabs in Sidebar mode, or the panel grows for

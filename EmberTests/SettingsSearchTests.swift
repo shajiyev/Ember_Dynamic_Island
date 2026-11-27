@@ -28,11 +28,13 @@ struct SettingsSearchTests {
     }
 
     @Test func theLayoutAndThePlayerButtonsAreFound() {
-        #expect(SettingsSearch.matches("compact") == [.panelLayout])
-        #expect(SettingsSearch.matches("layout") == [.panelLayout])
+        #expect(SettingsSearch.matches("compact") == [.musicStyle, .timerStyle])
+        #expect(SettingsSearch.matches("layout") == [.musicStyle, .timerStyle])
         #expect(SettingsSearch.matches("shuffle") == [.musicButtons])
         #expect(SettingsSearch.matches("repeat") == [.musicButtons])
         #expect(SettingsItem.musicButtons.page == .music)
+        #expect(SettingsItem.musicStyle.page == .music)
+        #expect(SettingsItem.timerStyle.page == .timer)
     }
 
     @Test func aPageIsFoundByItsOwnName() {

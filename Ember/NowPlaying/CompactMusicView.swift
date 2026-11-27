@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The Music tab in the compact panel: the cover with the title and artist, the bar across
+/// The Music tab's Style B: the cover with the title and artist, the bar across
 /// the whole width, and the buttons in the last row, where the Timer tab's are.
 struct CompactMusicView: View {
     let track: Track

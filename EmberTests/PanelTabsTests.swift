@@ -229,7 +229,7 @@ struct TopRowLayoutTests {
     }
 
     @Test func fiveTabsFitOnASideOfTheCompactPanel() {
-        #expect(minimumWidth(left: 5) <= PanelLayout.compact.size.width)
+        #expect(minimumWidth(left: 5) <= PanelLayout.defaultWidth)
     }
 
     @Test func fourLargeTabsFitLeftOfTheNotchInTheCompactPanel() {

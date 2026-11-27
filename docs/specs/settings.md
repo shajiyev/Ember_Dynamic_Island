@@ -216,7 +216,7 @@ going.
 
 | Setting | Default | What it does |
 |---|---|---|
-| Panel layout | Compact | One clickable card per layout, each with a small drawing of its Music tab, its name and size; the chosen card has an Ember rose outline. **Compact** (460 pt) or **Wide** (the original look). Every tab uses it; a change shows the next time the panel opens. Details: docs/specs/panel-layouts.md. |
+| Panel layout | Compact | **Removed 2026-11-27:** replaced by one Width slider and a Style on the Music and Timer pages (below). As it was: one clickable card per layout, each with a small drawing of its Music tab, its name and size; the chosen card has an Ember rose outline. **Compact** (460 pt) or **Wide** (the original look). Every tab uses it; a change shows the next time the panel opens. Details: docs/specs/panel-layouts.md. |
 
 ### Built 2026-11-17: Tabs
 
@@ -265,7 +265,7 @@ on the panel's left instead, with its own order (docs/specs/tab-sidebar.md).
 
 | Setting | Default | What it does |
 |---|---|---|
-| Width | Compact 460 pt, Wide 620 pt | A slider under the layout cards, in 10 pt steps, with the panel's real width beside it: how wide the open panel is. Each layout has its own range, **Compact 420–560 pt** and **Wide 560–760 pt** (to tune by eye), and keeps its own width. The slider's lowest point is the layout's lowest or the top row's minimum (below), whichever is larger, so it never offers a width the row cannot fit. The cards still decide the arrangement (stacked, or cover beside); the slider only its width. The bar, the text and the gaps stretch or shrink; the cover, the ring, the buttons and the month grid keep their size. Applies at once (the next time the panel opens). Saved as `compactWidth` and `wideWidth`. |
+| Width | 460 pt | **Since 2026-11-27:** one slider for every tab, **420–760 pt** in 10 pt steps, saved as `panelWidth` (an old `compactWidth` / `wideWidth` carries over once); the Music and Timer styles never change it. Its lowest point is still the top row's minimum when that is larger. Until then: a slider under the layout cards, in 10 pt steps, with the panel's real width beside it: how wide the open panel is. Each layout has its own range, **Compact 420–560 pt** and **Wide 560–760 pt** (to tune by eye), and keeps its own width. The slider's lowest point is the layout's lowest or the top row's minimum (below), whichever is larger, so it never offers a width the row cannot fit. The cards still decide the arrangement (stacked, or cover beside); the slider only its width. The bar, the text and the gaps stretch or shrink; the cover, the ring, the buttons and the month grid keep their size. Applies at once (the next time the panel opens). Saved as `compactWidth` and `wideWidth`. |
 
 **The width rule** (decided and built 2026-11-17 with Tabs, before the slider): the
 panel is as wide as the user's width (until the slider exists, the layout's width) or the
@@ -280,7 +280,7 @@ top row's **minimum**, whichever is larger.
   stays 460); five on the left, 457 pt; five on the left and three on the right with the
   battery, 493 pt. The worst case, eight tabs and the battery with More Space (a notch of
   about 220 pt), is about 530 pt, well inside any screen.
-- **Why only the width:** the height is fixed by Ember at 202 pt (184 pt until 2026-11-27)
+- **Why only the width:** the height is fixed by Ember at 187 pt (184 pt until 2026-11-27, then 202 and 192 that day)
   (docs/specs/panel-layouts.md, "Two layouts"), so every tab is sure to fit; a user-set
   height would need every tab to work at any height.
 - **Why not one "size" (scale) control:** the top row must line up with the real notch,
@@ -508,6 +508,7 @@ as it is picked. Its answers are these two settings; Settings → Glow changes t
 | Colour | The song's colour | (2026-11-22.) The colour of the song in the wings (equalizer and glow) and of the Music tab's panel glow: the cover's colour (today's look), or one colour from the colour menu. See "Each feature's colour" below. Greyed out while Music is off. |
 | Show the song when it changes | on | (Built 2026-11-23.) When the song changes, the pill grows down by a strip, like the volume's, with the new song's name. Greyed out while Music is off. Details: docs/specs/now-playing.md, "The song when it changes". |
 | Buttons | Previous, Play/Pause, Next | (Built 2026-11-23.) The Music tab's buttons, arranged by dragging on a preview of the row: two places on each side of play/pause, Spare below. It replaced Show shuffle and Show repeat (2026-11-16 to 2026-11-23), which are not carried over. Greyed out while Music is off. Details: docs/specs/now-playing.md, "Arranging the buttons". |
+| Style | Style A | (Built 2026-11-27.) Two clickable cards, each a small drawing of the tab: **Style A** "Cover beside" (the cover beside the title, bar and buttons) or **Style B** "Stacked" (a small cover and the title above a full-width bar, the buttons below). Never changes the panel's width. Greyed out while Music is off. Details: docs/specs/panel-layouts.md. |
 
 Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 
@@ -519,6 +520,7 @@ Details: docs/specs/now-playing.md, docs/specs/panel-layouts.md.
 |---|---|---|
 | Timer | on | The Timer tab and the countdown in the wings. Off: a running, paused or ringing timer is cancelled and its sound stops; its wings and the Timer tab go. No confirmation. |
 | Presets | 5, 25, 45 min | (2026-11-18.) The Timer tab's three preset buttons: each a number box with arrows, 1–180 minutes. The buttons show "5m", "25m", or "1h30" from an hour up. |
+| Style | Style A | (Built 2026-11-27.) Two clickable cards: **Style A** "Ring in the middle" (the ring on the left while stopped, sliding to the middle while it runs) or **Style B** "Ring beside" (the ring tile beside the setter or the time). Never changes the panel's width. Greyed out while Timer is off. Details: docs/specs/panel-layouts.md. |
 | Show the countdown in the notch | on | (2026-11-18) Off: a running or paused timer stays out of the wings and is seen only in the Timer tab; a playing song keeps the wings instead. "Time's up" still shows in the wings, with its sound: it is the alert that the timer finished. Greyed out while Timer is off. |
 | Colour | Orange, #FF7A1E | (2026-11-22.) The countdown's colour wherever the timer is orange today: its symbol and its glow in the wings, and the Timer tab with its panel glow. See "Each feature's colour" below. Greyed out while Timer is off. |
 | Hide the timer when paused | off | (Built 2026-11-23.) On: a paused timer leaves the wings and the pill goes back to rest (or a playing song takes the wings); resuming brings it back. The Timer tab still shows it. Greyed out while Timer or Show the countdown in the notch is off. Saved under `hidesPausedTimer`. |

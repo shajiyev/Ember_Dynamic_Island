@@ -5,14 +5,14 @@ import SwiftUI
 /// month and year opens Calendar.
 struct MonthGridView: View {
     let model: CalendarModel
-    @Environment(\.panelLayout) private var layout
+    @Environment(\.monthGridWidth) private var gridWidth
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             header
             grid
         }
-        .frame(width: layout.monthGridWidth)
+        .frame(width: gridWidth)
     }
 
     private var header: some View {

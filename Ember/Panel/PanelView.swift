@@ -62,8 +62,8 @@ struct PanelView: View {
 
             Group {
                 switch shownTab {
-                case .music: NowPlayingPanelView(model: nowPlaying, buttons: settings.musicButtons)
-                case .timer: TimerPanelView(timer: timer)
+                case .music: NowPlayingPanelView(model: nowPlaying, buttons: settings.musicButtons, style: settings.musicStyle)
+                case .timer: TimerPanelView(timer: timer, style: settings.timerStyle)
                 case .calendar: CalendarPanelView(model: calendar)
                 case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor,
                                                contentLeading: isSidebar ? RailLayout.contentLeading : PanelLayout.contentInset)
@@ -87,7 +87,7 @@ struct PanelView: View {
             }
         }
         .environment(\.colorScheme, .dark)   // the panel is always black
-        .environment(\.panelLayout, settings.panelLayout)
+        .environment(\.monthGridWidth, PanelLayout.monthGridWidth(width: settings.panelWidth))
         .environment(\.timerPresets, settings.timerPresets)
         // The panel glows in the song's colour on the Music tab, the timer's on Timer, and the
         // shelf's chosen one on Shelf.

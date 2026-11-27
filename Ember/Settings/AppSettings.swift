@@ -211,22 +211,17 @@ final class AppSettings {
     }
     /// The sound Low and Very low play.
     var lowBatterySound: AlertSound { didSet { save(lowBatterySound.rawValue, Key.lowBatterySound) } }
-    var panelLayout: PanelLayout { didSet { save(panelLayout.rawValue, Key.panelLayout) } }
-    /// Each layout's own width (Settings → General → Width), held to its range.
-    var compactWidth: Double {
+    /// The panel's width for every tab (Settings → General → Width), held to its range.
+    var panelWidth: Double {
         didSet {
-            let clamped = Self.clamped(compactWidth, to: PanelLayout.compact)
-            guard clamped == compactWidth else { compactWidth = clamped; return }
-            save(compactWidth, Key.compactWidth)
+            let clamped = Self.clampedWidth(panelWidth)
+            guard clamped == panelWidth else { panelWidth = clamped; return }
+            save(panelWidth, Key.panelWidth)
         }
     }
-    var wideWidth: Double {
-        didSet {
-            let clamped = Self.clamped(wideWidth, to: PanelLayout.wide)
-            guard clamped == wideWidth else { wideWidth = clamped; return }
-            save(wideWidth, Key.wideWidth)
-        }
-    }
+    /// How the Music and Timer tabs are arranged (Settings → Music / Timer → Style).
+    var musicStyle: TabStyle { didSet { save(musicStyle.rawValue, Key.musicStyle) } }
+    var timerStyle: TabStyle { didSet { save(timerStyle.rawValue, Key.timerStyle) } }
     /// Where each tab sits in the panel's top row (Settings → General → Tabs).
     var tabArrangement: TabArrangement {
         didSet {
@@ -318,10 +313,14 @@ final class AppSettings {
         static let keepAwakeTimes = "keepAwakeTimes"
         static let keepAwakeLidClosed = "keepAwakeLidClosed"
         static let lowBatterySound = "lowBatterySound"
+        static let panelWidth = "panelWidth"
+        static let musicStyle = "musicStyle"
+        static let timerStyle = "timerStyle"
+        // Only for `carryOverLayout`: the layouts that went on 2026-11-27.
         static let panelLayout = "panelLayout"
-        static let tabsLeft = "tabsLeft"
         static let compactWidth = "compactWidth"
         static let wideWidth = "wideWidth"
+        static let tabsLeft = "tabsLeft"
         static let tabsRight = "tabsRight"
         static let tabPlacement = "tabPlacement"
         static let tabsRail = "tabsRail"
@@ -335,6 +334,7 @@ final class AppSettings {
         func delay(_ key: String, _ fallback: TimeInterval) -> TimeInterval {
             Self.clamped(defaults.object(forKey: key) as? Double ?? fallback)
         }
+        Self.carryOverLayout(in: defaults)
         opensOnHover = bool(Key.opensOnHover)
         openDelay = delay(Key.openDelay, PillTiming().openDelay)
         closeDelay = delay(Key.closeDelay, PillTiming().closeDelay)
@@ -403,11 +403,9 @@ final class AppSettings {
         keepAwakeOn = bool(Key.keepAwakeOn)
         keepAwakeTimes = (defaults.array(forKey: Key.keepAwakeTimes) as? [Int]).map(KeepAwakeTimes.clamped) ?? KeepAwakeTimes.standard
         keepAwakeLidClosed = defaults.object(forKey: Key.keepAwakeLidClosed) as? Bool ?? false
-        panelLayout = defaults.string(forKey: Key.panelLayout).flatMap(PanelLayout.init(rawValue:)) ?? .compact
-        compactWidth = Self.clamped(defaults.object(forKey: Key.compactWidth) as? Double ?? PanelLayout.compact.size.width,
-                                    to: .compact)
-        wideWidth = Self.clamped(defaults.object(forKey: Key.wideWidth) as? Double ?? PanelLayout.wide.size.width,
-                                 to: .wide)
+        panelWidth = Self.clampedWidth(defaults.object(forKey: Key.panelWidth) as? Double ?? PanelLayout.defaultWidth)
+        musicStyle = defaults.string(forKey: Key.musicStyle).flatMap(TabStyle.init(rawValue:)) ?? .a
+        timerStyle = defaults.string(forKey: Key.timerStyle).flatMap(TabStyle.init(rawValue:)) ?? .a
         tabArrangement = TabArrangement(left: defaults.stringArray(forKey: Key.tabsLeft) ?? [],
                                         right: defaults.stringArray(forKey: Key.tabsRight) ?? [])
         tabPlacement = defaults.string(forKey: Key.tabPlacement).flatMap(TabPlacement.init(rawValue:)) ?? .topRow
@@ -482,9 +480,7 @@ final class AppSettings {
             tabArrangement = fresh.tabArrangement
             tabPlacement = fresh.tabPlacement
             railArrangement = fresh.railArrangement
-            panelLayout = fresh.panelLayout
-            compactWidth = fresh.compactWidth
-            wideWidth = fresh.wideWidth
+            panelWidth = fresh.panelWidth
         case .glow:
             glowOn = fresh.glowOn
             glowColor = fresh.glowColor
@@ -503,12 +499,14 @@ final class AppSettings {
         case .music:
             musicOn = fresh.musicOn
             musicButtons = fresh.musicButtons
+            musicStyle = fresh.musicStyle
             showsSongOnChange = fresh.showsSongOnChange
             featureGlows[.music] = fresh.featureGlows[.music]
             featureColors[.music] = nil
         case .timer:
             timerOn = fresh.timerOn
             timerPresets = fresh.timerPresets
+            timerStyle = fresh.timerStyle
             timerInWings = fresh.timerInWings
             hidesPausedTimer = fresh.hidesPausedTimer
             timesUpSound = fresh.timesUpSound
@@ -552,15 +550,14 @@ final class AppSettings {
                     Key.hidesInCaptures, Key.hidesInFullScreen, Key.alertsInFullScreen,
                     Key.showsMenuBarIcon, Key.tapsTrackpadOnOpen,
                     Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight,
-                    Key.tabPlacement, Key.tabsRail, Key.panelLayout,
-                    Key.compactWidth, Key.wideWidth]
+                    Key.tabPlacement, Key.tabsRail, Key.panelWidth]
         case .glow:
             return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
                     Key.activityGlowOn, Key.activityGlowStrength, Key.activityGlowSpread, Key.activityGlowFade,
                     Key.panelGlowOn, Key.panelGlowStrength, Key.panelGlowSpread, Key.panelGlowFade]
-        case .music: return [Key.musicOn, Key.musicButtons, Key.showsSongOnChange, Key.glow(.music),
+        case .music: return [Key.musicOn, Key.musicButtons, Key.musicStyle, Key.showsSongOnChange, Key.glow(.music),
                              Key.color(.music)]
-        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerInWings, Key.hidesPausedTimer, Key.glow(.timer),
+        case .timer: return [Key.timerOn, Key.timerPresets, Key.timerStyle, Key.timerInWings, Key.hidesPausedTimer, Key.glow(.timer),
                              Key.color(.timer), Key.color(.timesUp), Key.timesUpSound]
         case .calendar: return [Key.calendarOn, Key.headsUpMinutes, Key.headsUpSound, Key.hidesAllDayEvents,
                                 Key.hidesCompletedReminders, Key.glow(.calendar), Key.color(.calendar)]
@@ -572,13 +569,7 @@ final class AppSettings {
         }
     }
 
-    /// The chosen layout's width.
-    var panelWidth: Double {
-        get { panelLayout == .compact ? compactWidth : wideWidth }
-        set { if panelLayout == .compact { compactWidth = newValue } else { wideWidth = newValue } }
-    }
-
-    /// The open panel's size before the width rule: the chosen layout's width, Ember's
+    /// The open panel's size before the width rule: the chosen width, Ember's
     /// height, and with the sidebar the rail's room, so every tab keeps its space.
     var panelSize: CGSize {
         let rail = tabPlacement == .sidebar ? RailLayout.panelRoom : 0
@@ -612,8 +603,26 @@ final class AppSettings {
         min(max(delay, delayRange.lowerBound), delayRange.upperBound)
     }
 
-    private static func clamped(_ width: Double, to layout: PanelLayout) -> Double {
-        min(max(width, layout.widthRange.lowerBound), layout.widthRange.upperBound)
+    private static func clampedWidth(_ width: Double) -> Double {
+        min(max(width, PanelLayout.widthRange.lowerBound), PanelLayout.widthRange.upperBound)
+    }
+
+    /// Once, after the layouts went (2026-11-27): a saved layout keeps its look and its width.
+    /// Wide becomes the cover beside (Music's Style A) and the ring beside (Timer's Style B);
+    /// Compact becomes stacked Music (Style B) and the ring in the middle (Timer's Style A).
+    /// The old keys are then removed, so Reset to Defaults gives Style A and 460 pt.
+    private static func carryOverLayout(in defaults: UserDefaults) {
+        let oldKeys = [Key.panelLayout, Key.compactWidth, Key.wideWidth]
+        guard oldKeys.contains(where: { defaults.object(forKey: $0) != nil }) else { return }
+        let isWide = defaults.string(forKey: Key.panelLayout) == "wide"
+        let width = defaults.object(forKey: isWide ? Key.wideWidth : Key.compactWidth) as? Double
+            ?? (isWide ? 620 : PanelLayout.defaultWidth)
+        if defaults.object(forKey: Key.panelWidth) == nil { defaults.set(width, forKey: Key.panelWidth) }
+        let musicStyle: TabStyle = isWide ? .a : .b
+        let timerStyle: TabStyle = isWide ? .b : .a
+        if defaults.object(forKey: Key.musicStyle) == nil { defaults.set(musicStyle.rawValue, forKey: Key.musicStyle) }
+        if defaults.object(forKey: Key.timerStyle) == nil { defaults.set(timerStyle.rawValue, forKey: Key.timerStyle) }
+        oldKeys.forEach(defaults.removeObject(forKey:))
     }
 
     /// Exactly three presets, each within range; anything else gives the default presets.

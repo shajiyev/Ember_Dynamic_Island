@@ -109,13 +109,13 @@
     activity and rings at zero until "Time's up" is seen.
   - `ScreenUseMonitor.swift`: tells whether the screen is in use (not locked, off or
     asleep), so the sound rings only once when nobody can be watching.
-  - `TimerPanelView.swift`: the Timer tab; draws `CompactTimerView` or its own wide
-    layout (built like the Music tab, the ring tile where the cover would be), from the
-    panel's layout.
-  - `CompactTimerView.swift`: the compact layout. Stopped, the ring on the left, the presets
+  - `TimerPanelView.swift`: the Timer tab; draws `CompactTimerView` (Style A) or its own
+    Style B (built like the Music tab, the ring tile where the cover would be), from
+    Settings → Timer → Style.
+  - `CompactTimerView.swift`: Style A. Stopped, the ring on the left, the presets
     on the right and the setter between them; started, the ring slides to the centre with
     the time left inside, the time set on its left and when it ends on its right.
-  - `TimerParts.swift`: what both layouts share: `TimerSetter`, `TimerControls`,
+  - `TimerParts.swift`: what both styles share: `TimerSetter`, `TimerControls`,
     `PresetChip`. `TimerRing.swift`: the ring tile, with the `timer` symbol or the time
     left in its centre. `HoldRepeatButton.swift`: the setter's arrows.
   - `StopwatchButton.swift`: the Timer tab's main button, the white circle drawn as a
@@ -138,12 +138,13 @@
     so a stale answer is never shown. `defaultGlow` (Ember's glow colour, from Settings)
     colours a song without a cover; a change re-sends the playing song's activity. `recheck()` reads the players that have no read
     under way; the open Music tab calls it every `recheckInterval` (2 s).
-  - `NowPlayingPanelView.swift`: the Music tab; draws `CompactMusicView` or its own wide
-    layout from the panel's layout, or "Nothing playing". Clicking the cover, title, artist
+  - `NowPlayingPanelView.swift`: the Music tab; draws its own Style A (the cover beside,
+    7 pt above the middle) or `CompactMusicView` (Style B), from Settings → Music → Style,
+    or "Nothing playing". Clicking the cover, title, artist
     or icon brings the player to the front and closes the panel.
-  - `CompactMusicView.swift`: the compact layout: cover and text, the bar across the whole
+  - `CompactMusicView.swift`: Style B: cover and text, the bar across the whole
     width, the buttons in the last row.
-  - `NowPlayingParts.swift`: what both layouts share: `SongCover`, `SongTitleLine`,
+  - `NowPlayingParts.swift`: what both styles share: `SongCover`, `SongTitleLine`,
     `SongArtist`, `SongBar` (a `CapsuleBar` scrubber whose length can be clicked to show
     the time left, kept in UserDefaults as `showsTimeLeft`), `MusicControls` (play/pause
     with the saved row around it) and `PlayerToggleButton`.
@@ -214,10 +215,13 @@
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
   (light grey, white under the pointer, all one width), shared by the Music and Timer
   tabs so they always look alike and sit in the same place.
-- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 202, the default) and
-  Wide (620 × 202), `contentInset` (32), each one's width range for Settings → General → Width (the width itself
-  is `AppSettings.compactWidth` / `wideWidth`), each one's name, the month grid's width, and where the compact
-  buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
+- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: the panel's measures: height 187,
+  `contentInset` (32), the width's range (420–760) and default (460) for Settings → General
+  → Width (the width itself is `AppSettings.panelWidth`), the lowest width the top row
+  allows, the month grid's width for a panel width (the `monthGridWidth` environment
+  value), and where Style A's Timer buttons and Style B's Music buttons sit.
+- `Ember/Panel/TabStyle.swift` — `TabStyle` (`a`, `b`): how the Music and the Timer tab are
+  arranged, each chosen on its own Settings page.
 - `Ember/Panel/TabPlacement.swift` — `TabPlacement` (top row or sidebar) and `RailLayout`:
   the sidebar rail's place, size, the panel's extra room, the tabs' size and gaps for a
   count, where the tab's name sits (#48).
@@ -284,8 +288,9 @@
     `GlowColorRow.swift` and `ColorPopup.swift`: the glow colour circles (and
     `FeatureColorRow`, the same circles after the feature's own one) and the
     Custom popup (colour square, hue bar, hex field). `TabsPreview.swift`: the drawing of
-    the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `LayoutCards.swift`: the clickable panel
-    layout cards, each a small drawing of its layout.
+    the panel's top in General → Tabs, drawn with `TopRowLayout`, where tabs are dragged. `StyleCards.swift`: the clickable Style
+    cards on the Music and Timer pages, each a small drawing of the tab (`ChoiceCard`,
+    shared with the tab position cards).
   - `LaunchAtLogin.swift` (the only `SMAppService` code) and `Feedback.swift` (the feedback
     destination, nil until chosen).
 - `Ember/EmberApp.swift` — app entry, app delegate (connects features to the pill), menu
@@ -342,13 +347,13 @@ Calendar while it shows, so the next opening shows Calendar.
 
 Settings: a change in the Settings window sets `AppSettings`, which saves it and calls
 `onChange`; the app delegate's `applySettings()` sets the pill's timing, hover, glow and
-open size (`PillController.openSize`, from the chosen layout; `NotchGeometry` uses it),
+open size (`PillController.openSize`, from the chosen width; `NotchGeometry` uses it),
 starts or stops Now Playing, Calendar, Battery and the screenshot watcher (`stop()` ends
 their observers and timers), lets the pill take file drags while the shelf is on, gives
 `PanelSelection` the default tab and the last-tab cooldown, and cancels the timer when it
 is turned off. `PanelView` reads
-`AppSettings.shownTabs`, `batteryInPanelOn`, the layout (passed down as `panelLayout`)
-and the shuffle and repeat switches directly.
+`AppSettings.shownTabs`, `batteryInPanelOn`, the Music and Timer styles (handed to each
+tab) and the shuffle and repeat switches directly.
 
 Shelf: files dragged over the pill make `PillController` open it (`onFileDragEntered` holds
 the Shelf tab) and publish `fileDragPosition`, which `ShelfPanelView` reads from the

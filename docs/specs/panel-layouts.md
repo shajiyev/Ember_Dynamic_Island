@@ -1,6 +1,101 @@
 # Panel layouts: Compact and Wide (#38, with #33's shuffle and repeat)
 
 Date: 2026-11-15. Status: built 2026-11-16 (plan: docs/plans/panel-layouts.md).
+**Changed 2026-11-27: the two layouts are gone.** One width for the whole panel, and a style
+for Music and for Timer chosen on their own pages; see the next section. The sections after
+it describe the layouts as built in 2026-11. Music: Wide is now Style A, Compact Style B;
+Timer: Compact is Style A, Wide Style B.
+
+## Styles per tab, one width (agreed and built 2026-11-27)
+
+**Why:** the layouts changed only the Music and Timer tabs, yet chose the whole panel's
+width. The user wants the width set once and each of those tabs' look chosen on its own,
+as a style that never changes the width. (This replaces the 2026-11-21 decision that
+dropped a layout per tab: then a layout set the width; now a style does not.)
+
+**Settings → General → Width:** one slider for every tab, **420–760 pt**, default **460**,
+in 10 pt steps. Its lowest point still rises when the top row needs more room (the width
+rule), as before. The Panel layout cards are removed.
+
+**Settings → Music → Style** and **Settings → Timer → Style:** two cards each, drawn in the
+app like the old layout cards (the shared `ChoiceCard`), the chosen one outlined in Ember rose:
+
+| Page | Style A (default) | Style B |
+|---|---|---|
+| Music | today's Wide: the cover beside the title, bar and controls, sitting 7 pt above the middle | today's Compact: a small cover and the title, a full-width bar, the controls centred below |
+| Timer | today's Compact: the ring on the left while stopped, sliding to the centre while it runs | today's Wide: the ring tile where the cover would be, with the setter or the time beside it |
+
+- The line under each card: Music A "Cover beside", B "Stacked"; Timer A "Ring in the
+  middle", B "Ring beside".
+- Changed at the user's first look (2026-11-27): Music's two styles swapped names, so the
+  cover beside is Style A and the default, and it was lifted 7 pt toward the notch (10 tried first) (it
+  sat so low that a pointer fitted between the notch and the song's title). Timer's
+  styles did not change.
+- Greyed out while the tab's feature is off. A change shows the next time the panel opens.
+- Reset to Defaults on the page brings back Style A. Search finds them with "style",
+  "layout", "compact", "wide" (and "cover" / "ring").
+
+**Every style fits every width.** A style only arranges the tab; it adapts to the width set,
+from 420 to 760 pt: bars and gaps stretch or shrink, and in Style B the cover or ring keeps
+its size while the text, bar and controls share what is left, so nothing is cut off at 420.
+- **Calendar:** the month grid is 176 pt wide below a 560 pt panel and 190 pt from 560 up
+  (was Compact / Wide).
+- Shelf and Keep awake already fill any width.
+
+**Height: 187 pt** (202 − 10 − 5, both asked by the user on 2026-11-27). The sidebar's rail
+then fits 7 tabs (was 8): large icons up to 6, the 7th makes them all regular.
+
+**Existing settings** carry over once, on the first launch after the change, keeping their
+look and width: Wide gives the cover beside (Music A) and the ring beside (Timer B);
+Compact gives stacked Music (B) and the ring in the middle (Timer A).
+
+**How it is built (outline; the plan has the detail):**
+- `PanelLayout` stops being a choice: it keeps the panel's measures (`height` 187,
+  `contentInset`, `controlsBottomInset`), and gains the width's range and default and the
+  month grid's width for a panel width. `lowestWidth(sideRoom:notchWidth:)` becomes static.
+- New `TabStyle` (`a`, `b`; titles "Style A" / "Style B").
+- `AppSettings`: `panelWidth` (one saved value), `musicStyle`, `timerStyle`; the old
+  `panelLayout`, `compactWidth` and `wideWidth` are read once to carry them over, then no
+  longer used. `PanelView` hands each tab its style; the `panelLayout` environment value goes.
+- Settings: `GeneralPage` loses the layout cards; `FeaturePages` gains a Style row on Music
+  and Timer; `LayoutCards.swift` becomes the style cards and their drawings.
+- `PillController`'s own copy of the height becomes 187 (`PanelHeightTests`).
+
+**Tests:** `TabStyle`; the width's range and default; the month grid's width at 559 / 560;
+`AppSettings` defaults, saving, Reset per page, and carrying over Compact and Wide; search
+for "style" / "layout"; the rail's fit at 187 pt (6 large, 7 regular).
+
+**Check on screen:** each style of Music and Timer at 420, 460, 620 and 760 pt (nothing cut
+off or crowded); Calendar on both sides of 560; Settings → General shows only Width;
+the Style cards on Music and Timer; the panel at 187 pt in both tab placements.
+Checked by the user on macOS 26.6.2, 2026-11-27.
+
+**Key files (as built):** `Ember/Panel/PanelLayout.swift` (the measures, the width's range
+and default, `monthGridWidth(width:)`), `Ember/Panel/TabStyle.swift`,
+`Ember/Settings/AppSettings.swift` (`panelWidth`, `musicStyle`, `timerStyle`,
+`carryOverLayout(in:)`), `Ember/Settings/StyleCards.swift` (`ChoiceCard`, `MusicStyleCards`,
+`TimerStyleCards`), `Ember/Settings/FeaturePages.swift` (the Style rows),
+`Ember/NowPlaying/NowPlayingPanelView.swift` (Music's Style A, `coverLift` 7 pt),
+`Ember/NowPlaying/CompactMusicView.swift` (Music's Style B), `Ember/Timer/TimerPanelView.swift`
+(Timer's Style B, its presets a row or, when the width is short, a column),
+`Ember/Timer/CompactTimerView.swift` (Timer's Style A).
+
+**Gotchas:**
+- One `TabStyle` serves both tabs, but its letters mean different things: Music A is the
+  cover beside (the old Wide look), Timer A the ring in the middle (the old Compact look).
+  The carry-over sets each tab on its own for that reason.
+- Music's names were swapped after a first build with Music A stacked; a Mac that saved
+  Music "b" then shows the stacked style until Style A is picked again (only the developer's
+  Mac; never released).
+- `PillController.openSize` keeps its own copy of the height (the pill module does not see
+  the panel module); `PanelHeightTests` keeps the two equal.
+- The Timer's Style B presets switch to a column (`ViewThatFits`) so they fit at 420 pt.
+
+**Tests (as built):** `PanelLayoutTests` (height 187, the width's range and default, the
+month grid at 559 / 560, the lowest width), `PanelHeightTests`, `AppSettingsTests` (the
+styles' defaults, saving, Reset per page, Wide and Compact carried over with their looks and
+widths), `SettingsSearchTests` (style / layout / compact), `TabPlacementTests` (the rail at
+187 pt: 6 large, 7 regular, 8 sit tight).
 
 ## Goal
 

@@ -57,10 +57,10 @@ final class PillController {
     }
     /// Which glows are on and how strong (Settings → Glow).
     var glow = GlowSettings()
-    /// The open panel's size (the layout chosen in Settings), compact until the app hands
-    /// over the chosen layout's size. A change after `start` moves and resizes the window at once.
+    /// The open panel's size (the width chosen in Settings), 460 pt until the app hands
+    /// over the chosen size. A change after `start` moves and resizes the window at once.
     /// (The height is `PanelLayout.height`; the pill module does not refer to the panel module.)
-    @ObservationIgnored var openSize = CGSize(width: 460, height: 202) {
+    @ObservationIgnored var openSize = CGSize(width: 460, height: 187) {
         didSet {
             guard openSize != oldValue, screenObserver != nil else { return }
             refreshDisplay()
