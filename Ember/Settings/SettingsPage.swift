@@ -25,9 +25,9 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     case timer
     case calendar
     case shelf
+    case keepAwake
     case battery
     case levels
-    case keepAwake
     case permissions
     case feedback
     case about
@@ -86,8 +86,8 @@ nonisolated enum SettingsPage: CaseIterable, Hashable {
     var group: SettingsGroup {
         switch self {
         case .general, .glow: return .main
-        case .music, .timer, .calendar, .shelf: return .tabs
-        case .battery, .levels, .keepAwake: return .system
+        case .music, .timer, .calendar, .shelf, .keepAwake: return .tabs
+        case .battery, .levels: return .system
         case .permissions, .feedback, .about: return .help
         }
     }

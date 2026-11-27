@@ -283,4 +283,12 @@ struct TopRowLayoutTests {
         #expect(PanelTabSize.large.tabWidth == 22)
         #expect(PanelTabSize.large.symbolSize > PanelTabSize.regular.symbolSize)
     }
+
+    @Test func keepAwakeIsATabWithAFilledCupWhileOnAndNoGlowOfItsOwn() {
+        #expect(PanelTab.keepAwake.title == "Keep awake")
+        #expect(PanelTab.keepAwake.symbolName == "cup.and.saucer")
+        #expect(PanelTab.keepAwake.activeSymbolName == "cup.and.saucer.fill")
+        #expect(PanelTab.music.activeSymbolName == PanelTab.music.symbolName)
+        #expect(PanelTab.keepAwake.glowColor(PanelTabColors(song: .red, timer: .orange, shelf: .blue)) == nil)
+    }
 }

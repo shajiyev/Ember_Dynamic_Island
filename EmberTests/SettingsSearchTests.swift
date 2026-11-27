@@ -72,7 +72,7 @@ struct SettingsSearchTests {
     }
 
     @Test func thePanelsTabsShareOneHeader() {
-        #expect(SettingsPage.allCases.filter { $0.group == .tabs } == [.music, .timer, .calendar, .shelf])
+        #expect(SettingsPage.allCases.filter { $0.group == .tabs } == [.music, .timer, .calendar, .shelf, .keepAwake])
         #expect(SettingsGroup.tabs.title == "Tabs")
     }
 
@@ -194,13 +194,13 @@ struct SettingsSearchTests {
         #expect(SettingsItem.songOnChange.page == .music)
     }
 
-    @Test func keepAwakeHasItsOwnPageAfterVolumeAndBrightness() {
+    @Test func keepAwakeHasItsOwnPageAmongTheTabsAfterShelf() {
         #expect(SettingsSearch.pages(for: "caffeinate") == [.keepAwake])
         #expect(SettingsSearch.matches("lid closed") == [.keepAwakeLidClosed])
         #expect(SettingsItem.keepAwakeTimes.page == .keepAwake)
         let pages = SettingsPage.allCases
-        #expect(pages[pages.firstIndex(of: .levels)! + 1] == .keepAwake)
-        #expect(SettingsPage.keepAwake.group == .system)
+        #expect(pages[pages.firstIndex(of: .shelf)! + 1] == .keepAwake)
+        #expect(SettingsPage.keepAwake.group == .tabs)
     }
 
     @Test func theWelcomeCanBeShownAgainFromAbout() {

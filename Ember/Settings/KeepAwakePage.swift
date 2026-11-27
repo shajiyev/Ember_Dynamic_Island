@@ -11,7 +11,7 @@ struct KeepAwakePage: View {
                 Toggle(SettingsItem.keepAwake.title, isOn: $settings.keepAwakeOn)
                     .settingsItem(.keepAwake)
             } footer: {
-                Text("Keeps your Mac from sleeping for a while, from the cup in the panel's top row or Ember's menu bar menu. The screen still dims and turns off as usual. Off stops it and removes the cup.")
+                Text("Keeps your Mac from sleeping for a while, from the Keep awake tab in the panel or Ember's menu bar menu. The screen still dims and turns off as usual. Off stops it and removes the tab.")
             }
             Section {
                 LabeledContent(SettingsItem.keepAwakeTimes.title) {

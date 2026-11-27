@@ -59,9 +59,9 @@ observers, no timers, no Apple Events.
 
 Taken from Atoll's settings (`SettingsView.swift`), adapted to Ember.
 - **Sidebar:** a search field at the top, a divider, then the pages in groups with small
-  grey headers: General and Glow (no header), **Tabs** (Music, Timer, Calendar, Shelf: the
-  panel's tabs; one header since 2026-11-21, before that Media and Productivity),
-  **System** (Battery, Volume & Brightness), then Permissions, Feedback and About (no
+  grey headers: General and Glow (no header), **Tabs** (Music, Timer, Calendar, Shelf, Keep
+  Awake since 2026-11-27: the panel's tabs; one header since 2026-11-21, before that Media
+  and Productivity), **System** (Battery, Volume & Brightness), then Permissions, Feedback and About (no
   header; Permissions and About since 2026-11-18).
   Rows about 36–44 pt tall, about 210 pt wide.
 - **Icons:** a 26 pt rounded square (corner 8) filled with a gradient from the page's
@@ -224,6 +224,9 @@ Where each tab sits in the panel's top row, on either side of the notch, arrange
 dragging. Designed with the tabs to come in mind: the panel will hold **8 tabs** (Music,
 Shelf, Timer, Calendar; later Clipboard history #16, Color picker #17, Webcam mirror #19,
 Claude Code usage #24). Keep awake (#18) and Stats (#21) go to the menu bar instead.
+Changed 2026-11-27: Keep awake is a tab too (built; docs/specs/keep-awake.md, "The tab"),
+and a **Top row / Sidebar** choice (designed, not built) above this drawing puts the tabs in a rail
+on the panel's left instead, with its own order (docs/specs/tab-sidebar.md).
 
 ```
  ┌───────────────────────────────────────────────────────────┐
@@ -623,6 +626,7 @@ Details: docs/specs/volume-brightness.md ("The switch").
 Added 2026-11-23 with the feature (#18): Keep awake (on), Times (30, 60, 120, 180 min,
 5–720), Also with the lid closed (off), and Reset to Defaults. Details:
 docs/specs/keep-awake.md, "Settings → Keep awake".
+Since 2026-11-27 the page sits among the Tabs pages, after Shelf (Keep awake is a tab).
 
 ---
 

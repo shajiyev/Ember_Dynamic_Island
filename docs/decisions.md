@@ -1420,3 +1420,26 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
   shows the same page. **Why:** GitHub Releases looks technical to non-technical
   visitors; one page means each release is written once.
 - 2026-11-27: paused while the app's design and tabs change; resumed in a later session.
+
+## 2026-11-27 — Keep awake is a tab; a sidebar for the tabs is designed
+- **Decision:** Keep awake's cup and its popup menu became a panel tab, placed, ordered and
+  turned off like the others, built like the compact Timer: a ring with the time left, the
+  status and Stop, and the four times plus ∞ in a column. The menu bar menu keeps its Keep
+  awake items; Also with the lid closed stays in Settings only. This replaces "menu bar
+  only" (2026-11-17) and the cup in the top row (2026-11-23). **Why:** the user wants Keep
+  awake, and later the color picker and clipboard, as tabs rather than separate popups.
+- **Decision:** the ring counts down by the second, and starting, stopping and another time
+  sweep it; "until I turn it off" sits still. The ticking runs only while the tab is on
+  screen. **Why:** asked at the first look ("make it more alive"); a still ∞ costs no CPU.
+  The Timer tab shares the ring, so cancelling a timer now drains its ring too; the user
+  kept that.
+- **Decision:** Settings → Keep Awake moved from System to the Tabs pages, after Shelf.
+  **Why:** it is a tab now.
+- **Decision:** tabs in a sidebar (#48) as an option beside the top row (the default), a
+  rail from the panel's top edge with the tab's name in small grey capitals beside it, the
+  panel wider by the rail's room, each placement with its own order, and a rail that scrolls
+  with every tab on. Designed and planned, not built. **Why:** the user likes the look; an
+  option keeps the tabs by the notch, where the pointer already is, as the default.
+- **Note:** the macOS 15 smoke test (release plan, task 5) was put off by the user to add
+  these first.
+

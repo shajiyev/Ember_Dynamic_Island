@@ -1,6 +1,6 @@
 # Roadmap
 
-## Current status (2026-11-24)
+## Current status (2026-11-27)
 - **Done:** project memory layout created (CLAUDE.md, docs/, .gitignore).
 - **Done:** v1 feature scope agreed — see docs/features.md (v1 / later / dropped).
 - **Done:** license chosen — GPL-3.0 (LICENSE added).
@@ -254,6 +254,16 @@
   Music tab's Buttons row has six places, room for every button. Settings and onboarding
   now open in front of other apps (`NSWindow.showInFront()`). 569 tests pass; checked on
   screen by the user on macOS 26.6.2.
+- **Done:** Keep awake is a tab (#18, 2026-11-27): the cup and its popup became a tab like
+  the others, built like the compact Timer: a ring counting down by the second (only while
+  seen) that sweeps full on start and drains on Stop, "Awake · until 13:05" with Stop, and
+  the four times plus ∞ in a column; the cup is filled from every tab while keeping awake.
+  Settings → Keep Awake moved among the Tabs pages. The Timer's ring now also drains when a
+  timer is cancelled (kept by the user). 580 tests pass; checked on screen by the user on
+  macOS 26.6.2. Spec docs/specs/keep-awake.md, plan docs/plans/keep-awake.md, part 2.
+- **Designed:** tabs in a sidebar (#48, 2026-11-27): a Top row / Sidebar choice, a scrolling
+  rail down the panel's left side with the tab's name beside it, each placement with its own
+  order. Spec docs/specs/tab-sidebar.md, plan docs/plans/tab-sidebar.md (4 tasks), next.
 - **In progress:** "Ship it" (milestone 3), releasing 1.0 (docs/plans/release.md). Done:
   the performance audit (docs/performance.md), the README for strangers, a real update kept
   local, and a real first run in a fresh account (2026-11-24). The first run found that
@@ -261,14 +271,14 @@
   without asking): now the folder is opened once so macOS asks, onboarding has a Shelf
   page, Settings → Permissions lists the folder, and a switch turns macOS's screenshot
   thumbnail, which delays the shelf by about 5 s, on or off. 575 tests pass; checked by
-  the user on macOS 26.6.2. Left: the macOS 15 smoke test and the release itself.
+  the user on macOS 26.6.2. Left: the macOS 15 smoke test (put off by the user on 2026-11-27 to add Keep awake as a tab and the sidebar first) and the release itself.
   2026-11-24: Settings now opens in front, ready to use, from the gear and the menu, also
   over full-screen apps (it is built at launch and kept: about 37 MB); the gear no longer
   freezes the panel; onboarding's Back slides the other way. Checked by the user, also
   in the fresh test account.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
-- **Next:** "Ship it" (milestone 3).
+- **Next:** tabs in a sidebar (#48, docs/plans/tab-sidebar.md), then "Ship it" (milestone 3): the macOS 15 smoke test and the release.
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything

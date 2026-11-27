@@ -139,12 +139,13 @@ struct AppSettingsTests {
 
     @Test func onlyTheTabsThatAreOnAreShown() {
         let settings = AppSettings(defaults: freshDefaults())
-        #expect(settings.shownTabs == [.music, .shelf, .timer, .calendar])
+        #expect(settings.shownTabs == [.music, .shelf, .timer, .calendar, .keepAwake])
         settings.timerOn = false
         settings.shelfOn = false
-        #expect(settings.shownTabs == [.music, .calendar])
+        #expect(settings.shownTabs == [.music, .calendar, .keepAwake])
         settings.musicOn = false
         settings.calendarOn = false
+        settings.keepAwakeOn = false
         #expect(settings.shownTabs.isEmpty)
     }
 
@@ -267,10 +268,10 @@ struct AppSettingsTests {
         settings.timerOn = false
 
         let relaunched = AppSettings(defaults: defaults)
-        #expect(relaunched.tabArrangement.right == [.music])
-        #expect(relaunched.shownTabs == [.shelf, .calendar, .music])
+        #expect(relaunched.tabArrangement.right == [.keepAwake, .music])
+        #expect(relaunched.shownTabs == [.shelf, .calendar, .keepAwake, .music])
         #expect(relaunched.shownTabs(on: .left) == [.shelf, .calendar])
-        #expect(relaunched.shownTabs(on: .right) == [.music])
+        #expect(relaunched.shownTabs(on: .right) == [.keepAwake, .music])
     }
 
     @Test func theRoomBesideTheNotchFollowsTheTabsThatAreOnAndTheBattery() {
@@ -534,12 +535,20 @@ struct AppSettingsTests {
         #expect(relaunched.keepAwakeOn && relaunched.keepAwakeTimes == KeepAwakeTimes.standard && !relaunched.keepAwakeLidClosed)
     }
 
-    @Test func theTopRowMakesRoomForTheCupWhileKeepAwakeIsOn() {
+    @Test func theKeepAwakeTabTakesItsRoomOnlyWhileOn() {
         let settings = AppSettings(defaults: freshDefaults())
-        let left = settings.shownTabs(on: .left).count
-        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: left, right: 0, showsBattery: true, showsKeepAwake: true))
+        #expect(settings.shownTabs(on: .right) == [.keepAwake])
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 4, right: 1, showsBattery: true))
         settings.keepAwakeOn = false
-        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: left, right: 0, showsBattery: true))
+        #expect(!settings.shownTabs.contains(.keepAwake))
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 4, right: 0, showsBattery: true))
+    }
+
+    @Test func anArrangementSavedBeforeTheKeepAwakeTabGetsItOnTheRight() {
+        let defaults = freshDefaults()
+        defaults.set(["music", "shelf", "timer", "calendar"], forKey: "tabsLeft")
+        defaults.set([String](), forKey: "tabsRight")
+        #expect(AppSettings(defaults: defaults).tabArrangement.right == [.keepAwake])
     }
 
     @Test func onboardingIsNotDoneAtFirstAndNoResetUndoesIt() {

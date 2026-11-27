@@ -8,6 +8,7 @@ nonisolated enum PanelTab: String, CaseIterable {
     case shelf
     case timer
     case calendar
+    case keepAwake
 
     var title: String {
         switch self {
@@ -15,6 +16,7 @@ nonisolated enum PanelTab: String, CaseIterable {
         case .timer: return "Timer"
         case .calendar: return "Calendar"
         case .shelf: return "Shelf"
+        case .keepAwake: return "Keep awake"
         }
     }
 
@@ -24,16 +26,23 @@ nonisolated enum PanelTab: String, CaseIterable {
         case .timer: return "timer"
         case .calendar: return "calendar"
         case .shelf: return "tray.full"
+        case .keepAwake: return "cup.and.saucer"
         }
     }
 
+    /// The icon while the tab's feature is at work: Keep awake's filled cup while keeping
+    /// awake; the usual icon for the others.
+    var activeSymbolName: String {
+        self == .keepAwake ? "cup.and.saucer.fill" : symbolName
+    }
+
     /// The glow the open panel asks for on this tab: the song's colour on Music, the timer's
-    /// on Timer, the shelf's chosen one on Shelf; nil keeps the pill's own glow (Calendar).
+    /// on Timer, the shelf's chosen one on Shelf; nil keeps the pill's own glow (Calendar, Keep awake).
     func glowColor(_ colors: PanelTabColors) -> Color? {
         switch self {
         case .music: return colors.song
         case .timer: return colors.timer
-        case .calendar: return nil
+        case .calendar, .keepAwake: return nil
         case .shelf: return colors.shelf
         }
     }
@@ -167,29 +176,28 @@ nonisolated struct TopRowLayout: Equatable {
 
     /// The room the row needs beside the notch on each side, from the panel's edge: the
     /// fuller side at the regular size and the smallest gaps.
-    static func sideRoom(left: Int, right: Int, showsBattery: Bool, showsKeepAwake: Bool = false) -> CGFloat {
+    static func sideRoom(left: Int, right: Int, showsBattery: Bool) -> CGFloat {
         let row = TopRowLayout(size: .regular, leftSpacing: minSpacing, rightSpacing: minSpacing)
         let leftNeed = row.rowWidth(left, spacing: minSpacing)
         let rightNeed = row.rowWidth(right, spacing: minSpacing)
-            + row.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery, showsKeepAwake: showsKeepAwake)
+            + row.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
         return rowInset + notchClearance + max(leftNeed, rightNeed)
     }
 
     /// The row in a panel `panelWidth` wide, centred on a notch `notchWidth` wide.
-    static func fitting(left: Int, right: Int, showsBattery: Bool, showsKeepAwake: Bool = false,
+    static func fitting(left: Int, right: Int, showsBattery: Bool,
                         panelWidth: CGFloat, notchWidth: CGFloat) -> TopRowLayout {
         let space = (panelWidth - notchWidth) / 2 - rowInset - notchClearance
         func row(_ size: PanelTabSize) -> TopRowLayout {
             let sized = TopRowLayout(size: size, leftSpacing: 0, rightSpacing: 0)
-            let rightSpace = space - sized.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery,
-                                                           showsKeepAwake: showsKeepAwake)
+            let rightSpace = space - sized.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
             return TopRowLayout(size: size, leftSpacing: spread(size, left, in: space),
                                 rightSpacing: spread(size, right, in: rightSpace))
         }
         let large = row(.large)
         let fits = large.rowWidth(left, spacing: minSpacing) <= space
             && large.rowWidth(right, spacing: minSpacing)
-                <= space - large.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery, showsKeepAwake: showsKeepAwake)
+                <= space - large.fixedRightWidth(hasTabs: right > 0, showsBattery: showsBattery)
         return fits ? large : row(.regular)
     }
 
@@ -198,12 +206,11 @@ nonisolated struct TopRowLayout: Equatable {
         CGFloat(count) * size.tabWidth + CGFloat(max(count - 1, 0)) * spacing
     }
 
-    /// What the right side holds besides its tabs: Keep awake's cup and the battery when
-    /// shown, and the gear, with a gap before each that follows something.
-    func fixedRightWidth(hasTabs: Bool, showsBattery: Bool, showsKeepAwake: Bool = false) -> CGFloat {
-        let cup = showsKeepAwake ? size.tabWidth + Self.groupGap : 0
+    /// What the right side holds besides its tabs: the battery when shown, and the gear, with
+    /// a gap before each that follows something.
+    func fixedRightWidth(hasTabs: Bool, showsBattery: Bool) -> CGFloat {
         let battery = showsBattery ? Self.batteryWidth + Self.groupGap : 0
-        return (hasTabs ? Self.groupGap : 0) + cup + battery + size.tabWidth
+        return (hasTabs ? Self.groupGap : 0) + battery + size.tabWidth
     }
 
     /// The room left in `space` spread evenly between `count` tabs, from none to `maxSpacing`.
@@ -214,38 +221,50 @@ nonisolated struct TopRowLayout: Equatable {
     }
 }
 
-/// One side of the panel's top row, with its tabs that are on: icons only, as large and as
-/// spread out as fits (`TopRowLayout`). The name shows as a tooltip on hover and is what
-/// VoiceOver reads. An unselected tab brightens on hover, a little less than the gear does.
+/// One tab, in the top row or the sidebar's rail: its icon only (filled while its feature
+/// is at work, as Keep awake's cup), in a soft capsule while chosen, brighter on hover. The
+/// name shows as a tooltip on hover and is what VoiceOver reads.
+struct PanelTabButton: View {
+    let tab: PanelTab
+    let isSelected: Bool
+    var isActive = false
+    let size: PanelTabSize
+    let action: () -> Void
+    @State private var isHovered = false
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: isActive ? tab.activeSymbolName : tab.symbolName)
+                .font(.system(size: size.symbolSize, weight: .semibold))
+                .frame(width: size.iconFrame, height: size.iconFrame)
+                .padding(.horizontal, 3)
+                .padding(.vertical, 3)
+                .background(Capsule().fill(.white.opacity(isSelected ? 0.15 : 0)))
+                .foregroundStyle(.white.opacity(isSelected || isActive ? 1 : isHovered ? 0.85 : 0.55))
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+        .help(tab.title)
+        .accessibilityLabel(isActive ? "\(tab.title), on" : tab.title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+/// One side of the panel's top row, with its tabs that are on, as large and as spread out
+/// as fits (`TopRowLayout`). `activeTabs` show their filled icon.
 struct PanelTabRow: View {
     let tabs: [PanelTab]
     @Binding var selection: PanelTab
+    var activeTabs: Set<PanelTab> = []
     let size: PanelTabSize
     let spacing: CGFloat
-    @State private var hoveredTab: PanelTab?
 
     var body: some View {
         HStack(spacing: spacing) {
             ForEach(tabs, id: \.self) { tab in
-                Button {
-                    selection = tab
-                } label: {
-                    Image(systemName: tab.symbolName)
-                        .font(.system(size: size.symbolSize, weight: .semibold))
-                        .frame(width: size.iconFrame, height: size.iconFrame)
-                        .padding(.horizontal, 3)
-                        .padding(.vertical, 3)
-                        .background(Capsule().fill(.white.opacity(selection == tab ? 0.15 : 0)))
-                        .foregroundStyle(.white.opacity(selection == tab ? 1 : hoveredTab == tab ? 0.85 : 0.55))
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .onHover { isHovering in
-                    if isHovering { hoveredTab = tab } else if hoveredTab == tab { hoveredTab = nil }
-                }
-                .help(tab.title)
-                .accessibilityLabel(tab.title)
-                .accessibilityAddTraits(selection == tab ? .isSelected : [])
+                PanelTabButton(tab: tab, isSelected: selection == tab, isActive: activeTabs.contains(tab),
+                               size: size) { selection = tab }
             }
         }
     }

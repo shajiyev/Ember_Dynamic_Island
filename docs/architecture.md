@@ -186,9 +186,12 @@
   - `KeepAwakeModel.swift`: the session, the power assertion (lid open), running the
     lid-closed scripts through sudo when the rule is installed or as root through the
     password dialog (`UserShell`, `AdminShell`), the time left, the check after a restart.
-  - `KeepAwakeMenu.swift`: the menu shared by the panel's cup and the menu bar menu, the cup
-    button, and the menu bar icon with its dot (`MenuBarIcon`). Settings: `KeepAwakePage.swift`.
-  The top row makes room for the cup (`TopRowLayout`, `showsKeepAwake`).
+  - `KeepAwakePanelView.swift`: the Keep awake tab (since 2026-11-27): the ring (`TimerRing`
+    with the cup) counting down by the second while on screen (one `TimelineView`, so the
+    ring keeps its identity and sweeps on start and Stop), the status and Stop, the column of
+    times. `KeepAwakeTimes` gives its texts and the ring's share.
+  - `KeepAwakeMenu.swift`: the menu bar menu's Keep awake items and the menu bar icon with
+    its dot (`MenuBarIcon`). Settings: `KeepAwakePage.swift`, among the Tabs pages.
 - `Ember/Levels/` — volume and brightness in the pill (#11).
   - `LevelKey.swift`, `LevelStep.swift`, `LevelLook.swift`: the pure rules: reading a media
     key from a system-defined event, the 1/16 and 1/64 steps, and every value (symbols,
@@ -219,7 +222,9 @@
   sits on and in which order (Settings → General → Tabs), read from saved names and moved
   by dragging.
 - `Ember/Panel/PanelTabs.swift` — `TopRowLayout`: the top row's room beside the notch (the
-  width rule) and its icon size and gaps at a width; the Music | Shelf | Timer | Calendar tabs (icons only), and
+  width rule) and its icon size and gaps at a width; the tabs (Music, Shelf, Timer, Calendar,
+  Keep awake; icons only, `activeSymbolName` filled while at work), `PanelTabButton` (one
+  tab, shared by every row) and `PanelTabRow`, and
   `PanelSelection`: the tab, remembered between openings, and which tab the panel opens
   on: a fresh alert's (`alertTab`), else the default tab chosen in Settings
   (`defaultTab`), else the tab of what the wings show (`openingTab`) unless the panel closed

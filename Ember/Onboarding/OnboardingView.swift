@@ -96,7 +96,7 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 12) {
                 HowToRow(symbol: "cursorarrow", text: "Hover the notch to open the panel.")
                 HowToRow(symbol: "doc.on.doc", text: "Drag files onto the notch to keep them on the shelf.")
-                HowToRow(symbol: "cup.and.saucer", text: "The cup keeps your Mac awake for a while.")
+                HowToRow(symbol: "cup.and.saucer", text: "The cup tab keeps your Mac awake for a while.")
                 HowToRow(symbol: "gearshape", text: "The gear, or Ember's menu bar icon, opens Settings.")
             }
         case .done:

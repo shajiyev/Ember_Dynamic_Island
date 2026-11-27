@@ -4,10 +4,10 @@ import Testing
 struct TabArrangementTests {
     private let standard = TabArrangement.standard
 
-    @Test func everyTabStartsOnTheLeftInTheUsualOrder() {
+    @Test func theFourTabsStartOnTheLeftAndKeepAwakeOnTheRight() {
         #expect(standard.left == [.music, .shelf, .timer, .calendar])
-        #expect(standard.right.isEmpty)
-        #expect(standard.all == [.music, .shelf, .timer, .calendar])
+        #expect(standard.right == [.keepAwake])
+        #expect(standard.all == [.music, .shelf, .timer, .calendar, .keepAwake])
     }
 
     @Test func aTabMovesBeforeAnotherOnItsSide() {
@@ -21,9 +21,9 @@ struct TabArrangementTests {
     @Test func aTabMovesAcrossTheNotch() {
         let moved = standard.moving(.music, to: .right, before: nil)
         #expect(moved.left == [.shelf, .timer, .calendar])
-        #expect(moved.right == [.music])
+        #expect(moved.right == [.keepAwake, .music])
         #expect(moved.side(of: .music) == .right)
-        #expect(moved.all == [.shelf, .timer, .calendar, .music])
+        #expect(moved.all == [.shelf, .timer, .calendar, .keepAwake, .music])
     }
 
     @Test func aTabMovesBeforeOneOnTheOtherSide() {
@@ -37,7 +37,7 @@ struct TabArrangementTests {
 
     @Test func readingDropsUnknownNamesAndRepeats() {
         let read = TabArrangement(left: ["music", "radio", "music"], right: ["shelf", "timer", "calendar", "shelf"])
-        #expect(read.left == [.music])
+        #expect(read.left == [.music, .keepAwake])
         #expect(read.right == [.shelf, .timer, .calendar])
     }
 
@@ -49,7 +49,8 @@ struct TabArrangementTests {
         // The right side always holds the gear and the battery, about three tabs' room.
         let read = TabArrangement(left: ["music", "shelf", "timer"], right: [])
         #expect(read.left == [.music, .shelf, .timer, .calendar])
+        #expect(read.right == [.keepAwake])
         let full = TabArrangement(left: [], right: ["music", "shelf"])
-        #expect(full.left == [.timer, .calendar])
+        #expect(full.left == [.timer, .calendar, .keepAwake])
     }
 }

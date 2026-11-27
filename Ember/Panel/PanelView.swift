@@ -25,17 +25,15 @@ struct PanelView: View {
         let leftTabs = settings.shownTabs(on: .left)
         let rightTabs = settings.shownTabs(on: .right)
         let row = TopRowLayout.fitting(left: leftTabs.count, right: rightTabs.count,
-                                       showsBattery: settings.batteryInPanelOn, showsKeepAwake: settings.keepAwakeOn,
+                                       showsBattery: settings.batteryInPanelOn,
                                        panelWidth: panelWidth, notchWidth: notchWidth)
         let tabSelection = Binding(get: { shownTab ?? .music }, set: { selection.choose($0) })
+        let activeTabs: Set<PanelTab> = keepAwake.session != nil ? [.keepAwake] : []
         VStack(spacing: 0) {
             HStack(spacing: TopRowLayout.groupGap) {
-                PanelTabRow(tabs: leftTabs, selection: tabSelection, size: row.size, spacing: row.leftSpacing)
+                PanelTabRow(tabs: leftTabs, selection: tabSelection, activeTabs: activeTabs, size: row.size, spacing: row.leftSpacing)
                 Spacer(minLength: 0)
-                PanelTabRow(tabs: rightTabs, selection: tabSelection, size: row.size, spacing: row.rightSpacing)
-                if settings.keepAwakeOn {
-                    KeepAwakeButton(model: keepAwake, settings: settings, size: row.size)
-                }
+                PanelTabRow(tabs: rightTabs, selection: tabSelection, activeTabs: activeTabs, size: row.size, spacing: row.rightSpacing)
                 if settings.batteryInPanelOn, let reading = battery.reading {
                     BatteryStatusView(reading: reading)
                 }
@@ -52,6 +50,7 @@ struct PanelView: View {
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
                 case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor)
+                case .keepAwake: KeepAwakePanelView(model: keepAwake, settings: settings)
                 case nil: AllFeaturesOffView { openSettings(.music) }
                 }
             }

@@ -37,10 +37,4 @@ struct PanelLayoutTests {
         #expect(PanelLayout.compact.lowestWidth(sideRoom: full, notchWidth: 185) == 493)
         #expect(PanelLayout.wide.lowestWidth(sideRoom: full, notchWidth: 185) == 560)
     }
-
-    @Test func theCupTakesATabsWidthAndAGapOnTheRight() {
-        let without = TopRowLayout.sideRoom(left: 0, right: 2, showsBattery: true)
-        let with = TopRowLayout.sideRoom(left: 0, right: 2, showsBattery: true, showsKeepAwake: true)
-        #expect(with == without + PanelTabSize.regular.tabWidth + TopRowLayout.groupGap)
-    }
 }

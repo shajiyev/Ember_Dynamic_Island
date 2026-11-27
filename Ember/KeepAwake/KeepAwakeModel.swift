@@ -12,6 +12,8 @@ final class KeepAwakeModel {
     struct Session: Equatable {
         /// Nil keeps it until Stop.
         let endsAt: Date?
+        /// The chosen time, for the tab's ring and lit button; nil until stopped.
+        let minutes: Int?
         var lidClosed: Bool
     }
 
@@ -52,7 +54,7 @@ final class KeepAwakeModel {
         }
         defaults.set(lidClosed, forKey: Self.lidClosedRunningKey)
         holdAssertion()
-        session = Session(endsAt: endsAt, lidClosed: lidClosed)
+        session = Session(endsAt: endsAt, minutes: minutes, lidClosed: lidClosed)
         startTicking()
     }
 

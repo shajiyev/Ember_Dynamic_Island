@@ -193,7 +193,7 @@ final class AppSettings {
     var batteryInPanelOn: Bool { didSet { save(batteryInPanelOn, Key.batteryInPanelOn) } }
     /// Onboarding has run (the window was finished or closed). No Reset changes it.
     var onboarded: Bool { didSet { save(onboarded, Key.onboarded) } }
-    /// Keep awake's cup in the panel and its item in the menu bar menu.
+    /// Keep awake's tab in the panel and its item in the menu bar menu.
     var keepAwakeOn: Bool { didSet { save(keepAwakeOn, Key.keepAwakeOn) } }
     /// Keep awake's four times, in minutes.
     var keepAwakeTimes: [Int] {
@@ -416,6 +416,7 @@ final class AppSettings {
         case .timer: return timerOn
         case .calendar: return calendarOn
         case .shelf: return shelfOn
+        case .keepAwake: return keepAwakeOn
         }
     }
 
@@ -578,7 +579,7 @@ final class AppSettings {
     /// The room the top row needs on each side of the notch, for the pill (the width rule).
     var openSideRoom: CGFloat {
         TopRowLayout.sideRoom(left: shownTabs(on: .left).count, right: shownTabs(on: .right).count,
-                              showsBattery: batteryInPanelOn, showsKeepAwake: keepAwakeOn)
+                              showsBattery: batteryInPanelOn)
     }
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {
