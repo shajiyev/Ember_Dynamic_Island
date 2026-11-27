@@ -4,9 +4,9 @@ import SwiftUI
 enum ShelfLook {
     /// AirDrop's own blue, #0A84FF.
     static let airDropBlue = Color(red: 0x0A / 255, green: 0x84 / 255, blue: 0xFF / 255)
-    /// The AirDrop area's share of the width; `ShelfDropTarget.boundary` follows it.
-    static let airDropShare: CGFloat = 0.2
-    static let spacing: CGFloat = 12
+    /// The AirDrop area's share of the width; `ShelfDropTarget.boundary(panelWidth:contentLeading:)` follows it.
+    nonisolated static let airDropShare: CGFloat = 0.2
+    nonisolated static let spacing: CGFloat = 12
 }
 
 /// A dashed rounded frame around one of the Shelf tab's areas, its content clipped inside.

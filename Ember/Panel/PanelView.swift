@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// The inside of the open panel: a top row beside the notch with the tab row on the left
-/// and status items on the right, above the chosen tab. Only the features that are on in
-/// Settings show.
+/// The inside of the open panel: a top row beside the notch above the chosen tab. With the
+/// tabs in the top row, they sit on both sides of the notch and the status items on the
+/// right; with the sidebar, the rail runs down the left side and the top row holds the
+/// tab's name and the status items. Only the features that are on in Settings show.
 struct PanelView: View {
     let battery: BatteryMonitor
     let timer: TimerModel
@@ -22,26 +23,41 @@ struct PanelView: View {
         // Shelf while it is held: during a file drag (until the panel closes) and for a few
         // seconds after a drop or a screenshot.
         let shownTab = selection.visibleTab(among: settings.shownTabs)
-        let leftTabs = settings.shownTabs(on: .left)
-        let rightTabs = settings.shownTabs(on: .right)
+        let isSidebar = settings.tabPlacement == .sidebar
+        let leftTabs = isSidebar ? [] : settings.shownTabs(on: .left)
+        let rightTabs = isSidebar ? [] : settings.shownTabs(on: .right)
         let row = TopRowLayout.fitting(left: leftTabs.count, right: rightTabs.count,
                                        showsBattery: settings.batteryInPanelOn,
                                        panelWidth: panelWidth, notchWidth: notchWidth)
+        let railSize = RailLayout.tabs(count: settings.shownTabs.count, panelHeight: PanelLayout.height).size
         let tabSelection = Binding(get: { shownTab ?? .music }, set: { selection.choose($0) })
         let activeTabs: Set<PanelTab> = keepAwake.session != nil ? [.keepAwake] : []
         VStack(spacing: 0) {
             HStack(spacing: TopRowLayout.groupGap) {
-                PanelTabRow(tabs: leftTabs, selection: tabSelection, activeTabs: activeTabs, size: row.size, spacing: row.leftSpacing)
+                if isSidebar {
+                    if let shownTab {
+                        TabNameLabel(tab: shownTab)
+                            .frame(maxWidth: RailLayout.nameRoom(panelWidth: panelWidth, notchWidth: notchWidth),
+                                   alignment: .leading)
+                            .offset(y: RailLayout.firstTabCenter(size: railSize) - notchHeight / 2)
+                    }
+                } else {
+                    PanelTabRow(tabs: leftTabs, selection: tabSelection, activeTabs: activeTabs,
+                                size: row.size, spacing: row.leftSpacing)
+                }
                 Spacer(minLength: 0)
-                PanelTabRow(tabs: rightTabs, selection: tabSelection, activeTabs: activeTabs, size: row.size, spacing: row.rightSpacing)
+                PanelTabRow(tabs: rightTabs, selection: tabSelection, activeTabs: activeTabs,
+                            size: row.size, spacing: row.rightSpacing)
                 if settings.batteryInPanelOn, let reading = battery.reading {
                     BatteryStatusView(reading: reading)
                 }
                 PanelSettingsButton(size: row.size) { openSettings(.general) }
             }
             // Closer to the panel's edges than the content (`TopRowLayout.rowInset`), still
-            // clear of the top corners' curve.
-            .padding(.horizontal, TopRowLayout.rowInset - 32)
+            // clear of the top corners' curve; with the sidebar the name starts in line with
+            // the content.
+            .padding(.leading, isSidebar ? 0 : TopRowLayout.rowInset - PanelLayout.contentInset)
+            .padding(.trailing, TopRowLayout.rowInset - PanelLayout.contentInset)
             .frame(height: notchHeight)
 
             Group {
@@ -49,14 +65,27 @@ struct PanelView: View {
                 case .music: NowPlayingPanelView(model: nowPlaying, buttons: settings.musicButtons)
                 case .timer: TimerPanelView(timer: timer)
                 case .calendar: CalendarPanelView(model: calendar)
-                case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor)
+                case .shelf: ShelfPanelView(model: shelf, color: settings.featureColors[.shelf] ?? settings.glowColor,
+                                               contentLeading: isSidebar ? RailLayout.contentLeading : PanelLayout.contentInset)
                 case .keepAwake: KeepAwakePanelView(model: keepAwake, settings: settings)
                 case nil: AllFeaturesOffView { openSettings(.music) }
                 }
             }
             .frame(maxHeight: .infinity)
         }
-        .padding(.horizontal, 32)   // clears the open panel's flared and rounded corners
+        // Clears the open panel's flared and rounded corners, and with the sidebar the rail.
+        .padding(.leading, isSidebar ? RailLayout.contentLeading : PanelLayout.contentInset)
+        .padding(.trailing, PanelLayout.contentInset)
+        .overlay(alignment: .topLeading) {
+            if isSidebar {
+                PanelRail(tabs: settings.shownTabs, selection: tabSelection, activeTabs: activeTabs)
+                    .padding(.leading, RailLayout.leading)
+                    .padding(.top, RailLayout.topInset)
+                    .padding(.bottom, RailLayout.bottomInset)
+                    // Read before the tab's content, as the top row's tabs are.
+                    .accessibilitySortPriority(1)
+            }
+        }
         .environment(\.colorScheme, .dark)   // the panel is always black
         .environment(\.panelLayout, settings.panelLayout)
         .environment(\.timerPresets, settings.timerPresets)

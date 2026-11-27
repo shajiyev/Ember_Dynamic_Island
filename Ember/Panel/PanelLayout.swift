@@ -54,13 +54,18 @@ nonisolated enum PanelLayout: String, CaseIterable {
         max(widthRange.lowerBound, notchWidth + 2 * sideRoom)
     }
 
-    /// The open panel's height in both layouts: the lowest that does not feel pressed,
-    /// chosen by eye on 2026-11-17 (was 200). Users do not change it.
-    static let height: CGFloat = 184
+    /// The open panel's height in both layouts, chosen by the user on 2026-11-27: 10% taller
+    /// than 184 so the Calendar tab fits easily (was 200 before 2026-11-17). Users do not
+    /// change it.
+    static let height: CGFloat = 202
 
     /// In the compact layout, the Music and Timer buttons sit this far above the bottom of
     /// the panel's body, so they are in the same place on both tabs.
     static let controlsBottomInset: CGFloat = 16
+
+    /// From the panel's edges to the content, on both sides: clear of the open panel's
+    /// flared and rounded corners.
+    static let contentInset: CGFloat = 32
 }
 
 extension EnvironmentValues {

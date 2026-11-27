@@ -21,6 +21,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     case panelLayout
     case panelWidth
     case tabArrangement
+    case tabPlacement
     case glowOn
     case glowColor
     case alwaysOnGlow
@@ -92,7 +93,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
     var page: SettingsPage {
         switch self {
         case .launchAtLogin, .showsMenuBarIcon, .tapsTrackpadOnOpen, .opensOnHover, .openDelay, .closeDelay, .openSpeed, .closeSpeed, .panelShortcut, .opensOnTab, .tabCooldown,
-             .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement:
+             .hidesInCaptures, .hidesInFullScreen, .alertsInFullScreen, .lastingPriority, .panelLayout, .panelWidth, .tabArrangement, .tabPlacement:
             return .general
         case .glowOn, .glowColor, .alwaysOnGlow, .restGlowStrength, .restGlowSpread, .restGlowFade, .activityGlow, .activityGlowStrength, .activityGlowSpread,
              .activityGlowFade, .panelGlow, .panelGlowStrength, .panelGlowSpread, .panelGlowFade:
@@ -134,6 +135,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelLayout: return "Panel layout"
         case .panelWidth: return "Width"
         case .tabArrangement: return "Tabs"
+        case .tabPlacement: return "Tab position"
         case .glowOn: return "Glow"
         case .glowColor: return "Glow colour"
         case .alwaysOnGlow: return "Resting glow"
@@ -207,6 +209,7 @@ nonisolated enum SettingsItem: CaseIterable, Hashable {
         case .panelLayout: return ["compact", "wide", "size", "panel"]
         case .panelWidth: return ["wider", "narrower", "size"]
         case .tabArrangement: return ["arrange", "drag", "top row", "side"]
+        case .tabPlacement: return ["sidebar", "rail", "top row", "left"]
         case .glowOn: return ["no glow", "all glows", "off"]
         case .glowColor: return ["color", "tint", "rose", "amber", "mint", "blue", "lilac", "white", "custom"]
         case .alwaysOnGlow: return ["always-on", "light", "rest", "notch"]

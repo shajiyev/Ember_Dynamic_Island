@@ -238,6 +238,7 @@ on the panel's left instead, with its own order (docs/specs/tab-sidebar.md).
 | Setting | Default | What it does |
 |---|---|---|
 | Tabs | Music, Shelf, Timer, Calendar on the left; nothing on the right | A drawing of the top of the open panel, at its real proportions (this Mac's notch, the panel's width, the same icon sizes and gaps as the panel, the real battery and the gear) and scaled down, so every tab sits exactly where it will in the panel: left tabs from the left edge, right tabs against the battery and gear. Dragging a tab onto another puts it just before that one; dropping it in the empty part of a side puts it at that side's inner end, by the notch. A tab whose feature is off is drawn faded and keeps its place (its room is drawn too). The battery and the gear do not move. The panel follows at once. |
+| Tab position (built 2026-11-27) | Top row | Two cards above the drawing, **Top row** and **Sidebar** (docs/specs/tab-sidebar.md). With Sidebar the drawing becomes the rail, dragged the same way; the rail keeps its own order (`tabsRail`), and the panel grows by the rail's room. Saved as `tabPlacement`. |
 
 - **New tabs** (a feature built later, or one missing from what was saved) start at the
   end of the side with more room.
@@ -279,7 +280,7 @@ top row's **minimum**, whichever is larger.
   stays 460); five on the left, 457 pt; five on the left and three on the right with the
   battery, 493 pt. The worst case, eight tabs and the battery with More Space (a notch of
   about 220 pt), is about 530 pt, well inside any screen.
-- **Why only the width:** the height is fixed by Ember at 184 pt
+- **Why only the width:** the height is fixed by Ember at 202 pt (184 pt until 2026-11-27)
   (docs/specs/panel-layouts.md, "Two layouts"), so every tab is sure to fit; a user-set
   height would need every tab to work at any height.
 - **Why not one "size" (scale) control:** the top row must line up with the real notch,

@@ -54,3 +54,29 @@ struct TabArrangementTests {
         #expect(full.left == [.timer, .calendar, .keepAwake])
     }
 }
+
+struct RailArrangementTests {
+    @Test func everyTabStartsInTheUsualOrder() {
+        #expect(RailArrangement.standard.tabs == [.music, .shelf, .timer, .calendar, .keepAwake])
+        #expect(RailArrangement(saved: []) == .standard)
+    }
+
+    @Test func readingDropsUnknownNamesAndRepeatsAndAddsMissingTabsAtTheEnd() {
+        let read = RailArrangement(saved: ["timer", "radio", "timer", "music"])
+        #expect(read.tabs == [.timer, .music, .shelf, .calendar, .keepAwake])
+    }
+
+    @Test func aTabMovesBeforeAnother() {
+        #expect(RailArrangement.standard.moving(.keepAwake, before: .music).tabs
+                == [.keepAwake, .music, .shelf, .timer, .calendar])
+    }
+
+    @Test func aTabMovesToTheEnd() {
+        #expect(RailArrangement.standard.moving(.music, before: nil).tabs
+                == [.shelf, .timer, .calendar, .keepAwake, .music])
+    }
+
+    @Test func movingATabBeforeItselfChangesNothing() {
+        #expect(RailArrangement.standard.moving(.timer, before: .timer) == .standard)
+    }
+}

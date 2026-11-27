@@ -11,13 +11,16 @@ struct ShelfPanelView: View {
     let color: Color
     @Environment(\.closePanel) private var closePanel
     @Environment(\.fileDragPosition) private var fileDragPosition
+    @Environment(\.panelWidth) private var panelWidth
+    /// How far in the content starts from the panel's left edge (the rail's room in Sidebar mode).
+    let contentLeading: CGFloat
     /// The width of the shelf's row, so its empty space fills it.
     @State private var rowWidth: CGFloat = 0
 
     var body: some View {
         // The area under dragged files, if the drop would do anything there: the shelf's own
         // items can only go to AirDrop.
-        let target = fileDragPosition.map(ShelfDropTarget.init(position:))
+        let target = fileDragPosition.map { ShelfDropTarget(position: $0, panelWidth: panelWidth, contentLeading: contentLeading) }
             .flatMap { $0.accepts(fromShelf: model.isDraggingOut) ? $0 : nil }
         GeometryReader { proxy in
             HStack(spacing: ShelfLook.spacing) {

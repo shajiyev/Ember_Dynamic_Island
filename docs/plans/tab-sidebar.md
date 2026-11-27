@@ -79,7 +79,7 @@ Before Task 1, run TEST once and note the count (`Test run with N tests`).
   `nameRoom(panelWidth:notchWidth:) -> CGFloat`; `RailArrangement(saved: [String])`,
   `.standard`, `.tabs`, `moving(_:before:)`; `PanelLayout.contentInset` (32).
 
-- [ ] **Step 1: Write the failing tests.** Create `EmberTests/TabPlacementTests.swift`:
+- [x] **Step 1: Write the failing tests.** Create `EmberTests/TabPlacementTests.swift`:
 
 ```swift
 import CoreGraphics
@@ -147,10 +147,10 @@ struct RailArrangementTests {
 }
 ```
 
-- [ ] **Step 2: Run TEST.** Expected: build errors (`TabPlacement`, `RailLayout`,
+- [x] **Step 2: Run TEST.** Expected: build errors (`TabPlacement`, `RailLayout`,
   `RailArrangement`, `contentInset` not found).
 
-- [ ] **Step 3: Implement.** In `Ember/Panel/PanelLayout.swift`, after `controlsBottomInset`:
+- [x] **Step 3: Implement.** In `Ember/Panel/PanelLayout.swift`, after `controlsBottomInset`:
 
 ```swift
     /// From the panel's edges to the content, on both sides: clear of the open panel's
@@ -270,9 +270,9 @@ nonisolated struct RailArrangement: Equatable {
 }
 ```
 
-- [ ] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 10 more tests.
+- [x] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 10 more tests.
 
-- [ ] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
+- [x] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
   1 of 4 done (the rules)". Give the user:
   `git add Ember/Panel/TabPlacement.swift Ember/Panel/TabArrangement.swift Ember/Panel/PanelLayout.swift EmberTests/TabPlacementTests.swift EmberTests/TabArrangementTests.swift docs/roadmap.md && git commit -m "Added the sidebar's rules" -m $'- Top row or sidebar, the rail\'s sizes, fades and the name\'s room\n- The rail\'s own tab order' && git push`
 
@@ -289,7 +289,7 @@ nonisolated struct RailArrangement: Equatable {
   `tabOrder: [PanelTab]`; `shownTabs` follows `tabOrder`; `panelSize` is wider by
   `RailLayout.panelRoom` with the sidebar; `openSideRoom` counts no tabs with the sidebar.
 
-- [ ] **Step 1: Write the failing tests.** In `EmberTests/AppSettingsTests.swift`, add:
+- [x] **Step 1: Write the failing tests.** In `EmberTests/AppSettingsTests.swift`, add:
 
 ```swift
     @Test func theTabsAreInTheTopRowUntilTheSidebarIsChosen() {
@@ -327,10 +327,10 @@ nonisolated struct RailArrangement: Equatable {
     }
 ```
 
-- [ ] **Step 2: Run TEST.** Expected: build errors (`tabPlacement`, `railArrangement`,
+- [x] **Step 2: Run TEST.** Expected: build errors (`tabPlacement`, `railArrangement`,
   `tabOrder` not found).
 
-- [ ] **Step 3: Implement in `AppSettings.swift`.**
+- [x] **Step 3: Implement in `AppSettings.swift`.**
   - In `enum Key`, after `static let tabsRight = "tabsRight"`:
 
 ```swift
@@ -400,9 +400,9 @@ nonisolated struct RailArrangement: Equatable {
   In `GeneralPage.swift`, the opening tab's `Picker`: change
   `ForEach(settings.tabArrangement.all, id: \.self)` to `ForEach(settings.tabOrder, id: \.self)`.
 
-- [ ] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 3 more tests than after Task 1.
+- [x] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 3 more tests than after Task 1.
 
-- [ ] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
+- [x] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
   2 of 4 done (settings)". Give the user:
   `git add Ember/Settings/AppSettings.swift Ember/Settings/GeneralPage.swift EmberTests/AppSettingsTests.swift docs/roadmap.md && git commit -m "Saved the tabs' placement and the rail's order" -m $'- Top row by default; the rail keeps its own order\n- With the sidebar the panel is wider by the rail\'s room' && git push`
 
@@ -418,7 +418,7 @@ nonisolated struct RailArrangement: Equatable {
 - Produces: `PanelRail(tabs:selection:activeTabs:)`, `TabNameLabel(tab:)` (Settings' rail
   drawing uses `TabNameLabel` in Task 4).
 
-- [ ] **Step 1: The rail.** Create `Ember/Panel/PanelRail.swift`:
+- [x] **Step 1: The rail.** Create `Ember/Panel/PanelRail.swift`:
 
 ```swift
 import SwiftUI
@@ -496,7 +496,7 @@ struct TabNameLabel: View {
 }
 ```
 
-- [ ] **Step 2: The panel.** In `Ember/Panel/PanelView.swift`, replace the doc comment over
+- [x] **Step 2: The panel.** In `Ember/Panel/PanelView.swift`, replace the doc comment over
   `struct PanelView` with:
 
 ```swift
@@ -575,10 +575,10 @@ struct TabNameLabel: View {
 
   The modifiers after it (`.environment(\.colorScheme, .dark)` onwards) stay as they are.
 
-- [ ] **Step 3: CLEAN, TEST, BUILD.** Expected: `** TEST SUCCEEDED **` (same count as after
+- [x] **Step 3: CLEAN, TEST, BUILD.** Expected: `** TEST SUCCEEDED **` (same count as after
   Task 2); both builds succeed with no warnings.
 
-- [ ] **Step 4: Look at it before Settings has the choice.** Run the Debug build from Xcode,
+- [x] **Step 4: Look at it before Settings has the choice.** Run the Debug build from Xcode,
   quit it, then in Terminal: `defaults write io.github.shajiyev.Ember tabPlacement sidebar`,
   and run it again. Check with the user, Compact and Wide: the rail from near the top edge
   to near the bottom; the tab's name beside it, level with the notch, in line with the
@@ -588,7 +588,7 @@ struct TabNameLabel: View {
   `RailLayout` by eye if asked (update `TabPlacementTests` to match). Then
   `defaults delete io.github.shajiyev.Ember tabPlacement`.
 
-- [ ] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
+- [x] **Step 5: Roadmap and commit.** Roadmap **In progress**: "Tabs in a sidebar (#48): Task
   3 of 4 done (the rail in the panel)". Give the user:
   `git add Ember/Panel/PanelRail.swift Ember/Panel/PanelView.swift docs/roadmap.md && git commit -m "Added the sidebar's rail to the panel" -m $'- The tabs in a scrolling rail with fades, the chosen tab kept in view\n- The tab\'s name beside the rail, level with the notch' && git push`
 
@@ -610,7 +610,7 @@ struct TabNameLabel: View {
   `TabPlacementCards(selection:)`, `RailPreview(settings:)`,
   `TabChip(tab:size:isOn:isVertical:onDrop:)`, `SettingsItem.tabPlacement`.
 
-- [ ] **Step 1: Write the failing test.** In `EmberTests/SettingsSearchTests.swift`, add:
+- [x] **Step 1: Write the failing test.** In `EmberTests/SettingsSearchTests.swift`, add:
 
 ```swift
     @Test func theTabPositionIsFoundBySidebarRailAndTopRow() {
@@ -621,18 +621,18 @@ struct TabNameLabel: View {
     }
 ```
 
-- [ ] **Step 2: Run TEST.** Expected: build error, `tabPlacement` is not a `SettingsItem`.
+- [x] **Step 2: Run TEST.** Expected: build error, `tabPlacement` is not a `SettingsItem`.
 
-- [ ] **Step 3: The search item.** In `SettingsSearch.swift`: add `case tabPlacement` after
+- [x] **Step 3: The search item.** In `SettingsSearch.swift`: add `case tabPlacement` after
   `case tabArrangement`; in `page`, add `.tabPlacement` after `.tabArrangement` in the
   `.general` list; in `title`, after the `.tabArrangement` line, add
   `case .tabPlacement: return "Tab position"`; in `keywords`, after the `.tabArrangement`
   line, add `case .tabPlacement: return ["sidebar", "rail", "top row", "left"]`.
 
-- [ ] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 1 more test. If "rail" also
+- [x] **Step 4: Run TEST.** Expected: `** TEST SUCCEEDED **`, 1 more test. If "rail" also
   finds another setting, show the user which and agree a change before going on.
 
-- [ ] **Step 5: One card for both choices.** In `LayoutCards.swift`, replace `LayoutCards`
+- [x] **Step 5: One card for both choices.** In `LayoutCards.swift`, replace `LayoutCards`
   (struct and doc comment) with:
 
 ```swift
@@ -690,7 +690,7 @@ struct ChoiceCard<Sketch: View>: View {
 }
 ```
 
-- [ ] **Step 6: The Tab position cards.** Create `Ember/Settings/TabPlacementCards.swift`:
+- [x] **Step 6: The Tab position cards.** Create `Ember/Settings/TabPlacementCards.swift`:
 
 ```swift
 import SwiftUI
@@ -760,7 +760,7 @@ private struct PlacementSketch: View {
 }
 ```
 
-- [ ] **Step 7: A tab chip for the rail.** In `TabsPreview.swift`, `TabChip`: remove
+- [x] **Step 7: A tab chip for the rail.** In `TabsPreview.swift`, `TabChip`: remove
   `private` from `private struct TabChip`, update its doc to "A tab in the Settings
   drawings, drawn like the panel's: its icon, draggable by name, taking a dropped tab just
   before it (to its left in the top row, above it in the rail).", add
@@ -778,7 +778,7 @@ private struct PlacementSketch: View {
             }
 ```
 
-- [ ] **Step 8: The rail drawing.** Create `Ember/Settings/RailPreview.swift`:
+- [x] **Step 8: The rail drawing.** Create `Ember/Settings/RailPreview.swift`:
 
 ```swift
 import SwiftUI
@@ -839,7 +839,7 @@ struct RailPreview: View {
 }
 ```
 
-- [ ] **Step 9: The Tabs section.** In `GeneralPage.swift`, replace the Tabs `Section` (the
+- [x] **Step 9: The Tabs section.** In `GeneralPage.swift`, replace the Tabs `Section` (the
   one holding `TabsPreview`) with:
 
 ```swift
@@ -865,10 +865,10 @@ struct RailPreview: View {
             }
 ```
 
-- [ ] **Step 10: CLEAN, TEST, BUILD.** Expected: `** TEST SUCCEEDED **` (1 more than after
+- [x] **Step 10: CLEAN, TEST, BUILD.** Expected: `** TEST SUCCEEDED **` (1 more than after
   Task 3); both builds succeed with no warnings.
 
-- [ ] **Step 11: The user checks on screen** (macOS 26), the spec's checklist:
+- [x] **Step 11: The user checks on screen** (macOS 26), the spec's checklist:
   1. A fresh setup (or Reset to Defaults on General) shows the top row, unchanged; the
      Top row card is outlined.
   2. Sidebar: the drawing changes to the rail; the next opening shows the rail from the top
@@ -885,10 +885,15 @@ struct RailPreview: View {
      activity look right with the rail. Search finds "sidebar" and "rail".
   Fix what the user finds; tune sizes by eye.
 
-- [ ] **Step 12: Checkpoint and commit.** Run the global checkpoint: roadmap, features (#48
+- [x] **Step 12: Checkpoint and commit.** Run the global checkpoint: roadmap, features (#48
   added as done), architecture (`TabPlacement.swift`, `PanelRail.swift`, the Settings
   files), the spec's Key files / Gotchas / Tests as built (the panel's real extra width,
   the name's real room), docs/specs/settings.md's Tabs section (the setting, its default,
   `tabPlacement` and `tabsRail`), decisions (the sidebar as an option, its own order, the
   name beside the rail; why). Give the user one line listing this work's files:
   `git add Ember EmberTests docs && git commit -m "Added tabs in a sidebar" -m $'- Settings → General → Tabs: Top row or Sidebar, each with its own order\n- A scrolling rail down the panel\'s left side, the tab\'s name beside it\n- The panel grows by the rail\'s room so every tab keeps its space' && git push`
+
+**As built (2026-11-27):** after the final review the shelf's drop split follows the
+content's edge; at the user's first look the name moved level with the first tab, scrolling
+was dropped for smaller icons (`RailLayout.tabs(count:panelHeight:)`), and the panel became
+202 pt tall. 599 tests pass; checked on screen by the user on macOS 26.6.2.

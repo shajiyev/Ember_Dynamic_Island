@@ -1,6 +1,6 @@
 # Tabs in a sidebar (#48)
 
-Agreed with the user 2026-11-27. Status: designed, not built. Built after Keep awake's tab
+Agreed with the user 2026-11-27. Status: built 2026-11-27, checked on screen by the user on macOS 26.6.2. Built after Keep awake's tab
 (docs/specs/keep-awake.md, "The tab"), so the rail holds that tab from the start.
 
 ## Goal
@@ -51,8 +51,9 @@ small grey capitals: **10 pt capitals** chosen).
   capitals**, letters spaced a little (about 0.8 pt), **white at 50%**: a quiet label, not a
   title. Chosen 2026-11-27 from six mocked-up sizes and styles (capitals or normal letters,
   10–13 pt).
-- In the top row, centred on the notch's height, starting in line with the content's left
-  edge (right of the rail).
+- In the top row, level with the middle of the rail's first tab (23 pt from the panel's top, 22 with regular icons;
+  moved down from the notch's middle at the user's first look, 2026-11-27), starting in line
+  with the content's left edge (right of the rail).
 - It follows the tab shown, also when the panel shows Shelf by itself (a drop, a screenshot).
 - A name too long for the room before the notch ends with "…". Today's names all fit.
 - Only in Sidebar mode; the top row placement has no name.
@@ -60,12 +61,16 @@ small grey capitals: **10 pt capitals** chosen).
 
 ### Many tabs
 
-- About **6 tabs** fit without scrolling. With more, the rail **scrolls**: two fingers or the
-  mouse wheel over the rail move only the rail.
-- A **soft fade** at the rail's top or bottom edge (or both) shows that tabs are hidden there.
-- When the panel opens on a tab that is out of sight (the last tab, an alert's tab, the
-  keyboard shortcut), the rail scrolls to it first.
-- With 6 tabs or fewer nothing scrolls and there is no fade.
+Changed 2026-11-27 at the user's first look: no scrolling. Like the top row, the icons get
+smaller when the tabs do not fit (a scrolling rail with edge fades was built first, then
+dropped).
+- **Large icons** (22 pt with the capsule) while they fit, with the room left spread between
+  them from 2 to 4 pt; **regular icons** (20 pt) otherwise, 2 pt apart. In the 202 pt panel:
+  up to 7 tabs large, 8 regular.
+- The rail never scrolls; every tab is always in sight.
+- **Limit:** 8 tabs fit. The planned list has 9 (with Clipboard, Color picker, Webcam
+  mirror and Claude Code usage); the 9th needs a decision when it comes (a smaller size, or
+  fewer tabs).
 
 ### The panel's width
 
@@ -88,7 +93,7 @@ small grey capitals: **10 pt capitals** chosen).
 - Under the cards, the drag preview follows the choice:
   - **Top row:** today's drawing of the top of the panel, unchanged.
   - **Sidebar:** a drawing of the panel's left part with the rail and the tab's name, at real
-    size; every tab is drawn, so it grows rather than scrolls. Dragging a tab onto another puts it just before that one; dropping it in
+    size and at the icon size the rail uses. Dragging a tab onto another puts it just before that one; dropping it in
     the rail's empty part puts it at the end. A tab whose feature is off is drawn faded and
     keeps its place, as in the top row's drawing.
 - **Each placement keeps its own order.** Arranging the rail never changes the top row and
@@ -101,16 +106,17 @@ small grey capitals: **10 pt capitals** chosen).
 
 - A rail on the right side.
 - Tab names written beside the icons in the rail (it would need about 100 pt).
-- A taller panel when many tabs are on (the rail scrolls instead).
+- A taller panel when many tabs are on (the icons get smaller instead).
+- Scrolling the rail (built, then dropped on 2026-11-27).
 - Placement per layout (the choice applies to Compact and Wide together).
 
 ## How it is built
 
 | Unit | File | What it does |
 |---|---|---|
-| Placement | `Ember/Panel/TabPlacement.swift` (new) | `TabPlacement` (`topRow`, `sidebar`) and `RailLayout`: the rail's width, inset, room added to the panel, tab size and gap, how many tabs fit before it scrolls. Pure, `nonisolated`. |
+| Placement | `Ember/Panel/TabPlacement.swift` (new) | `TabPlacement` (`topRow`, `sidebar`) and `RailLayout`: the rail's width, inset, room added to the panel, the tabs' size and gap for a number of tabs. Pure, `nonisolated`. |
 | Rail order | `Ember/Panel/TabArrangement.swift` | Gains `RailArrangement`: one list of tabs read from saved names (unknown names and repeats dropped, missing tabs at the end) and moving a tab before another or to the end. Pure. |
-| Rail view | `Ember/Panel/PanelRail.swift` (new) | The rail: the strip, the tabs (one tab button, pulled out of `PanelTabRow` in `PanelTabs.swift` so the top row and the rail share it), scrolling, the edge fades, scrolling to the chosen tab. |
+| Rail view | `Ember/Panel/PanelRail.swift` (new) | The rail: the strip, the tabs (one tab button, pulled out of `PanelTabRow` in `PanelTabs.swift` so the top row and the rail share it), sized by `RailLayout`. |
 | Panel | `Ember/Panel/PanelView.swift` | In Sidebar mode, the rail beside the content, and a top row with the tab's name on the left and the battery and the gear on the right. |
 | Settings | `Ember/Settings/AppSettings.swift` | `tabPlacement` (top row) and `railArrangement` (saved as `tabsRail`); `panelSize` adds `RailLayout.panelRoom` in Sidebar mode; `openSideRoom` counts no tabs in Sidebar mode; `shownTabs` follows the placement's order; Reset to Defaults. |
 | Settings page | `Ember/Settings/GeneralPage.swift`, `LayoutCards.swift`, `TabsPreview.swift`, `SettingsSearch.swift` | The Top row / Sidebar cards; the rail drawing with dragging; the search words. |
@@ -120,15 +126,35 @@ today.
 
 ## Key files
 
-To fill in as built.
+- `Ember/Panel/TabPlacement.swift` — `TabPlacement`; `RailTabs`; `RailLayout`: the rail's
+  place and width, `contentLeading` (74), `panelRoom` (42), `tabRoom`, `tabs(count:panelHeight:)`
+  (large icons while they fit, else regular; gaps 2–4 pt), `firstTabCenter(size:)`, `nameRoom`.
+- `Ember/Panel/TabArrangement.swift` — `RailArrangement`, the rail's own order.
+- `Ember/Panel/PanelRail.swift` — `PanelRail` (the strip and its tabs, no scrolling) and
+  `TabNameLabel`.
+- `Ember/Panel/PanelView.swift` — the rail as an overlay (read first by VoiceOver), the name
+  in the top row level with the first tab, the content's leading inset.
+- `Ember/Settings/AppSettings.swift` — `tabPlacement`, `railArrangement`, `tabOrder`,
+  `panelSize` (+ `RailLayout.panelRoom` with the sidebar), `openSideRoom` (no tabs with the
+  sidebar).
+- `Ember/Settings/TabPlacementCards.swift`, `RailPreview.swift`, `LayoutCards.swift`
+  (`ChoiceCard`, shared with Panel layout), `TabsPreview.swift` (`TabChip`, also vertical),
+  `GeneralPage.swift`, `SettingsSearch.swift` (`tabPlacement`, "Tab position").
+- `Ember/Shelf/ShelfItems.swift` — `ShelfDropTarget(position:panelWidth:contentLeading:)`:
+  the AirDrop / keep split follows where the content starts (`AppDelegate+Shelf.swift`,
+  `ShelfPanelView.swift`).
 
 ## Gotchas
 
+- Anything placed by a share of the panel's width must allow for the rail: the shelf's drop
+  split was wrong in Sidebar mode until it followed the content's leading inset.
+- `PillController.openSize` keeps its own copy of the panel's height (the pill module does
+  not refer to the panel module); `PanelHeightTests` keeps the two in step.
+- 8 tabs fit in the rail; a 9th needs a decision (see "Many tabs").
 - `shownTabs` decides the opening tab's fallback and the "first tab" order everywhere; in
   Sidebar mode it must follow the rail's order, not the top row's.
 - The top row's `TopRowLayout` must not count tabs in Sidebar mode, or the panel grows for
   tabs that are not in the row.
-- Scrolling the rail must not reach the content: only the rail scrolls.
 - The name's room is the space between the rail and the notch, about 80 pt at the default
   width on a 185 pt notch, less with More Space's wider notch. Tabs to come need short
   titles (Claude Code usage in capitals would not fit whole).
@@ -138,7 +164,8 @@ To fill in as built.
 Unit tests, written first:
 - `RailArrangementTests`: reading saved names (unknown and repeated names dropped, missing
   tabs at the end); moving a tab before another and to the end.
-- `RailLayoutTests`: 6 tabs fit without scrolling, 7 do not; the room added to the panel.
+- `TabPlacementTests` (`RailLayout`): large icons up to 7 tabs, regular for 8, the gaps; the
+  room added to the panel; the name's room and height.
 - `AppSettingsTests`: Top row is the default; the placement and the rail's order survive a
   relaunch; Reset to Defaults brings both back; `panelSize` is wider by the rail's room in
   Sidebar mode; `openSideRoom` counts no tabs in Sidebar mode; `shownTabs` follows the
@@ -153,12 +180,13 @@ Manual checklist (in the plan), on macOS 26:
    roomy as before, in Compact and in Wide.
 3. Dragging in the rail drawing reorders the rail; the top row's order does not change, and
    switching back and forth keeps both.
-4. With every tab on (7 or more), the rail scrolls, the fades show where tabs are hidden,
-   the content does not move, and opening on a hidden tab scrolls it into view.
+4. The rail does not move under two fingers. (Smaller icons for 8 tabs cannot be seen with
+   today's 5 tabs; the rule is covered by tests.)
 5. Turning features off and on: their tabs leave and come back in place in both orders.
 6. The keyboard shortcut, full-screen apps (the bare notch) and closing onto a live activity
    look right with the rail.
 
 ## Last updated
 
-2026-11-27: designed.
+2026-11-27: designed and built; at the user's first look the name moved level with the
+first tab, scrolling was dropped for smaller icons, and the panel became 202 pt tall.

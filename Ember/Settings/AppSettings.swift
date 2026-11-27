@@ -234,6 +234,12 @@ final class AppSettings {
             save(tabArrangement.right.map(\.rawValue), Key.tabsRight)
         }
     }
+    /// Where the tabs sit: the top row or the sidebar's rail (Settings → General → Tabs).
+    var tabPlacement: TabPlacement { didSet { save(tabPlacement.rawValue, Key.tabPlacement) } }
+    /// The tabs' order in the rail, kept apart from the top row's.
+    var railArrangement: RailArrangement {
+        didSet { save(railArrangement.tabs.map(\.rawValue), Key.tabsRail) }
+    }
     /// The colours chosen on the feature pages, saved as hex codes; a feature with none
     /// keeps its own (`FeatureColor`).
     var featureColors: [FeatureColor: Color] {
@@ -317,6 +323,8 @@ final class AppSettings {
         static let compactWidth = "compactWidth"
         static let wideWidth = "wideWidth"
         static let tabsRight = "tabsRight"
+        static let tabPlacement = "tabPlacement"
+        static let tabsRail = "tabsRail"
         static let musicButtons = "musicButtons"
         static let showsSongOnChange = "showsSongOnChange"
     }
@@ -402,6 +410,8 @@ final class AppSettings {
                                  to: .wide)
         tabArrangement = TabArrangement(left: defaults.stringArray(forKey: Key.tabsLeft) ?? [],
                                         right: defaults.stringArray(forKey: Key.tabsRight) ?? [])
+        tabPlacement = defaults.string(forKey: Key.tabPlacement).flatMap(TabPlacement.init(rawValue:)) ?? .topRow
+        railArrangement = RailArrangement(saved: defaults.stringArray(forKey: Key.tabsRail) ?? [])
         musicButtons = defaults.stringArray(forKey: Key.musicButtons).map(MusicButtonRow.init(saved:)) ?? .standard
         showsSongOnChange = bool(Key.showsSongOnChange)
     }
@@ -470,6 +480,8 @@ final class AppSettings {
             tabCooldown = fresh.tabCooldown
             lastingPriority = fresh.lastingPriority
             tabArrangement = fresh.tabArrangement
+            tabPlacement = fresh.tabPlacement
+            railArrangement = fresh.railArrangement
             panelLayout = fresh.panelLayout
             compactWidth = fresh.compactWidth
             wideWidth = fresh.wideWidth
@@ -539,7 +551,8 @@ final class AppSettings {
             return [Key.opensOnHover, Key.openDelay, Key.closeDelay, Key.openSpeed, Key.closeSpeed, Key.panelShortcut,
                     Key.hidesInCaptures, Key.hidesInFullScreen, Key.alertsInFullScreen,
                     Key.showsMenuBarIcon, Key.tapsTrackpadOnOpen,
-                    Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight, Key.panelLayout,
+                    Key.opensOnTab, Key.tabCooldown, Key.lastingPriority, Key.tabsLeft, Key.tabsRight,
+                    Key.tabPlacement, Key.tabsRail, Key.panelLayout,
                     Key.compactWidth, Key.wideWidth]
         case .glow:
             return [Key.glowOn, Key.glowColor, Key.alwaysOnGlow, Key.restGlowStrength, Key.restGlowSpread, Key.restGlowFade,
@@ -565,11 +578,21 @@ final class AppSettings {
         set { if panelLayout == .compact { compactWidth = newValue } else { wideWidth = newValue } }
     }
 
-    /// The open panel's size before the width rule: the chosen layout's width, Ember's height.
-    var panelSize: CGSize { CGSize(width: panelWidth, height: PanelLayout.height) }
+    /// The open panel's size before the width rule: the chosen layout's width, Ember's
+    /// height, and with the sidebar the rail's room, so every tab keeps its space.
+    var panelSize: CGSize {
+        let rail = tabPlacement == .sidebar ? RailLayout.panelRoom : 0
+        return CGSize(width: panelWidth + rail, height: PanelLayout.height)
+    }
 
-    /// The panel's tabs that are on, left side then right side.
-    var shownTabs: [PanelTab] { tabArrangement.all.filter(isOn) }
+    /// Every tab in the chosen placement's order: the rail's, or the top row's left side
+    /// then right side. Used wherever tabs are listed.
+    var tabOrder: [PanelTab] {
+        tabPlacement == .sidebar ? railArrangement.tabs : tabArrangement.all
+    }
+
+    /// The panel's tabs that are on, in `tabOrder`.
+    var shownTabs: [PanelTab] { tabOrder.filter(isOn) }
 
     /// The tabs that are on, on one side of the notch, in order.
     func shownTabs(on side: TabSide) -> [PanelTab] {
@@ -577,9 +600,12 @@ final class AppSettings {
     }
 
     /// The room the top row needs on each side of the notch, for the pill (the width rule).
+    /// With the sidebar the row holds no tabs, only the battery and the gear.
     var openSideRoom: CGFloat {
-        TopRowLayout.sideRoom(left: shownTabs(on: .left).count, right: shownTabs(on: .right).count,
-                              showsBattery: batteryInPanelOn)
+        let hasTabs = tabPlacement == .topRow
+        return TopRowLayout.sideRoom(left: hasTabs ? shownTabs(on: .left).count : 0,
+                                     right: hasTabs ? shownTabs(on: .right).count : 0,
+                                     showsBattery: batteryInPanelOn)
     }
 
     private static func clamped(_ delay: TimeInterval) -> TimeInterval {

@@ -1443,3 +1443,15 @@ release. Reproduced by restarting BetterDisplay after Ember; the tap list
 - **Note:** the macOS 15 smoke test (release plan, task 5) was put off by the user to add
   these first.
 
+## 2026-11-27 — The sidebar as built: no scrolling, the name by the first tab, a taller panel
+- **Decision:** the rail does not scroll; like the top row, its icons get smaller when the
+  tabs do not fit (large while they fit, then regular; 8 fit). **Why:** the user found
+  scrolling unneeded; a scrolling rail with edge fades was built first and removed.
+- **Decision:** the tab's name sits level with the rail's first tab, not the notch's middle.
+  **Why:** asked by the user at the first look.
+- **Decision:** the panel is 202 pt tall (was 184), in every layout and placement. **Why:**
+  the Calendar tab looked pressed.
+- **Decision:** the shelf's AirDrop / keep split is worked out from where the content
+  starts, not a fixed share of the panel. **Why:** in Sidebar mode part of the AirDrop box
+  kept files instead of sending them (found in the final review).
+

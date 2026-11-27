@@ -214,12 +214,17 @@
 - `Ember/Panel/PanelButtons.swift` — `CircleButton` (white circle) and `PlainButton`
   (light grey, white under the pointer, all one width), shared by the Music and Timer
   tabs so they always look alike and sit in the same place.
-- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 184, the default) and
-  Wide (620 × 184), each one's width range for Settings → General → Width (the width itself
+- `Ember/Panel/PanelLayout.swift` — `PanelLayout`: Compact (460 × 202, the default) and
+  Wide (620 × 202), `contentInset` (32), each one's width range for Settings → General → Width (the width itself
   is `AppSettings.compactWidth` / `wideWidth`), each one's name, the month grid's width, and where the compact
   buttons sit; the `panelLayout` environment value `PanelView` sets for every tab.
+- `Ember/Panel/TabPlacement.swift` — `TabPlacement` (top row or sidebar) and `RailLayout`:
+  the sidebar rail's place, size, the panel's extra room, the tabs' size and gaps for a
+  count, where the tab's name sits (#48).
+- `Ember/Panel/PanelRail.swift` — `PanelRail`, the sidebar's rail, and `TabNameLabel`.
 - `Ember/Panel/TabArrangement.swift` — `TabArrangement`: which side of the notch each tab
-  sits on and in which order (Settings → General → Tabs), read from saved names and moved
+  sits on and in which order (Settings → General → Tabs), and `RailArrangement`, the rail's
+  own order; both read from saved names and moved
   by dragging.
 - `Ember/Panel/PanelTabs.swift` — `TopRowLayout`: the top row's room beside the notch (the
   width rule) and its icon size and gaps at a width; the tabs (Music, Shelf, Timer, Calendar,

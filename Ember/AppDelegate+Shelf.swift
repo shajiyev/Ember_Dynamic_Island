@@ -4,7 +4,11 @@ extension AppDelegate {
     /// Files dropped on the open panel: sent with AirDrop (the left area) or kept on the shelf
     /// (the right area). The shelf's own items, dragged onto it, can only be sent.
     func receiveFiles(_ urls: [URL], at position: CGFloat) {
-        let target = ShelfDropTarget(position: position)
+        // The panel's real width (the pill widens it when its content needs room), and where
+        // the content starts, which depends on where the tabs are.
+        let leading = settings.tabPlacement == .sidebar ? RailLayout.contentLeading : PanelLayout.contentInset
+        let width = controller.geometry?.openSize.width ?? settings.panelSize.width
+        let target = ShelfDropTarget(position: position, panelWidth: width, contentLeading: leading)
         guard target.accepts(fromShelf: shelf.isDraggingOut) else { return }
         switch target {
         case .airDrop:

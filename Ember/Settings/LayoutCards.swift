@@ -1,40 +1,55 @@
 import SwiftUI
 
-/// Settings → General → Panel layout: a clickable card per layout with a small drawing of
-/// its Music tab, its name and size. The chosen card has an Ember rose outline.
+/// Settings → General → Panel layout: a card per layout with a small drawing of its Music
+/// tab, its name and a line under it.
 struct LayoutCards: View {
     @Binding var selection: PanelLayout
 
     var body: some View {
         HStack(spacing: 12) {
             ForEach(PanelLayout.allCases, id: \.self) { layout in
-                Button { selection = layout } label: { card(layout) }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(layout.title)
-                    .accessibilityHint(layout.summary)
-                    .accessibilityAddTraits(selection == layout ? .isSelected : [])
+                ChoiceCard(title: layout.title, summary: layout.summary, isSelected: selection == layout,
+                           action: { selection = layout }) {
+                    LayoutSketch(layout: layout)
+                }
             }
         }
     }
+}
 
-    private func card(_ layout: PanelLayout) -> some View {
-        VStack(spacing: 4) {
-            LayoutSketch(layout: layout)
-                .frame(height: 64)
-            Text(layout.title)
-                .font(.system(size: 12, weight: .semibold))
-            Text(layout.summary)
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
+/// A clickable card in Settings: a small drawing, a name and a line under it, with an Ember
+/// rose outline while chosen. Shared by Panel layout and Tab position.
+struct ChoiceCard<Sketch: View>: View {
+    let title: String
+    let summary: String
+    let isSelected: Bool
+    let action: () -> Void
+    @ViewBuilder let sketch: Sketch
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                sketch
+                    .frame(height: 64)
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+                Text(summary)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity)
+            .background(RoundedRectangle(cornerRadius: 10).fill(.quaternary.opacity(0.5)))
+            .overlay {
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(isSelected ? PillStyle.glowColor : .clear, lineWidth: 2)
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 10))
         }
-        .padding(10)
-        .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 10).fill(.quaternary.opacity(0.5)))
-        .overlay {
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(selection == layout ? PillStyle.glowColor : .clear, lineWidth: 2)
-        }
-        .contentShape(RoundedRectangle(cornerRadius: 10))
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(summary)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

@@ -207,4 +207,11 @@ struct SettingsSearchTests {
         #expect(SettingsSearch.matches("onboarding") == [.showWelcome])
         #expect(SettingsItem.showWelcome.page == .about)
     }
+
+    @Test func theTabPositionIsFoundBySidebarRailAndTopRow() {
+        #expect(SettingsSearch.matches("sidebar") == [.tabPlacement])
+        #expect(SettingsSearch.matches("rail") == [.tabPlacement])
+        #expect(SettingsSearch.matches("top row") == [.tabArrangement, .tabPlacement])
+        #expect(SettingsItem.tabPlacement.page == .general)
+    }
 }

@@ -87,12 +87,13 @@ struct TabsPreview: View {
     }
 }
 
-/// A tab in the drawing, drawn like the panel's: its icon, draggable by name, taking a
-/// dropped tab just before it.
-private struct TabChip: View {
+/// A tab in the Settings drawings, drawn like the panel's: its icon, draggable by name,
+/// taking a dropped tab just before it (to its left in the top row, above it in the rail).
+struct TabChip: View {
     let tab: PanelTab
     let size: PanelTabSize
     let isOn: Bool
+    var isVertical = false
     let onDrop: (String?) -> Bool
     @State private var isTargeted = false
 
@@ -105,8 +106,12 @@ private struct TabChip: View {
             .foregroundStyle(.white.opacity(isOn ? 0.85 : 0.25))
             .background(Capsule().fill(.white.opacity(isTargeted ? 0.25 : 0)))
             // Where a dropped tab will land: just before this one.
-            .overlay(alignment: .leading) {
-                if isTargeted { Capsule().fill(.white).frame(width: 1.5, height: size.iconFrame).offset(x: -2) }
+            .overlay(alignment: isVertical ? .top : .leading) {
+                if isTargeted {
+                    Capsule().fill(.white)
+                        .frame(width: isVertical ? size.iconFrame : 1.5, height: isVertical ? 1.5 : size.iconFrame)
+                        .offset(x: isVertical ? 0 : -2, y: isVertical ? -2 : 0)
+                }
             }
             .contentShape(Capsule())
             .draggable(tab.rawValue) {

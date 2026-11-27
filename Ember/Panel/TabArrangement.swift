@@ -59,3 +59,31 @@ nonisolated struct TabArrangement: Equatable {
         return moved
     }
 }
+
+/// The tabs' order in the sidebar's rail (Settings → General → Tabs, Sidebar): one column,
+/// kept apart from the top row's order. Every tab has a place, also while its feature is
+/// off, so it comes back where it was.
+nonisolated struct RailArrangement: Equatable {
+    private(set) var tabs: [PanelTab]
+
+    /// Every tab in the usual order.
+    static let standard = RailArrangement(saved: [])
+
+    /// Reads saved tab names: unknown names and repeats are dropped, and a tab missing from
+    /// them (a new feature) goes to the end.
+    init(saved names: [String]) {
+        var seen = Set<PanelTab>()
+        tabs = names.compactMap(PanelTab.init(rawValue:)).filter { seen.insert($0).inserted }
+        tabs += PanelTab.allCases.filter { !seen.contains($0) }
+    }
+
+    /// The order with `tab` moved just before `before`, or to the end when `before` is nil.
+    func moving(_ tab: PanelTab, before: PanelTab?) -> RailArrangement {
+        guard tab != before else { return self }
+        var moved = self
+        moved.tabs.removeAll { $0 == tab }
+        let index = before.flatMap { moved.tabs.firstIndex(of: $0) } ?? moved.tabs.endIndex
+        moved.tabs.insert(tab, at: index)
+        return moved
+    }
+}

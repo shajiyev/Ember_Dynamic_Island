@@ -70,12 +70,18 @@ nonisolated enum ShelfDropTarget: Equatable {
     case keep
 
     /// Where the two areas meet, as a share of the panel's width: the middle of the gap between
-    /// them, in both panel layouts (`ShelfDropZones.airDropShare`, the panel's 32 pt side margins).
-    static let boundary: CGFloat = 0.24
+    /// them. The content spans from `contentLeading` to `PanelLayout.contentInset` short of the
+    /// right edge; the AirDrop area is `ShelfLook.airDropShare` of it, less the gap.
+    static func boundary(panelWidth: CGFloat, contentLeading: CGFloat) -> CGFloat {
+        let content = panelWidth - contentLeading - PanelLayout.contentInset
+        let airDropWidth = (content - ShelfLook.spacing) * ShelfLook.airDropShare
+        return (contentLeading + airDropWidth + ShelfLook.spacing / 2) / panelWidth
+    }
 
-    /// `position`: where across the panel's width, 0…1.
-    init(position: CGFloat) {
-        self = position < Self.boundary ? .airDrop : .keep
+    /// `position`: where across the panel's width, 0…1. `panelWidth`: the open panel's width.
+    /// `contentLeading`: how far in the content starts from the panel's left edge.
+    init(position: CGFloat, panelWidth: CGFloat, contentLeading: CGFloat) {
+        self = position < Self.boundary(panelWidth: panelWidth, contentLeading: contentLeading) ? .airDrop : .keep
     }
 
     /// Whether files dropped here do anything. Files from elsewhere can be kept or sent; the

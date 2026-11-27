@@ -567,4 +567,38 @@ struct AppSettingsTests {
         #expect(!settings.musicOn && !settings.screenshotsToShelf)
         #expect(settings.timerOn && settings.shelfOn && settings.calendarOn)   // need no permission
     }
+
+    @Test func theTabsAreInTheTopRowUntilTheSidebarIsChosen() {
+        let defaults = freshDefaults()
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.tabPlacement == .topRow && settings.railArrangement == .standard)
+        settings.tabPlacement = .sidebar
+        settings.railArrangement = settings.railArrangement.moving(.calendar, before: .music)
+
+        let relaunched = AppSettings(defaults: defaults)
+        #expect(relaunched.tabPlacement == .sidebar)
+        #expect(relaunched.railArrangement.tabs == [.calendar, .music, .shelf, .timer, .keepAwake])
+        #expect(relaunched.tabArrangement == .standard)   // the top row keeps its own order
+        relaunched.reset(.general)
+        #expect(relaunched.tabPlacement == .topRow && relaunched.railArrangement == .standard)
+    }
+
+    @Test func withTheSidebarTheTabsFollowTheRailsOrder() {
+        let settings = AppSettings(defaults: freshDefaults())
+        settings.railArrangement = settings.railArrangement.moving(.calendar, before: .music)
+        #expect(settings.tabOrder == settings.tabArrangement.all)
+        settings.tabPlacement = .sidebar
+        #expect(settings.tabOrder == [.calendar, .music, .shelf, .timer, .keepAwake])
+        settings.timerOn = false
+        #expect(settings.shownTabs == [.calendar, .music, .shelf, .keepAwake])
+    }
+
+    @Test func theSidebarWidensThePanelAndLeavesTheTopRowToTheBatteryAndTheGear() {
+        let settings = AppSettings(defaults: freshDefaults())
+        let topRowWidth = settings.panelSize.width
+        settings.tabPlacement = .sidebar
+        #expect(settings.panelSize.width == topRowWidth + RailLayout.panelRoom)
+        #expect(settings.panelWidth == Double(PanelLayout.compact.size.width))   // the slider's width leaves the rail out
+        #expect(settings.openSideRoom == TopRowLayout.sideRoom(left: 0, right: 0, showsBattery: true))
+    }
 }

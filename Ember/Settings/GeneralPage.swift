@@ -43,7 +43,7 @@ struct GeneralPage: View {
                 Picker(SettingsItem.opensOnTab.title, selection: $settings.opensOnTab) {
                     Text("Last tab (Recommended)").tag(PanelTab?.none)
                     Divider()
-                    ForEach(settings.tabArrangement.all, id: \.self) { tab in
+                    ForEach(settings.tabOrder, id: \.self) { tab in
                         Text(tab.title).tag(PanelTab?.some(tab))
                     }
                 }
@@ -85,12 +85,24 @@ struct GeneralPage: View {
                 Text("When a timer and a song are both going. The last tab you used: the song if you last closed the panel on Music, otherwise the timer. Alerts, such as Time's up or a low battery, always show first.")
             }
             Section {
-                TabsPreview(settings: settings, notchWidth: notchWidth)
-                    .settingsItem(.tabArrangement)
+                TabPlacementCards(selection: $settings.tabPlacement)
+                    .settingsItem(.tabPlacement)
+                Group {
+                    switch settings.tabPlacement {
+                    case .topRow: TabsPreview(settings: settings, notchWidth: notchWidth)
+                    case .sidebar: RailPreview(settings: settings)
+                    }
+                }
+                .settingsItem(.tabArrangement)
             } header: {
                 Text(SettingsItem.tabArrangement.title)
             } footer: {
-                Text("Drag a tab to reorder it, or across the notch to the other side. A faded tab is turned off; it keeps its place. If a side needs more room, the panel grows on both sides; it goes back when tabs are turned off.")
+                switch settings.tabPlacement {
+                case .topRow:
+                    Text("Drag a tab to reorder it, or across the notch to the other side. A faded tab is turned off; it keeps its place. If a side needs more room, the panel grows on both sides; it goes back when tabs are turned off. A change of position shows the next time the panel opens.")
+                case .sidebar:
+                    Text("Drag a tab to reorder the rail; the top row keeps its own order. A faded tab is turned off; it keeps its place. With more tabs than fit, the rail scrolls. The sidebar makes the panel a little wider, so every tab keeps its room. A change of position shows the next time the panel opens.")
+                }
             }
             Section {
                 LayoutCards(selection: $settings.panelLayout)
@@ -170,7 +182,8 @@ struct GlowPage: View {
 }
 
 /// General → Width: the chosen layout's width, from as narrow as the layout and the tabs
-/// allow up to the layout's widest, in 10 pt steps, with the panel's real width beside it.
+/// allow up to the layout's widest, in 10 pt steps, with the chosen width beside it (without
+/// the sidebar's rail).
 private struct WidthRow: View {
     @Bindable var settings: AppSettings
     let notchWidth: CGFloat

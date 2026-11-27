@@ -261,9 +261,14 @@
   Settings → Keep Awake moved among the Tabs pages. The Timer's ring now also drains when a
   timer is cancelled (kept by the user). 580 tests pass; checked on screen by the user on
   macOS 26.6.2. Spec docs/specs/keep-awake.md, plan docs/plans/keep-awake.md, part 2.
-- **Designed:** tabs in a sidebar (#48, 2026-11-27): a Top row / Sidebar choice, a scrolling
-  rail down the panel's left side with the tab's name beside it, each placement with its own
-  order. Spec docs/specs/tab-sidebar.md, plan docs/plans/tab-sidebar.md (4 tasks), next.
+- **Done:** tabs in a sidebar (#48, 2026-11-27): Settings → General → Tabs chooses Top row
+  (default) or Sidebar, each with its own order dragged in a drawing; the sidebar is a rail
+  down the panel's left side with the tab's name in small grey capitals beside it, level
+  with the first tab; the icons get smaller when the tabs do not fit (no scrolling); the
+  panel grows by the rail's room. The shelf's AirDrop / keep split follows the content's
+  edge. The panel is 202 pt tall (was 184), asked so the Calendar tab fits easily. 599
+  tests pass; checked on screen by the user on macOS 26.6.2. Spec docs/specs/tab-sidebar.md,
+  plan docs/plans/tab-sidebar.md.
 - **In progress:** "Ship it" (milestone 3), releasing 1.0 (docs/plans/release.md). Done:
   the performance audit (docs/performance.md), the README for strangers, a real update kept
   local, and a real first run in a fresh account (2026-11-24). The first run found that
@@ -278,7 +283,8 @@
   in the fresh test account.
 - **Noted for later (not designed):** themes (#37: Black, Liquid Glass, custom colour) and
   more layout settings (#38: the calendar in the Music tab). See docs/features.md.
-- **Next:** tabs in a sidebar (#48, docs/plans/tab-sidebar.md), then "Ship it" (milestone 3): the macOS 15 smoke test and the release.
+- **Next:** dropping the panel layouts for a look chosen per tab (Music, Timer) and one width
+  (asked 2026-11-27, being designed), then "Ship it" (milestone 3): the macOS 15 smoke test and the release.
   Website: paused until v1 of the app is done. Then the page is reworked and every demo is
   rebuilt from scratch to match the real app: a hero with the pill playing live
   activities and "Good to know", highlights with their own demos, and "Explore everything
